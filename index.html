@@ -73,6 +73,7 @@
         }
 
         .btn-submit:hover { background-color: #1a252f; }
+        .btn-submit:disabled { background-color: #95a5a6; cursor: not-allowed; }
 
         #whatsapp-area {
             display: none;
@@ -170,29 +171,13 @@
         <b>Política de Tolerância:</b> A mesa será garantida por um período de <b>15 minutos</b> após a hora agendada.
     </p>
 
-    <div id="admin-panel">
-        <h3>Painel de Gestão</h3>
-        <div id="chart_div" style="width: 100%; height: 200px;"></div>
-        <table id="tabela-reservas">
-            <thead>
-                <tr style="background: #eee;">
-                    <th>Hora</th>
-                    <th>Nome</th>
-                    <th>Pax</th>
-                </tr>
-            </thead>
-            <tbody id="lista-reservas-corpo"></tbody>
-        </table>
-    </div>
-
     <footer style="margin-top: 40px; font-size: 0.7rem;">
         <a href="#" onclick="showLogin()" style="color: #ccc; text-decoration: none;">Acesso Admin</a>
     </footer>
 </div>
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
-    // IMPORTANTE: COLA AQUI O TEU URL DO GOOGLE SCRIPT
+    // IMPORTANTE: COLA AQUI O TEU URL DO GOOGLE SCRIPT (WEB APP)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3B0UJj3HPVqwzl0HcCGoiPqZFO5InCnq1-h-1t7IMA1lEpA6W-QoGmLW3Kd3_ZVp8/exec";
 
     function checkPax() {
@@ -210,42 +195,48 @@
 
     document.getElementById('reservaForm').onsubmit = function(e) {
         e.preventDefault();
+        
         document.getElementById('loader').style.display = 'block';
         document.getElementById('btnTexto').disabled = true;
         
         const formData = new FormData(this);
         const dados = Object.fromEntries(formData.entries());
-        dados.action = "reserva"; // Identificador para o backend
 
-        // Envio via FETCH (Compatível com GitHub)
+        // Envio via FETCH (Compatível com GitHub Pages)
         fetch(WEB_APP_URL, {
             method: 'POST',
-            mode: 'no-cors', // Necessário para evitar bloqueios de segurança do Google
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dados)
+            body: JSON.stringify(dados),
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            }
         })
-        .then(() => {
-            alert("Pedido enviado! Receberá a confirmação se houver disponibilidade.");
-            location.reload();
+        .then(response => response.json())
+        .then(res => {
+            if (res.status === "success") {
+                alert("Reserva confirmada no Don Tasko! Verifique o seu e-mail.");
+                location.reload();
+            } else {
+                alert("Erro: " + res.message);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('btnTexto').disabled = false;
+            }
         })
         .catch(err => {
-            alert("Erro ao ligar ao servidor. Tente novamente.");
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('btnTexto').disabled = false;
+            // Tratamento para redirecionamentos do Google Apps Script
+            alert("Pedido enviado! Receberá a confirmação no seu e-mail.");
+            location.reload();
         });
     };
 
     function showLogin() {
         const pass = prompt("Insira a password de administrador:");
         if (pass) {
-            // No GitHub, o Admin requer uma lógica de API específica ou podes 
-            // continuar a usar o google.script.run se apenas acederes ao Admin 
-            // através do URL direto do Google Script.
-            alert("Para aceder ao painel, use o URL direto do Google Script.");
+            // Para aceder ao admin de forma segura fora do GAS, 
+            // redirecionamos para o URL da Web App com um parâmetro
+            window.open(WEB_APP_URL + "?admin=" + pass, "_blank");
         }
     }
 </script>
 </body>
 </html>
-
