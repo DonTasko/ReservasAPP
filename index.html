@@ -64,8 +64,8 @@
 </div>
 
 <script>
-    // URL Atualizada conforme solicitado
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwnFMzIPsCl17PKLSNYWzrxaXEJz2gNgyOqqZsFjz0-3N75Nc6DCZ1y5cH2NF0JliCN/exec";
+    let diasFechadosGlobal = [];
 
     // Bloquear datas passadas
     document.getElementById('campoData').min = new Date().toISOString().split("T")[0];
@@ -77,31 +77,43 @@
         document.getElementById('whatsapp-area').style.display = p > 8 ? 'block' : 'none';
     });
 
-    // Carregar Horários da Sheet
+    // Carregar Horários e Dias de Fecho ao iniciar
     window.onload = function() {
-        fetch(URL_SCRIPT, {
-            method: 'POST',
-            body: JSON.stringify({action: 'getHorarios'})
-        })
+        // 1. Carregar Horários
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
         .then(r => r.json())
         .then(lista => {
             const s = document.getElementById('horarioSelect');
-            if (lista && lista.length > 0) {
-                s.innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao carregar horários:", err);
-            document.getElementById('horarioSelect').innerHTML = "<option value='19:30'>19:30</option><option value='20:30'>20:30</option>";
+            if (lista && lista.length > 0) s.innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
         });
+
+        // 2. Carregar Dias de Fecho para validação local
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDiasFechados'}) })
+        .then(r => r.json())
+        .then(dias => { diasFechadosGlobal = dias; });
     };
 
-    // Submeter Formulário com Validação de Erro
+    // Validação de Data ao mudar o campo
+    document.getElementById('campoData').addEventListener('change', function() {
+        const dataSelecionada = this.value;
+        const dataObj = new Date(dataSelecionada);
+        const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        const nomeDia = diasSemana[dataObj.getDay()];
+
+        const estaFechado = diasFechadosGlobal.some(item => {
+            return item === dataSelecionada || item.toLowerCase() === nomeDia.toLowerCase();
+        });
+
+        if (estaFechado) {
+            alert("O restaurante está encerrado às " + nomeDia + ". Por favor, escolha outra data.");
+            this.value = "";
+        }
+    });
+
     document.getElementById('reservaForm').onsubmit = function(e) {
         e.preventDefault();
         const loader = document.getElementById('loader');
         const btn = document.getElementById('btnSubmeter');
-        
         loader.style.display = 'block';
         btn.disabled = true;
 
@@ -109,10 +121,7 @@
         const dados = Object.fromEntries(formData.entries());
         dados.action = "reserva";
 
-        fetch(URL_SCRIPT, {
-            method: 'POST',
-            body: JSON.stringify(dados)
-        })
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
         .then(r => r.json())
         .then(res => {
             loader.style.display = 'none';
@@ -120,7 +129,6 @@
                 alert("Reserva confirmada no Don Tasko!");
                 location.reload();
             } else {
-                // Aqui exibe o erro de lotação vindo do Google Script
                 alert("Atenção: " + res.message);
                 btn.disabled = false;
             }
@@ -128,12 +136,9 @@
         .catch(err => {
             loader.style.display = 'none';
             btn.disabled = false;
-            // Caso ocorra erro de rede ou timeout
-            alert("Erro na ligação ao servidor. Tente novamente.");
+            alert("Erro na ligação ao servidor.");
         });
     };
 </script>
 </body>
 </html>
-
-
