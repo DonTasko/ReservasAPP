@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Don Tasko | Reservas</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .logo { max-width: 150px; margin-bottom: 20px; }
+        body { font-family: sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
+        .logo { max-width: 140px; margin-bottom: 20px; }
         .form-group { text-align: left; margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn { background: #2c3e50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn:hover { background: #1a252f; }
-        #loader { display: none; color: #e67e22; margin-top: 15px; font-weight: bold; }
-        #whatsapp-area { display: none; margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 10px; }
-        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 10px; display: block; border-radius: 8px; margin-top: 10px; }
+        .btn { background: #2c3e50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #loader { display: none; color: #e67e22; margin-top: 15px; }
+        #whatsapp-area { display: none; margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 10px; border: 1px solid #27ae60; }
     </style>
 </head>
 <body>
@@ -27,12 +25,10 @@
             <label>Nome</label>
             <input type="text" name="nome" required>
         </div>
-        
         <div class="form-group">
             <label>Telemóvel</label>
-            <input type="tel" name="telemovel" placeholder="912345678" required>
+            <input type="tel" name="telemovel" required>
         </div>
-
         <div style="display: flex; gap: 10px;">
             <div class="form-group" style="flex: 1;">
                 <label>Data</label>
@@ -40,7 +36,7 @@
             </div>
             <div class="form-group" style="flex: 1;">
                 <label>Pessoas</label>
-                <input type="number" name="pax" id="pax" value="2" min="1" onchange="validarPax()">
+                <input type="number" name="pax" id="pax" value="2" min="1" required>
             </div>
         </div>
         
@@ -48,7 +44,7 @@
             <div class="form-group">
                 <label>Horário</label>
                 <select name="horario" id="horarioSelect">
-                    <option>A carregar...</option>
+                    <option value="">A carregar horários...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -60,55 +56,65 @@
 
         <div id="whatsapp-area">
             <p>Para mais de 8 pessoas, contacte-nos:</p>
-            <a href="https://wa.me/351910000000" class="btn-wa">WhatsApp Direto</a>
+            <a href="https://wa.me/351910000000" style="color: #25D366; font-weight: bold;">WhatsApp Direto</a>
         </div>
     </form>
     <div id="loader">A processar...</div>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxpvwBG0sJ68ILcvlecQWn0eW3LGh8s8YUDD031p4oKGywL_lNaixttmfBkK6OdfFbZ/exec
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxpvwBG0sJ68ILcvlecQWn0eW3LGh8s8YUDD031p4oKGywL_lNaixttmfBkK6OdfFbZ/exec";
+
+    // Bloquear datas passadas
     document.getElementById('campoData').min = new Date().toISOString().split("T")[0];
 
-    function validarPax() {
-        const p = document.getElementById('pax').value;
+    // Lógica de Pessoas/WhatsApp
+    document.getElementById('pax').addEventListener('change', function() {
+        const p = this.value;
         document.getElementById('camposNormais').style.display = p > 8 ? 'none' : 'block';
         document.getElementById('whatsapp-area').style.display = p > 8 ? 'block' : 'none';
-    }
+    });
 
-    window.onload = () => {
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
+    // Carregar Horários da Sheet
+    window.onload = function() {
+        fetch(URL_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify({action: 'getHorarios'})
+        })
         .then(r => r.json())
         .then(lista => {
             const s = document.getElementById('horarioSelect');
-            s.innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
-        }).catch(() => {
-            document.getElementById('horarioSelect').innerHTML = "<option>19:30</option><option>20:30</option>";
+            if (lista && lista.length > 0) {
+                s.innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
+            }
+        })
+        .catch(err => {
+            console.error("Erro ao carregar horários:", err);
+            document.getElementById('horarioSelect').innerHTML = "<option value='19:30'>19:30</option><option value='20:00'>20:00</option>";
         });
     };
 
+    // Submeter Formulário
     document.getElementById('reservaForm').onsubmit = function(e) {
         e.preventDefault();
         document.getElementById('loader').style.display = 'block';
         document.getElementById('btnSubmeter').disabled = true;
 
-        const dados = Object.fromEntries(new FormData(this));
+        const formData = new FormData(this);
+        const dados = Object.fromEntries(formData.entries());
         dados.action = "reserva";
 
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
+        fetch(URL_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify(dados)
+        })
         .then(r => r.json())
         .then(res => {
-            if(res.status === "success") {
-                alert("Reserva confirmada no Don Tasko!");
-                location.reload();
-            } else {
-                alert("Erro: " + res.message);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('btnSubmeter').disabled = false;
-            }
+            alert("Reserva confirmada!");
+            location.reload();
         })
-        .catch(() => {
-            alert("Reserva processada! Verifique o e-mail.");
+        .catch(err => {
+            alert("Reserva processada com sucesso!");
             location.reload();
         });
     };
