@@ -12,7 +12,8 @@
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         .btn { background: #2c3e50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        #loader { display: none; color: #e67e22; margin-top: 15px; }
+        .btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        #loader { display: none; color: #e67e22; margin-top: 15px; font-weight: bold; }
         #whatsapp-area { display: none; margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 10px; border: 1px solid #27ae60; }
     </style>
 </head>
@@ -27,7 +28,7 @@
         </div>
         <div class="form-group">
             <label>Telemóvel</label>
-            <input type="tel" name="telemovel" required>
+            <input type="tel" name="telemovel" required placeholder="9xx xxx xxx">
         </div>
         <div style="display: flex; gap: 10px;">
             <div class="form-group" style="flex: 1;">
@@ -56,21 +57,22 @@
 
         <div id="whatsapp-area">
             <p>Para mais de 8 pessoas, contacte-nos:</p>
-            <a href="https://wa.me/351910000000" style="color: #25D366; font-weight: bold;">WhatsApp Direto</a>
+            <a href="https://wa.me/351910000000" style="color: #25D366; font-weight: bold; text-decoration: none;">WhatsApp Direto</a>
         </div>
     </form>
-    <div id="loader">A processar...</div>
+    <div id="loader">A processar a sua reserva...</div>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxpvwBG0sJ68ILcvlecQWn0eW3LGh8s8YUDD031p4oKGywL_lNaixttmfBkK6OdfFbZ/exec";
+    // URL Atualizada conforme solicitado
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbznH4wZnUbkdIN4zLMhBIUGxRbGkx1vJOjmmpA0xFktIbXRiE42fe6gNsbw_rbCyv8/exec";
 
     // Bloquear datas passadas
     document.getElementById('campoData').min = new Date().toISOString().split("T")[0];
 
     // Lógica de Pessoas/WhatsApp
     document.getElementById('pax').addEventListener('change', function() {
-        const p = this.value;
+        const p = parseInt(this.value);
         document.getElementById('camposNormais').style.display = p > 8 ? 'none' : 'block';
         document.getElementById('whatsapp-area').style.display = p > 8 ? 'block' : 'none';
     });
@@ -90,15 +92,18 @@
         })
         .catch(err => {
             console.error("Erro ao carregar horários:", err);
-            document.getElementById('horarioSelect').innerHTML = "<option value='19:30'>19:30</option><option value='20:00'>20:00</option>";
+            document.getElementById('horarioSelect').innerHTML = "<option value='19:30'>19:30</option><option value='20:30'>20:30</option>";
         });
     };
 
-    // Submeter Formulário
+    // Submeter Formulário com Validação de Erro
     document.getElementById('reservaForm').onsubmit = function(e) {
         e.preventDefault();
-        document.getElementById('loader').style.display = 'block';
-        document.getElementById('btnSubmeter').disabled = true;
+        const loader = document.getElementById('loader');
+        const btn = document.getElementById('btnSubmeter');
+        
+        loader.style.display = 'block';
+        btn.disabled = true;
 
         const formData = new FormData(this);
         const dados = Object.fromEntries(formData.entries());
@@ -110,12 +115,21 @@
         })
         .then(r => r.json())
         .then(res => {
-            alert("Reserva confirmada!");
-            location.reload();
+            loader.style.display = 'none';
+            if (res.status === "success") {
+                alert("Reserva confirmada no Don Tasko!");
+                location.reload();
+            } else {
+                // Aqui exibe o erro de lotação vindo do Google Script
+                alert("Atenção: " + res.message);
+                btn.disabled = false;
+            }
         })
         .catch(err => {
-            alert("Reserva processada com sucesso!");
-            location.reload();
+            loader.style.display = 'none';
+            btn.disabled = false;
+            // Caso ocorra erro de rede ou timeout
+            alert("Erro na ligação ao servidor. Tente novamente.");
         });
     };
 </script>
