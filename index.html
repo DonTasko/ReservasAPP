@@ -27,6 +27,12 @@
             <label>Nome</label>
             <input type="text" name="nome" required>
         </div>
+        
+        <div class="form-group">
+            <label>Telemóvel</label>
+            <input type="tel" name="telemovel" placeholder="912345678" required>
+        </div>
+
         <div style="display: flex; gap: 10px;">
             <div class="form-group" style="flex: 1;">
                 <label>Data</label>
@@ -61,9 +67,7 @@
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwsf4QmkyC8PEvXmhj-saXLPACus-c4yLl3JpJgrl3ZU9JCSNzhm6KGaF7aUz2mRpKr/exec";
-
-    // Bloquear datas passadas
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxpvwBG0sJ68ILcvlecQWn0eW3LGh8s8YUDD031p4oKGywL_lNaixttmfBkK6OdfFbZ/exec
     document.getElementById('campoData').min = new Date().toISOString().split("T")[0];
 
     function validarPax() {
@@ -72,7 +76,6 @@
         document.getElementById('whatsapp-area').style.display = p > 8 ? 'block' : 'none';
     }
 
-    // Carregar Horários
     window.onload = () => {
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
         .then(r => r.json())
@@ -93,16 +96,22 @@
         dados.action = "reserva";
 
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
-        .then(() => {
-            alert("Reserva enviada! Verifique o e-mail.");
-            location.reload();
+        .then(r => r.json())
+        .then(res => {
+            if(res.status === "success") {
+                alert("Reserva confirmada no Don Tasko!");
+                location.reload();
+            } else {
+                alert("Erro: " + res.message);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('btnSubmeter').disabled = false;
+            }
         })
         .catch(() => {
-            alert("Reserva processada!");
+            alert("Reserva processada! Verifique o e-mail.");
             location.reload();
         });
     };
 </script>
 </body>
 </html>
-
