@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva de Mesa | Restaurante</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e67e22;
+            --success: #27ae60;
+            --bg: #f8f9fa;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 180px;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 { color: var(--primary); margin-bottom: 0.5rem; }
+        p.subtitle { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.85rem; }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            width: 100%;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover { background-color: #1a252f; }
+
+        /* Botão WhatsApp para Grupos Grandes */
+        #whatsapp-area {
+            display: none;
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #27ae60;
+            margin-top: 1rem;
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem;
+            display: inline-block;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .policy-note {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 1rem;
+            line-height: 1.4;
+        }
+
+        .loading { display: none; margin-top: 1rem; color: var(--accent); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="logo.png" alt="Restaurante Logo" class="logo" id="rest-logo">
+    
+    <h2>Reserva de Mesa</h2>
+    <p class="subtitle">Escolha o seu momento connosco</p>
+
+    <form id="reservaForm">
+        <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" id="nome" required placeholder="Ex: João Silva">
+        </div>
+
+        <div class="form-row" style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+                <label>Data</label>
+                <input type="date" id="data" required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Pessoas</label>
+                <input type="number" id="pax" min="1" max="20" value="2" onchange="checkPax()">
+            </div>
+        </div>
+
+        <div id="standard-fields">
+            <div class="form-group">
+                <label>Refeição / Horário</label>
+                <select id="horario" required>
+                    <optgroup label="Almoço (12:00 - 15:00)">
+                        <option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                    </optgroup>
+                    <optgroup label="Jantar (19:00 - 22:00)">
+                        <option value="19:00">19:00</option>
+                        <option value="20:00">20:00</option>
+                        <option value="21:00">21:00</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>E-mail (Para confirmação)</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Confirmar Reserva</button>
+        </div>
+
+        <div id="whatsapp-area">
+            <p>Para grupos superiores a 8 pessoas, por favor contacte-nos diretamente.</p>
+            <a href="https://wa.me/351910000000" id="wa-link" class="btn-whatsapp">Reservar via WhatsApp</a>
+        </div>
+    </form>
+
+    <div id="loader" class="loading">A processar a sua mesa...</div>
+
+    <p class="policy-note">
+        <b>Política de Tolerância:</b> A mesa será garantida por um período de <b>15 minutos</b> após a hora agendada.
+    </p>
+</div>
+
+<script>
+    function checkPax() {
+        const pax = document.getElementById('pax').value;
+        const standardFields = document.getElementById('standard-fields');
+        const whatsappArea = document.getElementById('whatsapp-area');
+
+        if (pax > 8) {
+            standardFields.style.display = 'none';
+            whatsappArea.style.display = 'block';
+        } else {
+            standardFields.style.display = 'block';
+            whatsappArea.style.display = 'none';
+        }
+    }
+
+    document.getElementById('reservaForm').onsubmit = function(e) {
+        e.preventDefault();
+        document.getElementById('loader').style.display = 'block';
+        
+        const dados = {
+            nome: document.getElementById('nome').value,
+            data: document.getElementById('data').value,
+            pax: document.getElementById('pax').value,
+            horario: document.getElementById('horario').value,
+            email: document.getElementById('email').value
+        };
+
+        // Chamar função do Google Apps Script
+        google.script.run
+            .withSuccessHandler(res => {
+                alert("Reserva confirmada! Verifique o seu e-mail.");
+                location.reload();
+            })
+            .withFailureHandler(err => {
+                alert("Erro: " + err.message);
+                document.getElementById('loader').style.display = 'none';
+            })
+            .processarReserva(dados);
+    };
+</script>
+
+</body>
+</html>
+<div id="admin-panel" style="display:none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+    <h3>Painel de Gestão</h3>
+    
+    <div id="chart_div" style="width: 100%; height: 300px;"></div>
+
+    <div style="margin-bottom: 15px;">
+        <input type="date" id="filtro-data" onchange="carregarReservas()">
+    </div>
+
+    <table id="tabela-reservas" style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #eee;">
+                <th>Hora</th>
+                <th>Nome</th>
+                <th>Pax</th>
+                <th>Mesa</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="lista-reservas-corpo">
+            </tbody>
+    </table>
+</div>
+
+<footer style="margin-top: 40px; font-size: 0.7rem;">
+    <a href="#" onclick="showLogin()" style="color: #ccc; text-decoration: none;">Acesso Admin</a>
+</footer>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    function showLogin() {
+        const pass = prompt("Insira a password de administrador:");
+        if (pass) {
+            google.script.run
+                .withSuccessHandler(acessoPermitido)
+                .withFailureHandler(err => alert("Password incorreta!"))
+                .verificarAdmin(pass);
+        }
+    }
+
+    function acessoPermitido(dados) {
+        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('reservaForm').style.display = 'none';
+        desenharGrafico(dados.ocupacao);
+        preencherTabela(dados.reservas);
+    }
+
+    function desenharGrafico(dadosOcupacao) {
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(() => {
+            const data = google.visualization.arrayToDataTable(dadosOcupacao);
+            const options = {
+                title: 'Ocupação por Turno (Capacidade Máxima: 35)',
+                colors: ['#e67e22'],
+                legend: { position: 'none' }
+            };
+            const chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        });
+    }
+</script>
