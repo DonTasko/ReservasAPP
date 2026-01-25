@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Privada | Don Tasko</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; }
+        
+        /* Estilos do Login */
+        #login-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; 
+        }
+        .login-box { background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .login-box input { padding: 10px; width: 200px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; display: block; }
+        .login-box button { background: #27ae60; color: white; border: none; padding: 10px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Dashboard (Escondida inicialmente) */
+        #dashboard-content { display: none; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .container { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+        .dia-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f2f5; }
+        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .obs-text { font-size: 12px; color: #606770; font-style: italic; }
+        .btn-refresh { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="border:none">Acesso Restrito</h2>
+        <input type="password" id="passInput" placeholder="Palavra-passe">
+        <button onclick="verificarPass()">Entrar</button>
+        <p id="erro" style="color:red; display:none; margin-top:10px;">Incorreto!</p>
+    </div>
+</div>
+
+<div id="dashboard-content">
+    <div class="header">
+        <h1>📊 Painel Administrativo Don Tasko</h1>
+        <button class="btn-refresh" onclick="carregarDados()">🔄 Atualizar Dados</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Ocupação (Próximos 7 Dias)</h2>
+            <div id="resumo7Dias">Carregando ocupação...</div>
+        </div>
+
+        <div class="card">
+            <h2>Reservas para Hoje</h2>
+            <table id="tabelaHoje">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Pax</th>
+                        <th>Contacto</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5">A carregar reservas de hoje...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxv2Ue7HIbQCavMFXiR2cJ9ojonNgH3sJPsTAxO7NvBKe0eDOClnnxbvC9mH-3mRGED/exec";
+    const PASS_CORRETA = "Tasko123";
+
+    function verificarPass() {
+        const input = document.getElementById('passInput').value;
+        if (input === PASS_CORRETA) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            carregarDados();
+        } else {
+            document.getElementById('erro').style.display = 'block';
+        }
+    }
+
+    // Permitir premir "Enter" para entrar
+    document.getElementById('passInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') verificarPass();
+    });
+
+    function carregarDados() {
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) })
+        .then(r => r.json())
+        .then(data => {
+            const resumoDiv = document.getElementById('resumo7Dias');
+            if (data.resumo && Object.keys(data.resumo).length > 0) {
+                resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(dataStr => `
+                    <div class="dia-item">
+                        <span>${dataStr}</span>
+                        <span class="pax-badge">${data.resumo[dataStr]} pax</span>
+                    </div>
+                `).join('');
+            } else {
+                resumoDiv.innerHTML = "Sem ocupação prevista.";
+            }
+
+            const tbody = document.querySelector('#tabelaHoje tbody');
+            if (data.listaHoje && data.listaHoje.length > 0) {
+                tbody.innerHTML = data.listaHoje.map(r => `
+                    <tr>
+                        <td><strong>${r.hora}</strong></td>
+                        <td>${r.nome}</td>
+                        <td><span class="pax-badge">${r.pax}</span></td>
+                        <td>${r.tel}</td>
+                        <td class="obs-text">${r.obs || "---"}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Não existem reservas para hoje.</td></tr>";
+            }
+        })
+        .catch(err => console.log("Erro: " + err));
+    }
+</script>
+
+</body>
+</html>
