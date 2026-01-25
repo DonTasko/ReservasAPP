@@ -10,7 +10,8 @@
         .logo { max-width: 140px; margin-bottom: 20px; }
         .form-group { text-align: left; margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: sans-serif; }
+        textarea { resize: none; }
         .btn { background: #2c3e50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn:disabled { background: #95a5a6; cursor: not-allowed; }
         #loader { display: none; color: #e67e22; margin-top: 15px; font-weight: bold; }
@@ -52,6 +53,10 @@
                 <label>E-mail</label>
                 <input type="email" name="email" required>
             </div>
+            <div class="form-group">
+                <label>Observações / Alergias (Opcional)</label>
+                <textarea name="obs" rows="2" placeholder="Ex: Cadeira de bebé, alergias..."></textarea>
+            </div>
             <button type="submit" class="btn" id="btnSubmeter">Confirmar Reserva</button>
         </div>
 
@@ -67,19 +72,15 @@
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyTQ6Zzc6E1MU2Rntcsv37BfBGM2AbqOpU8tnPwKo4aYBCis4f5CvG0EvS2l1Ll9m-l/exec";
     let diasFechadosGlobal = [];
 
-    // Bloquear datas passadas
     document.getElementById('campoData').min = new Date().toISOString().split("T")[0];
 
-    // Lógica de Pessoas/WhatsApp
     document.getElementById('pax').addEventListener('change', function() {
         const p = parseInt(this.value);
         document.getElementById('camposNormais').style.display = p > 8 ? 'none' : 'block';
         document.getElementById('whatsapp-area').style.display = p > 8 ? 'block' : 'none';
     });
 
-    // Carregar Horários e Dias de Fecho ao iniciar
     window.onload = function() {
-        // 1. Carregar Horários
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
         .then(r => r.json())
         .then(lista => {
@@ -87,13 +88,11 @@
             if (lista && lista.length > 0) s.innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
         });
 
-        // 2. Carregar Dias de Fecho para validação local
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDiasFechados'}) })
         .then(r => r.json())
         .then(dias => { diasFechadosGlobal = dias; });
     };
 
-    // Validação de Data ao mudar o campo
     document.getElementById('campoData').addEventListener('change', function() {
         const dataSelecionada = this.value;
         const dataObj = new Date(dataSelecionada);
@@ -142,5 +141,3 @@
 </script>
 </body>
 </html>
-
-
