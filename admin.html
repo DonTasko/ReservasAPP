@@ -15,20 +15,28 @@
         .login-box input { padding: 10px; width: 200px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; display: block; }
         .login-box button { background: #27ae60; color: white; border: none; padding: 10px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
-        /* Dashboard (Escondida inicialmente) */
-        #dashboard-content { display: none; }
-
+        /* Dashboard */
+        #dashboard-content { display: none; max-width: 1200px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .container { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+        
+        /* Formulário Manual */
+        .form-manual input, .form-manual select, .form-manual textarea { 
+            width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;
+        }
+        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Lista e Tabela */
         .dia-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f2f5; }
         .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
         table { width: 100%; border-collapse: collapse; background: white; }
         th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        .obs-text { font-size: 12px; color: #606770; font-style: italic; }
+        .obs-text { font-size: 11px; color: #606770; font-style: italic; }
         .btn-refresh { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-cancel { background: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -49,9 +57,32 @@
     </div>
 
     <div class="container">
-        <div class="card">
-            <h2>Ocupação (Próximos 7 Dias)</h2>
-            <div id="resumo7Dias">Carregando ocupação...</div>
+        <div>
+            <div class="card">
+                <h2>➕ Reserva Manual</h2>
+                <form id="formManual" class="form-manual">
+                    <input type="text" name="nome" placeholder="Nome do Cliente" required>
+                    <input type="tel" name="telemovel" placeholder="Telemóvel" required>
+                    <div style="display:flex; gap:10px;">
+                        <input type="date" name="data" id="dataManual" required>
+                        <input type="number" name="pax" value="2" min="1" required>
+                    </div>
+                    <select name="horario" id="horarioManual">
+                        <option value="12:30">12:30</option>
+                        <option value="13:00">13:00</option>
+                        <option value="19:30">19:30</option>
+                        <option value="20:00">20:00</option>
+                    </select>
+                    <input type="email" name="email" placeholder="E-mail (opcional)">
+                    <textarea name="obs" rows="2" placeholder="Notas internas..."></textarea>
+                    <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Ocupação (Próximos 7 Dias)</h2>
+                <div id="resumo7Dias">Carregando ocupação...</div>
+            </div>
         </div>
 
         <div class="card">
@@ -62,12 +93,12 @@
                         <th>Hora</th>
                         <th>Cliente</th>
                         <th>Pax</th>
-                        <th>Contacto</th>
-                        <th>Observações</th>
+                        <th>Notas</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="5">A carregar reservas de hoje...</td></tr>
+                    <tr><td colspan="5">A carregar reservas...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -79,56 +110,72 @@
     const PASS_CORRETA = "Tasko123";
 
     function verificarPass() {
-        const input = document.getElementById('passInput').value;
-        if (input === PASS_CORRETA) {
+        if (document.getElementById('passInput').value === PASS_CORRETA) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
+            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
             carregarDados();
         } else {
             document.getElementById('erro').style.display = 'block';
         }
     }
 
-    // Permitir premir "Enter" para entrar
-    document.getElementById('passInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') verificarPass();
-    });
+    document.getElementById('passInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') verificarPass(); });
 
     function carregarDados() {
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) })
         .then(r => r.json())
         .then(data => {
+            // Renderizar Resumo
             const resumoDiv = document.getElementById('resumo7Dias');
-            if (data.resumo && Object.keys(data.resumo).length > 0) {
-                resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(dataStr => `
-                    <div class="dia-item">
-                        <span>${dataStr}</span>
-                        <span class="pax-badge">${data.resumo[dataStr]} pax</span>
-                    </div>
-                `).join('');
-            } else {
-                resumoDiv.innerHTML = "Sem ocupação prevista.";
-            }
+            resumoDiv.innerHTML = data.resumo ? Object.keys(data.resumo).sort().map(d => `
+                <div class="dia-item"><span>${d}</span><span class="pax-badge">${data.resumo[d]} pax</span></div>
+            `).join('') : "Sem ocupação.";
 
+            // Renderizar Tabela
             const tbody = document.querySelector('#tabelaHoje tbody');
-            if (data.listaHoje && data.listaHoje.length > 0) {
-                tbody.innerHTML = data.listaHoje.map(r => `
-                    <tr>
-                        <td><strong>${r.hora}</strong></td>
-                        <td>${r.nome}</td>
-                        <td><span class="pax-badge">${r.pax}</span></td>
-                        <td>${r.tel}</td>
-                        <td class="obs-text">${r.obs || "---"}</td>
-                    </tr>
-                `).join('');
-            } else {
-                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Não existem reservas para hoje.</td></tr>";
-            }
-        })
-        .catch(err => console.log("Erro: " + err));
+            tbody.innerHTML = data.listaHoje.length > 0 ? data.listaHoje.map(r => `
+                <tr>
+                    <td><strong>${r.hora}</strong></td>
+                    <td>${r.nome}<br><small>${r.tel}</small></td>
+                    <td><span class="pax-badge">${r.pax}</span></td>
+                    <td class="obs-text">${r.obs || "---"}</td>
+                    <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}')">Cancelar</button></td>
+                </tr>
+            `).join('') : "<tr><td colspan='5' style='text-align:center;'>Sem reservas para hoje.</td></tr>";
+        });
     }
+
+    function cancelarReserva(nome, hora) {
+        if (confirm(`Deseja mesmo cancelar a reserva de ${nome} às ${hora}?`)) {
+            // Nota: Para cancelar via dashboard usamos o fluxo simplificado. No Code.gs deve existir a action 'cancelarAdmin'
+            fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) })
+            .then(() => { alert("Reserva cancelada!"); carregarDados(); });
+        }
+    }
+
+    document.getElementById('formManual').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnManual');
+        btn.disabled = true;
+        btn.innerText = "Gravando...";
+
+        const formData = new FormData(this);
+        const dados = Object.fromEntries(formData.entries());
+        dados.action = "reservaManual";
+
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
+        .then(r => r.json())
+        .then(res => {
+            alert("Reserva manual gravada com sucesso!");
+            this.reset();
+            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+            btn.disabled = false;
+            btn.innerText = "Gravar Reserva";
+            carregarDados();
+        });
+    };
 </script>
 
 </body>
-
 </html>
