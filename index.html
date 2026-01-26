@@ -2,143 +2,156 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Don Tasko | Reservas</title>
+    <title>Admin Don Tasko | 15 Dias</title>
     <style>
-        body { font-family: sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
-        .logo { max-width: 140px; margin-bottom: 20px; }
-        .form-group { text-align: left; margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: sans-serif; }
-        textarea { resize: none; }
-        .btn { background: #2c3e50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn:disabled { background: #95a5a6; cursor: not-allowed; }
-        #loader { display: none; color: #e67e22; margin-top: 15px; font-weight: bold; }
-        #whatsapp-area { display: none; margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 10px; border: 1px solid #27ae60; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: white; padding: 30px; border-radius: 12px; text-align: center; }
+        #dashboard-content { display: none; max-width: 1200px; margin: auto; }
+        .grid-main { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+        
+        /* Form Manual */
+        .form-manual input, .form-manual select, .form-manual textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Lista 15 dias com scroll */
+        .scroll-resumo { max-height: 350px; overflow-y: auto; padding-right: 5px; }
+        .dia-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f2f5; border-radius: 6px; margin-bottom: 2px; }
+        
+        /* Cores de Alerta */
+        .status-ok { background: #e8f5e9; border-left: 5px solid #2ecc71; }
+        .status-warning { background: #fff3e0; border-left: 5px solid #f39c12; }
+        .status-full { background: #ffebee; border-left: 5px solid #e74c3c; }
+        
+        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; background: #f8f9fa; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .btn-cancel { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <img src="logo.png" alt="Don Tasko" class="logo">
-    <form id="reservaForm">
-        <div class="form-group">
-            <label>Nome</label>
-            <input type="text" name="nome" required>
-        </div>
-        <div class="form-group">
-            <label>Telemóvel</label>
-            <input type="tel" name="telemovel" required placeholder="9xx xxx xxx">
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <div class="form-group" style="flex: 1;">
-                <label>Data</label>
-                <input type="date" name="data" id="campoData" required>
+<div id="login-screen">
+    <div class="login-box">
+        <h2>Acesso Don Tasko</h2>
+        <input type="password" id="passInput" placeholder="Palavra-passe">
+        <button onclick="verificarPass()" class="btn-add">Entrar</button>
+    </div>
+</div>
+
+<div id="dashboard-content">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom:20px;">
+        <h1>📊 Painel Administrativo</h1>
+        <button onclick="carregarDados()" class="btn-add" style="width: auto; padding: 10px 20px;">🔄 Atualizar Dados</button>
+    </div>
+
+    <div class="grid-main">
+        <div>
+            <div class="card">
+                <h2>➕ Reserva Manual</h2>
+                <form id="formManual" class="form-manual">
+                    <input type="text" name="nome" placeholder="Nome" required>
+                    <input type="tel" name="telemovel" placeholder="Telemóvel" required>
+                    <div style="display:flex; gap:5px;">
+                        <input type="date" name="data" id="dataManual" required>
+                        <input type="number" name="pax" value="2" min="1" required>
+                    </div>
+                    <select name="horario" id="horarioManual"></select>
+                    <textarea name="obs" placeholder="Observações..."></textarea>
+                    <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
+                </form>
             </div>
-            <div class="form-group" style="flex: 1;">
-                <label>Pessoas</label>
-                <input type="number" name="pax" id="pax" value="2" min="1" required>
+
+            <div class="card">
+                <h2>📅 Próximos 15 Dias</h2>
+                <div id="resumo15" class="scroll-resumo"></div>
             </div>
-        </div>
-        
-        <div id="camposNormais">
-            <div class="form-group">
-                <label>Horário</label>
-                <select name="horario" id="horarioSelect">
-                    <option value="">A carregar horários...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label>Observações / Alergias (Opcional)</label>
-                <textarea name="obs" rows="2" placeholder="Ex: Cadeira de bebé, alergias..."></textarea>
-            </div>
-            <button type="submit" class="btn" id="btnSubmeter">Confirmar Reserva</button>
         </div>
 
-        <div id="whatsapp-area">
-            <p>Para mais de 8 pessoas, contacte-nos:</p>
-            <a href="https://wa.me/351910000000" style="color: #25D366; font-weight: bold; text-decoration: none;">WhatsApp Direto</a>
+        <div class="card">
+            <h2>🍽️ Reservas para Hoje</h2>
+            <table id="tabelaHoje">
+                <thead>
+                    <tr><th>Hora</th><th>Cliente</th><th>Pax</th><th>Notas</th><th>Ação</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-    </form>
-    <div id="loader">A processar a sua reserva...</div>
+    </div>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxv2Ue7HIbQCavMFXiR2cJ9ojonNgH3sJPsTAxO7NvBKe0eDOClnnxbvC9mH-3mRGED/exec";
-    let diasFechadosGlobal = [];
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyawjojVqh1BmC-osO77jB1aAjBgK42vTBWjxfhqWAjTriV-nAWxP7Snto8ZUUuGn91/exec";
+    const PASS_CORRETA = "Tasko123";
+    const LOTACAO_MAX = 34;
 
-    document.getElementById('campoData').min = new Date().toISOString().split("T")[0];
-
-    document.getElementById('pax').addEventListener('change', function() {
-        const p = parseInt(this.value);
-        document.getElementById('camposNormais').style.display = p > 8 ? 'none' : 'block';
-        document.getElementById('whatsapp-area').style.display = p > 8 ? 'block' : 'none';
-    });
-
-    window.onload = function() {
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
-        .then(r => r.json())
-        .then(lista => {
-            const s = document.getElementById('horarioSelect');
-            if (lista && lista.length > 0) s.innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
-        });
-
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDiasFechados'}) })
-        .then(r => r.json())
-        .then(dias => { diasFechadosGlobal = dias; });
-    };
-
-    document.getElementById('campoData').addEventListener('change', function() {
-        const dataSelecionada = this.value;
-        const dataObj = new Date(dataSelecionada);
-        const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-        const nomeDia = diasSemana[dataObj.getDay()];
-
-        const estaFechado = diasFechadosGlobal.some(item => {
-            return item === dataSelecionada || item.toLowerCase() === nomeDia.toLowerCase();
-        });
-
-        if (estaFechado) {
-            alert("O restaurante está encerrado às " + nomeDia + ". Por favor, escolha outra data.");
-            this.value = "";
+    function verificarPass() {
+        if (document.getElementById('passInput').value === PASS_CORRETA) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+            carregarHorarios();
+            carregarDados();
         }
-    });
+    }
 
-    document.getElementById('reservaForm').onsubmit = function(e) {
-        e.preventDefault();
-        const loader = document.getElementById('loader');
-        const btn = document.getElementById('btnSubmeter');
-        loader.style.display = 'block';
-        btn.disabled = true;
-
-        const formData = new FormData(this);
-        const dados = Object.fromEntries(formData.entries());
-        dados.action = "reserva";
-
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
-        .then(r => r.json())
-        .then(res => {
-            loader.style.display = 'none';
-            if (res.status === "success") {
-                alert("Reserva confirmada no Don Tasko!");
-                location.reload();
-            } else {
-                alert("Atenção: " + res.message);
-                btn.disabled = false;
-            }
-        })
-        .catch(err => {
-            loader.style.display = 'none';
-            btn.disabled = false;
-            alert("Erro na ligação ao servidor.");
+    function carregarHorarios() {
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
+        .then(r => r.json()).then(lista => {
+            document.getElementById('horarioManual').innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
         });
+    }
+
+    function carregarDados() {
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) })
+        .then(r => r.json()).then(data => {
+            // Render 15 dias com cores
+            const resumoDiv = document.getElementById('resumo15');
+            resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(d => {
+                const total = data.resumo[d];
+                let classe = "status-ok";
+                if (total >= LOTACAO_MAX) classe = "status-full";
+                else if (total >= 25) classe = "status-warning";
+                
+                return `<div class="dia-item ${classe}">
+                    <span>${d}</span>
+                    <span class="pax-badge">${total} pax</span>
+                </div>`;
+            }).join('');
+
+            // Render Hoje
+            const tbody = document.querySelector('#tabelaHoje tbody');
+            tbody.innerHTML = data.listaHoje.length > 0 ? data.listaHoje.map(r => `
+                <tr>
+                    <td><b>${r.hora}</b></td>
+                    <td>${r.nome}<br><small>${r.tel}</small></td>
+                    <td><span class="pax-badge">${r.pax}</span></td>
+                    <td style="font-size:11px; font-style:italic;">${r.obs || ''}</td>
+                    <td><button class="btn-cancel" onclick="cancelar('${r.nome}', '${r.hora}')">Cancelar</button></td>
+                </tr>`).join('') : "<tr><td colspan='5' style='text-align:center'>Sem reservas.</td></tr>";
+        });
+    }
+
+    function cancelar(nome, hora) {
+        if (confirm(`Cancelar reserva de ${nome}?`)) {
+            fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) })
+            .then(() => { alert("Cancelada!"); carregarDados(); });
+        }
+    }
+
+    document.getElementById('formManual').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnManual');
+        btn.disabled = true; btn.innerText = "A gravar...";
+        const dados = Object.fromEntries(new FormData(this).entries());
+        dados.action = "reservaManual";
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
+        .then(() => { alert("Sucesso!"); this.reset(); btn.disabled = false; btn.innerText = "Gravar Reserva"; carregarDados(); });
     };
 </script>
 </body>
 </html>
-
