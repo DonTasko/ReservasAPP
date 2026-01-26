@@ -28,8 +28,15 @@
         }
         .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
-        /* Lista e Tabela */
-        .dia-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f2f5; }
+        /* Lista 15 dias com scroll */
+        .scroll-resumo { max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .dia-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f2f5; border-radius: 6px; margin-bottom: 2px; }
+        
+        /* Cores de Alerta */
+        .status-ok { background: #e8f5e9; border-left: 5px solid #2ecc71; }
+        .status-warning { background: #fff3e0; border-left: 5px solid #f39c12; }
+        .status-full { background: #ffebee; border-left: 5px solid #e74c3c; }
+
         .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
         table { width: 100%; border-collapse: collapse; background: white; }
         th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
@@ -73,15 +80,14 @@
                         <option value="19:30">19:30</option>
                         <option value="20:00">20:00</option>
                     </select>
-                    <input type="email" name="email" placeholder="E-mail (opcional)">
-                    <textarea name="obs" rows="2" placeholder="Notas internas..."></textarea>
+                    <textarea name="obs" rows="2" placeholder="Notas internas (Mesa, Alergias...)"></textarea>
                     <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
                 </form>
             </div>
 
             <div class="card">
-                <h2>Ocupação (Próximos 7 Dias)</h2>
-                <div id="resumo7Dias">Carregando ocupação...</div>
+                <h2>📅 Ocupação (15 Dias)</h2>
+                <div id="resumo15" class="scroll-resumo">Carregando ocupação...</div>
             </div>
         </div>
 
@@ -106,8 +112,9 @@
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxCm0pHahOvRSnWgyAGNbqZFrnW_ofLbCcXvAkB1uU3yF5KWqvT-DnHUgtJbYCj6Nj7/exec";
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyawjojVqh1BmC-osO77jB1aAjBgK42vTBWjxfhqWAjTriV-nAWxP7Snto8ZUUuGn91/exec";
     const PASS_CORRETA = "Tasko123";
+    const LOTACAO_MAX = 34;
 
     function verificarPass() {
         if (document.getElementById('passInput').value === PASS_CORRETA) {
@@ -126,13 +133,21 @@
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) })
         .then(r => r.json())
         .then(data => {
-            // Renderizar Resumo
-            const resumoDiv = document.getElementById('resumo7Dias');
-            resumoDiv.innerHTML = data.resumo ? Object.keys(data.resumo).sort().map(d => `
-                <div class="dia-item"><span>${d}</span><span class="pax-badge">${data.resumo[d]} pax</span></div>
-            `).join('') : "Sem ocupação.";
+            // Renderizar Resumo 15 dias
+            const resumoDiv = document.getElementById('resumo15');
+            resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(d => {
+                const total = data.resumo[d];
+                let classe = "status-ok";
+                if (total >= LOTACAO_MAX) classe = "status-full";
+                else if (total >= 25) classe = "status-warning";
+                
+                return `<div class="dia-item ${classe}">
+                    <span>${d}</span>
+                    <span class="pax-badge">${total} pax</span>
+                </div>`;
+            }).join('');
 
-            // Renderizar Tabela
+            // Renderizar Tabela Hoje
             const tbody = document.querySelector('#tabelaHoje tbody');
             tbody.innerHTML = data.listaHoje.length > 0 ? data.listaHoje.map(r => `
                 <tr>
@@ -148,7 +163,6 @@
 
     function cancelarReserva(nome, hora) {
         if (confirm(`Deseja mesmo cancelar a reserva de ${nome} às ${hora}?`)) {
-            // Nota: Para cancelar via dashboard usamos o fluxo simplificado. No Code.gs deve existir a action 'cancelarAdmin'
             fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) })
             .then(() => { alert("Reserva cancelada!"); carregarDados(); });
         }
@@ -157,25 +171,21 @@
     document.getElementById('formManual').onsubmit = function(e) {
         e.preventDefault();
         const btn = document.getElementById('btnManual');
-        btn.disabled = true;
-        btn.innerText = "Gravando...";
+        btn.disabled = true; btn.innerText = "Gravando...";
 
-        const formData = new FormData(this);
-        const dados = Object.fromEntries(formData.entries());
+        const dados = Object.fromEntries(new FormData(this).entries());
         dados.action = "reservaManual";
 
         fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
         .then(r => r.json())
         .then(res => {
-            alert("Reserva manual gravada com sucesso!");
+            alert("Reserva manual gravada!");
             this.reset();
             document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
-            btn.disabled = false;
-            btn.innerText = "Gravar Reserva";
+            btn.disabled = false; btn.innerText = "Gravar Reserva";
             carregarDados();
         });
     };
 </script>
-
 </body>
 </html>
