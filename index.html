@@ -2,156 +2,116 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Don Tasko | 15 Dias</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas | Don Tasko</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; }
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .login-box { background: white; padding: 30px; border-radius: 12px; text-align: center; }
-        #dashboard-content { display: none; max-width: 1200px; margin: auto; }
-        .grid-main { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
-        
-        /* Form Manual */
-        .form-manual input, .form-manual select, .form-manual textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-
-        /* Lista 15 dias com scroll */
-        .scroll-resumo { max-height: 350px; overflow-y: auto; padding-right: 5px; }
-        .dia-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f2f5; border-radius: 6px; margin-bottom: 2px; }
-        
-        /* Cores de Alerta */
-        .status-ok { background: #e8f5e9; border-left: 5px solid #2ecc71; }
-        .status-warning { background: #fff3e0; border-left: 5px solid #f39c12; }
-        .status-full { background: #ffebee; border-left: 5px solid #e74c3c; }
-        
-        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; background: #f8f9fa; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn-cancel { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        :root { --primary: #2c3e50; --accent: #27ae60; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f9f9f9; color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .booking-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo h1 { color: var(--primary); margin: 0; font-size: 24px; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        textarea { resize: none; }
+        .btn-submit { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; margin-top: 25px; cursor: pointer; transition: transform 0.2s; }
+        .btn-submit:active { transform: scale(0.98); }
+        .loading { display: none; text-align: center; margin-top: 10px; color: var(--accent); font-weight: bold; }
+        #mensagem-sucesso { display: none; background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div id="login-screen">
-    <div class="login-box">
-        <h2>Acesso Don Tasko</h2>
-        <input type="password" id="passInput" placeholder="Palavra-passe">
-        <button onclick="verificarPass()" class="btn-add">Entrar</button>
-    </div>
-</div>
-
-<div id="dashboard-content">
-    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom:20px;">
-        <h1>📊 Painel Administrativo</h1>
-        <button onclick="carregarDados()" class="btn-add" style="width: auto; padding: 10px 20px;">🔄 Atualizar Dados</button>
+<div class="booking-card">
+    <div class="logo">
+        <h1>🍽️ Don Tasko</h1>
+        <p>Reserve a sua mesa em segundos</p>
     </div>
 
-    <div class="grid-main">
-        <div>
-            <div class="card">
-                <h2>➕ Reserva Manual</h2>
-                <form id="formManual" class="form-manual">
-                    <input type="text" name="nome" placeholder="Nome" required>
-                    <input type="tel" name="telemovel" placeholder="Telemóvel" required>
-                    <div style="display:flex; gap:5px;">
-                        <input type="date" name="data" id="dataManual" required>
-                        <input type="number" name="pax" value="2" min="1" required>
-                    </div>
-                    <select name="horario" id="horarioManual"></select>
-                    <textarea name="obs" placeholder="Observações..."></textarea>
-                    <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
-                </form>
+    <div id="mensagem-sucesso">✅ Reserva enviada com sucesso! Receberá um e-mail em breve.</div>
+
+    <form id="formReserva">
+        <label>Nome Completo</label>
+        <input type="text" name="nome" placeholder="Ex: João Silva" required>
+
+        <label>Telemóvel</label>
+        <input type="tel" name="telemovel" placeholder="912 345 678" required>
+
+        <label>E-mail</label>
+        <input type="email" name="email" placeholder="seu@email.com" required>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Data</label>
+                <input type="date" name="data" id="dataReserva" required>
             </div>
-
-            <div class="card">
-                <h2>📅 Próximos 15 Dias</h2>
-                <div id="resumo15" class="scroll-resumo"></div>
+            <div style="flex: 1;">
+                <label>Pessoas</label>
+                <input type="number" name="pax" value="2" min="1" max="20" required>
             </div>
         </div>
 
-        <div class="card">
-            <h2>🍽️ Reservas para Hoje</h2>
-            <table id="tabelaHoje">
-                <thead>
-                    <tr><th>Hora</th><th>Cliente</th><th>Pax</th><th>Notas</th><th>Ação</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+        <label>Horário</label>
+        <select name="horario" id="selectHorario">
+            <option value="12:30">12:30 (Almoço)</option>
+            <option value="13:00">13:00 (Almoço)</option>
+            <option value="19:30">19:30 (Jantar)</option>
+            <option value="20:00">20:00 (Jantar)</option>
+            <option value="21:00">21:00 (Jantar)</option>
+        </select>
+
+        <label>Observações (Opcional)</label>
+        <textarea name="obs" rows="3" placeholder="Ex: Mesa no pátio, alergias, cadeira de bebé..."></textarea>
+
+        <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
+        <div class="loading" id="loader">A processar o seu pedido...</div>
+    </form>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyawjojVqh1BmC-osO77jB1aAjBgK42vTBWjxfhqWAjTriV-nAWxP7Snto8ZUUuGn91/exec";
-    const PASS_CORRETA = "Tasko123";
-    const LOTACAO_MAX = 34;
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyawjojVqh1BmC-osO77jB1aAjBgK42vTBWjxfhqWAjTriV-nAWxP7Snto8ZUUuGn91/exec
+    // Bloquear datas passadas
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('dataReserva').setAttribute('min', hoje);
+    document.getElementById('dataReserva').value = hoje;
 
-    function verificarPass() {
-        if (document.getElementById('passInput').value === PASS_CORRETA) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard-content').style.display = 'block';
-            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
-            carregarHorarios();
-            carregarDados();
-        }
-    }
-
-    function carregarHorarios() {
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) })
-        .then(r => r.json()).then(lista => {
-            document.getElementById('horarioManual').innerHTML = lista.map(h => `<option value="${h}">${h}</option>`).join('');
-        });
-    }
-
-    function carregarDados() {
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) })
-        .then(r => r.json()).then(data => {
-            // Render 15 dias com cores
-            const resumoDiv = document.getElementById('resumo15');
-            resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(d => {
-                const total = data.resumo[d];
-                let classe = "status-ok";
-                if (total >= LOTACAO_MAX) classe = "status-full";
-                else if (total >= 25) classe = "status-warning";
-                
-                return `<div class="dia-item ${classe}">
-                    <span>${d}</span>
-                    <span class="pax-badge">${total} pax</span>
-                </div>`;
-            }).join('');
-
-            // Render Hoje
-            const tbody = document.querySelector('#tabelaHoje tbody');
-            tbody.innerHTML = data.listaHoje.length > 0 ? data.listaHoje.map(r => `
-                <tr>
-                    <td><b>${r.hora}</b></td>
-                    <td>${r.nome}<br><small>${r.tel}</small></td>
-                    <td><span class="pax-badge">${r.pax}</span></td>
-                    <td style="font-size:11px; font-style:italic;">${r.obs || ''}</td>
-                    <td><button class="btn-cancel" onclick="cancelar('${r.nome}', '${r.hora}')">Cancelar</button></td>
-                </tr>`).join('') : "<tr><td colspan='5' style='text-align:center'>Sem reservas.</td></tr>";
-        });
-    }
-
-    function cancelar(nome, hora) {
-        if (confirm(`Cancelar reserva de ${nome}?`)) {
-            fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) })
-            .then(() => { alert("Cancelada!"); carregarDados(); });
-        }
-    }
-
-    document.getElementById('formManual').onsubmit = function(e) {
+    document.getElementById('formReserva').onsubmit = function(e) {
         e.preventDefault();
-        const btn = document.getElementById('btnManual');
-        btn.disabled = true; btn.innerText = "A gravar...";
-        const dados = Object.fromEntries(new FormData(this).entries());
-        dados.action = "reservaManual";
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
-        .then(() => { alert("Sucesso!"); this.reset(); btn.disabled = false; btn.innerText = "Gravar Reserva"; carregarDados(); });
+        
+        const btn = document.getElementById('btnEnviar');
+        const loader = document.getElementById('loader');
+        
+        btn.style.display = 'none';
+        loader.style.display = 'block';
+
+        const formData = new FormData(this);
+        const dados = Object.fromEntries(formData.entries());
+        // Ação padrão para o index é a reserva normal
+        dados.action = "reservaSite"; 
+
+        fetch(URL_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify(dados)
+        })
+        .then(response => response.json())
+        .then(res => {
+            if(res.status === 'success') {
+                document.getElementById('formReserva').style.display = 'none';
+                document.getElementById('mensagem-sucesso').style.display = 'block';
+                window.scrollTo(0, 0);
+            } else {
+                alert("Erro: " + res.message);
+                btn.style.display = 'block';
+                loader.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Erro na ligação. Tente novamente.");
+            btn.style.display = 'block';
+            loader.style.display = 'none';
+        });
     };
 </script>
+
 </body>
 </html>
