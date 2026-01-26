@@ -108,27 +108,34 @@
     selectHorario.innerHTML = '';
     const slots = [];
     
-    console.log("A processar intervalos:", intervalos); // Aparece na consola (F12)
+    console.log("A processar intervalos:", intervalos);
 
     [intervalos.almoco, intervalos.jantar].forEach(intervalo => {
-        if (!intervalo || !intervalo.includes('-')) {
-            console.warn("Intervalo inválido ou vazio:", intervalo);
+        if (!intervalo) return;
+
+        // Limpeza: remove espaços e normaliza traços longos para hífen normal
+        const limpo = intervalo.toString().replace(/–|—/g, "-").replace(/\s/g, "");
+        
+        if (!limpo.includes('-')) {
+            console.warn("Intervalo ainda inválido após limpeza:", limpo);
             return;
         }
 
-        const partes = intervalo.split('-');
-        let atual = parseHora(partes[0].trim());
-        const limite = parseHora(partes[1].trim());
+        const partes = limpo.split('-');
+        let atual = parseHora(partes[0]);
+        const limite = parseHora(partes[1]);
 
-        // Criar opções de 30 em 30 minutos
-        while (atual <= limite) {
+        // Evita loops infinitos se a hora estiver mal formatada
+        let seguranca = 0; 
+        while (atual <= limite && seguranca < 48) {
             slots.push(formatarHora(atual));
             atual.setMinutes(atual.getMinutes() + 30);
+            seguranca++;
         }
     });
 
     if (slots.length === 0) {
-        selectHorario.innerHTML = '<option value="">Sem horários disponíveis</option>';
+        selectHorario.innerHTML = '<option value="">Sem horários (verificar config)</option>';
         return;
     }
 
@@ -139,7 +146,6 @@
         selectHorario.appendChild(opt);
     });
 }
-
     function parseHora(h) {
         const [hh, mm] = h.split(':');
         const d = new Date();
@@ -175,5 +181,6 @@
 
 </body>
 </html>
+
 
 
