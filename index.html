@@ -9,6 +9,8 @@
         body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; color: var(--text); display: flex; justify-content: center; padding: 20px; }
         .booking-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
         .logo { text-align: center; margin-bottom: 20px; }
+        /* Estilo para o logótipo */
+        .logo img { max-width: 150px; height: auto; margin-bottom: 10px; }
         .logo h1 { color: var(--primary); margin: 0; font-size: 24px; }
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -20,7 +22,8 @@
 
 <div class="booking-card">
     <div class="logo">
-        <h1>🍽️ Don Tasko</h1>
+        <img src="logo.png" alt="Don Tasko Logo">
+        <h1>Don Tasko</h1>
         <p>Reserva de Mesa</p>
     </div>
 
@@ -76,14 +79,11 @@
         ]);
         
         configsGlobal = configs;
-        
-        // Configurar data mínima (hoje)
         campoData.min = new Date().toISOString().split('T')[0];
         
         const atualizarForm = () => {
             const dataSel = campoData.value;
             const diaSemana = new Date(dataSel).toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
-            
             if (fechados.includes(diaSemana) || fechados.includes(dataSel)) {
                 alert("Restaurante encerrado nesta data.");
                 campoData.value = "";
@@ -100,12 +100,20 @@
 
     function verificarGrupo() {
         const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
-        if (parseInt(campoPax.value) > max) {
+        const numPessoas = campoPax.value;
+
+        if (parseInt(numPessoas) > max) {
             btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
             btnEnviar.style.background = "var(--whatsapp)";
+            
             btnEnviar.onclick = (e) => {
                 e.preventDefault();
-                window.open(configsGlobal.WHATSAPP_URL, '_blank');
+                // Extrair apenas os números do link que está na sheet (caso tenhas o link completo ou só o número)
+                const telOriginal = configsGlobal.WHATSAPP_URL.replace(/\D/g, ""); 
+                const mensagem = encodeURIComponent("Olá! Queria reservar uma mesa para " + numPessoas + " pessoas no dia " + campoData.value);
+                const linkFinal = "https://wa.me/" + telOriginal + "?text=" + mensagem;
+                
+                window.open(linkFinal, '_blank');
             };
         } else {
             btnEnviar.innerText = "Confirmar Reserva";
@@ -136,6 +144,7 @@
     document.getElementById('formReserva').onsubmit = async (e) => {
         e.preventDefault();
         btnEnviar.disabled = true;
+        btnEnviar.innerText = "A processar...";
         const dados = Object.fromEntries(new FormData(e.target));
         dados.action = "reservaSite";
         const res = await fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify(dados)}).then(r => r.json());
@@ -145,6 +154,7 @@
         } else {
             alert("Erro: " + res.message);
             btnEnviar.disabled = false;
+            btnEnviar.innerText = "Confirmar Reserva";
         }
     };
 
