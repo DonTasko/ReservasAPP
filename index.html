@@ -9,7 +9,7 @@
         body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; color: var(--text); display: flex; justify-content: center; padding: 20px; }
         .booking-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
         .logo { text-align: center; margin-bottom: 20px; }
-        .logo img { max-width: 150px; height: auto; margin-bottom: 10px; } /* Estilo para o logo.png */
+        .logo img { max-width: 150px; height: auto; margin-bottom: 10px; border-radius: 10px; }
         .logo h1 { color: var(--primary); margin: 0; font-size: 24px; }
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -55,7 +55,7 @@
         </select>
 
         <label>Observações</label>
-        <textarea name="obs" rows="2" placeholder="Ex: Alergias ou cadeira de bebé"></textarea>
+        <textarea name="obs" rows="2" placeholder="Ex: Alergias, cadeira de bebé..."></textarea>
 
         <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
     </form>
@@ -78,7 +78,12 @@
                 fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
             ]);
             
-            configsGlobal = configs;
+            // Limpa as chaves das configs (remove espaços e garante consistência)
+            configsGlobal = {};
+            for (let key in configs) {
+                configsGlobal[key.trim()] = configs[key];
+            }
+
             campoData.min = new Date().toISOString().split('T')[0];
             
             const atualizarForm = () => {
@@ -97,11 +102,10 @@
             campoData.onchange = atualizarForm;
             campoPax.oninput = verificarGrupo;
             atualizarForm();
-        } catch(e) { console.error("Erro ao carregar:", e); }
+        } catch(e) { console.error("Erro no carregamento inicial:", e); }
     }
 
     function verificarGrupo() {
-        // Usa o valor da aba Config (MAX_CONVIDADOS)
         const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8; 
         const numPessoas = campoPax.value;
 
@@ -111,8 +115,15 @@
             
             btnEnviar.onclick = (e) => {
                 e.preventDefault();
-                // Limpa o link do WhatsApp da Config para garantir que funciona
-                const telOriginal = configsGlobal.WHATSAPP_URL.replace(/\D/g, ""); 
+                // Verificação de segurança para o link
+                const rawUrl = configsGlobal.WHATSAPP_URL || "";
+                const telOriginal = rawUrl.toString().replace(/\D/g, ""); 
+                
+                if (!telOriginal) {
+                    alert("Erro: Número de WhatsApp não configurado na Sheet.");
+                    return;
+                }
+
                 const msg = encodeURIComponent("Olá! Queria reservar uma mesa para " + numPessoas + " pessoas no dia " + campoData.value);
                 window.open("https://wa.me/" + telOriginal + "?text=" + msg, '_blank');
             };
@@ -125,14 +136,13 @@
 
     function gerarHoras(h) {
         selectHorario.innerHTML = '';
-        // Lê os intervalos de Almoço e Jantar definidos na aba Restaurantes
         [h.almoco, h.jantar].forEach(intervalo => {
             if (!intervalo) return;
-            const parts = intervalo.replace(/–/g, '-').split('-');
+            const parts = intervalo.replace(/–|—/g, '-').split('-');
             if(parts.length < 2) return;
             
-            let [hAt, mAt] = parts[0].split(':').map(Number);
-            const [hFim, mFim] = parts[1].split(':').map(Number);
+            let [hAt, mAt] = parts[0].trim().split(':').map(Number);
+            const [hFim, mFim] = parts[1].trim().split(':').map(Number);
             
             while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
                 const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
@@ -147,21 +157,29 @@
 
     document.getElementById('formReserva').onsubmit = async (e) => {
         e.preventDefault();
+        if (btnEnviar.type === "button") return; // Ignora se for modo WhatsApp
+
         btnEnviar.disabled = true;
         btnEnviar.innerText = "A processar...";
         const dados = Object.fromEntries(new FormData(e.target));
         dados.action = "reservaSite";
+        
         try {
             const res = await fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify(dados)}).then(r => r.json());
             if (res.status === 'success') {
                 document.getElementById('formReserva').style.display = 'none';
                 document.getElementById('msg-sucesso').style.display = 'block';
+                window.scrollTo(0,0);
             } else {
                 alert("Erro: " + res.message);
                 btnEnviar.disabled = false;
                 btnEnviar.innerText = "Confirmar Reserva";
             }
-        } catch(e) { alert("Erro na ligação."); btnEnviar.disabled = false; }
+        } catch(e) { 
+            alert("Erro na ligação."); 
+            btnEnviar.disabled = false;
+            btnEnviar.innerText = "Confirmar Reserva";
+        }
     };
 
     carregarDados();
