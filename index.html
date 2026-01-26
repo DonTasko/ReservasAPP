@@ -12,9 +12,9 @@
         .logo h1 { color: var(--primary); margin: 0; font-size: 24px; }
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        textarea { resize: none; }
-        .btn-submit { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; margin-top: 25px; cursor: pointer; transition: transform 0.2s; }
-        .btn-submit:active { transform: scale(0.98); }
+        input:disabled { background: #eee; cursor: not-allowed; }
+        .btn-submit { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; margin-top: 25px; cursor: pointer; }
+        .btn-submit:disabled { background: #95a5a6; }
         .loading { display: none; text-align: center; margin-top: 10px; color: var(--accent); font-weight: bold; }
         #mensagem-sucesso { display: none; background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
     </style>
@@ -56,11 +56,10 @@
             <option value="13:00">13:00 (Almoço)</option>
             <option value="19:30">19:30 (Jantar)</option>
             <option value="20:00">20:00 (Jantar)</option>
-            <option value="21:00">21:00 (Jantar)</option>
         </select>
 
         <label>Observações (Opcional)</label>
-        <textarea name="obs" rows="3" placeholder="Ex: Mesa no pátio, alergias, cadeira de bebé..."></textarea>
+        <textarea name="obs" rows="3" placeholder="Alergias, Etc"></textarea>
 
         <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
         <div class="loading" id="loader">A processar o seu pedido...</div>
@@ -68,15 +67,39 @@
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyawjojVqh1BmC-osO77jB1aAjBgK42vTBWjxfhqWAjTriV-nAWxP7Snto8ZUUuGn91/exec
-    // Bloquear datas passadas
-    const hoje = new Date().toISOString().split('T')[0];
-    document.getElementById('dataReserva').setAttribute('min', hoje);
-    document.getElementById('dataReserva').value = hoje;
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyawjojVqh1BmC-osO77jB1aAjBgK42vTBWjxfhqWAjTriV-nAWxP7Snto8ZUUuGn91/exec";
+    let diasFechados = [];
 
+    // 1. Bloquear datas passadas no calendário
+    const hoje = new Date().toISOString().split('T')[0];
+    const campoData = document.getElementById('dataReserva');
+    campoData.setAttribute('min', hoje);
+    campoData.value = hoje;
+
+    // 2. Buscar dias fechados da Google Sheet ao carregar a página
+    fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDiasFechados'}) })
+    .then(r => r.json())
+    .then(dias => { 
+        diasFechados = dias; 
+        validarData(); // Validar a data inicial (hoje)
+    });
+
+    // 3. Validar se a data escolhida é um dia fechado
+    campoData.addEventListener('change', validarData);
+
+    function validarData() {
+        if (diasFechados.includes(campoData.value)) {
+            alert("Lamentamos, mas o restaurante está fechado na data selecionada.");
+            campoData.value = "";
+            document.getElementById('btnEnviar').disabled = true;
+        } else {
+            document.getElementById('btnEnviar').disabled = false;
+        }
+    }
+
+    // 4. Envio do Formulário
     document.getElementById('formReserva').onsubmit = function(e) {
         e.preventDefault();
-        
         const btn = document.getElementById('btnEnviar');
         const loader = document.getElementById('loader');
         
@@ -85,30 +108,19 @@
 
         const formData = new FormData(this);
         const dados = Object.fromEntries(formData.entries());
-        // Ação padrão para o index é a reserva normal
         dados.action = "reservaSite"; 
 
-        fetch(URL_SCRIPT, {
-            method: 'POST',
-            body: JSON.stringify(dados)
-        })
+        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
         .then(response => response.json())
         .then(res => {
             if(res.status === 'success') {
                 document.getElementById('formReserva').style.display = 'none';
                 document.getElementById('mensagem-sucesso').style.display = 'block';
-                window.scrollTo(0, 0);
             } else {
                 alert("Erro: " + res.message);
                 btn.style.display = 'block';
                 loader.style.display = 'none';
             }
-        })
-        .catch(error => {
-            console.error(error);
-            alert("Erro na ligação. Tente novamente.");
-            btn.style.display = 'block';
-            loader.style.display = 'none';
         });
     };
 </script>
