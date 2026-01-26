@@ -14,7 +14,6 @@
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         .btn-submit { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; margin-top: 25px; cursor: pointer; width: 100%; }
         .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
-        .loading { display: none; text-align: center; margin-top: 10px; color: var(--accent); font-weight: bold; }
         #msg-sucesso { display: none; background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
     </style>
 </head>
@@ -26,7 +25,7 @@
         <p>Reserve a sua mesa</p>
     </div>
 
-    <div id="msg-sucesso">✅ Reserva enviada! Verifique o seu e-mail.</div>
+    <div id="msg-sucesso">✅ Reserva enviada com sucesso!</div>
 
     <form id="formReserva">
         <label>Nome Completo</label>
@@ -51,136 +50,106 @@
 
         <label>Horário Disponível</label>
         <select name="horario" id="selectHorario">
-            <option value="">Selecione uma data primeiro...</option>
+            <option value="">A carregar horários...</option>
         </select>
 
         <label>Observações</label>
         <textarea name="obs" rows="2" placeholder="Alergias, Etc"></textarea>
 
         <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
-        <div class="loading" id="loader">A processar...</div>
     </form>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbziBS4WGSg-rHfY4Bh7BBefEoctajJgTjgZRCjG0BKGhra6LXlzhqAtfn3sBSE9IjHG/exec";
-    
-    // Configurações iniciais
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxv2Ue7HIbQCavMFXiR2cJ9ojonNgH3sJPsTAxO7NvBKe0eDOClnnxbvC9mH-3mRGED/exec";
     const campoData = document.getElementById('dataReserva');
     const selectHorario = document.getElementById('selectHorario');
-    const hoje = new Date().toISOString().split('T')[0];
-    campoData.setAttribute('min', hoje);
-    campoData.value = hoje;
 
-    // 1. Carregar Horários e Dias de Fecho da Sheet
-    async function carregarConfiguracoes() {
+    // Inicialização
+    async function init() {
+        const hoje = new Date().toISOString().split('T')[0];
+        campoData.setAttribute('min', hoje);
+        campoData.value = hoje;
+        await atualizarTudo();
+    }
+
+    async function atualizarTudo() {
         try {
-            const respFecho = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDiasFechados'}) });
-            const diasFechados = await respFecho.json();
+            const [fechados, intervalos] = await Promise.all([
+                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getDiasFechados'})}).then(r => r.json()),
+                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getHorarios'})}).then(r => r.json())
+            ]);
 
-            const respHoras = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getHorarios'}) });
-            const intervalos = await respHoras.json();
+            const dataEscolha = new Date(campoData.value);
+            const diaSemana = dataEscolha.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
 
-            validarEGerarHorarios(diasFechados, intervalos);
-
-            campoData.addEventListener('change', () => validarEGerarHorarios(diasFechados, intervalos));
-        } catch (e) { console.error("Erro ao carregar configs:", e); }
+            if (fechados.includes(diaSemana) || fechados.includes(campoData.value)) {
+                alert("Restaurante encerrado nesta data.");
+                selectHorario.innerHTML = '<option value="">Encerrado</option>';
+                document.getElementById('btnEnviar').disabled = true;
+            } else {
+                document.getElementById('btnEnviar').disabled = false;
+                gerarHoras(intervalos);
+            }
+        } catch (e) { console.error(e); }
     }
 
-    function validarEGerarHorarios(fechados, intervalos) {
-        const dataEscolha = new Date(campoData.value);
-        const diaSemana = dataEscolha.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
-        const dataISO = campoData.value;
-
-        if (fechados.includes(diaSemana) || fechados.includes(dataISO)) {
-            alert("O restaurante está encerrado nesta data.");
-            campoData.value = "";
-            selectHorario.innerHTML = '<option value="">Restaurante Fechado</option>';
-            document.getElementById('btnEnviar').disabled = true;
-            return;
-        }
-
-        document.getElementById('btnEnviar').disabled = false;
-        gerarSelectHoras(intervalos);
-    }
-
-    function gerarSelectHoras(intervalos) {
-    selectHorario.innerHTML = '';
-    const slots = [];
-    
-    console.log("A processar intervalos:", intervalos);
-
-    [intervalos.almoco, intervalos.jantar].forEach(intervalo => {
-        if (!intervalo) return;
-
-        // Limpeza: remove espaços e normaliza traços longos para hífen normal
-        const limpo = intervalo.toString().replace(/–|—/g, "-").replace(/\s/g, "");
+    function gerarHoras(intervalos) {
+        selectHorario.innerHTML = '';
+        const slots = [];
         
-        if (!limpo.includes('-')) {
-            console.warn("Intervalo ainda inválido após limpeza:", limpo);
-            return;
-        }
+        [intervalos.almoco, intervalos.jantar].forEach(inter => {
+            if (!inter) return;
+            const limpo = inter.replace(/–|—/g, "-").replace(/\s/g, "");
+            if (!limpo.includes('-')) return;
 
-        const partes = limpo.split('-');
-        let atual = parseHora(partes[0]);
-        const limite = parseHora(partes[1]);
+            const [inicio, fim] = limpo.split('-');
+            let atual = parseTime(inicio);
+            const limite = parseTime(fim);
 
-        // Evita loops infinitos se a hora estiver mal formatada
-        let seguranca = 0; 
-        while (atual <= limite && seguranca < 48) {
-            slots.push(formatarHora(atual));
-            atual.setMinutes(atual.getMinutes() + 30);
-            seguranca++;
-        }
-    });
+            while (atual <= limite) {
+                slots.push(formatTime(atual));
+                atual.setMinutes(atual.getMinutes() + 15); // Intervalo de 15 minutos
+            }
+        });
 
-    if (slots.length === 0) {
-        selectHorario.innerHTML = '<option value="">Sem horários (verificar config)</option>';
-        return;
+        slots.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s; opt.textContent = s;
+            selectHorario.appendChild(opt);
+        });
     }
 
-    slots.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s;
-        opt.textContent = s;
-        selectHorario.appendChild(opt);
-    });
-}
-    function parseHora(h) {
-        const [hh, mm] = h.split(':');
-        const d = new Date();
-        d.setHours(hh, mm, 0, 0);
+    function parseTime(t) {
+        const [h, m] = t.split(':');
+        const d = new Date(); d.setHours(h, m, 0, 0);
         return d;
     }
 
-    function formatarHora(d) {
-        return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
+    function formatTime(d) {
+        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
     }
 
-    // 2. Envio do Formulário
+    campoData.addEventListener('change', atualizarTudo);
     document.getElementById('formReserva').onsubmit = async function(e) {
         e.preventDefault();
         const btn = document.getElementById('btnEnviar');
-        const loader = document.getElementById('loader');
-        btn.disabled = true; loader.style.display = 'block';
-
-        const dados = Object.fromEntries(new FormData(this).entries());
+        btn.disabled = true; btn.innerText = "A processar...";
         
-        try {
-            const r = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
-            const res = await r.json();
-            if (res.status === 'success') {
-                document.getElementById('formReserva').style.display = 'none';
-                document.getElementById('msg-sucesso').style.display = 'block';
-            } else { alert("Erro: " + res.message); btn.disabled = false; loader.style.display = 'none'; }
-        } catch (err) { alert("Erro na ligação."); btn.disabled = false; loader.style.display = 'none'; }
+        const dados = Object.fromEntries(new FormData(this).entries());
+        dados.action = "reservaSite";
+
+        const res = await fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify(dados)}).then(r => r.json());
+        if(res.status === 'success') {
+            document.getElementById('formReserva').style.display = 'none';
+            document.getElementById('msg-sucesso').style.display = 'block';
+        } else {
+            alert("Erro: " + res.message);
+            btn.disabled = false; btn.innerText = "Confirmar Reserva";
+        }
     };
 
-    carregarConfiguracoes();
+    init();
 </script>
-
 </body>
 </html>
-
-
-
