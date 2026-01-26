@@ -25,49 +25,32 @@
         <h1>Don Tasko</h1>
         <p>Reserva de Mesa</p>
     </div>
-
     <div id="msg-sucesso">✅ Reserva enviada! Verifique o seu e-mail.</div>
-
     <form id="formReserva">
         <label>Nome Completo</label>
         <input type="text" name="nome" required>
-
         <label>Telemóvel</label>
         <input type="tel" name="telemovel" required>
-
         <label>E-mail</label>
         <input type="email" name="email" required>
-
         <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Data</label>
-                <input type="date" name="data" id="dataReserva" required>
-            </div>
-            <div style="flex: 1;">
-                <label>Pessoas</label>
-                <input type="number" name="pax" id="numPax" value="2" min="1" required>
-            </div>
+            <div style="flex: 1;"><label>Data</label><input type="date" name="data" id="dataReserva" required></div>
+            <div style="flex: 1;"><label>Pessoas</label><input type="number" name="pax" id="numPax" value="2" min="1" required></div>
         </div>
-
         <label>Horário</label>
-        <select name="horario" id="selectHorario">
-            <option value="">A carregar horários...</option>
-        </select>
-
+        <select name="horario" id="selectHorario"><option value="">A carregar...</option></select>
         <label>Observações</label>
-        <textarea name="obs" rows="2" placeholder="Ex: Alergias, cadeira de bebé..."></textarea>
-
+        <textarea name="obs" rows="2"></textarea>
         <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
     </form>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw_xj3CGVzOyV7pBgG3w1Fn9JZIn4piHa55a1W3xxLSkF5YhP0Z3I6Lm3-xXYf7WA6q/exec";
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzrkJHBd6OxOi71BV-Vd3-I7WtCTfB_K54XFcH4R4DZuvQkb_CBvzM89JS4kmUgOu6k/exec";
     const campoData = document.getElementById('dataReserva');
     const selectHorario = document.getElementById('selectHorario');
     const campoPax = document.getElementById('numPax');
     const btnEnviar = document.getElementById('btnEnviar');
-
     let configsGlobal = {};
 
     async function carregarDados() {
@@ -77,60 +60,33 @@
                 fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getHorarios'})}).then(r => r.json()),
                 fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
             ]);
-            
-            // Limpa as chaves das configs (remove espaços e garante consistência)
-            configsGlobal = {};
-            for (let key in configs) {
-                configsGlobal[key.trim()] = configs[key];
-            }
-
+            configsGlobal = configs;
             campoData.min = new Date().toISOString().split('T')[0];
-            
-            const atualizarForm = () => {
-                const dataSel = campoData.value;
-                const diaSemana = new Date(dataSel).toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
-                
-                if (fechados.includes(diaSemana) || fechados.includes(dataSel)) {
-                    alert("Restaurante encerrado nesta data.");
-                    campoData.value = "";
-                    selectHorario.innerHTML = '<option>Encerrado</option>';
-                    return;
+            campoData.onchange = () => {
+                const diaSemana = new Date(campoData.value).toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
+                if (fechados.includes(diaSemana) || fechados.includes(campoData.value)) {
+                    alert("Encerrado nesta data."); campoData.value = ""; return;
                 }
                 gerarHoras(horarios);
             };
-
-            campoData.onchange = atualizarForm;
             campoPax.oninput = verificarGrupo;
-            atualizarForm();
-        } catch(e) { console.error("Erro no carregamento inicial:", e); }
+            campoData.onchange();
+        } catch(e) { console.error(e); }
     }
 
     function verificarGrupo() {
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8; 
-        const numPessoas = campoPax.value;
-
-        if (parseInt(numPessoas) > max) {
+        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+        if (parseInt(campoPax.value) > max) {
             btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
             btnEnviar.style.background = "var(--whatsapp)";
-            
             btnEnviar.onclick = (e) => {
                 e.preventDefault();
-                // Verificação de segurança para o link
-                const rawUrl = configsGlobal.WHATSAPP_URL || "";
-                const telOriginal = rawUrl.toString().replace(/\D/g, ""); 
-                
-                if (!telOriginal) {
-                    alert("Erro: Número de WhatsApp não configurado na Sheet.");
-                    return;
-                }
-
-                const msg = encodeURIComponent("Olá! Queria reservar uma mesa para " + numPessoas + " pessoas no dia " + campoData.value);
-                window.open("https://wa.me/" + telOriginal + "?text=" + msg, '_blank');
+                const tel = configsGlobal.WHATSAPP_URL ? configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
+                if(!tel) return alert("WhatsApp não configurado.");
+                window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent("Olá! Queria reservar mesa para " + campoPax.value + " pessoas."), '_blank');
             };
         } else {
-            btnEnviar.innerText = "Confirmar Reserva";
-            btnEnviar.style.background = "var(--accent)";
-            btnEnviar.onclick = null;
+            btnEnviar.innerText = "Confirmar Reserva"; btnEnviar.style.background = ""; btnEnviar.onclick = null;
         }
     }
 
@@ -139,49 +95,31 @@
         [h.almoco, h.jantar].forEach(intervalo => {
             if (!intervalo) return;
             const parts = intervalo.replace(/–|—/g, '-').split('-');
-            if(parts.length < 2) return;
-            
             let [hAt, mAt] = parts[0].trim().split(':').map(Number);
             const [hFim, mFim] = parts[1].trim().split(':').map(Number);
-            
             while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
                 const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
-                const opt = document.createElement('option');
-                opt.value = opt.text = tempo;
+                const opt = document.createElement('option'); opt.value = opt.text = tempo;
                 selectHorario.appendChild(opt);
-                mAt += 15;
-                if (mAt >= 60) { mAt = 0; hAt++; }
+                mAt += 15; if (mAt >= 60) { mAt = 0; hAt++; }
             }
         });
     }
 
     document.getElementById('formReserva').onsubmit = async (e) => {
         e.preventDefault();
-        if (btnEnviar.type === "button") return; // Ignora se for modo WhatsApp
-
-        btnEnviar.disabled = true;
-        btnEnviar.innerText = "A processar...";
+        if (campoPax.value > (parseInt(configsGlobal.MAX_CONVIDADOS) || 8)) return;
+        btnEnviar.disabled = true; btnEnviar.innerText = "A processar...";
         const dados = Object.fromEntries(new FormData(e.target));
         dados.action = "reservaSite";
-        
-        try {
-            const res = await fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify(dados)}).then(r => r.json());
-            if (res.status === 'success') {
-                document.getElementById('formReserva').style.display = 'none';
-                document.getElementById('msg-sucesso').style.display = 'block';
-                window.scrollTo(0,0);
-            } else {
-                alert("Erro: " + res.message);
-                btnEnviar.disabled = false;
-                btnEnviar.innerText = "Confirmar Reserva";
-            }
-        } catch(e) { 
-            alert("Erro na ligação."); 
-            btnEnviar.disabled = false;
-            btnEnviar.innerText = "Confirmar Reserva";
+        const res = await fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify(dados)}).then(r => r.json());
+        if (res.status === 'success') {
+            document.getElementById('formReserva').style.display = 'none';
+            document.getElementById('msg-sucesso').style.display = 'block';
+        } else {
+            alert("Erro: " + res.message); btnEnviar.disabled = false;
         }
     };
-
     carregarDados();
 </script>
 </body>
