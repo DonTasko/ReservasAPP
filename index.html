@@ -105,28 +105,40 @@
     }
 
     function gerarSelectHoras(intervalos) {
-        selectHorario.innerHTML = '';
-        const slots = [];
-        
-        [intervalos.almoco, intervalos.jantar].forEach(intervalo => {
-            if (!intervalo) return;
-            const [inicio, fim] = intervalo.split('-');
-            let atual = parseHora(inicio);
-            const limite = parseHora(fim);
+    selectHorario.innerHTML = '';
+    const slots = [];
+    
+    console.log("A processar intervalos:", intervalos); // Aparece na consola (F12)
 
-            while (atual <= limite) {
-                slots.push(formatarHora(atual));
-                atual.setMinutes(atual.getMinutes() + 30);
-            }
-        });
+    [intervalos.almoco, intervalos.jantar].forEach(intervalo => {
+        if (!intervalo || !intervalo.includes('-')) {
+            console.warn("Intervalo inválido ou vazio:", intervalo);
+            return;
+        }
 
-        slots.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            selectHorario.appendChild(opt);
-        });
+        const partes = intervalo.split('-');
+        let atual = parseHora(partes[0].trim());
+        const limite = parseHora(partes[1].trim());
+
+        // Criar opções de 30 em 30 minutos
+        while (atual <= limite) {
+            slots.push(formatarHora(atual));
+            atual.setMinutes(atual.getMinutes() + 30);
+        }
+    });
+
+    if (slots.length === 0) {
+        selectHorario.innerHTML = '<option value="">Sem horários disponíveis</option>';
+        return;
     }
+
+    slots.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        selectHorario.appendChild(opt);
+    });
+}
 
     function parseHora(h) {
         const [hh, mm] = h.split(':');
@@ -163,4 +175,5 @@
 
 </body>
 </html>
+
 
