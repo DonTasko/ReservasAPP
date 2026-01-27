@@ -17,16 +17,29 @@
 
         /* Dashboard */
         #dashboard-content { display: none; max-width: 1200px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
         .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
         .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
         
+        /* Aviso de Ocupação */
+        .aviso-ocupacao { 
+            background: #fff3cd; 
+            border-left: 5px solid #ffc107; 
+            padding: 12px; 
+            border-radius: 6px; 
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .aviso-ocupacao.critico { background: #ffebee; border-left-color: #e74c3c; }
+        
         /* Formulário Manual */
         .form-manual input, .form-manual select, .form-manual textarea { 
             width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;
+            font-size: 14px;
         }
         .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-add:disabled { background: #95a5a6; cursor: not-allowed; }
 
         /* Lista 15 dias com scroll */
         .scroll-resumo { max-height: 400px; overflow-y: auto; padding-right: 5px; }
@@ -37,13 +50,20 @@
         .status-warning { background: #fff3e0; border-left: 5px solid #f39c12; }
         .status-full { background: #ffebee; border-left: 5px solid #e74c3c; }
 
-        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
+        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
         table { width: 100%; border-collapse: collapse; background: white; }
-        th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
+        th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+        tr:hover { background: #f9f9f9; }
         .obs-text { font-size: 11px; color: #606770; font-style: italic; }
         .btn-refresh { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-cancel { background: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-cancel:hover { background: #c0392b; }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
@@ -69,12 +89,14 @@
                 <h2>➕ Reserva Manual</h2>
                 <form id="formManual" class="form-manual">
                     <input type="text" name="nome" placeholder="Nome do Cliente" required>
+                    <input type="email" name="email" placeholder="Email" required>
                     <input type="tel" name="telemovel" placeholder="Telemóvel" required>
                     <div style="display:flex; gap:10px;">
-                        <input type="date" name="data" id="dataManual" required>
-                        <input type="number" name="pax" value="2" min="1" required>
+                        <input type="date" name="data" id="dataManual" required style="flex:1;">
+                        <input type="number" name="pax" value="2" min="1" max="20" required style="flex:0.5;">
                     </div>
-                    <select name="horario" id="horarioManual">
+                    <select name="horario" id="horarioManual" required>
+                        <option value="">Seleciona horário</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
                         <option value="19:30">19:30</option>
@@ -92,6 +114,7 @@
         </div>
 
         <div class="card">
+            <div id="avisoOcupacao"></div>
             <h2>Reservas para Hoje</h2>
             <table id="tabelaHoje">
                 <thead>
@@ -113,8 +136,8 @@
 
 <script>
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzrkJHBd6OxOi71BV-Vd3-I7WtCTfB_K54XFcH4R4DZuvQkb_CBvzM89JS4kmUgOu6k/exec";
-    const PASS_CORRETA = "Tasko123";
-    const LOTACAO_MAX = 34;
+    const PASS_CORRETA = "Tasko123"; // TODO: Será movido para backend
+    let LOTACAO_MAX = 30;
 
     function verificarPass() {
         if (document.getElementById('passInput').value === PASS_CORRETA) {
@@ -127,19 +150,56 @@
         }
     }
 
-    document.getElementById('passInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') verificarPass(); });
+    document.getElementById('passInput').addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') verificarPass(); 
+    });
 
-    function carregarDados() {
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) })
-        .then(r => r.json())
-        .then(data => {
+    async function carregarDados() {
+        try {
+            const response = await fetch(URL_SCRIPT, { 
+                method: 'POST', 
+                body: JSON.stringify({action: 'getDashboard'}) 
+            });
+            const data = await response.json();
+            
+            // Carregar configs para obter LOTACAO_MAX
+            const configResponse = await fetch(URL_SCRIPT, { 
+                method: 'POST', 
+                body: JSON.stringify({action: 'getConfigs'}) 
+            });
+            const configs = await configResponse.json();
+            LOTACAO_MAX = parseInt(configs.LOTACAO_MAXIMA) || 30;
+            
+            // Renderizar aviso de ocupação para hoje
+            const hoje = new Date().toISOString().split('T')[0];
+            const ocupacaoHoje = data.resumo[hoje] || 0;
+            const vagasRestantes = LOTACAO_MAX - ocupacaoHoje;
+            const percentualOcupacao = (ocupacaoHoje / LOTACAO_MAX) * 100;
+            
+            let classeCritica = '';
+            let mensagem = `<strong>Hoje:</strong> ${ocupacaoHoje} pax (${vagasRestantes} vagas)`;
+            
+            if (percentualOcupacao >= 100) {
+                classeCritica = 'critico';
+                mensagem += ' ⚠️ LOTAÇÃO COMPLETA';
+            } else if (percentualOcupacao >= 80) {
+                classeCritica = 'critico';
+                mensagem += ' ⚠️ Quase cheio';
+            } else if (percentualOcupacao >= 60) {
+                mensagem += ' - Ocupação elevada';
+            }
+            
+            const avisoDiv = document.getElementById('avisoOcupacao');
+            avisoDiv.className = 'aviso-ocupacao ' + classeCritica;
+            avisoDiv.innerHTML = mensagem;
+            
             // Renderizar Resumo 15 dias
             const resumoDiv = document.getElementById('resumo15');
             resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(d => {
                 const total = data.resumo[d];
                 let classe = "status-ok";
                 if (total >= LOTACAO_MAX) classe = "status-full";
-                else if (total >= 25) classe = "status-warning";
+                else if (total >= Math.floor(LOTACAO_MAX * 0.75)) classe = "status-warning";
                 
                 return `<div class="dia-item ${classe}">
                     <span>${d}</span>
@@ -158,39 +218,64 @@
                     <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}')">Cancelar</button></td>
                 </tr>
             `).join('') : "<tr><td colspan='5' style='text-align:center;'>Sem reservas para hoje.</td></tr>";
-        });
-    }
-
-    function cancelarReserva(nome, hora) {
-        if (confirm(`Deseja mesmo cancelar a reserva de ${nome} às ${hora}?`)) {
-            fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) })
-            .then(() => { alert("Reserva cancelada!"); carregarDados(); });
+        } catch (error) {
+            console.error("Erro ao carregar dados:", error);
+            document.getElementById('avisoOcupacao').innerHTML = '<div class="aviso-ocupacao critico">Erro ao carregar dados. Tenta novamente.</div>';
         }
     }
 
-    document.getElementById('formManual').onsubmit = function(e) {
+    async function cancelarReserva(nome, hora) {
+        if (confirm(`Deseja mesmo cancelar a reserva de ${nome} às ${hora}?`)) {
+            try {
+                const response = await fetch(URL_SCRIPT, { 
+                    method: 'POST', 
+                    body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) 
+                });
+                const resultado = await response.json();
+                
+                if (resultado.status === 'success') {
+                    alert(resultado.message);
+                    carregarDados();
+                } else {
+                    alert("Erro: " + resultado.message);
+                }
+            } catch (error) {
+                alert("Erro ao processar cancelamento: " + error);
+            }
+        }
+    }
+
+    document.getElementById('formManual').onsubmit = async function(e) {
         e.preventDefault();
         const btn = document.getElementById('btnManual');
-        btn.disabled = true; btn.innerText = "Gravando...";
+        btn.disabled = true;
+        btn.innerText = "Gravando...";
 
-        const dados = Object.fromEntries(new FormData(this).entries());
-        dados.action = "reservaManual";
+        try {
+            const dados = Object.fromEntries(new FormData(this).entries());
+            dados.action = "reservaManual";
 
-        fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
-        .then(r => r.json())
-        .then(res => {
-            alert("Reserva manual gravada!");
-            this.reset();
-            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
-            btn.disabled = false; btn.innerText = "Gravar Reserva";
-            carregarDados();
-        });
+            const response = await fetch(URL_SCRIPT, { 
+                method: 'POST', 
+                body: JSON.stringify(dados) 
+            });
+            const res = await response.json();
+            
+            if (res.status === 'success') {
+                alert("Reserva manual gravada com sucesso!");
+                this.reset();
+                document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+                carregarDados();
+            } else {
+                alert("Erro: " + res.message);
+            }
+        } catch (error) {
+            alert("Erro ao gravar reserva: " + error);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Gravar Reserva";
+        }
     };
 </script>
 </body>
 </html>
-
-
-
-
-
