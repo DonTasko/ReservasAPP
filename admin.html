@@ -212,18 +212,34 @@
     }
 
     function renderizarProximasReservas(lista) {
-        const tbody = document.querySelector('#tabelaProximas tbody');
-        const listaLimpa = lista.filter(r => !r.data.includes("1899"));
-        tbody.innerHTML = listaLimpa.map(r => `
-            <tr>
-                <td><span class="date-text">${formatarData(r.data)}</span><br><strong>${r.hora}</strong></td>
-                <td><strong>${r.nome}</strong><br><small>${r.tel}</small></td>
-                <td><span class="pax-badge">${r.pax}</span></td>
-                <td>${r.obs || ""}</td>
-                <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">X</button></td>
-            </tr>
-        `).join('');
+    const tbody = document.querySelector('#tabelaProximas tbody');
+    
+    // 1. Filtrar datas inválidas
+    let listaLimpa = lista.filter(r => !r.data.includes("1899"));
+    
+    // 2. ORDENAÇÃO: Coloca as datas mais recentes primeiro
+    listaLimpa.sort((a, b) => {
+        // Combina data e hora para uma comparação precisa
+        const dataA = new Date(a.data + 'T' + a.hora);
+        const dataB = new Date(b.data + 'T' + b.hora);
+        return dataA - dataB; // Para ordem decrescente (mais longe primeiro), usa dataB - dataA
+    });
+    
+    if (listaLimpa.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Sem reservas.</td></tr>';
+        return;
     }
+
+    tbody.innerHTML = listaLimpa.map(r => `
+        <tr>
+            <td><span class="date-text">${formatarData(r.data)}</span><br><strong>${r.hora}</strong></td>
+            <td><strong>${r.nome}</strong><br><small>${r.tel}</small></td>
+            <td><span class="pax-badge">${r.pax}</span></td>
+            <td>${r.obs || ""}</td>
+            <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">X</button></td>
+        </tr>
+    `).join('');
+}
 
     function formatarData(dataStr) {
         if (!dataStr || dataStr.includes("1899")) return "---";
@@ -262,4 +278,5 @@
 </script>
 </body>
 </html>
+
 
