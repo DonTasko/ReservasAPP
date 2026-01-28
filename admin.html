@@ -1,172 +1,63 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard Privada | Don Tasko</title>
-    <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; }
-
-        /* Estilos do Login */
-        #login-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; 
-        }
-        .login-box { background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .login-box input { padding: 10px; width: 200px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; display: block; }
-        .login-box button { background: #27ae60; color: white; border: none; padding: 10px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-
-        /* Dashboard */
-        #dashboard-content { display: none; max-width: 1300px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        .container { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
-
-        /* Ocupação Separada */
-        .scroll-resumo { max-height: 600px; overflow-y: auto; padding-right: 5px; }
-        .dia-card { border: 1px solid #eee; border-radius: 8px; padding: 10px; margin-bottom: 10px; background: #fff; }
-        .dia-titulo { font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block; color: #34495e; }
-        
-        .periodo-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
-        .barra-progresso { flex: 1; height: 8px; background: #eee; border-radius: 4px; margin: 0 10px; overflow: hidden; }
-        .barra-fill { height: 100%; transition: width 0.3s; }
-        
-        /* Cores Ocupação */
-        .color-low { background: #2ecc71; }
-        .color-mid { background: #f1c40f; }
-        .color-high { background: #e67e22; }
-        .color-full { background: #e74c3c; }
-
-        /* Formulário Manual */
-        .form-manual input, .form-manual select, .form-manual textarea { 
-            width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px;
-        }
-        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-
-        /* Tabela */
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-size: 13px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
-        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
-        .date-text { color: #e67e22; font-weight: bold; font-size: 12px; display: block; }
-        .btn-refresh { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-cancel { background: #fdf0f0; color: #e74c3c; border: 1px solid #ffcccc; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
-
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-
-<div id="login-screen">
-    <div class="login-box">
-        <h2 style="border:none">Don Tasko Admin</h2>
-        <input type="password" id="passInput" placeholder="Palavra-passe">
-        <button onclick="verificarPass()">Entrar</button>
-        <p id="erro" style="color:red; display:none; margin-top:10px;">Incorreto!</p>
-    </div>
-</div>
-
-<div id="dashboard-content">
-    <div class="header">
-        <h1>📊 Dashboard Don Tasko</h1>
-        <button class="btn-refresh" onclick="carregarDados()">🔄 Atualizar Tudo</button>
-    </div>
-
-    <div class="container">
-        <div>
-            <div class="card">
-                <h2>📅 Ocupação (15 Dias)</h2>
-                <div id="resumo15" class="scroll-resumo">A carregar análise...</div>
-            </div>
-
-            <div class="card">
-                <h2>➕ Reserva Manual</h2>
-                <form id="formManual" class="form-manual">
-                    <input type="text" name="nome" placeholder="Nome" required>
-                    <input type="tel" name="telemovel" placeholder="Telemóvel" required>
-                    <div style="display:flex; gap:10px;">
-                        <input type="date" name="data" id="dataManual" required style="flex:1;">
-                        <input type="number" name="pax" value="2" min="1" max="20" required style="flex:0.5;">
-                    </div>
-                    <select name="horario" required>
-                        <option value="12:30">12:30</option>
-                        <option value="13:00">13:00</option>
-                        <option value="19:30">19:30</option>
-                        <option value="20:00">20:00</option>
-                    </select>
-                    <textarea name="obs" rows="2" placeholder="Notas..."></textarea>
-                    <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>🔜 Próximas Reservas (Ordem Cronológica)</h2>
-            <table id="tabelaProximas">
-                <thead>
-                    <tr>
-                        <th>Data/Hora</th>
-                        <th>Cliente</th>
-                        <th>Pax</th>
-                        <th>Notas</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="5">A sincronizar com a base de dados...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
 <script>
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwb1vrj2-nN-qVyXvOEc7kqw1Cg13f9nufwR9ixZ6bBmihuRL7aYfhQ8AjZ-d53AU8/exec";
     const PASS_CORRETA = "Tasko123";
     let LOTACAO_MAX = 30;
 
+    // 1. GESTÃO DE ACESSO
     function verificarPass() {
         if (document.getElementById('passInput').value === PASS_CORRETA) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
-            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+            
+            // Define data de hoje no input sem desvio de fuso
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            document.getElementById('dataManual').value = `${ano}-${mes}-${dia}`;
+            
             carregarDados();
         } else {
             document.getElementById('erro').style.display = 'block';
         }
     }
 
+    // 2. CARREGAMENTO DE DADOS (API)
     async function carregarDados() {
+        const btn = document.querySelector('.btn-refresh');
+        btn.innerText = "🔄 A atualizar...";
+        
         try {
-            // Puxar Configs
-            const configResponse = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getConfigs'}) });
-            const configs = await configResponse.json();
+            // Puxar Configurações
+            const configRes = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getConfigs'}) });
+            const configs = await configRes.json();
             LOTACAO_MAX = parseInt(configs.LOTACAO_MAXIMA) || 30;
 
-            // Puxar Dados Dashboard
+            // Puxar Dados do Dashboard
             const response = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) });
             const data = await response.json();
 
-            renderizarOcupacao(data.resumoCompleto || data.resumo);
-            renderizarProximasReservas(data.listaHoje || data.listaGeral);
+            renderizarOcupacao(data.resumoCompleto);
+            renderizarProximasReservas(data.listaGeral);
 
         } catch (error) {
-            console.error("Erro:", error);
+            console.error("Erro ao carregar dados:", error);
+            alert("Erro de ligação ao servidor.");
+        } finally {
+            btn.innerText = "🔄 Atualizar Tudo";
         }
     }
 
+    // 3. RENDERIZAÇÃO DA OCUPAÇÃO (15 DIAS)
     function renderizarOcupacao(resumo) {
         const resumoDiv = document.getElementById('resumo15');
         resumoDiv.innerHTML = '';
-
-        // Ordenar datas
+        
+        // Ordenar datas cronologicamente
         const datas = Object.keys(resumo).sort();
 
         datas.forEach(dataStr => {
-            const periodos = resumo[dataStr]; // Espera {almoco: X, jantar: Y}
-            // Fallback caso o backend envie apenas total:
+            const periodos = resumo[dataStr];
             const alm = periodos.almoco || 0;
             const jan = periodos.jantar || 0;
 
@@ -189,70 +80,114 @@
 
         return `
             <div class="periodo-row">
-                <span style="width:50px">${label}</span>
+                <span style="width:60px; font-weight:500;">${label}</span>
                 <div class="barra-progresso">
                     <div class="barra-fill ${cor}" style="width: ${perc}%"></div>
                 </div>
-                <span style="width:40px; text-align:right"><strong>${pax}</strong>/${LOTACAO_MAX}</span>
+                <span style="width:50px; text-align:right"><strong>${pax}</strong>/${LOTACAO_MAX}</span>
             </div>
         `;
     }
 
+    // 4. RENDERIZAÇÃO DA TABELA DE RESERVAS
     function renderizarProximasReservas(lista) {
         const tbody = document.querySelector('#tabelaProximas tbody');
-        
-        // Ordenar por data e hora
-        lista.sort((a, b) => new Date(a.data + ' ' + a.hora) - new Date(b.data + ' ' + b.hora));
+        if (!lista || lista.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">Sem reservas registadas.</td></tr>';
+            return;
+        }
+
+        // Ordenar por Data e depois por Hora
+        lista.sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
 
         tbody.innerHTML = lista.map(r => `
             <tr>
                 <td>
                     <span class="date-text">${formatarData(r.data)}</span>
-                    <strong>${r.hora}</strong>
+                    <strong style="font-size:1.1em;">${r.hora}</strong>
                 </td>
-                <td>${r.nome}<br><small>${r.tel}</small></td>
+                <td>
+                    <strong>${r.nome}</strong><br>
+                    <small style="color:#666;">📞 ${r.tel}</small>
+                </td>
                 <td><span class="pax-badge">${r.pax} pax</span></td>
-                <td class="obs-text">${r.obs || "---"}</td>
-                <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">Cancelar</button></td>
+                <td style="font-style:italic; color:#555; max-width:200px;">${r.obs || "---"}</td>
+                <td>
+                    <button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">
+                        Cancelar
+                    </button>
+                </td>
             </tr>
         `).join('');
     }
 
+    // 5. FORMATADOR DE DATA (ANTI-FUSO HORÁRIO)
     function formatarData(dataStr) {
-        const d = new Date(dataStr);
-        return d.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', weekday: 'short' });
+        if (!dataStr) return "---";
+        // Remove qualquer parte de hora se existir (ex: 2026-01-30T23:00:00)
+        const apenasData = dataStr.split('T')[0];
+        const partes = apenasData.split('-'); 
+        
+        if (partes.length !== 3) return dataStr;
+
+        const ano = partes[0];
+        const mes = partes[1];
+        const dia = partes[2];
+
+        // Determinar dia da semana sem usar UTC (evita saltos de dia)
+        const dataObj = new Date(ano, mes - 1, dia);
+        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const semana = diasSemana[dataObj.getDay()];
+
+        return `${semana}, ${dia}/${mes}`;
     }
 
-    // O resto das funções (cancelarReserva, formManual) permanecem similares, 
-    // apenas certificando que enviam a data correta no cancelamento.
-
+    // 6. AÇÕES (CANCELAR E MANUAL)
     async function cancelarReserva(nome, hora, data) {
-        if (confirm(`Cancelar reserva de ${nome}?`)) {
-            const response = await fetch(URL_SCRIPT, { 
-                method: 'POST', 
-                body: JSON.stringify({action: 'cancelarAdmin', nome, hora, data}) 
-            });
-            carregarDados();
+        if (confirm(`Deseja cancelar a reserva de ${nome} às ${hora}?\nEsta ação não pode ser desfeita.`)) {
+            try {
+                const res = await fetch(URL_SCRIPT, { 
+                    method: 'POST', 
+                    body: JSON.stringify({action: 'cancelarAdmin', nome, hora, data}) 
+                });
+                await carregarDados();
+            } catch (e) { alert("Erro ao cancelar."); }
         }
     }
 
-    // Event listener para Enter no login
-    document.getElementById('passInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') verificarPass(); });
-
-    // Submissão Manual
+    // Submissão de Reserva Manual
     document.getElementById('formManual').onsubmit = async function(e) {
         e.preventDefault();
         const btn = document.getElementById('btnManual');
+        const originalText = btn.innerText;
+        
         btn.disabled = true;
+        btn.innerText = "⌛ A gravar...";
+        
         const dados = Object.fromEntries(new FormData(this).entries());
         dados.action = "reservaManual";
-        await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
-        this.reset();
-        carregarDados();
-        btn.disabled = false;
+        
+        try {
+            const response = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
+            const res = await response.json();
+            
+            if(res.status === "success") {
+                this.reset();
+                // Repor data de hoje no input após reset
+                const hoje = new Date().toISOString().split('T')[0];
+                document.getElementById('dataManual').value = hoje;
+                await carregarDados();
+            } else {
+                alert("Erro: " + res.message);
+            }
+        } catch(e) { 
+            alert("Erro de ligação."); 
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
     };
 
+    // Atalho Enter para Login
+    document.getElementById('passInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') verificarPass(); });
 </script>
-</body>
-</html>
-
