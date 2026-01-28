@@ -11,10 +11,7 @@
             --danger: #e74c3c;
             --warning: #f1c40f;
         }
-
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; margin: 0; }
-
-        /* Login */
         #login-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--primary); display: flex; justify-content: center; align-items: center; z-index: 1000; 
@@ -22,16 +19,10 @@
         .login-box { background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
         .login-box input { padding: 12px; width: 250px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; display: block; font-size: 16px; }
         .login-box button { background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        /* Dashboard */
         #dashboard-content { display: none; max-width: 1400px; margin: auto; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        
-        .live-status {
-            display: flex; align-items: center; gap: 10px; background: white; padding: 10px 20px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+        .live-status { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 20px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .dot { height: 12px; width: 12px; background-color: #bbb; border-radius: 50%; display: inline-block; }
         .pulse { background-color: var(--danger); animation: pulse-red 2s infinite; }
         @keyframes pulse-red {
@@ -39,29 +30,21 @@
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
         }
-
         .container { display: grid; grid-template-columns: 380px 1fr; gap: 25px; }
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
         h2 { margin-top: 0; font-size: 18px; color: var(--primary); border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; display: flex; justify-content: space-between; }
-
         .scroll-resumo { max-height: 550px; overflow-y: auto; padding-right: 10px; }
         .dia-card { border: 1px solid #eee; border-radius: 10px; padding: 15px; margin-bottom: 12px; }
         .dia-titulo { font-weight: bold; font-size: 15px; margin-bottom: 10px; display: block; color: var(--primary); }
-        
         .periodo-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
         .barra-progresso { flex: 1; height: 10px; background: #eee; border-radius: 5px; margin: 0 12px; overflow: hidden; }
         .barra-fill { height: 100%; }
-        
         .color-low { background: #2ecc71; }
         .color-mid { background: #f1c40f; }
         .color-high { background: #e67e22; }
         .color-full { background: var(--danger); }
-
-        .form-manual input, .form-manual select, .form-manual textarea { 
-            width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; 
-        }
+        .form-manual input, .form-manual select, .form-manual textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         .btn-add { background: var(--accent); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 15px; background: #f8f9fa; border-bottom: 2px solid #eee; }
         td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
@@ -69,7 +52,6 @@
         .date-text { color: #e67e22; font-weight: bold; }
         .btn-refresh { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-cancel { background: #fff5f5; color: var(--danger); border: 1px solid #feb2b2; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-
         @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -90,7 +72,7 @@
             <h1>📊 Painel de Controlo</h1>
             <div class="live-status">
                 <span id="statusDot" class="dot"></span>
-                <span id="statusText">Sincronizado</span>
+                <span id="statusText">A sincronizar...</span>
             </div>
         </div>
         <button class="btn-refresh" onclick="carregarDados()">🔄 Atualizar</button>
@@ -113,12 +95,9 @@
                         <input type="number" name="pax" value="2" min="1" required>
                     </div>
                     <select name="horario" required>
-                        <option value="12:30">12:30</option>
-                        <option value="13:00">13:00</option>
-                        <option value="13:30">13:30</option>
-                        <option value="19:30">19:30</option>
-                        <option value="20:00">20:00</option>
-                        <option value="20:30">20:30</option>
+                        <option value="12:30">12:30</option><option value="13:00">13:00</option>
+                        <option value="13:30">13:30</option><option value="19:30">19:30</option>
+                        <option value="20:00">20:00</option><option value="20:30">20:30</option>
                         <option value="21:00">21:00</option>
                     </select>
                     <textarea name="obs" rows="2" placeholder="Observações"></textarea>
@@ -129,7 +108,7 @@
 
         <div class="main-col">
             <div class="card">
-                <h2>🔜 Próximas Reservas</h2>
+                <h2>🔜 Próximas Reservas (Ordenadas)</h2>
                 <table id="tabelaProximas">
                     <thead>
                         <tr>
@@ -148,11 +127,9 @@
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwCBe0OmHpM8RPyAifVLgJ6PJ7G42d7paXYWRC89doUVahf8_ZECe53sWPy5aDHhZEd/exec";
+    let URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwCBe0OmHpM8RPyAifVLgJ6PJ7G42d7paXYWRC89doUVahf8_ZECe53sWPy5aDHhZEd/exec";
     const PASS_CORRETA = "Tasko123";
     let LOTACAO_MAX = 30;
-    let ultimaContagem = 0;
-    const somDing = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
     function verificarPass() {
         if (document.getElementById('passInput').value === PASS_CORRETA) {
@@ -167,7 +144,6 @@
     }
 
     async function carregarDados() {
-        const dot = document.getElementById('statusDot');
         const statusTxt = document.getElementById('statusText');
         try {
             const [confRes, dashRes] = await Promise.all([
@@ -175,16 +151,11 @@
                 fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getDashboard'}) }).then(r => r.json())
             ]);
 
+            if (confRes.URL && confRes.URL !== URL_SCRIPT) URL_SCRIPT = confRes.URL;
             LOTACAO_MAX = parseInt(confRes.LOTACAO_MAXIMA) || 30;
-
-            if (ultimaContagem > 0 && dashRes.listaGeral.length > ultimaContagem) {
-                somDing.play().catch(() => {});
-            }
-            ultimaContagem = dashRes.listaGeral.length;
 
             renderizarOcupacao(dashRes.resumoCompleto);
             renderizarProximasReservas(dashRes.listaGeral);
-            verificarAlertas(dashRes.listaGeral);
             statusTxt.innerText = "Sincronizado: " + new Date().toLocaleTimeString('pt-PT');
         } catch (e) { statusTxt.innerText = "Erro na ligação"; }
     }
@@ -212,46 +183,26 @@
     }
 
     function renderizarProximasReservas(lista) {
-    const tbody = document.querySelector('#tabelaProximas tbody');
-    
-    // 1. Filtrar datas inválidas
-    let listaLimpa = lista.filter(r => !r.data.includes("1899"));
-    
-    // 2. ORDENAÇÃO: Coloca as datas mais recentes primeiro
-    listaLimpa.sort((a, b) => {
-        // Combina data e hora para uma comparação precisa
-        const dataA = new Date(a.data + 'T' + a.hora);
-        const dataB = new Date(b.data + 'T' + b.hora);
-        return dataA - dataB; // Para ordem decrescente (mais longe primeiro), usa dataB - dataA
-    });
-    
-    if (listaLimpa.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Sem reservas.</td></tr>';
-        return;
+        const tbody = document.querySelector('#tabelaProximas tbody');
+        // Ordenação Cronológica (Mais Próxima Primeiro)
+        lista.sort((a, b) => new Date(a.data + 'T' + a.hora) - new Date(b.data + 'T' + b.hora));
+        
+        tbody.innerHTML = lista.map(r => `
+            <tr>
+                <td><span class="date-text">${formatarData(r.data)}</span><br><strong>${r.hora}</strong></td>
+                <td><strong>${r.nome}</strong><br><small>${r.tel}</small></td>
+                <td><span class="pax-badge">${r.pax}</span></td>
+                <td>${r.obs || ""}</td>
+                <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">X</button></td>
+            </tr>
+        `).join('');
     }
 
-    tbody.innerHTML = listaLimpa.map(r => `
-        <tr>
-            <td><span class="date-text">${formatarData(r.data)}</span><br><strong>${r.hora}</strong></td>
-            <td><strong>${r.nome}</strong><br><small>${r.tel}</small></td>
-            <td><span class="pax-badge">${r.pax}</span></td>
-            <td>${r.obs || ""}</td>
-            <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">X</button></td>
-        </tr>
-    `).join('');
-}
-
     function formatarData(dataStr) {
-        if (!dataStr || dataStr.includes("1899")) return "---";
         const partes = dataStr.split('-');
         const dObj = new Date(partes[0], partes[1] - 1, partes[2]);
         const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         return `${dias[dObj.getDay()]}, ${partes[2]}/${partes[1]}`;
-    }
-
-    function verificarAlertas(lista) {
-        const hoje = new Date().toISOString().split('T')[0];
-        if (lista.some(r => r.data === hoje)) document.getElementById('statusDot').classList.add('pulse');
     }
 
     document.getElementById('formManual').onsubmit = async function(e) {
@@ -278,5 +229,3 @@
 </script>
 </body>
 </html>
-
-
