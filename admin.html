@@ -1,192 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Privada | Don Tasko</title>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --accent: #27ae60;
-            --danger: #e74c3c;
-            --warning: #f1c40f;
-        }
-
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; margin: 0; }
-
-        /* Login */
-        #login-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--primary); display: flex; justify-content: center; align-items: center; z-index: 1000; 
-        }
-        .login-box { background: white; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
-        .login-box input { padding: 12px; width: 250px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; display: block; font-size: 16px; }
-        .login-box button { background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        /* Dashboard */
-        #dashboard-content { display: none; max-width: 1400px; margin: auto; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        
-        /* Notificação Ativa */
-        .live-status {
-            display: flex; align-items: center; gap: 10px; background: white; padding: 10px 20px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .dot { height: 12px; width: 12px; background-color: #bbb; border-radius: 50%; display: inline-block; }
-        .pulse { background-color: var(--danger); animation: pulse-red 2s infinite; }
-        @keyframes pulse-red {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-        }
-
-        .container { display: grid; grid-template-columns: 380px 1fr; gap: 25px; }
-        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        h2 { margin-top: 0; font-size: 18px; color: var(--primary); border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; display: flex; justify-content: space-between; }
-
-        /* Ocupação */
-        .scroll-resumo { max-height: 550px; overflow-y: auto; padding-right: 10px; }
-        .dia-card { border: 1px solid #eee; border-radius: 10px; padding: 15px; margin-bottom: 12px; transition: transform 0.2s; }
-        .dia-card:hover { transform: translateX(5px); border-color: var(--accent); }
-        .dia-titulo { font-weight: bold; font-size: 15px; margin-bottom: 10px; display: block; color: var(--primary); }
-        
-        .periodo-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-        .barra-progresso { flex: 1; height: 10px; background: #eee; border-radius: 5px; margin: 0 12px; overflow: hidden; }
-        .barra-fill { height: 100%; transition: width 0.8s ease-in-out; }
-        
-        .color-low { background: #2ecc71; }
-        .color-mid { background: #f1c40f; }
-        .color-high { background: #e67e22; }
-        .color-full { background: var(--danger); }
-
-        /* Form Manual */
-        .form-manual input, .form-manual select, .form-manual textarea { 
-            width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; 
-        }
-        .btn-add { background: var(--accent); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
-
-        /* Tabela */
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; background: #f8f9fa; border-bottom: 2px solid #eee; font-size: 14px; }
-        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
-        .pax-badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; }
-        .date-text { color: #e67e22; font-weight: bold; font-size: 12px; text-transform: uppercase; }
-        .btn-refresh { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-cancel { background: #fff5f5; color: var(--danger); border: 1px solid #feb2b2; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
-    </style>
-</head>
-<body>
-
-<div id="login-screen">
-    <div class="login-box">
-        <img src="https://via.placeholder.com/80/27ae60/ffffff?text=DT" style="border-radius:10px; margin-bottom:15px;">
-        <h2>Admin Don Tasko</h2>
-        <input type="password" id="passInput" placeholder="Código de Acesso">
-        <button onclick="verificarPass()">Entrar no Sistema</button>
-        <p id="erro" style="color:var(--danger); display:none; margin-top:15px; font-weight:bold;">Acesso Negado!</p>
-    </div>
-</div>
-
-<div id="dashboard-content">
-    <div class="header">
-        <div>
-            <h1>📊 Painel de Controlo</h1>
-            <div class="live-status">
-                <span id="statusDot" class="dot"></span>
-                <span id="statusText" style="font-size:13px; font-weight:500;">Sincronizado</span>
-            </div>
-        </div>
-        <button class="btn-refresh" onclick="carregarDados()">🔄 Atualizar Dados</button>
-    </div>
-
-    <div class="container">
-        <div class="side-col">
-            <div class="card">
-                <h2>📅 Ocupação (15 Dias)</h2>
-                <div id="resumo15" class="scroll-resumo">A analisar lotação...</div>
-            </div>
-
-            <div class="card">
-                <h2>➕ Reserva Interna</h2>
-                <form id="formManual" class="form-manual">
-                    <input type="text" name="nome" placeholder="Nome do Cliente" required>
-                    <input type="tel" name="telemovel" placeholder="Telemóvel" required>
-                    <div style="display:flex; gap:10px;">
-                        <input type="date" name="data" id="dataManual" required style="flex:1.5;">
-                        <input type="number" name="pax" value="2" min="1" max="30" required style="flex:0.8;">
-                    </div>
-                    <select name="horario" id="selectHoras" required>
-                        <option value="12:30">12:30</option>
-                        <option value="13:00">13:00</option>
-                        <option value="13:30">13:30</option>
-                        <option value="19:30">19:30</option>
-                        <option value="20:00">20:00</option>
-                        <option value="20:30">20:30</option>
-                        <option value="21:00">21:00</option>
-                    </select>
-                    <textarea name="obs" rows="2" placeholder="Notas internas (ex: Mesa de canto)"></textarea>
-                    <button type="submit" class="btn-add" id="btnManual">Confirmar Reserva</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="main-col">
-            <div class="card">
-                <h2>🔜 Próximas Marcações</h2>
-                <div class="table-container">
-                    <table id="tabelaProximas">
-                        <thead>
-                            <tr>
-                                <th>Data/Hora</th>
-                                <th>Cliente</th>
-                                <th>Lugar</th>
-                                <th>Observações</th>
-                                <th>Gestão</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td colspan="5" style="text-align:center; padding:40px; color:#666;">A carregar reservas...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwb1vrj2-nN-qVyXvOEc7kqw1Cg13f9nufwR9ixZ6bBmihuRL7aYfhQ8AjZ-d53AU8/exec";
     const PASS_CORRETA = "Tasko123";
     let LOTACAO_MAX = 30;
+    let ultimaContagem = 0;
+    
+    // Áudio de Alerta (Som de notificação curto)
+    const somDing = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
-    // LOGIN
     function verificarPass() {
         if (document.getElementById('passInput').value === PASS_CORRETA) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
-            
-            const hoje = new Date();
-            document.getElementById('dataManual').value = hoje.toISOString().split('T')[0];
-            
+            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
             carregarDados();
-            // Auto-refresh a cada 5 minutos
-            setInterval(carregarDados, 300000);
+            setInterval(carregarDados, 60000); // Atualiza a cada 1 min para o som ser eficaz
         } else {
             document.getElementById('erro').style.display = 'block';
         }
     }
 
-    // CARREGAR TUDO
     async function carregarDados() {
         const dot = document.getElementById('statusDot');
         const statusTxt = document.getElementById('statusText');
-        dot.classList.remove('pulse');
-        statusTxt.innerText = "A atualizar...";
-
+        
         try {
             const [confRes, dashRes] = await Promise.all([
                 fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'getConfigs'}) }).then(r => r.json()),
@@ -194,16 +30,19 @@
             ]);
 
             LOTACAO_MAX = parseInt(confRes.LOTACAO_MAXIMA) || 30;
+            
+            // LÓGICA DO SOM: Toca se o número de reservas na lista geral aumentou
+            if (ultimaContagem > 0 && dashRes.listaGeral.length > ultimaContagem) {
+                somDing.play().catch(e => console.log("Som bloqueado pelo browser"));
+            }
+            ultimaContagem = dashRes.listaGeral.length;
+
             renderizarOcupacao(dashRes.resumoCompleto);
             renderizarProximasReservas(dashRes.listaGeral);
-
-            // Verificar se há reservas para AGORA (Próximas 2 horas)
             verificarAlertas(dashRes.listaGeral);
             
-            statusTxt.innerText = "Sincronizado: " + new Date().toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
-
+            statusTxt.innerText = "Sincronizado: " + new Date().toLocaleTimeString('pt-PT');
         } catch (error) {
-            console.error(error);
             statusTxt.innerText = "Erro na ligação";
         }
     }
@@ -224,64 +63,44 @@
 
     function barra(pax, label) {
         const perc = Math.min((pax/LOTACAO_MAX)*100, 100);
-        let cor = 'color-low';
-        if(perc >= 100) cor = 'color-full'; else if(perc >= 80) cor = 'color-high'; else if(perc >= 50) cor = 'color-mid';
-        return `
-            <div class="periodo-row">
-                <span style="width:55px">${label}</span>
+        let cor = (perc >= 100) ? 'color-full' : (perc >= 80) ? 'color-high' : (perc >= 50) ? 'color-mid' : 'color-low';
+        return `<div class="periodo-row"><span>${label}</span>
                 <div class="barra-progresso"><div class="barra-fill ${cor}" style="width:${perc}%"></div></div>
-                <span style="width:45px; text-align:right"><strong>${pax}</strong>/${LOTACAO_MAX}</span>
-            </div>`;
+                <span><strong>${pax}</strong>/${LOTACAO_MAX}</span></div>`;
     }
 
     function renderizarProximasReservas(lista) {
         const tbody = document.querySelector('#tabelaProximas tbody');
-        if (!lista || lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px;">Sem reservas futuras.</td></tr>';
+        // Filtra para remover qualquer entrada inválida do ano 1899
+        const listaLimpa = lista.filter(r => !r.data.includes("1899"));
+        
+        if (listaLimpa.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Sem reservas.</td></tr>';
             return;
         }
 
-        lista.sort((a,b) => (a.data + a.hora).localeCompare(b.data + b.hora));
-
-        tbody.innerHTML = lista.map(r => `
+        tbody.innerHTML = listaLimpa.map(r => `
             <tr>
                 <td><span class="date-text">${formatarData(r.data)}</span><br><strong>${r.hora}</strong></td>
                 <td><strong>${r.nome}</strong><br><small>${r.tel}</small></td>
                 <td><span class="pax-badge">${r.pax} pax</span></td>
-                <td style="color:#666; font-size:12px;">${r.obs || "---"}</td>
+                <td style="font-size:12px; color:#666">${r.obs || ""}</td>
                 <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}', '${r.data}')">Remover</button></td>
             </tr>
         `).join('');
     }
 
-    function verificarAlertas(lista) {
-        const agora = new Date();
-        const dataHoje = agora.toISOString().split('T')[0];
-        const horaAtual = agora.getHours() + ":" + agora.getMinutes();
-        
-        // Se houver reserva hoje num intervalo de 3 horas a partir de agora
-        const temReservaProxima = lista.some(r => r.data === dataHoje);
-        
-        if (temReservaProxima) {
-            document.getElementById('statusDot').classList.add('pulse');
-        }
-    }
-
-    // FORMATAÇÃO DE DATA SEM ERRO DE FUSO
     function formatarData(dataStr) {
-        if (!dataStr) return "---";
-        const partes = dataStr.split('T')[0].split('-'); 
-        if (partes.length !== 3) return dataStr;
+        if (!dataStr || dataStr.includes("1899")) return "---";
+        const partes = dataStr.split('-'); 
         const dObj = new Date(partes[0], partes[1] - 1, partes[2]);
         const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         return `${dias[dObj.getDay()]}, ${partes[2]}/${partes[1]}`;
     }
 
-    async function cancelarReserva(nome, hora, data) {
-        if (confirm(`Remover permanentemente a reserva de ${nome}?`)) {
-            await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome, hora, data}) });
-            carregarDados();
-        }
+    function verificarAlertas(lista) {
+        const hoje = new Date().toISOString().split('T')[0];
+        if (lista.some(r => r.data === hoje)) document.getElementById('statusDot').classList.add('pulse');
     }
 
     document.getElementById('formManual').onsubmit = async function(e) {
@@ -290,14 +109,21 @@
         btn.disabled = true; btn.innerText = "A gravar...";
         const dados = Object.fromEntries(new FormData(this));
         dados.action = "reservaManual";
-        await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
-        this.reset();
-        document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
-        await carregarDados();
+        
+        try {
+            await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
+            this.reset();
+            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+            await carregarDados();
+        } catch(e) { alert("Erro ao gravar."); }
+        
         btn.disabled = false; btn.innerText = "Confirmar Reserva";
     };
 
-    document.getElementById('passInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') verificarPass(); });
+    async function cancelarReserva(n, h, d) {
+        if (confirm(`Remover reserva de ${n}?`)) {
+            await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify({action: 'cancelarAdmin', nome: n, hora: h, data: d}) });
+            carregarDados();
+        }
+    }
 </script>
-</body>
-</html>
