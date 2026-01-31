@@ -2,67 +2,162 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Privada | Don Tasko</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #1c1e21; }
         
         /* Estilos do Login */
         #login-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; 
         }
-        .login-box { background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .login-box input { padding: 10px; width: 200px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; display: block; }
-        .login-box button { background: #27ae60; color: white; border: none; padding: 10px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .login-box { 
+            background: white; padding: 40px; border-radius: 16px; 
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-width: 320px;
+        }
+        .login-box h2 { margin-bottom: 25px; color: #2c3e50; font-size: 24px; }
+        .login-box input { 
+            padding: 12px 15px; width: 100%; border: 2px solid #ddd; 
+            border-radius: 8px; margin-bottom: 15px; font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        .login-box input:focus { outline: none; border-color: #27ae60; }
+        .login-box button { 
+            background: #27ae60; color: white; border: none; 
+            padding: 12px 30px; border-radius: 8px; cursor: pointer; 
+            font-weight: bold; font-size: 15px; width: 100%;
+            transition: background 0.3s;
+        }
+        .login-box button:hover { background: #229954; }
+        .erro { color: #e74c3c; margin-top: 15px; font-size: 14px; display: none; }
 
         /* Dashboard */
-        #dashboard-content { display: none; max-width: 1200px; margin: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 18px; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; }
+        #dashboard-content { display: none; padding: 20px; max-width: 1400px; margin: auto; }
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 30px; flex-wrap: wrap; gap: 15px;
+            background: white; padding: 20px; border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .header h1 { font-size: 24px; color: #2c3e50; }
+        
+        .container { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
+        .card { 
+            background: white; border-radius: 12px; padding: 25px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; 
+        }
+        .card h2 { 
+            margin: 0 0 20px 0; font-size: 18px; color: #2c3e50; 
+            border-bottom: 2px solid #f0f2f5; padding-bottom: 12px; 
+        }
         
         /* Aviso de Ocupação */
         .aviso-ocupacao { 
-            background: #fff3cd; 
-            border-left: 5px solid #ffc107; 
-            padding: 12px; 
-            border-radius: 6px; 
-            margin-bottom: 15px;
-            font-size: 14px;
+            background: #e8f5e9; border-left: 5px solid #27ae60; 
+            padding: 15px; border-radius: 8px; margin-bottom: 20px;
+            font-size: 15px; font-weight: 500;
         }
-        .aviso-ocupacao.critico { background: #ffebee; border-left-color: #e74c3c; }
+        .aviso-ocupacao.warning { background: #fff3cd; border-left-color: #ffc107; color: #856404; }
+        .aviso-ocupacao.critico { background: #ffebee; border-left-color: #e74c3c; color: #721c24; }
         
         /* Formulário Manual */
         .form-manual input, .form-manual select, .form-manual textarea { 
-            width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;
-            font-size: 14px;
+            width: 100%; padding: 10px 12px; margin-bottom: 12px; 
+            border: 2px solid #e0e0e0; border-radius: 8px; 
+            font-size: 14px; font-family: inherit;
+            transition: border-color 0.3s;
         }
-        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .form-manual input:focus, .form-manual select:focus, .form-manual textarea:focus {
+            outline: none; border-color: #27ae60;
+        }
+        .form-row { display: flex; gap: 12px; }
+        .form-row > * { flex: 1; }
+        .form-row .pax-input { flex: 0.4; }
+        
+        .btn-add { 
+            background: #27ae60; color: white; border: none; 
+            width: 100%; padding: 12px; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; font-size: 15px;
+            transition: background 0.3s;
+        }
+        .btn-add:hover { background: #229954; }
         .btn-add:disabled { background: #95a5a6; cursor: not-allowed; }
 
-        /* Lista 15 dias com scroll */
-        .scroll-resumo { max-height: 400px; overflow-y: auto; padding-right: 5px; }
-        .dia-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f2f5; border-radius: 6px; margin-bottom: 2px; }
+        /* Lista 15 dias */
+        .scroll-resumo { max-height: 450px; overflow-y: auto; padding-right: 8px; }
+        .scroll-resumo::-webkit-scrollbar { width: 6px; }
+        .scroll-resumo::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .scroll-resumo::-webkit-scrollbar-thumb { background: #bbb; border-radius: 10px; }
+        .scroll-resumo::-webkit-scrollbar-thumb:hover { background: #999; }
         
-        /* Cores de Alerta */
+        .dia-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 15px; border-radius: 8px; margin-bottom: 8px;
+            transition: transform 0.2s;
+        }
+        .dia-item:hover { transform: translateX(3px); }
+        
         .status-ok { background: #e8f5e9; border-left: 5px solid #2ecc71; }
         .status-warning { background: #fff3e0; border-left: 5px solid #f39c12; }
         .status-full { background: #ffebee; border-left: 5px solid #e74c3c; }
 
-        .pax-badge { background: #2c3e50; color: white; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-size: 13px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
-        tr:hover { background: #f9f9f9; }
-        .obs-text { font-size: 11px; color: #606770; font-style: italic; }
-        .btn-refresh { background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-cancel { background: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .dia-data { font-weight: 600; color: #2c3e50; }
+        .pax-badge { 
+            background: #2c3e50; color: white; 
+            padding: 4px 12px; border-radius: 20px; 
+            font-weight: bold; font-size: 13px; 
+        }
+        
+        /* Tabela */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; padding: 14px 12px; background: #f8f9fa; 
+            border-bottom: 2px solid #dee2e6; font-size: 13px; 
+            font-weight: 600; color: #495057; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td { padding: 14px 12px; border-bottom: 1px solid #f0f2f5; font-size: 14px; }
+        tr:hover { background: #f8f9fa; }
+        .obs-text { font-size: 12px; color: #606770; font-style: italic; }
+        
+        .btn-refresh { 
+            background: #27ae60; color: white; border: none; 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
+            font-weight: bold; display: flex; align-items: center; gap: 8px;
+            transition: background 0.3s;
+        }
+        .btn-refresh:hover { background: #229954; }
+        
+        .btn-cancel { 
+            background: #e74c3c; color: white; border: none; 
+            padding: 6px 12px; border-radius: 6px; cursor: pointer; 
+            font-size: 12px; font-weight: 500;
+            transition: background 0.3s;
+        }
         .btn-cancel:hover { background: #c0392b; }
 
-        @media (max-width: 768px) {
+        /* Loading e estados vazios */
+        .loading { text-align: center; padding: 40px; color: #95a5a6; }
+        .empty-state { text-align: center; padding: 40px; color: #95a5a6; }
+        
+        /* Debug console */
+        #debug-console { 
+            position: fixed; bottom: 10px; right: 10px; 
+            background: rgba(0,0,0,0.9); color: #0f0; 
+            padding: 10px; border-radius: 8px; max-width: 400px;
+            max-height: 200px; overflow-y: auto; font-family: monospace;
+            font-size: 11px; display: none; z-index: 999;
+        }
+
+        @media (max-width: 968px) {
             .container { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: flex-start; }
+            .header { flex-direction: column; align-items: stretch; }
+            #dashboard-content { padding: 10px; }
         }
     </style>
 </head>
@@ -70,214 +165,417 @@
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 style="border:none">Acesso Restrito</h2>
-        <input type="password" id="passInput" placeholder="Palavra-passe">
+        <h2>🔒 Acesso Restrito</h2>
+        <input type="password" id="passInput" placeholder="Digite a palavra-passe" autocomplete="current-password">
         <button onclick="verificarPass()">Entrar</button>
-        <p id="erro" style="color:red; display:none; margin-top:10px;">Incorreto!</p>
+        <p class="erro" id="erro">Palavra-passe incorreta!</p>
     </div>
 </div>
 
 <div id="dashboard-content">
     <div class="header">
         <h1>📊 Painel Administrativo Don Tasko</h1>
-        <button class="btn-refresh" onclick="carregarDados()">🔄 Atualizar Dados</button>
+        <button class="btn-refresh" onclick="carregarDados()">
+            <span>🔄</span>
+            <span>Atualizar Dados</span>
+        </button>
     </div>
 
     <div class="container">
+        <!-- Coluna Esquerda -->
         <div>
+            <!-- Formulário de Reserva Manual -->
             <div class="card">
-                <h2>➕ Reserva Manual</h2>
+                <h2>➕ Criar Reserva Manual</h2>
                 <form id="formManual" class="form-manual">
                     <input type="text" name="nome" placeholder="Nome do Cliente" required>
                     <input type="email" name="email" placeholder="Email" required>
-                    <input type="tel" name="telemovel" placeholder="Telemóvel" required>
-                    <div style="display:flex; gap:10px;">
-                        <input type="date" name="data" id="dataManual" required style="flex:1;">
-                        <input type="number" name="pax" value="2" min="1" max="20" required style="flex:0.5;">
+                    <input type="tel" name="telemovel" placeholder="Telemóvel" required pattern="[0-9]{9,15}">
+                    
+                    <div class="form-row">
+                        <input type="date" name="data" id="dataManual" required>
+                        <input type="number" name="pax" value="2" min="1" max="20" required class="pax-input" title="Número de pessoas">
                     </div>
+                    
                     <select name="horario" id="horarioManual" required>
-                        <option value="">Seleciona horário</option>
+                        <option value="">Selecione o horário</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
                         <option value="19:30">19:30</option>
                         <option value="20:00">20:00</option>
+                        <option value="20:30">20:30</option>
                     </select>
-                    <textarea name="obs" rows="2" placeholder="Notas internas (Mesa, Alergias...)"></textarea>
+                    
+                    <textarea name="obs" rows="3" placeholder="Notas internas (ex: Mesa específica, alergias, ocasião especial...)"></textarea>
+                    
                     <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
                 </form>
             </div>
 
+            <!-- Resumo 15 Dias -->
             <div class="card">
-                <h2>📅 Ocupação (15 Dias)</h2>
-                <div id="resumo15" class="scroll-resumo">Carregando ocupação...</div>
+                <h2>📅 Ocupação (Próximos 15 Dias)</h2>
+                <div id="resumo15" class="scroll-resumo">
+                    <div class="loading">Carregando dados...</div>
+                </div>
             </div>
         </div>
 
+        <!-- Coluna Direita - Tabela de Hoje -->
         <div class="card">
             <div id="avisoOcupacao"></div>
             <h2>Reservas para Hoje</h2>
-            <table id="tabelaHoje">
-                <thead>
-                    <tr>
-                        <th>Hora</th>
-                        <th>Cliente</th>
-                        <th>Pax</th>
-                        <th>Notas</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="5">A carregar reservas...</td></tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table id="tabelaHoje">
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>Cliente</th>
+                            <th>Pax</th>
+                            <th>Notas</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5" class="loading">A carregar reservas...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxhW1AamciHP_dHfSvGlByIYCiMa1eoEubpchoylfpxAuUIg9uU6_IC-nyyB0n-NKPJ/exec";
-    const PASS_CORRETA = "Tasko123"; // TODO: Será movido para backend
-    let LOTACAO_MAX = 30;
+<!-- Console de Debug (visível apenas se ativado) -->
+<div id="debug-console"></div>
 
+<script>
+    // ========== CONFIGURAÇÕES ==========
+    const CONFIG = {
+        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbxhW1AamciHP_dHfSvGlByIYCiMa1eoEubpchoylfpxAuUIg9uU6_IC-nyyB0n-NKPJ/exec",
+        PASS_CORRETA: "Tasko123", // TODO: Mover para backend
+        LOTACAO_MAX: 30,
+        DEBUG_MODE: true // Ativa logs detalhados
+    };
+
+    // ========== FUNÇÕES AUXILIARES ==========
+    function debugLog(message, data = null) {
+        if (!CONFIG.DEBUG_MODE) return;
+        
+        const timestamp = new Date().toLocaleTimeString('pt-PT');
+        console.log(`[${timestamp}] ${message}`, data || '');
+        
+        const debugDiv = document.getElementById('debug-console');
+        debugDiv.style.display = 'block';
+        debugDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+        debugDiv.scrollTop = debugDiv.scrollHeight;
+    }
+
+    function formatarData(dataISO) {
+        const [ano, mes, dia] = dataISO.split('-');
+        const data = new Date(ano, mes - 1, dia);
+        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        return `${dia}/${mes} (${diasSemana[data.getDay()]})`;
+    }
+
+    function mostrarErro(mensagem) {
+        alert('❌ ' + mensagem);
+        debugLog('ERRO: ' + mensagem);
+    }
+
+    // ========== LOGIN ==========
     function verificarPass() {
-        if (document.getElementById('passInput').value === PASS_CORRETA) {
+        const senha = document.getElementById('passInput').value;
+        
+        if (senha === CONFIG.PASS_CORRETA) {
+            debugLog('Login bem-sucedido');
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
-            document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+            
+            // Define data de hoje no formulário
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataManual').value = hoje;
+            
+            // Carrega dados
             carregarDados();
         } else {
+            debugLog('Tentativa de login falhou');
             document.getElementById('erro').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('erro').style.display = 'none';
+            }, 3000);
         }
     }
 
+    // Event listener para Enter no campo de senha
     document.getElementById('passInput').addEventListener('keypress', (e) => { 
         if (e.key === 'Enter') verificarPass(); 
     });
 
+    // ========== CARREGAR DADOS DO BACKEND ==========
     async function carregarDados() {
+        debugLog('Iniciando carregamento de dados...');
+        
         try {
-            const response = await fetch(URL_SCRIPT, { 
-                method: 'POST', 
-                body: JSON.stringify({action: 'getDashboard'}) 
+            // 1. Buscar configurações
+            debugLog('Buscando configurações...');
+            const configResponse = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                mode: 'no-cors', // Importante para Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'getConfigs' })
             });
-            const data = await response.json();
             
-            // Carregar configs para obter LOTACAO_MAX
-            const configResponse = await fetch(URL_SCRIPT, { 
-                method: 'POST', 
-                body: JSON.stringify({action: 'getConfigs'}) 
+            // Nota: com mode: 'no-cors', não conseguimos ler a resposta diretamente
+            // Precisamos usar um approach diferente
+            debugLog('Resposta de configs recebida (opaque)', configResponse);
+
+            // 2. Buscar dados do dashboard
+            debugLog('Buscando dados do dashboard...');
+            const dashResponse = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: 'getDashboard' })
             });
-            const configs = await configResponse.json();
-            LOTACAO_MAX = parseInt(configs.LOTACAO_MAXIMA) || 30;
             
-            // Renderizar aviso de ocupação para hoje
-            const hoje = new Date().toISOString().split('T')[0];
-            const ocupacaoHoje = data.resumo[hoje] || 0;
-            const vagasRestantes = LOTACAO_MAX - ocupacaoHoje;
-            const percentualOcupacao = (ocupacaoHoje / LOTACAO_MAX) * 100;
+            debugLog('Status da resposta:', dashResponse.status);
             
-            let classeCritica = '';
-            let mensagem = `<strong>Hoje:</strong> ${ocupacaoHoje} pax (${vagasRestantes} vagas)`;
-            
-            if (percentualOcupacao >= 100) {
-                classeCritica = 'critico';
-                mensagem += ' ⚠️ LOTAÇÃO COMPLETA';
-            } else if (percentualOcupacao >= 80) {
-                classeCritica = 'critico';
-                mensagem += ' ⚠️ Quase cheio';
-            } else if (percentualOcupacao >= 60) {
-                mensagem += ' - Ocupação elevada';
+            if (!dashResponse.ok) {
+                throw new Error(`Erro HTTP: ${dashResponse.status}`);
             }
             
-            const avisoDiv = document.getElementById('avisoOcupacao');
-            avisoDiv.className = 'aviso-ocupacao ' + classeCritica;
-            avisoDiv.innerHTML = mensagem;
+            const data = await dashResponse.json();
+            debugLog('Dados recebidos:', data);
             
-            // Renderizar Resumo 15 dias
-            const resumoDiv = document.getElementById('resumo15');
-            resumoDiv.innerHTML = Object.keys(data.resumo).sort().map(d => {
-                const total = data.resumo[d];
-                let classe = "status-ok";
-                if (total >= LOTACAO_MAX) classe = "status-full";
-                else if (total >= Math.floor(LOTACAO_MAX * 0.75)) classe = "status-warning";
-                
-                return `<div class="dia-item ${classe}">
-                    <span>${d}</span>
-                    <span class="pax-badge">${total} pax</span>
-                </div>`;
-            }).join('');
-
-            // Renderizar Tabela Hoje
-            const tbody = document.querySelector('#tabelaHoje tbody');
-            tbody.innerHTML = data.listaHoje.length > 0 ? data.listaHoje.map(r => `
-                <tr>
-                    <td><strong>${r.hora}</strong></td>
-                    <td>${r.nome}<br><small>${r.tel}</small></td>
-                    <td><span class="pax-badge">${r.pax}</span></td>
-                    <td class="obs-text">${r.obs || "---"}</td>
-                    <td><button class="btn-cancel" onclick="cancelarReserva('${r.nome}', '${r.hora}')">Cancelar</button></td>
-                </tr>
-            `).join('') : "<tr><td colspan='5' style='text-align:center;'>Sem reservas para hoje.</td></tr>";
+            // Atualizar lotação máxima se disponível
+            if (data.configs && data.configs.LOTACAO_MAXIMA) {
+                CONFIG.LOTACAO_MAX = parseInt(data.configs.LOTACAO_MAXIMA);
+            }
+            
+            // Renderizar componentes
+            renderizarAvisoOcupacao(data.resumo || {});
+            renderizarResumo15Dias(data.resumo || {});
+            renderizarTabelaHoje(data.listaHoje || []);
+            
+            debugLog('Dados carregados com sucesso!');
+            
         } catch (error) {
-            console.error("Erro ao carregar dados:", error);
-            document.getElementById('avisoOcupacao').innerHTML = '<div class="aviso-ocupacao critico">Erro ao carregar dados. Tenta novamente.</div>';
+            debugLog('ERRO ao carregar dados:', error);
+            console.error('Erro detalhado:', error);
+            
+            // Mostrar mensagem de erro amigável
+            document.getElementById('avisoOcupacao').innerHTML = `
+                <div class="aviso-ocupacao critico">
+                    ⚠️ Erro ao carregar dados do servidor.<br>
+                    <small>Verifique a conexão ou tente novamente.</small>
+                </div>
+            `;
+            
+            document.getElementById('resumo15').innerHTML = `
+                <div class="empty-state">
+                    Não foi possível carregar os dados.<br>
+                    <button onclick="carregarDados()" style="margin-top:10px; padding:8px 16px; cursor:pointer;">
+                        Tentar Novamente
+                    </button>
+                </div>
+            `;
         }
     }
 
-    async function cancelarReserva(nome, hora) {
-        if (confirm(`Deseja mesmo cancelar a reserva de ${nome} às ${hora}?`)) {
-            try {
-                const response = await fetch(URL_SCRIPT, { 
-                    method: 'POST', 
-                    body: JSON.stringify({action: 'cancelarAdmin', nome: nome, hora: hora}) 
-                });
-                const resultado = await response.json();
+    // ========== RENDERIZAR AVISO DE OCUPAÇÃO ==========
+    function renderizarAvisoOcupacao(resumo) {
+        const hoje = new Date().toISOString().split('T')[0];
+        const ocupacaoHoje = resumo[hoje] || 0;
+        const vagasRestantes = CONFIG.LOTACAO_MAX - ocupacaoHoje;
+        const percentual = (ocupacaoHoje / CONFIG.LOTACAO_MAX) * 100;
+        
+        let classe = '';
+        let emoji = '✅';
+        let texto = `<strong>Hoje:</strong> ${ocupacaoHoje} pax reservados | ${vagasRestantes} vagas disponíveis`;
+        
+        if (percentual >= 100) {
+            classe = 'critico';
+            emoji = '🔴';
+            texto += ' - <strong>LOTAÇÃO COMPLETA</strong>';
+        } else if (percentual >= 80) {
+            classe = 'critico';
+            emoji = '⚠️';
+            texto += ' - <strong>Quase lotado!</strong>';
+        } else if (percentual >= 60) {
+            classe = 'warning';
+            emoji = '⚡';
+            texto += ' - Ocupação elevada';
+        }
+        
+        const avisoDiv = document.getElementById('avisoOcupacao');
+        avisoDiv.className = 'aviso-ocupacao ' + classe;
+        avisoDiv.innerHTML = `${emoji} ${texto}`;
+    }
+
+    // ========== RENDERIZAR RESUMO 15 DIAS ==========
+    function renderizarResumo15Dias(resumo) {
+        const resumoDiv = document.getElementById('resumo15');
+        
+        if (Object.keys(resumo).length === 0) {
+            resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada nos próximos 15 dias.</div>';
+            return;
+        }
+        
+        const hoje = new Date().toISOString().split('T')[0];
+        
+        resumoDiv.innerHTML = Object.keys(resumo)
+            .sort()
+            .map(dataISO => {
+                const total = resumo[dataISO];
+                const percentual = (total / CONFIG.LOTACAO_MAX) * 100;
                 
-                if (resultado.status === 'success') {
-                    alert(resultado.message);
-                    carregarDados();
-                } else {
-                    alert("Erro: " + resultado.message);
-                }
-            } catch (error) {
-                alert("Erro ao processar cancelamento: " + error);
+                let classe = "status-ok";
+                if (percentual >= 100) classe = "status-full";
+                else if (percentual >= 75) classe = "status-warning";
+                
+                const isHoje = dataISO === hoje;
+                const dataFormatada = formatarData(dataISO);
+                
+                return `
+                    <div class="dia-item ${classe}">
+                        <span class="dia-data">
+                            ${dataFormatada}
+                            ${isHoje ? '<strong>(HOJE)</strong>' : ''}
+                        </span>
+                        <span class="pax-badge">${total} pax</span>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    // ========== RENDERIZAR TABELA DE HOJE ==========
+    function renderizarTabelaHoje(lista) {
+        const tbody = document.querySelector('#tabelaHoje tbody');
+        
+        if (lista.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        📭 Sem reservas para hoje
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = lista
+            .sort((a, b) => a.hora.localeCompare(b.hora))
+            .map(reserva => `
+                <tr>
+                    <td><strong>${reserva.hora}</strong></td>
+                    <td>
+                        <strong>${reserva.nome}</strong><br>
+                        <small style="color:#606770;">${reserva.email || ''}</small><br>
+                        <small style="color:#606770;">📞 ${reserva.tel}</small>
+                    </td>
+                    <td><span class="pax-badge">${reserva.pax}</span></td>
+                    <td class="obs-text">${reserva.obs || '—'}</td>
+                    <td>
+                        <button class="btn-cancel" onclick="cancelarReserva('${reserva.nome}', '${reserva.hora}', '${reserva.email || ''}')">
+                            Cancelar
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+    }
+
+    // ========== CANCELAR RESERVA ==========
+    async function cancelarReserva(nome, hora, email) {
+        if (!confirm(`Confirma o cancelamento da reserva?\n\nCliente: ${nome}\nHorário: ${hora}`)) {
+            return;
+        }
+        
+        debugLog(`Cancelando reserva: ${nome} às ${hora}`);
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'cancelarAdmin',
+                    nome: nome,
+                    hora: hora,
+                    email: email
+                })
+            });
+            
+            const resultado = await response.json();
+            debugLog('Resposta do cancelamento:', resultado);
+            
+            if (resultado.status === 'success') {
+                alert('✅ ' + resultado.message);
+                carregarDados(); // Recarrega a tabela
+            } else {
+                mostrarErro(resultado.message || 'Erro desconhecido ao cancelar');
             }
+        } catch (error) {
+            debugLog('Erro ao cancelar:', error);
+            mostrarErro('Não foi possível processar o cancelamento. Tente novamente.');
         }
     }
 
+    // ========== SUBMETER RESERVA MANUAL ==========
     document.getElementById('formManual').onsubmit = async function(e) {
         e.preventDefault();
+        
         const btn = document.getElementById('btnManual');
         btn.disabled = true;
         btn.innerText = "Gravando...";
+        
+        debugLog('Submetendo reserva manual...');
 
         try {
-            const dados = Object.fromEntries(new FormData(this).entries());
+            const formData = new FormData(this);
+            const dados = Object.fromEntries(formData.entries());
             dados.action = "reservaManual";
-
-            const response = await fetch(URL_SCRIPT, { 
-                method: 'POST', 
-                body: JSON.stringify(dados) 
-            });
-            const res = await response.json();
             
-            if (res.status === 'success') {
-                alert("Reserva manual gravada com sucesso!");
+            debugLog('Dados do formulário:', dados);
+
+            const response = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            });
+            
+            const resultado = await response.json();
+            debugLog('Resposta da reserva:', resultado);
+            
+            if (resultado.status === 'success') {
+                alert('✅ Reserva criada com sucesso!');
                 this.reset();
-                document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+                
+                // Reseta data para hoje
+                const hoje = new Date().toISOString().split('T')[0];
+                document.getElementById('dataManual').value = hoje;
+                
+                // Recarrega dados
                 carregarDados();
             } else {
-                alert("Erro: " + res.message);
+                mostrarErro(resultado.message || 'Erro ao criar reserva');
             }
         } catch (error) {
-            alert("Erro ao gravar reserva: " + error);
+            debugLog('Erro ao gravar reserva:', error);
+            mostrarErro('Não foi possível gravar a reserva. Verifique os dados e tente novamente.');
         } finally {
             btn.disabled = false;
             btn.innerText = "Gravar Reserva";
         }
     };
+
+    // ========== INICIALIZAÇÃO ==========
+    debugLog('Dashboard carregado e pronto');
 </script>
 </body>
 </html>
-
-
