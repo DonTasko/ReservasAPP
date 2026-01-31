@@ -3,228 +3,536 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Privada | Don Tasko</title>
+    <title>Dashboard Admin | Don Tasko</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #1c1e21; }
         
-        /* Estilos do Login */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* LOGIN SCREEN */
         #login-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            display: flex; justify-content: center; align-items: center; z-index: 1000; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 1000; 
         }
+        
         .login-box { 
-            background: white; padding: 40px; border-radius: 16px; 
-            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            min-width: 320px;
+            background: white; padding: 50px 40px; border-radius: 20px; 
+            box-shadow: 0 20px 80px rgba(0,0,0,0.4); min-width: 350px;
+            animation: slideIn 0.4s ease;
         }
-        .login-box h2 { margin-bottom: 25px; color: #2c3e50; font-size: 24px; }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .login-box h2 { 
+            margin-bottom: 30px; color: #2c3e50; font-size: 28px; 
+            text-align: center; font-weight: 700;
+        }
+        
         .login-box input { 
-            padding: 12px 15px; width: 100%; border: 2px solid #ddd; 
-            border-radius: 8px; margin-bottom: 15px; font-size: 15px;
-            transition: border-color 0.3s;
+            padding: 14px 16px; width: 100%; border: 2px solid #e0e0e0; 
+            border-radius: 10px; margin-bottom: 20px; font-size: 15px;
+            transition: all 0.3s; font-family: inherit;
         }
-        .login-box input:focus { outline: none; border-color: #27ae60; }
+        
+        .login-box input:focus { 
+            outline: none; border-color: #667eea; 
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
         .login-box button { 
-            background: #27ae60; color: white; border: none; 
-            padding: 12px 30px; border-radius: 8px; cursor: pointer; 
-            font-weight: bold; font-size: 15px; width: 100%;
-            transition: background 0.3s;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 14px; border-radius: 10px; 
+            cursor: pointer; font-weight: 600; font-size: 16px; width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .login-box button:hover { background: #229954; }
-        .erro { color: #e74c3c; margin-top: 15px; font-size: 14px; display: none; }
+        
+        .login-box button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .login-box button:active { transform: translateY(0); }
+        
+        .erro { 
+            color: #e74c3c; margin-top: 15px; font-size: 14px; 
+            text-align: center; display: none; font-weight: 500;
+        }
 
-        /* Dashboard */
-        #dashboard-content { display: none; padding: 20px; max-width: 1400px; margin: auto; }
+        /* DASHBOARD */
+        #dashboard-content { display: none; max-width: 1600px; margin: 0 auto; }
+        
         .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 30px; flex-wrap: wrap; gap: 15px;
-            background: white; padding: 20px; border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: white; padding: 25px 30px; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px;
         }
-        .header h1 { font-size: 24px; color: #2c3e50; }
         
-        .container { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
+        .header h1 { 
+            font-size: 26px; color: #2c3e50; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        .header-actions {
+            display: flex; gap: 12px; flex-wrap: wrap;
+        }
+        
+        .btn-refresh, .btn-logout { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 12px 24px; 
+            border-radius: 10px; cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; font-size: 14px;
+            transition: all 0.3s; border: 2px solid transparent;
+        }
+        
+        .btn-logout {
+            background: white;
+            color: #667eea;
+            border-color: #667eea;
+        }
+        
+        .btn-refresh:hover, .btn-logout:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .container { 
+            display: grid; 
+            grid-template-columns: 420px 1fr; 
+            gap: 25px; 
+        }
+        
         .card { 
-            background: white; border-radius: 12px; padding: 25px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; 
+            background: white; border-radius: 16px; padding: 30px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
         .card h2 { 
-            margin: 0 0 20px 0; font-size: 18px; color: #2c3e50; 
-            border-bottom: 2px solid #f0f2f5; padding-bottom: 12px; 
+            margin: 0 0 25px 0; font-size: 20px; color: #2c3e50; 
+            border-bottom: 3px solid #f0f2f5; padding-bottom: 15px; 
+            font-weight: 700; display: flex; align-items: center; gap: 10px;
         }
         
-        /* Aviso de Ocupação */
+        /* AVISO DE OCUPAÇÃO */
         .aviso-ocupacao { 
-            background: #e8f5e9; border-left: 5px solid #27ae60; 
-            padding: 15px; border-radius: 8px; margin-bottom: 20px;
-            font-size: 15px; font-weight: 500;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #27ae60; padding: 18px 20px; 
+            border-radius: 12px; margin-bottom: 25px; font-size: 15px; 
+            font-weight: 600; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.1);
         }
-        .aviso-ocupacao.warning { background: #fff3cd; border-left-color: #ffc107; color: #856404; }
-        .aviso-ocupacao.critico { background: #ffebee; border-left-color: #e74c3c; color: #721c24; }
         
-        /* Formulário Manual */
+        .aviso-ocupacao.warning { 
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe9a6 100%);
+            border-left-color: #ffc107; color: #856404;
+            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.1);
+        }
+        
+        .aviso-ocupacao.critico { 
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left-color: #e74c3c; color: #721c24;
+            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.1);
+        }
+        
+        .aviso-icon {
+            font-size: 24px;
+        }
+        
+        /* FORMULÁRIO MANUAL */
         .form-manual input, .form-manual select, .form-manual textarea { 
-            width: 100%; padding: 10px 12px; margin-bottom: 12px; 
-            border: 2px solid #e0e0e0; border-radius: 8px; 
+            width: 100%; padding: 12px 14px; margin-bottom: 14px; 
+            border: 2px solid #e0e0e0; border-radius: 10px; 
             font-size: 14px; font-family: inherit;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
+        
         .form-manual input:focus, .form-manual select:focus, .form-manual textarea:focus {
-            outline: none; border-color: #27ae60;
+            outline: none; 
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+        
         .form-row { display: flex; gap: 12px; }
         .form-row > * { flex: 1; }
         .form-row .pax-input { flex: 0.4; }
         
         .btn-add { 
-            background: #27ae60; color: white; border: none; 
-            width: 100%; padding: 12px; border-radius: 8px; 
-            cursor: pointer; font-weight: bold; font-size: 15px;
-            transition: background 0.3s;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white; border: none; width: 100%; padding: 14px; 
+            border-radius: 10px; cursor: pointer; font-weight: 700; 
+            font-size: 15px; transition: all 0.3s;
         }
-        .btn-add:hover { background: #229954; }
-        .btn-add:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .btn-add:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-add:disabled { 
+            background: #95a5a6; 
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
-        /* Lista 15 dias */
-        .scroll-resumo { max-height: 450px; overflow-y: auto; padding-right: 8px; }
-        .scroll-resumo::-webkit-scrollbar { width: 6px; }
+        /* LISTA 15 DIAS */
+        .scroll-resumo { 
+            max-height: 500px; overflow-y: auto; 
+            padding-right: 10px; margin-top: 10px;
+        }
+        
+        .scroll-resumo::-webkit-scrollbar { width: 8px; }
         .scroll-resumo::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .scroll-resumo::-webkit-scrollbar-thumb { background: #bbb; border-radius: 10px; }
         .scroll-resumo::-webkit-scrollbar-thumb:hover { background: #999; }
         
         .dia-item { 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; border-radius: 8px; margin-bottom: 8px;
-            transition: transform 0.2s;
+            padding: 14px 18px; border-radius: 10px; margin-bottom: 10px;
+            transition: all 0.2s; cursor: default;
         }
-        .dia-item:hover { transform: translateX(3px); }
         
-        .status-ok { background: #e8f5e9; border-left: 5px solid #2ecc71; }
-        .status-warning { background: #fff3e0; border-left: 5px solid #f39c12; }
-        .status-full { background: #ffebee; border-left: 5px solid #e74c3c; }
+        .dia-item:hover { 
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .status-ok { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #2ecc71; 
+        }
+        
+        .status-warning { 
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe9a6 100%);
+            border-left: 5px solid #f39c12; 
+        }
+        
+        .status-full { 
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 5px solid #e74c3c; 
+        }
 
-        .dia-data { font-weight: 600; color: #2c3e50; }
+        .dia-data { 
+            font-weight: 700; color: #2c3e50; font-size: 14px;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        
+        .dia-data-principal { font-size: 15px; }
+        .dia-semana { font-size: 12px; color: #666; font-weight: 500; }
+        
         .pax-badge { 
-            background: #2c3e50; color: white; 
-            padding: 4px 12px; border-radius: 20px; 
-            font-weight: bold; font-size: 13px; 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white; padding: 6px 14px; border-radius: 20px; 
+            font-weight: 700; font-size: 13px; 
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
         }
         
-        /* Tabela */
-        .table-container { overflow-x: auto; }
+        /* TABELA */
+        .table-container { 
+            overflow-x: auto; 
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
         table { width: 100%; border-collapse: collapse; }
-        th { 
-            text-align: left; padding: 14px 12px; background: #f8f9fa; 
-            border-bottom: 2px solid #dee2e6; font-size: 13px; 
-            font-weight: 600; color: #495057; text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        td { padding: 14px 12px; border-bottom: 1px solid #f0f2f5; font-size: 14px; }
-        tr:hover { background: #f8f9fa; }
-        .obs-text { font-size: 12px; color: #606770; font-style: italic; }
         
-        .btn-refresh { 
-            background: #27ae60; color: white; border: none; 
-            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
-            font-weight: bold; display: flex; align-items: center; gap: 8px;
-            transition: background 0.3s;
+        th { 
+            text-align: left; padding: 16px 14px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid #dee2e6; font-size: 13px; 
+            font-weight: 700; color: #495057; text-transform: uppercase;
+            letter-spacing: 0.5px; position: sticky; top: 0;
         }
-        .btn-refresh:hover { background: #229954; }
+        
+        td { 
+            padding: 16px 14px; border-bottom: 1px solid #f0f2f5; 
+            font-size: 14px; 
+        }
+        
+        tr:hover td { background: #f8f9fa; }
+        tr:last-child td { border-bottom: none; }
+        
+        .cliente-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .cliente-nome { font-weight: 600; color: #2c3e50; }
+        .cliente-contato { font-size: 12px; color: #666; }
+        
+        .hora-badge {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 15px;
+        }
+        
+        .obs-text { 
+            font-size: 12px; color: #606770; 
+            font-style: italic; max-width: 200px;
+        }
         
         .btn-cancel { 
-            background: #e74c3c; color: white; border: none; 
-            padding: 6px 12px; border-radius: 6px; cursor: pointer; 
-            font-size: 12px; font-weight: 500;
-            transition: background 0.3s;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white; border: none; padding: 8px 16px; 
+            border-radius: 8px; cursor: pointer; font-size: 12px; 
+            font-weight: 600; transition: all 0.3s;
         }
-        .btn-cancel:hover { background: #c0392b; }
-
-        /* Loading e estados vazios */
-        .loading { text-align: center; padding: 40px; color: #95a5a6; }
-        .empty-state { text-align: center; padding: 40px; color: #95a5a6; }
         
-        /* Debug console */
-        #debug-console { 
-            position: fixed; bottom: 10px; right: 10px; 
-            background: rgba(0,0,0,0.9); color: #0f0; 
-            padding: 10px; border-radius: 8px; max-width: 400px;
-            max-height: 200px; overflow-y: auto; font-family: monospace;
-            font-size: 11px; display: none; z-index: 999;
+        .btn-cancel:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
         }
 
-        @media (max-width: 968px) {
+        /* ESTADOS VAZIOS E LOADING */
+        .loading, .empty-state { 
+            text-align: center; padding: 60px 20px; 
+            color: #95a5a6; font-size: 15px;
+        }
+        
+        .loading::before {
+            content: "⏳";
+            font-size: 40px;
+            display: block;
+            margin-bottom: 15px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .empty-state::before {
+            content: "📭";
+            font-size: 60px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* FILTROS */
+        .filtros {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filtro-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .filtro-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .filtro-btn.ativo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
             .container { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: stretch; }
-            #dashboard-content { padding: 10px; }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 20px; }
+            .card { padding: 20px; }
+            .btn-refresh, .btn-logout { padding: 10px 16px; font-size: 13px; }
+            th, td { padding: 12px 8px; font-size: 12px; }
+        }
+
+        /* ANIMAÇÕES SUAVES */
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
+<!-- TELA DE LOGIN -->
 <div id="login-screen">
     <div class="login-box">
-        <h2>🔒 Acesso Restrito</h2>
-        <input type="password" id="passInput" placeholder="Digite a palavra-passe" autocomplete="current-password">
-        <button onclick="verificarPass()">Entrar</button>
-        <p class="erro" id="erro">Palavra-passe incorreta!</p>
+        <h2>🔒 Acesso Admin</h2>
+        <input 
+            type="password" 
+            id="passInput" 
+            placeholder="Digite a palavra-passe" 
+            autocomplete="current-password"
+        >
+        <button onclick="verificarPass()">Entrar no Dashboard</button>
+        <p class="erro" id="erro">⚠️ Palavra-passe incorreta!</p>
     </div>
 </div>
 
+<!-- DASHBOARD PRINCIPAL -->
 <div id="dashboard-content">
-    <div class="header">
-        <h1>📊 Painel Administrativo Don Tasko</h1>
-        <button class="btn-refresh" onclick="carregarDados()">
-            <span>🔄</span>
-            <span>Atualizar Dados</span>
-        </button>
+    
+    <!-- CABEÇALHO -->
+    <div class="header fade-in">
+        <h1>
+            <span>📊</span>
+            <span>Painel Administrativo Don Tasko</span>
+        </h1>
+        <div class="header-actions">
+            <button class="btn-refresh" onclick="carregarDados()">
+                <span>🔄</span>
+                <span>Atualizar</span>
+            </button>
+            <button class="btn-logout" onclick="logout()">
+                <span>🚪</span>
+                <span>Sair</span>
+            </button>
+        </div>
     </div>
 
     <div class="container">
-        <!-- Coluna Esquerda -->
+        
+        <!-- COLUNA ESQUERDA -->
         <div>
-            <!-- Formulário de Reserva Manual -->
-            <div class="card">
-                <h2>➕ Criar Reserva Manual</h2>
+            
+            <!-- FORMULÁRIO DE RESERVA MANUAL -->
+            <div class="card fade-in">
+                <h2>
+                    <span>➕</span>
+                    <span>Criar Reserva Manual</span>
+                </h2>
                 <form id="formManual" class="form-manual">
-                    <input type="text" name="nome" placeholder="Nome do Cliente" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="tel" name="telemovel" placeholder="Telemóvel" required pattern="[0-9]{9,15}">
+                    <input 
+                        type="text" 
+                        name="nome" 
+                        placeholder="Nome do Cliente *" 
+                        required
+                        minlength="2"
+                    >
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="Email *" 
+                        required
+                    >
+                    <input 
+                        type="tel" 
+                        name="telemovel" 
+                        placeholder="Telemóvel *" 
+                        required 
+                        pattern="[0-9]{9,15}"
+                    >
                     
                     <div class="form-row">
-                        <input type="date" name="data" id="dataManual" required>
-                        <input type="number" name="pax" value="2" min="1" max="20" required class="pax-input" title="Número de pessoas">
+                        <input 
+                            type="date" 
+                            name="data" 
+                            id="dataManual" 
+                            required
+                        >
+                        <input 
+                            type="number" 
+                            name="pax" 
+                            value="2" 
+                            min="1" 
+                            max="20" 
+                            required 
+                            class="pax-input" 
+                            title="Número de pessoas"
+                        >
                     </div>
                     
                     <select name="horario" id="horarioManual" required>
-                        <option value="">Selecione o horário</option>
+                        <option value="">Selecione o horário *</option>
+                        <option value="12:00">12:00</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
+                        <option value="13:30">13:30</option>
+                        <option value="19:00">19:00</option>
                         <option value="19:30">19:30</option>
                         <option value="20:00">20:00</option>
                         <option value="20:30">20:30</option>
+                        <option value="21:00">21:00</option>
                     </select>
                     
-                    <textarea name="obs" rows="3" placeholder="Notas internas (ex: Mesa específica, alergias, ocasião especial...)"></textarea>
+                    <textarea 
+                        name="obs" 
+                        rows="3" 
+                        placeholder="Notas internas (Mesa, Alergias, Ocasião especial...)"
+                    ></textarea>
                     
-                    <button type="submit" class="btn-add" id="btnManual">Gravar Reserva</button>
+                    <button type="submit" class="btn-add" id="btnManual">
+                        💾 Gravar Reserva
+                    </button>
                 </form>
             </div>
 
-            <!-- Resumo 15 Dias -->
-            <div class="card">
-                <h2>📅 Ocupação (Próximos 15 Dias)</h2>
+            <!-- RESUMO 15 DIAS -->
+            <div class="card fade-in">
+                <h2>
+                    <span>📅</span>
+                    <span>Ocupação (Próximos 15 Dias)</span>
+                </h2>
                 <div id="resumo15" class="scroll-resumo">
                     <div class="loading">Carregando dados...</div>
                 </div>
             </div>
+            
         </div>
 
-        <!-- Coluna Direita - Tabela de Hoje -->
-        <div class="card">
+        <!-- COLUNA DIREITA - TABELA DE HOJE -->
+        <div class="card fade-in">
+            
+            <!-- AVISO DE OCUPAÇÃO -->
             <div id="avisoOcupacao"></div>
-            <h2>Reservas para Hoje</h2>
+            
+            <h2>
+                <span>🍽️</span>
+                <span>Reservas para Hoje</span>
+            </h2>
+            
+            <!-- FILTROS -->
+            <div class="filtros">
+                <button class="filtro-btn ativo" onclick="filtrarTurno('todos')">
+                    Todos
+                </button>
+                <button class="filtro-btn" onclick="filtrarTurno('almoco')">
+                    🌞 Almoço
+                </button>
+                <button class="filtro-btn" onclick="filtrarTurno('jantar')">
+                    🌙 Jantar
+                </button>
+            </div>
+            
             <div class="table-container">
                 <table id="tabelaHoje">
                     <thead>
@@ -237,49 +545,58 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="5" class="loading">A carregar reservas...</td></tr>
+                        <tr>
+                            <td colspan="5" class="loading">Carregando reservas...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
+            
         </div>
+        
     </div>
 </div>
-
-<!-- Console de Debug (visível apenas se ativado) -->
-<div id="debug-console"></div>
 
 <script>
     // ========== CONFIGURAÇÕES ==========
     const CONFIG = {
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbxhW1AamciHP_dHfSvGlByIYCiMa1eoEubpchoylfpxAuUIg9uU6_IC-nyyB0n-NKPJ/exec",
-        PASS_CORRETA: "Tasko123", // TODO: Mover para backend
+        // IMPORTANTE: Substitui este URL pelo teu URL de deployment do Google Apps Script
+        URL_SCRIPT: "https://script.google.com/macros/s/SEU_URL_AQUI/exec",
+        PASS_CORRETA: "Tasko123", // Troca por uma senha forte
         LOTACAO_MAX: 30,
-        DEBUG_MODE: true // Ativa logs detalhados
+        DEBUG_MODE: false // true para ver logs detalhados
     };
+
+    let reservasHoje = []; // Cache das reservas de hoje
+    let turnoFiltro = 'todos'; // Filtro atual
 
     // ========== FUNÇÕES AUXILIARES ==========
     function debugLog(message, data = null) {
         if (!CONFIG.DEBUG_MODE) return;
-        
         const timestamp = new Date().toLocaleTimeString('pt-PT');
         console.log(`[${timestamp}] ${message}`, data || '');
-        
-        const debugDiv = document.getElementById('debug-console');
-        debugDiv.style.display = 'block';
-        debugDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
-        debugDiv.scrollTop = debugDiv.scrollHeight;
     }
 
     function formatarData(dataISO) {
         const [ano, mes, dia] = dataISO.split('-');
         const data = new Date(ano, mes - 1, dia);
         const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        return `${dia}/${mes} (${diasSemana[data.getDay()]})`;
+        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        
+        return {
+            principal: `${dia} ${meses[data.getMonth()]}`,
+            semana: diasSemana[data.getDay()]
+        };
     }
 
     function mostrarErro(mensagem) {
         alert('❌ ' + mensagem);
         debugLog('ERRO: ' + mensagem);
+    }
+
+    function mostrarSucesso(mensagem) {
+        alert('✅ ' + mensagem);
+        debugLog('SUCESSO: ' + mensagem);
     }
 
     // ========== LOGIN ==========
@@ -295,14 +612,34 @@
             const hoje = new Date().toISOString().split('T')[0];
             document.getElementById('dataManual').value = hoje;
             
+            // Define data mínima como hoje
+            document.getElementById('dataManual').min = hoje;
+            
             // Carrega dados
             carregarDados();
+            carregarConfigs();
         } else {
             debugLog('Tentativa de login falhou');
-            document.getElementById('erro').style.display = 'block';
+            const erroEl = document.getElementById('erro');
+            erroEl.style.display = 'block';
+            
+            // Shake animation
+            document.querySelector('.login-box').style.animation = 'none';
             setTimeout(() => {
-                document.getElementById('erro').style.display = 'none';
+                document.querySelector('.login-box').style.animation = 'slideIn 0.4s ease';
+            }, 10);
+            
+            setTimeout(() => {
+                erroEl.style.display = 'none';
             }, 3000);
+        }
+    }
+
+    function logout() {
+        if (confirm('Tem certeza que deseja sair?')) {
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('passInput').value = '';
         }
     }
 
@@ -311,54 +648,51 @@
         if (e.key === 'Enter') verificarPass(); 
     });
 
-    // ========== CARREGAR DADOS DO BACKEND ==========
+    // ========== CARREGAR CONFIGURAÇÕES ==========
+    async function carregarConfigs() {
+        debugLog('Carregando configurações...');
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                body: JSON.stringify({ action: 'getConfigs' })
+            });
+            
+            const configs = await response.json();
+            debugLog('Configs recebidas:', configs);
+            
+            if (configs.LOTACAO_MAXIMA) {
+                CONFIG.LOTACAO_MAX = parseInt(configs.LOTACAO_MAXIMA);
+            }
+        } catch (error) {
+            debugLog('Erro ao carregar configs:', error);
+        }
+    }
+
+    // ========== CARREGAR DADOS DO DASHBOARD ==========
     async function carregarDados() {
         debugLog('Iniciando carregamento de dados...');
         
         try {
-            // 1. Buscar configurações
-            debugLog('Buscando configurações...');
-            const configResponse = await fetch(CONFIG.URL_SCRIPT, { 
+            const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                mode: 'no-cors', // Importante para Google Apps Script
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ action: 'getConfigs' })
-            });
-            
-            // Nota: com mode: 'no-cors', não conseguimos ler a resposta diretamente
-            // Precisamos usar um approach diferente
-            debugLog('Resposta de configs recebida (opaque)', configResponse);
-
-            // 2. Buscar dados do dashboard
-            debugLog('Buscando dados do dashboard...');
-            const dashResponse = await fetch(CONFIG.URL_SCRIPT, { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify({ action: 'getDashboard' })
             });
             
-            debugLog('Status da resposta:', dashResponse.status);
-            
-            if (!dashResponse.ok) {
-                throw new Error(`Erro HTTP: ${dashResponse.status}`);
+            if (!response.ok) {
+                throw new Error(`Erro HTTP: ${response.status}`);
             }
             
-            const data = await dashResponse.json();
+            const data = await response.json();
             debugLog('Dados recebidos:', data);
             
-            // Atualizar lotação máxima se disponível
-            if (data.configs && data.configs.LOTACAO_MAXIMA) {
-                CONFIG.LOTACAO_MAX = parseInt(data.configs.LOTACAO_MAXIMA);
-            }
+            // Guardar reservas em cache
+            reservasHoje = data.listaHoje || [];
             
             // Renderizar componentes
             renderizarAvisoOcupacao(data.resumo || {});
             renderizarResumo15Dias(data.resumo || {});
-            renderizarTabelaHoje(data.listaHoje || []);
+            renderizarTabelaHoje();
             
             debugLog('Dados carregados com sucesso!');
             
@@ -366,18 +700,20 @@
             debugLog('ERRO ao carregar dados:', error);
             console.error('Erro detalhado:', error);
             
-            // Mostrar mensagem de erro amigável
             document.getElementById('avisoOcupacao').innerHTML = `
                 <div class="aviso-ocupacao critico">
-                    ⚠️ Erro ao carregar dados do servidor.<br>
-                    <small>Verifique a conexão ou tente novamente.</small>
+                    <span class="aviso-icon">⚠️</span>
+                    <div>
+                        <strong>Erro ao carregar dados do servidor.</strong><br>
+                        <small>Verifica a conexão ou tenta novamente.</small>
+                    </div>
                 </div>
             `;
             
             document.getElementById('resumo15').innerHTML = `
                 <div class="empty-state">
                     Não foi possível carregar os dados.<br>
-                    <button onclick="carregarDados()" style="margin-top:10px; padding:8px 16px; cursor:pointer;">
+                    <button onclick="carregarDados()" class="btn-add" style="margin-top:15px; width:auto; padding:10px 20px;">
                         Tentar Novamente
                     </button>
                 </div>
@@ -394,25 +730,29 @@
         
         let classe = '';
         let emoji = '✅';
-        let texto = `<strong>Hoje:</strong> ${ocupacaoHoje} pax reservados | ${vagasRestantes} vagas disponíveis`;
+        let texto = `<strong>Hoje:</strong> ${ocupacaoHoje} pax reservados • ${vagasRestantes} vagas disponíveis`;
         
         if (percentual >= 100) {
             classe = 'critico';
             emoji = '🔴';
-            texto += ' - <strong>LOTAÇÃO COMPLETA</strong>';
+            texto += ' • <strong>LOTAÇÃO COMPLETA</strong>';
         } else if (percentual >= 80) {
             classe = 'critico';
             emoji = '⚠️';
-            texto += ' - <strong>Quase lotado!</strong>';
+            texto += ' • <strong>Quase lotado!</strong>';
         } else if (percentual >= 60) {
             classe = 'warning';
             emoji = '⚡';
-            texto += ' - Ocupação elevada';
+            texto += ' • Ocupação elevada';
         }
         
         const avisoDiv = document.getElementById('avisoOcupacao');
-        avisoDiv.className = 'aviso-ocupacao ' + classe;
-        avisoDiv.innerHTML = `${emoji} ${texto}`;
+        avisoDiv.innerHTML = `
+            <div class="aviso-ocupacao ${classe}">
+                <span class="aviso-icon">${emoji}</span>
+                <div>${texto}</div>
+            </div>
+        `;
     }
 
     // ========== RENDERIZAR RESUMO 15 DIAS ==========
@@ -420,7 +760,7 @@
         const resumoDiv = document.getElementById('resumo15');
         
         if (Object.keys(resumo).length === 0) {
-            resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada nos próximos 15 dias.</div>';
+            resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada.</div>';
             return;
         }
         
@@ -428,6 +768,7 @@
         
         resumoDiv.innerHTML = Object.keys(resumo)
             .sort()
+            .slice(0, 15) // Limitar a 15 dias
             .map(dataISO => {
                 const total = resumo[dataISO];
                 const percentual = (total / CONFIG.LOTACAO_MAX) * 100;
@@ -441,10 +782,13 @@
                 
                 return `
                     <div class="dia-item ${classe}">
-                        <span class="dia-data">
-                            ${dataFormatada}
-                            ${isHoje ? '<strong>(HOJE)</strong>' : ''}
-                        </span>
+                        <div class="dia-data">
+                            <span class="dia-data-principal">
+                                ${dataFormatada.principal}
+                                ${isHoje ? '<strong style="color:#667eea;">(HOJE)</strong>' : ''}
+                            </span>
+                            <span class="dia-semana">${dataFormatada.semana}</span>
+                        </div>
                         <span class="pax-badge">${total} pax</span>
                     </div>
                 `;
@@ -452,44 +796,70 @@
     }
 
     // ========== RENDERIZAR TABELA DE HOJE ==========
-    function renderizarTabelaHoje(lista) {
+    function renderizarTabelaHoje() {
         const tbody = document.querySelector('#tabelaHoje tbody');
         
-        if (lista.length === 0) {
+        // Filtrar por turno
+        let listaFiltrada = reservasHoje;
+        if (turnoFiltro === 'almoco') {
+            listaFiltrada = reservasHoje.filter(r => r.hora < '16:00');
+        } else if (turnoFiltro === 'jantar') {
+            listaFiltrada = reservasHoje.filter(r => r.hora >= '16:00');
+        }
+        
+        if (listaFiltrada.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="5" class="empty-state">
-                        📭 Sem reservas para hoje
+                        ${turnoFiltro === 'todos' ? '📭 Sem reservas para hoje' : 'Sem reservas neste turno'}
                     </td>
                 </tr>
             `;
             return;
         }
         
-        tbody.innerHTML = lista
+        tbody.innerHTML = listaFiltrada
             .sort((a, b) => a.hora.localeCompare(b.hora))
             .map(reserva => `
                 <tr>
-                    <td><strong>${reserva.hora}</strong></td>
+                    <td><span class="hora-badge">${reserva.hora}</span></td>
                     <td>
-                        <strong>${reserva.nome}</strong><br>
-                        <small style="color:#606770;">${reserva.email || ''}</small><br>
-                        <small style="color:#606770;">📞 ${reserva.tel}</small>
+                        <div class="cliente-info">
+                            <span class="cliente-nome">${reserva.nome}</span>
+                            ${reserva.tel ? `<span class="cliente-contato">📞 ${reserva.tel}</span>` : ''}
+                        </div>
                     </td>
                     <td><span class="pax-badge">${reserva.pax}</span></td>
                     <td class="obs-text">${reserva.obs || '—'}</td>
                     <td>
-                        <button class="btn-cancel" onclick="cancelarReserva('${reserva.nome}', '${reserva.hora}', '${reserva.email || ''}')">
-                            Cancelar
+                        <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome)}', '${reserva.hora}')">
+                            🗑️ Cancelar
                         </button>
                     </td>
                 </tr>
             `).join('');
     }
 
+    function escaparTexto(texto) {
+        return texto.replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    // ========== FILTRAR POR TURNO ==========
+    function filtrarTurno(turno) {
+        turnoFiltro = turno;
+        
+        // Atualizar botões ativos
+        document.querySelectorAll('.filtro-btn').forEach(btn => {
+            btn.classList.remove('ativo');
+        });
+        event.target.classList.add('ativo');
+        
+        renderizarTabelaHoje();
+    }
+
     // ========== CANCELAR RESERVA ==========
-    async function cancelarReserva(nome, hora, email) {
-        if (!confirm(`Confirma o cancelamento da reserva?\n\nCliente: ${nome}\nHorário: ${hora}`)) {
+    async function cancelarReserva(nome, hora) {
+        if (!confirm(`Confirma o cancelamento da reserva?\n\n👤 Cliente: ${nome}\n🕐 Horário: ${hora}`)) {
             return;
         }
         
@@ -498,14 +868,10 @@
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify({
                     action: 'cancelarAdmin',
                     nome: nome,
-                    hora: hora,
-                    email: email
+                    hora: hora
                 })
             });
             
@@ -513,14 +879,14 @@
             debugLog('Resposta do cancelamento:', resultado);
             
             if (resultado.status === 'success') {
-                alert('✅ ' + resultado.message);
-                carregarDados(); // Recarrega a tabela
+                mostrarSucesso(resultado.message);
+                carregarDados(); // Recarrega tudo
             } else {
                 mostrarErro(resultado.message || 'Erro desconhecido ao cancelar');
             }
         } catch (error) {
             debugLog('Erro ao cancelar:', error);
-            mostrarErro('Não foi possível processar o cancelamento. Tente novamente.');
+            mostrarErro('Não foi possível processar o cancelamento. Tenta novamente.');
         }
     }
 
@@ -529,8 +895,9 @@
         e.preventDefault();
         
         const btn = document.getElementById('btnManual');
+        const textoOriginal = btn.innerText;
         btn.disabled = true;
-        btn.innerText = "Gravando...";
+        btn.innerText = "⏳ Gravando...";
         
         debugLog('Submetendo reserva manual...');
 
@@ -543,9 +910,6 @@
 
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(dados)
             });
             
@@ -553,7 +917,7 @@
             debugLog('Resposta da reserva:', resultado);
             
             if (resultado.status === 'success') {
-                alert('✅ Reserva criada com sucesso!');
+                mostrarSucesso('Reserva criada com sucesso! ID: ' + resultado.id);
                 this.reset();
                 
                 // Reseta data para hoje
@@ -561,22 +925,25 @@
                 document.getElementById('dataManual').value = hoje;
                 
                 // Recarrega dados
-                carregarDados();
+                await carregarDados();
             } else {
                 mostrarErro(resultado.message || 'Erro ao criar reserva');
             }
         } catch (error) {
             debugLog('Erro ao gravar reserva:', error);
-            mostrarErro('Não foi possível gravar a reserva. Verifique os dados e tente novamente.');
+            mostrarErro('Não foi possível gravar a reserva. Verifica os dados e tenta novamente.');
         } finally {
             btn.disabled = false;
-            btn.innerText = "Gravar Reserva";
+            btn.innerText = textoOriginal;
         }
     };
 
-    // ========== INICIALIZAÇÃO ==========
-    debugLog('Dashboard carregado e pronto');
+    // ========== AUTO-REFRESH (opcional) ==========
+    // Descomenta para ativar refresh automático a cada 2 minutos
+    // setInterval(carregarDados, 120000);
+
+    debugLog('Dashboard admin carregado e pronto');
 </script>
+
 </body>
 </html>
-
