@@ -438,7 +438,7 @@
                 avisoDisp.classList.remove('indisponivel');
                 selectHorario.style.borderColor = '';
                 
-                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
                 if (parseInt(campoPax.value) <= max) {
                     btnEnviar.disabled = false;
                 }
@@ -462,7 +462,7 @@
         e.preventDefault();
         
         // Validação final
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
         if (parseInt(campoPax.value) > max) {
             mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
             return;
@@ -510,6 +510,7 @@
 </script>
 </body>
 </html>
+
 
 
 
