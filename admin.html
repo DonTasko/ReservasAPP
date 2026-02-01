@@ -137,7 +137,30 @@
             font-weight: 600; display: flex; align-items: center; gap: 12px;
             box-shadow: 0 2px 10px rgba(39, 174, 96, 0.1);
         }
-        
+        /* Botão Chegou */
+.btn-chegou {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.btn-chegou:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+}
+
+.acoes-reserva {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
         .aviso-ocupacao.warning { 
             background: linear-gradient(135deg, #fff3cd 0%, #ffe9a6 100%);
             border-left-color: #ffc107; color: #856404;
@@ -561,7 +584,7 @@
     // ========== CONFIGURAÇÕES ==========
     const CONFIG = {
         // IMPORTANTE: Substitui este URL pelo teu URL de deployment do Google Apps Script
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbzi_T3sW7f3uRQUynzqquXity7emJQzYmbFSWn_o5yqMGDN-5wqpVsYVnkvKWUKVexF/exec",
+        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exechttps://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exec",
         PASS_CORRETA: "Tasko123", // Troca por uma senha forte
         LOTACAO_MAX: 30,
         DEBUG_MODE: false // true para ver logs detalhados
@@ -947,6 +970,7 @@
 
 </body>
 </html>
+
 
 
 
