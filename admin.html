@@ -133,34 +133,11 @@
         .aviso-ocupacao { 
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             border-left: 5px solid #27ae60; padding: 18px 20px; 
-            border-radius: 12px; margin-bottom: 25px; font-size: 15px; 
+            border-radius: 12px; font-size: 15px; 
             font-weight: 600; display: flex; align-items: center; gap: 12px;
             box-shadow: 0 2px 10px rgba(39, 174, 96, 0.1);
         }
-        /* Botão Chegou */
-.btn-chegou {
-    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    transition: all 0.3s;
-    white-space: nowrap;
-}
-
-.btn-chegou:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
-}
-
-.acoes-reserva {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-}
+        
         .aviso-ocupacao.warning { 
             background: linear-gradient(135deg, #fff3cd 0%, #ffe9a6 100%);
             border-left-color: #ffc107; color: #856404;
@@ -175,6 +152,31 @@
         
         .aviso-icon {
             font-size: 24px;
+        }
+
+        /* Botão Chegou */
+        .btn-chegou {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-chegou:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .acoes-reserva {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
         }
         
         /* FORMULÁRIO MANUAL */
@@ -583,15 +585,15 @@
 <script>
     // ========== CONFIGURAÇÕES ==========
     const CONFIG = {
-        // IMPORTANTE: Substitui este URL pelo teu URL de deployment do Google Apps Script
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exechttps://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exec",
-        PASS_CORRETA: "Tasko123", // Troca por uma senha forte
+        // ⚠️ IMPORTANTE: Substitui pelo teu URL do Google Apps Script
+        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exec",
+        PASS_CORRETA: "Tasko123",
         LOTACAO_MAX: 30,
-        DEBUG_MODE: false // true para ver logs detalhados
+        DEBUG_MODE: false
     };
 
-    let reservasHoje = []; // Cache das reservas de hoje
-    let turnoFiltro = 'todos'; // Filtro atual
+    let reservasHoje = [];
+    let turnoFiltro = 'todos';
 
     // ========== FUNÇÕES AUXILIARES ==========
     function debugLog(message, data = null) {
@@ -631,14 +633,10 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
             
-            // Define data de hoje no formulário
             const hoje = new Date().toISOString().split('T')[0];
             document.getElementById('dataManual').value = hoje;
-            
-            // Define data mínima como hoje
             document.getElementById('dataManual').min = hoje;
             
-            // Carrega dados
             carregarDados();
             carregarConfigs();
         } else {
@@ -646,7 +644,6 @@
             const erroEl = document.getElementById('erro');
             erroEl.style.display = 'block';
             
-            // Shake animation
             document.querySelector('.login-box').style.animation = 'none';
             setTimeout(() => {
                 document.querySelector('.login-box').style.animation = 'slideIn 0.4s ease';
@@ -666,7 +663,6 @@
         }
     }
 
-    // Event listener para Enter no campo de senha
     document.getElementById('passInput').addEventListener('keypress', (e) => { 
         if (e.key === 'Enter') verificarPass(); 
     });
@@ -692,7 +688,7 @@
         }
     }
 
-    // ========== CARREGAR DADOS DO DASHBOARD ==========
+    // ========== CARREGAR DADOS (COMPATÍVEL COM AMBOS FORMATOS) ==========
     async function carregarDados() {
         debugLog('Iniciando carregamento de dados...');
         
@@ -709,12 +705,53 @@
             const data = await response.json();
             debugLog('Dados recebidos:', data);
             
-            // Guardar reservas em cache
             reservasHoje = data.listaHoje || [];
             
-            // Renderizar componentes
-            renderizarAvisoOcupacao(data.resumo || {});
-            renderizarResumo15Dias(data.resumo || {});
+            // ✨ COMPATIBILIDADE: Detectar formato
+            let resumoAlmoco = {};
+            let resumoJantar = {};
+            
+            if (data.resumoAlmoco && data.resumoJantar) {
+                // Formato NOVO
+                resumoAlmoco = data.resumoAlmoco;
+                resumoJantar = data.resumoJantar;
+                debugLog('Formato NOVO detectado');
+            } else if (data.resumo) {
+                // Formato ANTIGO - Dividir por turnos baseado nas reservas
+                debugLog('Formato ANTIGO detectado, convertendo...');
+                
+                // Processar reservas para separar por turno
+                const hoje = new Date().toISOString().split('T')[0];
+                const reservasAgrupadas = {};
+                
+                reservasHoje.forEach(r => {
+                    const data = hoje; // Assumir que são de hoje
+                    const turno = r.hora < '16:00' ? 'almoco' : 'jantar';
+                    
+                    if (!reservasAgrupadas[data]) {
+                        reservasAgrupadas[data] = { almoco: 0, jantar: 0 };
+                    }
+                    reservasAgrupadas[data][turno] += r.pax;
+                });
+                
+                // Para datas no resumo antigo, dividir meio a meio
+                Object.keys(data.resumo).forEach(dataKey => {
+                    const total = data.resumo[dataKey];
+                    if (!reservasAgrupadas[dataKey]) {
+                        resumoAlmoco[dataKey] = Math.floor(total / 2);
+                        resumoJantar[dataKey] = Math.ceil(total / 2);
+                    }
+                });
+                
+                // Adicionar dados processados das reservas
+                Object.keys(reservasAgrupadas).forEach(dataKey => {
+                    resumoAlmoco[dataKey] = reservasAgrupadas[dataKey].almoco;
+                    resumoJantar[dataKey] = reservasAgrupadas[dataKey].jantar;
+                });
+            }
+            
+            renderizarAvisoOcupacao(resumoAlmoco, resumoJantar);
+            renderizarResumo15Dias(resumoAlmoco, resumoJantar);
             renderizarTabelaHoje();
             
             debugLog('Dados carregados com sucesso!');
@@ -745,74 +782,122 @@
     }
 
     // ========== RENDERIZAR AVISO DE OCUPAÇÃO ==========
-    function renderizarAvisoOcupacao(resumo) {
+    function renderizarAvisoOcupacao(resumoAlmoco, resumoJantar) {
         const hoje = new Date().toISOString().split('T')[0];
-        const ocupacaoHoje = resumo[hoje] || 0;
-        const vagasRestantes = CONFIG.LOTACAO_MAX - ocupacaoHoje;
-        const percentual = (ocupacaoHoje / CONFIG.LOTACAO_MAX) * 100;
+        const almocoHoje = resumoAlmoco[hoje] || 0;
+        const jantarHoje = resumoJantar[hoje] || 0;
         
-        let classe = '';
-        let emoji = '✅';
-        let texto = `<strong>Hoje:</strong> ${ocupacaoHoje} pax reservados • ${vagasRestantes} vagas disponíveis`;
+        let avisoHTML = '<div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap;">';
         
-        if (percentual >= 100) {
-            classe = 'critico';
-            emoji = '🔴';
-            texto += ' • <strong>LOTAÇÃO COMPLETA</strong>';
-        } else if (percentual >= 80) {
-            classe = 'critico';
-            emoji = '⚠️';
-            texto += ' • <strong>Quase lotado!</strong>';
-        } else if (percentual >= 60) {
-            classe = 'warning';
-            emoji = '⚡';
-            texto += ' • Ocupação elevada';
+        // Almoço
+        const percAlmoco = (almocoHoje / CONFIG.LOTACAO_MAX) * 100;
+        let classeAlmoco = '';
+        let emojiAlmoco = '✅';
+        
+        if (percAlmoco >= 100) {
+            classeAlmoco = 'critico';
+            emojiAlmoco = '🔴';
+        } else if (percAlmoco >= 80) {
+            classeAlmoco = 'critico';
+            emojiAlmoco = '⚠️';
+        } else if (percAlmoco >= 60) {
+            classeAlmoco = 'warning';
+            emojiAlmoco = '⚡';
         }
         
-        const avisoDiv = document.getElementById('avisoOcupacao');
-        avisoDiv.innerHTML = `
-            <div class="aviso-ocupacao ${classe}">
-                <span class="aviso-icon">${emoji}</span>
-                <div>${texto}</div>
+        avisoHTML += `
+            <div class="aviso-ocupacao ${classeAlmoco}" style="flex:1; min-width:280px;">
+                <span class="aviso-icon">${emojiAlmoco}</span>
+                <div>
+                    <strong>🌞 Almoço:</strong> ${almocoHoje} pax • ${CONFIG.LOTACAO_MAX - almocoHoje} vagas
+                </div>
             </div>
         `;
+        
+        // Jantar
+        const percJantar = (jantarHoje / CONFIG.LOTACAO_MAX) * 100;
+        let classeJantar = '';
+        let emojiJantar = '✅';
+        
+        if (percJantar >= 100) {
+            classeJantar = 'critico';
+            emojiJantar = '🔴';
+        } else if (percJantar >= 80) {
+            classeJantar = 'critico';
+            emojiJantar = '⚠️';
+        } else if (percJantar >= 60) {
+            classeJantar = 'warning';
+            emojiJantar = '⚡';
+        }
+        
+        avisoHTML += `
+            <div class="aviso-ocupacao ${classeJantar}" style="flex:1; min-width:280px;">
+                <span class="aviso-icon">${emojiJantar}</span>
+                <div>
+                    <strong>🌙 Jantar:</strong> ${jantarHoje} pax • ${CONFIG.LOTACAO_MAX - jantarHoje} vagas
+                </div>
+            </div>
+        `;
+        
+        avisoHTML += '</div>';
+        
+        document.getElementById('avisoOcupacao').innerHTML = avisoHTML;
     }
 
     // ========== RENDERIZAR RESUMO 15 DIAS ==========
-    function renderizarResumo15Dias(resumo) {
+    function renderizarResumo15Dias(resumoAlmoco, resumoJantar) {
         const resumoDiv = document.getElementById('resumo15');
         
-        if (Object.keys(resumo).length === 0) {
+        const todasDatas = new Set([
+            ...Object.keys(resumoAlmoco),
+            ...Object.keys(resumoJantar)
+        ]);
+        
+        if (todasDatas.size === 0) {
             resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada.</div>';
             return;
         }
         
         const hoje = new Date().toISOString().split('T')[0];
         
-        resumoDiv.innerHTML = Object.keys(resumo)
+        resumoDiv.innerHTML = Array.from(todasDatas)
             .sort()
-            .slice(0, 15) // Limitar a 15 dias
+            .slice(0, 15)
             .map(dataISO => {
-                const total = resumo[dataISO];
-                const percentual = (total / CONFIG.LOTACAO_MAX) * 100;
-                
-                let classe = "status-ok";
-                if (percentual >= 100) classe = "status-full";
-                else if (percentual >= 75) classe = "status-warning";
+                const almoco = resumoAlmoco[dataISO] || 0;
+                const jantar = resumoJantar[dataISO] || 0;
                 
                 const isHoje = dataISO === hoje;
                 const dataFormatada = formatarData(dataISO);
                 
+                const percAlmoco = (almoco / CONFIG.LOTACAO_MAX) * 100;
+                const percJantar = (jantar / CONFIG.LOTACAO_MAX) * 100;
+                
+                let classeAlmoco = "status-ok";
+                if (percAlmoco >= 100) classeAlmoco = "status-full";
+                else if (percAlmoco >= 75) classeAlmoco = "status-warning";
+                
+                let classeJantar = "status-ok";
+                if (percJantar >= 100) classeJantar = "status-full";
+                else if (percJantar >= 75) classeJantar = "status-warning";
+                
                 return `
-                    <div class="dia-item ${classe}">
-                        <div class="dia-data">
-                            <span class="dia-data-principal">
-                                ${dataFormatada.principal}
-                                ${isHoje ? '<strong style="color:#667eea;">(HOJE)</strong>' : ''}
-                            </span>
-                            <span class="dia-semana">${dataFormatada.semana}</span>
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-weight: 700; margin-bottom: 8px; color: #2c3e50; font-size: 14px;">
+                            <span class="dia-data-principal">${dataFormatada.principal}</span>
+                            ${isHoje ? ' <strong style="color:#667eea;">(HOJE)</strong>' : ''}
+                            <span class="dia-semana"> - ${dataFormatada.semana}</span>
                         </div>
-                        <span class="pax-badge">${total} pax</span>
+                        <div style="display: flex; gap: 8px;">
+                            <div class="dia-item ${classeAlmoco}" style="flex: 1; padding: 10px 12px;">
+                                <span style="font-size: 11px; color: #666;">🌞 Almoço</span>
+                                <span class="pax-badge" style="font-size: 12px;">${almoco}</span>
+                            </div>
+                            <div class="dia-item ${classeJantar}" style="flex: 1; padding: 10px 12px;">
+                                <span style="font-size: 11px; color: #666;">🌙 Jantar</span>
+                                <span class="pax-badge" style="font-size: 12px;">${jantar}</span>
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -822,12 +907,11 @@
     function renderizarTabelaHoje() {
         const tbody = document.querySelector('#tabelaHoje tbody');
         
-        // Filtrar por turno
         let listaFiltrada = reservasHoje;
         if (turnoFiltro === 'almoco') {
-            listaFiltrada = reservasHoje.filter(r => r.hora < '16:00');
+            listaFiltrada = reservasHoje.filter(r => r.turno === 'Almoço' || r.hora < '16:00');
         } else if (turnoFiltro === 'jantar') {
-            listaFiltrada = reservasHoje.filter(r => r.hora >= '16:00');
+            listaFiltrada = reservasHoje.filter(r => r.turno === 'Jantar' || r.hora >= '16:00');
         }
         
         if (listaFiltrada.length === 0) {
@@ -855,9 +939,18 @@
                     <td><span class="pax-badge">${reserva.pax}</span></td>
                     <td class="obs-text">${reserva.obs || '—'}</td>
                     <td>
-                        <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome)}', '${reserva.hora}')">
-                            🗑️ Cancelar
-                        </button>
+                        <div class="acoes-reserva">
+                            ${reserva.status === 'Confirmada' ? `
+                                <button class="btn-chegou" onclick="marcarChegada('${reserva.id}')" title="Marcar como chegou">
+                                    ✅
+                                </button>
+                            ` : reserva.status === 'Chegou' ? `
+                                <span style="color:#27ae60; font-weight:700; font-size:11px; padding:6px;">✓ Chegou</span>
+                            ` : ''}
+                            <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome)}', '${reserva.hora}')">
+                                🗑️
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -871,13 +964,44 @@
     function filtrarTurno(turno) {
         turnoFiltro = turno;
         
-        // Atualizar botões ativos
         document.querySelectorAll('.filtro-btn').forEach(btn => {
             btn.classList.remove('ativo');
         });
         event.target.classList.add('ativo');
         
         renderizarTabelaHoje();
+    }
+
+    // ========== MARCAR CHEGADA ==========
+    async function marcarChegada(id) {
+        if (!confirm('Confirma que o cliente chegou ao restaurante?')) {
+            return;
+        }
+        
+        debugLog(`Marcando chegada: ${id}`);
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'marcarChegada',
+                    id: id
+                })
+            });
+            
+            const resultado = await response.json();
+            debugLog('Resposta da chegada:', resultado);
+            
+            if (resultado.status === 'success') {
+                mostrarSucesso(resultado.message);
+                carregarDados();
+            } else {
+                mostrarErro(resultado.message || 'Erro ao marcar chegada');
+            }
+        } catch (error) {
+            debugLog('Erro ao marcar chegada:', error);
+            mostrarErro('Não foi possível marcar a chegada. Tenta novamente.');
+        }
     }
 
     // ========== CANCELAR RESERVA ==========
@@ -903,7 +1027,7 @@
             
             if (resultado.status === 'success') {
                 mostrarSucesso(resultado.message);
-                carregarDados(); // Recarrega tudo
+                carregarDados();
             } else {
                 mostrarErro(resultado.message || 'Erro desconhecido ao cancelar');
             }
@@ -943,11 +1067,9 @@
                 mostrarSucesso('Reserva criada com sucesso! ID: ' + resultado.id);
                 this.reset();
                 
-                // Reseta data para hoje
                 const hoje = new Date().toISOString().split('T')[0];
                 document.getElementById('dataManual').value = hoje;
                 
-                // Recarrega dados
                 await carregarDados();
             } else {
                 mostrarErro(resultado.message || 'Erro ao criar reserva');
@@ -961,20 +1083,8 @@
         }
     };
 
-    // ========== AUTO-REFRESH (opcional) ==========
-    // Descomenta para ativar refresh automático a cada 2 minutos
-    // setInterval(carregarDados, 120000);
-
     debugLog('Dashboard admin carregado e pronto');
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
