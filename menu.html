@@ -3,187 +3,388 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Cardápio Don Tasko</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #121212;
-  --card: #1e1e1e;
-  --text: #f5f5f5;
-  --muted: #bdbdbd;
-  --accent: #d4af37;
+  --primary: #1a1a1a;
+  --accent: #d4a574;
+  --light: #f5f5f0;
+  --secondary: #5a4a3a;
+  --card: #2a2a2a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  font-family: system-ui, Arial;
-  background: var(--bg);
-  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  background: var(--primary);
+  color: var(--light);
+  min-height: 100vh;
 }
 
-/* Centro do menu */
-.wrapper {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-/* Cabeçalho */
+/* Header */
 header {
-  padding: 16px;
+  position: sticky;
+  top: 0;
+  background: var(--primary);
+  border-bottom: 1px solid var(--accent);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #2a2a2a;
 }
 
-header h1 {
-  font-size: 1.3rem;
-  margin: 0;
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--light);
+  letter-spacing: 2px;
 }
 
-.lang button {
-  background: none;
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+.lang-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-buttons button {
+  background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent);
-  margin-left: 6px;
-  padding: 4px 8px;
+  padding: 0.4rem 0.8rem;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Categorias */
+.lang-buttons button:hover {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.lang-buttons button.active {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+/* Main Content */
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 3px;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+/* Categories */
 .category {
-  padding: 12px 16px;
+  margin-bottom: 3rem;
 }
 
 .category h2 {
-  margin: 18px 0 10px;
-  border-bottom: 1px solid #2a2a2a;
-  padding-bottom: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid var(--accent);
   cursor: pointer;
+  transition: color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Itens */
+.category h2:hover {
+  color: var(--accent);
+}
+
+.category h2::after {
+  content: '▼';
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.category h2.collapsed::after {
+  transform: rotate(-90deg);
+}
+
+/* Items */
 .items {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.items.hidden {
   display: none;
 }
 
 .item {
   background: var(--card);
   border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 165, 116, 0.2);
+  border-color: var(--accent);
 }
 
 .item-top {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  column-gap: 12px;
+  display: flex;
+  justify-content: space-between;
   align-items: start;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .item-name {
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
 }
 
 .price {
-  font-weight: bold;
+  font-weight: 600;
   color: var(--accent);
   white-space: nowrap;
+  font-size: 1.1rem;
 }
 
 .desc {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin-top: 6px;
-  line-height: 1.3;
+  font-size: 0.95rem;
+  color: #bdbdbd;
+  line-height: 1.6;
 }
 
 /* Mobile */
-@media (max-width: 480px) {
-  .item-top {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
   }
-  .price {
-    margin-top: 6px;
-    font-size: 0.95rem;
+
+  .nav-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .item-top {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 </style>
 </head>
-
 <body>
-
-<header class="wrapper">
-  <h1>🍽️ Cardápio</h1>
-  <div class="lang">
-    <button onclick="setLang('PT')">PT</button>
-    <button onclick="setLang('EN')">EN</button>
-    <button onclick="setLang('FR')">FR</button>
+<header>
+  <div class="header-content">
+    <div class="logo">Don Tasko</div>
+    <div class="nav-links">
+      <a href="don-tasko.html">Início</a>
+      <a href="reservas.html">Reservas</a>
+      <div class="lang-buttons">
+        <button onclick="setLang('PT')" class="active" id="btn-PT">PT</button>
+        <button onclick="setLang('EN')" id="btn-EN">EN</button>
+        <button onclick="setLang('FR')" id="btn-FR">FR</button>
+      </div>
+    </div>
   </div>
 </header>
 
 <div class="wrapper">
-  <div id="menu"></div>
+  <h1 class="page-title">Nosso Menu</h1>
+  <p class="page-subtitle">Sabores Autênticos</p>
+  
+  <div id="menu" class="loading">Carregando menu...</div>
 </div>
 
 <script>
-let LANG = 'PT';
+// CONFIGURAÇÃO - SUBSTITUA ESTES VALORES
+const SHEET_ID = 'SEU_SHEET_ID_AQUI'; // ID da sua Google Sheet
+const API_KEY = 'SUA_API_KEY_AQUI'; // Sua API Key do Google
+const SHEET_NAME = 'Cardapio'; // Nome da aba da planilha
 
-function setLang(l) {
-  LANG = l;
-  render(window.MENU);
+let LANG = 'PT';
+let MENU_DATA = null;
+
+function setLang(lang) {
+  LANG = lang;
+  
+  // Atualizar botões ativos
+  document.querySelectorAll('.lang-buttons button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.getElementById(`btn-${lang}`).classList.add('active');
+  
+  // Re-renderizar menu
+  if (MENU_DATA) {
+    renderMenu(MENU_DATA);
+  }
 }
 
-google.script.run.withSuccessHandler(menu => {
-  window.MENU = menu;
-  render(menu);
-}).getMenu();
+async function loadMenu() {
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (!data.values) {
+      throw new Error('Nenhum dado encontrado na planilha');
+    }
+    
+    // Processar dados da planilha
+    const headers = data.values[0];
+    const rows = data.values.slice(1);
+    
+    // Organizar por categoria
+    const menu = {};
+    
+    rows.forEach(row => {
+      const item = {};
+      headers.forEach((header, index) => {
+        item[header] = row[index] || '';
+      });
+      
+      // Pular linhas vazias
+      if (!item.Categoria || !item.Nome) return;
+      
+      if (!menu[item.Categoria]) {
+        menu[item.Categoria] = [];
+      }
+      
+      // Converter preço para número
+      item.Preço = parseFloat(item.Preço) || 0;
+      
+      menu[item.Categoria].push(item);
+    });
+    
+    MENU_DATA = menu;
+    renderMenu(menu);
+    
+  } catch (error) {
+    console.error('Erro ao carregar menu:', error);
+    document.getElementById('menu').innerHTML = `
+      <div style="text-align: center; color: #ff6b6b; padding: 3rem;">
+        <h3>Erro ao carregar o menu</h3>
+        <p>Por favor, verifique a configuração do Google Sheets.</p>
+        <p style="font-size: 0.9rem; margin-top: 1rem;">Erro: ${error.message}</p>
+      </div>
+    `;
+  }
+}
 
-function render(menu) {
+function renderMenu(menu) {
   const container = document.getElementById('menu');
   container.innerHTML = '';
-
-  Object.keys(menu).forEach(cat => {
+  container.className = '';
+  
+  Object.keys(menu).forEach(categoria => {
     const section = document.createElement('div');
     section.className = 'category';
-
+    
     const h2 = document.createElement('h2');
-    h2.textContent = cat;
+    h2.textContent = categoria;
     section.appendChild(h2);
-
+    
     const items = document.createElement('div');
     items.className = 'items';
-
+    
+    // Toggle categoria
     h2.onclick = () => {
-      items.style.display = items.style.display === 'block' ? 'none' : 'block';
+      items.classList.toggle('hidden');
+      h2.classList.toggle('collapsed');
     };
-
-    menu[cat].forEach(i => {
-      const desc =
-        LANG === 'PT' ? i.PT :
-        LANG === 'EN' ? (i.EN || i.PT) :
-        (i.FR || i.PT);
-
+    
+    menu[categoria].forEach(item => {
+      // Selecionar descrição baseada no idioma
+      let desc = item.PT || '';
+      if (LANG === 'EN') desc = item.EN || item.PT || '';
+      if (LANG === 'FR') desc = item.FR || item.PT || '';
+      
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
         <div class="item-top">
-          <div class="item-name">${i.Nome}</div>
-          <div class="price">${i.Preço.toFixed(2)} €</div>
+          <div class="item-name">${item.Nome}</div>
+          <div class="price">${item.Preço.toFixed(2)} €</div>
         </div>
-        <div class="desc">${desc}</div>
+        ${desc ? `<div class="desc">${desc}</div>` : ''}
       `;
       items.appendChild(div);
     });
-
+    
     section.appendChild(items);
     container.appendChild(section);
   });
 }
-</script>
 
+// Carregar menu quando a página carregar
+loadMenu();
+</script>
 </body>
 </html>
