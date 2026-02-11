@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Cardápio Don Tasko</title>
+
+<style>
+:root {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #f5f5f5;
+  --muted: #bdbdbd;
+  --accent: #d4af37;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Centro do menu */
+.wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho */
+header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+header h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.lang button {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  margin-left: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Categorias */
+.category {
+  padding: 12px 16px;
+}
+
+.category h2 {
+  margin: 18px 0 10px;
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 6px;
+  cursor: pointer;
+}
+
+/* Itens */
+.items {
+  display: none;
+}
+
+.item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.item-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 12px;
+  align-items: start;
+}
+
+.item-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.price {
+  font-weight: bold;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.3;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .item-top {
+    grid-template-columns: 1fr;
+  }
+  .price {
+    margin-top: 6px;
+    font-size: 0.95rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="wrapper">
+  <h1>🍽️ Cardápio</h1>
+  <div class="lang">
+    <button onclick="setLang('PT')">PT</button>
+    <button onclick="setLang('EN')">EN</button>
+    <button onclick="setLang('FR')">FR</button>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div id="menu"></div>
+</div>
+
+<script>
+let LANG = 'PT';
+
+function setLang(l) {
+  LANG = l;
+  render(window.MENU);
+}
+
+google.script.run.withSuccessHandler(menu => {
+  window.MENU = menu;
+  render(menu);
+}).getMenu();
+
+function render(menu) {
+  const container = document.getElementById('menu');
+  container.innerHTML = '';
+
+  Object.keys(menu).forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'category';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = cat;
+    section.appendChild(h2);
+
+    const items = document.createElement('div');
+    items.className = 'items';
+
+    h2.onclick = () => {
+      items.style.display = items.style.display === 'block' ? 'none' : 'block';
+    };
+
+    menu[cat].forEach(i => {
+      const desc =
+        LANG === 'PT' ? i.PT :
+        LANG === 'EN' ? (i.EN || i.PT) :
+        (i.FR || i.PT);
+
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <div class="item-top">
+          <div class="item-name">${i.Nome}</div>
+          <div class="price">${i.Preço.toFixed(2)} €</div>
+        </div>
+        <div class="desc">${desc}</div>
+      `;
+      items.appendChild(div);
+    });
+
+    section.appendChild(items);
+    container.appendChild(section);
+  });
+}
+</script>
+
+</body>
+</html>
