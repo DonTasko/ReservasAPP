@@ -245,7 +245,7 @@ header {
   <div class="header-content">
     <div class="logo">Don Tasko</div>
     <div class="nav-links">
-      <a href="index.html">Início</a>
+      <a href="don-tasko.html">Início</a>
       <a href="reservas.html">Reservas</a>
       <div class="lang-buttons">
         <button onclick="setLang('PT')" class="active" id="btn-PT">PT</button>
@@ -301,6 +301,9 @@ async function loadMenu() {
     const headers = data.values[0];
     const rows = data.values.slice(1);
     
+    // Debug: mostrar cabeçalhos no console
+    console.log('Cabeçalhos encontrados:', headers);
+    
     // Organizar por categoria
     const menu = {};
     
@@ -310,6 +313,9 @@ async function loadMenu() {
         item[header] = row[index] || '';
       });
       
+      // Debug: mostrar item no console
+      console.log('Item processado:', item);
+      
       // Pular linhas vazias
       if (!item.Categoria || !item.Nome) return;
       
@@ -318,12 +324,13 @@ async function loadMenu() {
       }
       
       // Converter preço para número
-      item.Preço = parseFloat(item.Preço) || 0;
+      item.Preço = parseFloat(item.Preço.toString().replace(',', '.')) || 0;
       
       menu[item.Categoria].push(item);
     });
     
     MENU_DATA = menu;
+    console.log('Menu completo:', menu);
     renderMenu(menu);
     
   } catch (error) {
@@ -361,10 +368,22 @@ function renderMenu(menu) {
     };
     
     menu[categoria].forEach(item => {
+      // Pular itens inativos
+      if (item.Ativo && item.Ativo.toLowerCase() === 'não') return;
+      
       // Selecionar descrição baseada no idioma
-      let desc = item.PT || '';
-      if (LANG === 'EN') desc = item.EN || item.PT || '';
-      if (LANG === 'FR') desc = item.FR || item.PT || '';
+      // Tentar várias variações de nomes de colunas
+      let desc = '';
+      
+      if (LANG === 'PT') {
+        desc = item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || item.Portugues || item.Português || '';
+      } else if (LANG === 'EN') {
+        desc = item.Descrição_EN || item['Descrição EN'] || item.EN || item.en || item.English || item.Inglês || item.Ingles || item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || '';
+      } else if (LANG === 'FR') {
+        desc = item.Descrição_FR || item['Descrição FR'] || item.FR || item.fr || item.French || item.Francês || item.Frances || item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || '';
+      }
+      
+      console.log(`Item: ${item.Nome}, Idioma: ${LANG}, Descrição: ${desc}`);
       
       const div = document.createElement('div');
       div.className = 'item';
@@ -373,7 +392,7 @@ function renderMenu(menu) {
           <div class="item-name">${item.Nome}</div>
           <div class="price">${item.Preço.toFixed(2)} €</div>
         </div>
-        ${desc ? `<div class="desc">${desc}</div>` : ''}
+        ${desc ? `<div class="desc">${desc}</div>` : '<div class="desc" style="color: #ff6b6b; font-style: italic;">Tradução não disponível</div>'}
       `;
       items.appendChild(div);
     });
@@ -388,7 +407,3 @@ loadMenu();
 </script>
 </body>
 </html>
-
-
-
-
