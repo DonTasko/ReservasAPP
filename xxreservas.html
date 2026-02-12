@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reservas - Don Tasko</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1a1a1a;
+  --accent: #d4a574;
+  --light: #f5f5f0;
+  --secondary: #5a4a3a;
+  --card: #2a2a2a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--primary);
+  color: var(--light);
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  position: sticky;
+  top: 0;
+  background: var(--primary);
+  border-bottom: 1px solid var(--accent);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--light);
+  letter-spacing: 2px;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: var(--light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+/* Main Content */
+.wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 3px;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+/* Form */
+.reservation-form {
+  background: var(--card);
+  padding: 2.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.required {
+  color: var(--accent);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--primary);
+  border: 1px solid rgba(212, 165, 116, 0.3);
+  border-radius: 6px;
+  color: var(--light);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Checkbox de consentimento RGPD */
+.consent-group {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(212, 165, 116, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: start;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  width: auto;
+  margin-top: 0.2rem;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.checkbox-wrapper label {
+  margin: 0;
+  font-weight: 400;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  cursor: pointer;
+}
+
+.checkbox-wrapper label a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.consent-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 1.2rem;
+  background: var(--accent);
+  color: var(--primary);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #c4956a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 165, 116, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Success Message */
+.success-message {
+  display: none;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .reservation-form {
+    padding: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <a href="don-tasko.html" class="logo">Don Tasko</a>
+    <div class="nav-links">
+      <a href="don-tasko.html">Início</a>
+      <a href="menu.html">Menu</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrapper">
+  <h1 class="page-title">Reservar Mesa</h1>
+  <p class="page-subtitle">Reserve a sua experiência</p>
+
+  <div id="success-message" class="success-message">
+    <h3>✓ Reserva Enviada com Sucesso!</h3>
+    <p>Receberá uma confirmação por email em breve.</p>
+  </div>
+
+  <form id="reservation-form" class="reservation-form">
+    <div class="form-group">
+      <label for="name">Nome Completo <span class="required">*</span></label>
+      <input type="text" id="name" name="name" required>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span></label>
+        <input type="email" id="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Telefone <span class="required">*</span></label>
+        <input type="tel" id="phone" name="phone" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="date">Data <span class="required">*</span></label>
+        <input type="date" id="date" name="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="time">Hora <span class="required">*</span></label>
+        <input type="time" id="time" name="time" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="guests">Número de Pessoas <span class="required">*</span></label>
+      <input type="number" id="guests" name="guests" min="1" max="20" required>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Observações (Alergias, Preferências, Ocasião Especial)</label>
+      <textarea id="notes" name="notes" placeholder="Ex: Alergia a marisco, mesa junto à janela, aniversário..."></textarea>
+    </div>
+
+    <!-- Consentimento RGPD -->
+    <div class="consent-group">
+      <div class="checkbox-wrapper">
+        <input type="checkbox" id="consent-data" name="consent-data" required>
+        <label for="consent-data">
+          Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. <span class="required">*</span>
+        </label>
+      </div>
+
+      <div class="checkbox-wrapper">
+        <input type="checkbox" id="consent-marketing" name="consent-marketing">
+        <label for="consent-marketing">
+          Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional)
+        </label>
+      </div>
+
+      <div id="consent-error" class="consent-error">
+        Por favor, aceite a Política de Privacidade para continuar.
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Enviar Reserva</button>
+  </form>
+</div>
+
+<script>
+// Configurar data mínima (hoje)
+const dateInput = document.getElementById('date');
+const today = new Date().toISOString().split('T')[0];
+dateInput.setAttribute('min', today);
+
+// Form submission
+document.getElementById('reservation-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // Validar consentimento
+  const consentData = document.getElementById('consent-data');
+  const consentError = document.getElementById('consent-error');
+
+  if (!consentData.checked) {
+    consentError.style.display = 'block';
+    consentData.focus();
+    return;
+  } else {
+    consentError.style.display = 'none';
+  }
+
+  // Recolher dados do formulário
+  const formData = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    date: document.getElementById('date').value,
+    time: document.getElementById('time').value,
+    guests: document.getElementById('guests').value,
+    notes: document.getElementById('notes').value,
+    consentMarketing: document.getElementById('consent-marketing').checked,
+    timestamp: new Date().toISOString()
+  };
+
+  // AQUI: Integrar com Google Sheets ou sistema de reservas
+  console.log('Dados da reserva:', formData);
+
+  // Simular envio
+  const submitBtn = this.querySelector('.submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Enviando...';
+
+  // Simular delay de envio
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  // Mostrar mensagem de sucesso
+  document.getElementById('success-message').style.display = 'block';
+  this.reset();
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Enviar Reserva';
+
+  // Scroll to success message
+  document.getElementById('success-message').scrollIntoView({ behavior: 'smooth' });
+});
+
+// Remover mensagem de erro quando checkbox for marcada
+document.getElementById('consent-data').addEventListener('change', function() {
+  if (this.checked) {
+    document.getElementById('consent-error').style.display = 'none';
+  }
+});
+</script>
+
+<!-- Cookie Banner Script -->
+<script src="cookie-banner.js"></script>
+</body>
+</html>
