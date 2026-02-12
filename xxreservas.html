@@ -1,409 +1,599 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reservas - Don Tasko</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: #1a1a1a;
-  --accent: #d4a574;
-  --light: #f5f5f0;
-  --secondary: #5a4a3a;
-  --card: #2a2a2a;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  background: var(--primary);
-  color: var(--light);
-  min-height: 100vh;
-}
-
-/* Header */
-header {
-  position: sticky;
-  top: 0;
-  background: var(--primary);
-  border-bottom: 1px solid var(--accent);
-  z-index: 100;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-}
-
-.header-content {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--light);
-  letter-spacing: 2px;
-  text-decoration: none;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.nav-links a {
-  color: var(--light);
-  text-decoration: none;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-  color: var(--accent);
-}
-
-/* Main Content */
-.wrapper {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 3rem 1rem;
-}
-
-.page-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  text-align: center;
-  margin-bottom: 1rem;
-  letter-spacing: 3px;
-}
-
-.page-subtitle {
-  text-align: center;
-  color: var(--accent);
-  font-size: 1rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 3rem;
-}
-
-/* Form */
-.reservation-form {
-  background: var(--card);
-  padding: 2.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(212, 165, 116, 0.2);
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.required {
-  color: var(--accent);
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="date"],
-input[type="time"],
-input[type="number"],
-select,
-textarea {
-  width: 100%;
-  padding: 0.9rem;
-  background: var(--primary);
-  border: 1px solid rgba(212, 165, 116, 0.3);
-  border-radius: 6px;
-  color: var(--light);
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
-  transition: border-color 0.3s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-/* Checkbox de consentimento RGPD */
-.consent-group {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background: rgba(212, 165, 116, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(212, 165, 116, 0.2);
-}
-
-.checkbox-wrapper {
-  display: flex;
-  align-items: start;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-
-.checkbox-wrapper input[type="checkbox"] {
-  width: auto;
-  margin-top: 0.2rem;
-  cursor: pointer;
-  accent-color: var(--accent);
-}
-
-.checkbox-wrapper label {
-  margin: 0;
-  font-weight: 400;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  cursor: pointer;
-}
-
-.checkbox-wrapper label a {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.consent-error {
-  color: #ff6b6b;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  display: none;
-}
-
-/* Submit Button */
-.submit-btn {
-  width: 100%;
-  padding: 1.2rem;
-  background: var(--accent);
-  color: var(--primary);
-  border: none;
-  border-radius: 6px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #c4956a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(212, 165, 116, 0.3);
-}
-
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Success Message */
-.success-message {
-  display: none;
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid #4CAF50;
-  color: #4CAF50;
-  padding: 1.5rem;
-  border-radius: 8px;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .reservation-form {
-    padding: 1.5rem;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas | Don Tasko</title>
+    <style>
+        :root { 
+            --primary: #2c3e50; 
+            --accent: #27ae60; 
+            --whatsapp: #25D366; 
+            --text: #333;
+            --error: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #f9f9f9; 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px; 
+            margin: 0;
+        }
+        
+        .booking-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 450px; 
+        }
+        
+        .logo { 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+        
+        .logo img { 
+            max-width: 150px; 
+            height: auto; 
+            margin-bottom: 10px; 
+            border-radius: 10px; 
+        }
+        
+        .logo h1 { 
+            color: var(--primary); 
+            margin: 0; 
+            font-size: 24px; 
+        }
+        
+        .logo p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        label { 
+            display: block; 
+            margin-top: 15px; 
+            font-weight: bold; 
+            font-size: 14px;
+        }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 5px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+        }
+        
+        input:invalid:not(:placeholder-shown),
+        select:invalid:not([value=""]),
+        textarea:invalid:not(:placeholder-shown) {
+            border-color: var(--error);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row > div {
+            flex: 1;
+        }
+        
+        .form-row label {
+            margin-top: 0;
+        }
+        
+        .btn-submit { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 18px; 
+            margin-top: 25px; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover:not(:disabled) { 
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-submit:disabled { 
+            background: #95a5a6; 
+            cursor: not-allowed; 
+            opacity: 0.7;
+            transform: none;
+        }
+        
+        .btn-whatsapp { 
+            background: var(--whatsapp);
+        }
+        
+        .btn-whatsapp:hover:not(:disabled) { 
+            background: #1ead12;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        #msg-sucesso { 
+            display: none; 
+            background: #e8f5e9; 
+            border-left: 5px solid var(--success);
+            color: #2e7d32; 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: center; 
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        #msg-erro { 
+            display: none; 
+            background: #ffebee; 
+            border-left: 5px solid var(--error);
+            color: #c62828; 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: center; 
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .aviso-disponibilidade {
+            display: none;
+            background: #fff3cd;
+            border-left: 5px solid var(--warning);
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .aviso-disponibilidade.indisponivel {
+            background: #ffebee;
+            border-left-color: var(--error);
+            color: #c62828;
+        }
+        
+        .aviso-fechado {
+            display: none;
+            background: #ffebee;
+            border-left: 5px solid var(--error);
+            color: #c62828;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        /* RGPD Consent Box */
+        .consent-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f8ff;
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .checkbox-wrapper:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"] {
+            width: auto;
+            margin-top: 3px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+        
+        .checkbox-wrapper label {
+            margin: 0;
+            font-weight: normal;
+            font-size: 13px;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+        
+        .checkbox-wrapper label a {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        
+        .consent-error {
+            display: none;
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .carregando {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 600px) {
+            .booking-card { 
+                padding: 20px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-row > div:not(:first-child) label {
+                margin-top: 15px;
+            }
+            
+            .btn-submit {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-  <div class="header-content">
-    <a href="don-tasko.html" class="logo">Don Tasko</a>
-    <div class="nav-links">
-      <a href="don-tasko.html">Início</a>
-      <a href="menu.html">Menu</a>
+
+<div class="booking-card">
+    <div class="logo">
+        <img src="logo.png" alt="Don Tasko">
+        <h1>Don Tasko</h1>
+        <p>Reserva de Mesa</p>
     </div>
-  </div>
-</header>
-
-<div class="wrapper">
-  <h1 class="page-title">Reservar Mesa</h1>
-  <p class="page-subtitle">Reserve a sua experiência</p>
-
-  <div id="success-message" class="success-message">
-    <h3>✓ Reserva Enviada com Sucesso!</h3>
-    <p>Receberá uma confirmação por email em breve.</p>
-  </div>
-
-  <form id="reservation-form" class="reservation-form">
-    <div class="form-group">
-      <label for="name">Nome Completo <span class="required">*</span></label>
-      <input type="text" id="name" name="name" required>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="email">Email <span class="required">*</span></label>
-        <input type="email" id="email" name="email" required>
-      </div>
-
-      <div class="form-group">
-        <label for="phone">Telefone <span class="required">*</span></label>
-        <input type="tel" id="phone" name="phone" required>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="date">Data <span class="required">*</span></label>
-        <input type="date" id="date" name="date" required>
-      </div>
-
-      <div class="form-group">
-        <label for="time">Hora <span class="required">*</span></label>
-        <input type="time" id="time" name="time" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="guests">Número de Pessoas <span class="required">*</span></label>
-      <input type="number" id="guests" name="guests" min="1" max="20" required>
-    </div>
-
-    <div class="form-group">
-      <label for="notes">Observações (Alergias, Preferências, Ocasião Especial)</label>
-      <textarea id="notes" name="notes" placeholder="Ex: Alergia a marisco, mesa junto à janela, aniversário..."></textarea>
-    </div>
-
-    <!-- Consentimento RGPD -->
-    <div class="consent-group">
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="consent-data" name="consent-data" required>
-        <label for="consent-data">
-          Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. <span class="required">*</span>
-        </label>
-      </div>
-
-      <div class="checkbox-wrapper">
-        <input type="checkbox" id="consent-marketing" name="consent-marketing">
-        <label for="consent-marketing">
-          Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional)
-        </label>
-      </div>
-
-      <div id="consent-error" class="consent-error">
-        Por favor, aceite a Política de Privacidade para continuar.
-      </div>
-    </div>
-
-    <button type="submit" class="submit-btn">Enviar Reserva</button>
-  </form>
+    
+    <div id="msg-sucesso">✅ Reserva enviada! Verifica o teu e-mail para confirmação.</div>
+    <div id="msg-erro"></div>
+    
+    <form id="formReserva">
+        <label>Nome Completo</label>
+        <input type="text" name="nome" placeholder="O teu nome completo" required minlength="2">
+        
+        <label>Telemóvel</label>
+        <input type="tel" name="telemovel" placeholder="Ex: 912345678" required pattern="[0-9\s\-\+]{9,}">
+        
+        <label>E-mail</label>
+        <input type="email" name="email" placeholder="O teu e-mail" required>
+        
+        <div class="form-row">
+            <div>
+                <label>Data</label>
+                <input type="date" name="data" id="dataReserva" required>
+                <div id="avisoFechado" class="aviso-fechado">❌ Encerrado nesta data.</div>
+            </div>
+            <div>
+                <label>Pessoas</label>
+                <input type="number" name="pax" id="numPax" value="2" min="1" max="20" required>
+            </div>
+        </div>
+        
+        <label>Horário</label>
+        <select name="horario" id="selectHorario" required>
+            <option value="">A carregar...</option>
+        </select>
+        <div id="avisoDisponibilidade" class="aviso-disponibilidade"></div>
+        
+        <label>Observações</label>
+        <textarea name="obs" rows="2" placeholder="Alergias, preferências, etc. (opcional)"></textarea>
+        
+        <!-- Consentimento RGPD -->
+        <div class="consent-box">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="consentData" name="consentData" required>
+                <label for="consentData">
+                    Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. <span style="color: var(--error);">*</span>
+                </label>
+            </div>
+            
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="consentMarketing" name="consentMarketing">
+                <label for="consentMarketing">
+                    Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional)
+                </label>
+            </div>
+            
+            <div id="consentError" class="consent-error">
+                ⚠️ Por favor, aceite a Política de Privacidade para continuar.
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
+    </form>
 </div>
 
 <script>
-// Configurar data mínima (hoje)
-const dateInput = document.getElementById('date');
-const today = new Date().toISOString().split('T')[0];
-dateInput.setAttribute('min', today);
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exec";
+    const campoData = document.getElementById('dataReserva');
+    const selectHorario = document.getElementById('selectHorario');
+    const campoPax = document.getElementById('numPax');
+    const btnEnviar = document.getElementById('btnEnviar');
+    const avisoDisp = document.getElementById('avisoDisponibilidade');
+    const avisoFechado = document.getElementById('avisoFechado');
+    const msgErro = document.getElementById('msg-erro');
+    const consentData = document.getElementById('consentData');
+    const consentError = document.getElementById('consentError');
+    
+    let configsGlobal = {};
+    let diasFechados = [];
+    let horarios = {};
 
-// Form submission
-document.getElementById('reservation-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
+    async function carregarDados() {
+        try {
+            const [fechados, hors, configs] = await Promise.all([
+                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getDiasFechados'})}).then(r => r.json()),
+                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getHorarios'})}).then(r => r.json()),
+                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
+            ]);
+            
+            configsGlobal = configs;
+            diasFechados = fechados;
+            horarios = hors;
+            
+            campoData.min = new Date().toISOString().split('T')[0];
+            
+            campoData.addEventListener('change', verificarDataEGerarHoras);
+            campoPax.addEventListener('input', verificarGrupoEDisponibilidade);
+            selectHorario.addEventListener('change', verificarDisponibilidadeHorario);
+            consentData.addEventListener('change', function() {
+                if (this.checked) {
+                    consentError.style.display = 'none';
+                }
+            });
+            
+            // Carregar horários iniciais
+            verificarDataEGerarHoras();
+        } catch(e) { 
+            console.error("Erro ao carregar dados:", e);
+            mostrarErro("Erro ao carregar configurações. Tenta novamente mais tarde.");
+        }
+    }
 
-  // Validar consentimento
-  const consentData = document.getElementById('consent-data');
-  const consentError = document.getElementById('consent-error');
+    function verificarDataEGerarHoras() {
+        const dataValue = campoData.value;
+        avisoFechado.style.display = 'none';
+        
+        if (!dataValue) {
+            selectHorario.innerHTML = '<option value="">Seleciona uma data</option>';
+            avisoDisp.style.display = 'none';
+            return;
+        }
 
-  if (!consentData.checked) {
-    consentError.style.display = 'block';
-    consentData.focus();
-    return;
-  } else {
-    consentError.style.display = 'none';
-  }
+        const data = new Date(dataValue + 'T00:00:00');
+        const diaSemana = data.toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
+        
+        // Verificar se está fechado
+        if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
+            avisoFechado.style.display = 'block';
+            selectHorario.innerHTML = '<option value="">Encerrado</option>';
+            selectHorario.disabled = true;
+            avisoDisp.style.display = 'none';
+            return;
+        }
+        
+        selectHorario.disabled = false;
+        gerarHoras(horarios);
+        verificarDisponibilidadeHorario();
+    }
 
-  // Recolher dados do formulário
-  const formData = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    phone: document.getElementById('phone').value,
-    date: document.getElementById('date').value,
-    time: document.getElementById('time').value,
-    guests: document.getElementById('guests').value,
-    notes: document.getElementById('notes').value,
-    consentMarketing: document.getElementById('consent-marketing').checked,
-    timestamp: new Date().toISOString()
-  };
+    function verificarGrupoEDisponibilidade() {
+        verificarGrupo();
+        verificarDisponibilidadeHorario();
+    }
 
-  // AQUI: Integrar com Google Sheets ou sistema de reservas
-  console.log('Dados da reserva:', formData);
+    function verificarGrupo() {
+        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+        const pax = parseInt(campoPax.value);
+        
+        if (pax > max) {
+            btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
+            btnEnviar.classList.add('btn-whatsapp');
+            btnEnviar.type = 'button';
+            btnEnviar.onclick = abrirWhatsApp;
+        } else {
+            btnEnviar.innerText = "Confirmar Reserva";
+            btnEnviar.classList.remove('btn-whatsapp');
+            btnEnviar.type = 'submit';
+            btnEnviar.onclick = null;
+        }
+    }
 
-  // Simular envio
-  const submitBtn = this.querySelector('.submit-btn');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Enviando...';
+    function abrirWhatsApp(e) {
+        e.preventDefault();
+        const pax = parseInt(campoPax.value);
+        const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
+        const hora = selectHorario.value || '';
+        
+        const tel = configsGlobal.WHATSAPP_URL ? 
+            configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
+        
+        if (!tel) {
+            mostrarErro("WhatsApp não configurado.");
+            return;
+        }
+        
+        const mensagem = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
+        window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(mensagem), '_blank');
+    }
 
-  // Simular delay de envio
-  await new Promise(resolve => setTimeout(resolve, 1500));
+    function gerarHoras(h) {
+        selectHorario.innerHTML = '';
+        [h.almoco, h.jantar].forEach(intervalo => {
+            if (!intervalo) return;
+            
+            const parts = intervalo.replace(/–|—/g, '-').split('-');
+            let [hAt, mAt] = parts[0].trim().split(':').map(Number);
+            const [hFim, mFim] = parts[1].trim().split(':').map(Number);
+            
+            while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
+                const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
+                const opt = document.createElement('option');
+                opt.value = opt.text = tempo;
+                selectHorario.appendChild(opt);
+                mAt += 15;
+                if (mAt >= 60) {
+                    mAt = 0;
+                    hAt++;
+                }
+            }
+        });
+        selectHorario.value = '';
+    }
 
-  // Mostrar mensagem de sucesso
-  document.getElementById('success-message').style.display = 'block';
-  this.reset();
-  submitBtn.disabled = false;
-  submitBtn.textContent = 'Enviar Reserva';
+    async function verificarDisponibilidadeHorario() {
+        if (!campoData.value || !selectHorario.value) {
+            avisoDisp.style.display = 'none';
+            return;
+        }
 
-  // Scroll to success message
-  document.getElementById('success-message').scrollIntoView({ behavior: 'smooth' });
-});
+        try {
+            const response = await fetch(URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'verificarDisponiblidade',
+                    data: campoData.value,
+                    pax: parseInt(campoPax.value),
+                    horario: selectHorario.value
+                })
+            });
+            
+            const resultado = await response.json();
+            
+            if (!resultado.disponivel) {
+                avisoDisp.textContent = "⚠️ Sem disponibilidade para este horário. Escolhe outro.";
+                avisoDisp.classList.add('indisponivel');
+                selectHorario.style.borderColor = '#e74c3c';
+                btnEnviar.disabled = true;
+            } else {
+                avisoDisp.classList.remove('indisponivel');
+                selectHorario.style.borderColor = '';
+                
+                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+                if (parseInt(campoPax.value) <= max) {
+                    btnEnviar.disabled = false;
+                }
+            }
+            avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
+        } catch (error) {
+            console.error("Erro ao verificar disponibilidade:", error);
+            avisoDisp.style.display = 'none';
+        }
+    }
 
-// Remover mensagem de erro quando checkbox for marcada
-document.getElementById('consent-data').addEventListener('change', function() {
-  if (this.checked) {
-    document.getElementById('consent-error').style.display = 'none';
-  }
-});
+    function mostrarErro(mensagem) {
+        msgErro.textContent = "❌ " + mensagem;
+        msgErro.style.display = 'block';
+        setTimeout(() => {
+            msgErro.style.display = 'none';
+        }, 6000);
+    }
+
+    document.getElementById('formReserva').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Validar consentimento RGPD
+        if (!consentData.checked) {
+            consentError.style.display = 'block';
+            consentData.focus();
+            window.scrollTo({
+                top: consentData.offsetTop - 100,
+                behavior: 'smooth'
+            });
+            return;
+        }
+        
+        // Validação final
+        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+        if (parseInt(campoPax.value) > max) {
+            mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
+            return;
+        }
+        
+        if (!campoData.value || !selectHorario.value) {
+            mostrarErro("Por favor, preenche todos os campos obrigatórios.");
+            return;
+        }
+        
+        btnEnviar.disabled = true;
+        btnEnviar.innerText = "A processar...";
+        document.getElementById('formReserva').classList.add('carregando');
+        
+        try {
+            const dados = Object.fromEntries(new FormData(e.target));
+            dados.action = "reservaSite";
+            
+            const response = await fetch(URL_SCRIPT, {
+                method:'POST', 
+                body:JSON.stringify(dados)
+            });
+            
+            const res = await response.json();
+            
+            if (res.status === 'success') {
+                document.getElementById('formReserva').style.display = 'none';
+                document.getElementById('msg-sucesso').style.display = 'block';
+            } else {
+                mostrarErro(res.message || "Erro ao processar reserva. Tenta novamente.");
+                btnEnviar.disabled = false;
+                btnEnviar.innerText = "Confirmar Reserva";
+                document.getElementById('formReserva').classList.remove('carregando');
+            }
+        } catch (error) {
+            console.error("Erro:", error);
+            mostrarErro("Erro ao processar reserva. Verifica a conexão e tenta novamente.");
+            btnEnviar.disabled = false;
+            btnEnviar.innerText = "Confirmar Reserva";
+            document.getElementById('formReserva').classList.remove('carregando');
+        }
+    });
+    
+    carregarDados();
 </script>
 
 <!-- Cookie Banner Script -->
