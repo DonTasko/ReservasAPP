@@ -506,7 +506,7 @@
             const resultado = await response.json();
             
             if (!resultado.disponivel) {
-                avisoDisp.textContent = "⚠️ Sem disponibilidade para este horário. Escolhe outro.";
+                avisoDisp.textContent = "⚠️ Sem disponibilidade para esta refeição. Escolhe outra refeição.";
                 avisoDisp.classList.add('indisponivel');
                 selectHorario.style.borderColor = '#e74c3c';
                 btnEnviar.disabled = true;
@@ -600,3 +600,4 @@
 <script src="cookie-banner.js"></script>
 </body>
 </html>
+
