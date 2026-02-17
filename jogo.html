@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio do Chef</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background: linear-gradient(135deg, #111, #1f1f1f);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .game-container {
+        text-align: center;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(15px);
+        padding: 40px;
+        border-radius: 25px;
+        box-shadow: 0 0 40px rgba(0,0,0,0.6);
+        width: 350px;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #ff512f, #dd2476);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .score, .timer {
+        font-size: 18px;
+        margin: 10px 0;
+    }
+
+    .plate {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+        border-radius: 50%;
+        margin: 20px auto;
+        cursor: pointer;
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+        box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        position: relative;
+    }
+
+    .plate:hover {
+        transform: scale(1.1);
+    }
+
+    .plate:active {
+        transform: scale(0.9);
+        box-shadow: 0 0 40px #ff512f;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #ff512f, #dd2476);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    .floating {
+        position: absolute;
+        font-size: 18px;
+        font-weight: bold;
+        animation: floatUp 1s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+        0% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-50px); }
+    }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>🍽️ Desafio do Chef</h1>
+    <div class="score">Pontuação: <span id="score">0</span></div>
+    <div class="timer">Tempo: <span id="time">30</span>s</div>
+    <div class="plate" id="plate"></div>
+    <button onclick="startGame()">Começar</button>
+</div>
+
+<script>
+let score = 0;
+let timeLeft = 30;
+let gameActive = false;
+let timerInterval;
+
+const scoreDisplay = document.getElementById("score");
+const timeDisplay = document.getElementById("time");
+const plate = document.getElementById("plate");
+
+function startGame() {
+    score = 0;
+    timeLeft = 30;
+    gameActive = true;
+    scoreDisplay.textContent = score;
+    timeDisplay.textContent = timeLeft;
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timeDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            gameActive = false;
+            alert("⏰ Fim do jogo! Pontuação final: " + score);
+        }
+    }, 1000);
+}
+
+plate.addEventListener("click", function(e) {
+    if (!gameActive) return;
+
+    score++;
+    scoreDisplay.textContent = score;
+
+    // efeito visual +1
+    const plus = document.createElement("div");
+    plus.textContent = "+1";
+    plus.classList.add("floating");
+    plus.style.left = (e.offsetX + 100) + "px";
+    plus.style.top = (e.offsetY + 150) + "px";
+    plus.style.color = "#ff512f";
+
+    document.body.appendChild(plus);
+
+    setTimeout(() => plus.remove(), 1000);
+});
+</script>
+
+</body>
+</html>
