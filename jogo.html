@@ -1,161 +1,552 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Desafio do Chef</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
+  <meta charset="UTF-8" />
+  <title>Jogo do Don Tasko</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
     * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     body {
-        background: linear-gradient(135deg, #111, #1f1f1f);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #ffb347, #ff5f6d 40%, #1f1c2c 100%);
+      color: #fff;
     }
 
-    .game-container {
-        text-align: center;
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(15px);
-        padding: 40px;
-        border-radius: 25px;
-        box-shadow: 0 0 40px rgba(0,0,0,0.6);
-        width: 350px;
-        position: relative;
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(10, 10, 20, 0.9);
+      border-radius: 24px;
+      padding: 24px 22px 26px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    h1 {
-        font-size: 28px;
-        margin-bottom: 10px;
-        background: linear-gradient(90deg, #ff512f, #dd2476);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
     }
 
-    .score, .timer {
-        font-size: 18px;
-        margin: 10px 0;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: conic-gradient(from 210deg, #ffb347, #ff5f6d, #ffc371, #ffb347);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-text span {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hero {
+      position: relative;
+      margin-bottom: 18px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffb347, #ff5f6d);
+      padding: 14px 14px 12px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.35;
+      mix-blend-mode: soft-light;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-text h2 {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .hero-text p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .hero-pill {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .hero-pill span {
+      font-size: 9px;
+      opacity: 0.8;
+    }
+
+    .hero-score {
+      text-align: right;
+    }
+
+    .hero-score strong {
+      font-size: 22px;
+      display: block;
+      line-height: 1.1;
+    }
+
+    .hero-score small {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 8px;
+    }
+
+    .stat-card {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+    }
+
+    .stat-label {
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .game-area {
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.6));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      height: 220px;
     }
 
     .plate {
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle at 30% 30%, #fff, #ccc);
-        border-radius: 50%;
-        margin: 20px auto;
-        cursor: pointer;
-        transition: transform 0.1s ease, box-shadow 0.1s ease;
-        box-shadow: 0 0 20px rgba(255,255,255,0.3);
-        position: relative;
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffffff, #f0f0f0 40%, #d0d0d0 100%);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.08s ease-out;
     }
 
-    .plate:hover {
-        transform: scale(1.1);
+    .plate::before {
+      content: "🍽️";
+      font-size: 30px;
     }
 
     .plate:active {
-        transform: scale(0.9);
-        box-shadow: 0 0 40px #ff512f;
+      transform: scale(0.9);
     }
 
-    button {
-        margin-top: 15px;
-        padding: 10px 25px;
-        border: none;
-        border-radius: 20px;
-        background: linear-gradient(90deg, #ff512f, #dd2476);
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    button:hover {
-        opacity: 0.8;
-    }
-
-    .floating {
-        position: absolute;
-        font-size: 18px;
-        font-weight: bold;
-        animation: floatUp 1s ease-out forwards;
+    .combo {
+      position: absolute;
+      pointer-events: none;
+      color: #ffeb3b;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+      animation: floatUp 0.7s ease-out forwards;
+      font-size: 14px;
     }
 
     @keyframes floatUp {
-        0% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; transform: translateY(-50px); }
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-26px);
+      }
     }
-</style>
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-primary {
+      flex: 1.2;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ffb347, #ff5f6d);
+      color: #111;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+      filter: brightness(0.96);
+    }
+
+    .btn-ghost {
+      flex: 0.9;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.1s ease-out, border-color 0.1s ease-out;
+    }
+
+    .btn-ghost span {
+      font-size: 14px;
+    }
+
+    .btn-ghost:active {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 10px;
+      opacity: 0.7;
+    }
+
+    .footer strong {
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 12px;
+      }
+      .game-area {
+        height: 200px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">R</div>
+        <div class="brand-text">
+          <h1>Restaurante Don Tasko</h1>
+          <span>Jogo oficial da casa</span>
+        </div>
+      </div>
+      <div class="tag">Ganhe pontos & surpresas</div>
+    </div>
 
-<div class="game-container">
-    <h1>🍽️ Desafio do Chef</h1>
-    <div class="score">Pontuação: <span id="score">0</span></div>
-    <div class="timer">Tempo: <span id="time">30</span>s</div>
-    <div class="plate" id="plate"></div>
-    <button onclick="startGame()">Começar</button>
-</div>
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="hero-pill">
+            ⭐ Cliente em jogo
+            <span>toque nos pratos o mais rápido possível</span>
+          </div>
+          <h2>Sirva pratos antes que o tempo acabe!</h2>
+          <p>Toque nos pratos que aparecem. Cada acerto vale pontos. Combos rápidos valem ainda mais.</p>
+        </div>
+        <div class="hero-score">
+          <strong id="bestScore">0</strong>
+          <small>Melhor pontuação</small>
+        </div>
+      </div>
+    </div>
 
-<script>
-let score = 0;
-let timeLeft = 30;
-let gameActive = false;
-let timerInterval;
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Pontuação</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tempo</div>
+        <div class="stat-value" id="time">30s</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Combo</div>
+        <div class="stat-value" id="combo">x1</div>
+      </div>
+    </div>
 
-const scoreDisplay = document.getElementById("score");
-const timeDisplay = document.getElementById("time");
-const plate = document.getElementById("plate");
+    <div class="game-area" id="gameArea">
+      <!-- pratos aparecem aqui -->
+    </div>
 
-function startGame() {
-    score = 0;
-    timeLeft = 30;
-    gameActive = true;
-    scoreDisplay.textContent = score;
-    timeDisplay.textContent = timeLeft;
+    <div class="controls">
+      <button class="btn-primary" id="startBtn">Começar jogo</button>
+      <button class="btn-ghost" id="infoBtn">
+        <span>🍹</span> Prémios
+      </button>
+    </div>
 
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
+    <div class="footer">
+      <p>
+        Complete uma pontuação alta e mostre à equipa.<br />
+        <strong>Pode desbloquear surpresas especiais no restaurante.</strong>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const gameArea = document.getElementById("gameArea");
+    const scoreEl = document.getElementById("score");
+    const timeEl = document.getElementById("time");
+    const comboEl = document.getElementById("combo");
+    const bestScoreEl = document.getElementById("bestScore");
+    const startBtn = document.getElementById("startBtn");
+    const infoBtn = document.getElementById("infoBtn");
+
+    let score = 0;
+    let timeLeft = 30;
+    let timer = null;
+    let gameRunning = false;
+    let combo = 1;
+    let lastClickTime = 0;
+    let spawnInterval = null;
+
+    function loadBestScore() {
+      const stored = localStorage.getItem("restaurante_best_score");
+      if (stored) {
+        bestScoreEl.textContent = stored;
+      }
+    }
+
+    function saveBestScore() {
+      const best = parseInt(bestScoreEl.textContent || "0", 10);
+      if (score > best) {
+        bestScoreEl.textContent = score;
+        localStorage.setItem("restaurante_best_score", String(score));
+      }
+    }
+
+    function updateUI() {
+      scoreEl.textContent = score;
+      timeEl.textContent = timeLeft + "s";
+      comboEl.textContent = "x" + combo;
+    }
+
+    function resetGame() {
+      score = 0;
+      timeLeft = 30;
+      combo = 1;
+      lastClickTime = 0;
+      clearInterval(timer);
+      clearInterval(spawnInterval);
+      timer = null;
+      spawnInterval = null;
+      gameRunning = false;
+      gameArea.innerHTML = "";
+      startBtn.textContent = "Começar jogo";
+      updateUI();
+    }
+
+    function endGame() {
+      gameRunning = false;
+      clearInterval(timer);
+      clearInterval(spawnInterval);
+      saveBestScore();
+      startBtn.textContent = "Jogar de novo";
+      const msg = document.createElement("div");
+      msg.style.position = "absolute";
+      msg.style.inset = "0";
+      msg.style.display = "flex";
+      msg.style.alignItems = "center";
+      msg.style.justifyContent = "center";
+      msg.style.background = "rgba(0,0,0,0.65)";
+      msg.style.backdropFilter = "blur(4px)";
+      msg.style.flexDirection = "column";
+      msg.style.fontSize = "16px";
+      msg.style.textAlign = "center";
+      msg.innerHTML =
+        "<strong>Tempo esgotado!</strong><br/>Pontuação: " +
+        score +
+        "<br/><small>Toque em \"Jogar de novo\" para tentar bater o recorde.</small>";
+      gameArea.appendChild(msg);
+    }
+
+    function startTimer() {
+      timer = setInterval(() => {
         timeLeft--;
-        timeDisplay.textContent = timeLeft;
-
         if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            gameActive = false;
-            alert("⏰ Fim do jogo! Pontuação final: " + score);
+          timeLeft = 0;
+          updateUI();
+          endGame();
+        } else {
+          updateUI();
         }
-    }, 1000);
-}
+      }, 1000);
+    }
 
-plate.addEventListener("click", function(e) {
-    if (!gameActive) return;
+    function spawnPlate() {
+      if (!gameRunning) return;
 
-    score++;
-    scoreDisplay.textContent = score;
+      const plate = document.createElement("div");
+      plate.className = "plate";
 
-    // efeito visual +1
-    const plus = document.createElement("div");
-    plus.textContent = "+1";
-    plus.classList.add("floating");
-    plus.style.left = (e.offsetX + 100) + "px";
-    plus.style.top = (e.offsetY + 150) + "px";
-    plus.style.color = "#ff512f";
+      const areaRect = gameArea.getBoundingClientRect();
+      const size = 70;
+      const padding = 10;
 
-    document.body.appendChild(plus);
+      const maxX = areaRect.width - size - padding;
+      const maxY = areaRect.height - size - padding;
+      const x = Math.random() * maxX + padding;
+      const y = Math.random() * maxY + padding;
 
-    setTimeout(() => plus.remove(), 1000);
-});
-</script>
+      plate.style.left = x + "px";
+      plate.style.top = y + "px";
 
+      const lifetime = 900 + Math.random() * 600;
+
+      const removeTimeout = setTimeout(() => {
+        if (plate.parentNode) {
+          plate.remove();
+        }
+      }, lifetime);
+
+      plate.addEventListener("click", (e) => {
+        e.stopPropagation();
+        clearTimeout(removeTimeout);
+        handlePlateClick(plate, x + size / 2, y + size / 2);
+      });
+
+      gameArea.appendChild(plate);
+    }
+
+    function handlePlateClick(plate, cx, cy) {
+      const now = Date.now();
+      if (lastClickTime && now - lastClickTime < 600) {
+        combo = Math.min(combo + 1, 5);
+      } else {
+        combo = 1;
+      }
+      lastClickTime = now;
+
+      const basePoints = 10;
+      const gained = basePoints * combo;
+      score += gained;
+
+      const comboLabel = document.createElement("div");
+      comboLabel.className = "combo";
+      comboLabel.style.left = cx - 10 + "px";
+      comboLabel.style.top = cy - 10 + "px";
+      comboLabel.textContent = "+" + gained + (combo > 1 ? " (x" + combo + ")" : "");
+      gameArea.appendChild(comboLabel);
+
+      setTimeout(() => comboLabel.remove(), 700);
+
+      plate.remove();
+      updateUI();
+    }
+
+    function startSpawning() {
+      spawnPlate();
+      spawnInterval = setInterval(() => {
+        if (!gameRunning) return;
+        spawnPlate();
+      }, 650);
+    }
+
+    startBtn.addEventListener("click", () => {
+      if (gameRunning) return;
+      resetGame();
+      gameRunning = true;
+      startBtn.textContent = "A jogar...";
+      updateUI();
+      startTimer();
+      startSpawning();
+    });
+
+    infoBtn.addEventListener("click", () => {
+      alert(
+        "Ideia de prémios (personalizável):\n\n" +
+          "• Se fizer mais de 150 pontos: 1 bebida da casa.\n" +
+          "• Se bater o recorde do dia: sobremesa especial.\n\n" +
+          "Confirme sempre com a equipa do restaurante."
+      );
+    });
+
+    loadBestScore();
+    updateUI();
+  </script>
 </body>
 </html>
