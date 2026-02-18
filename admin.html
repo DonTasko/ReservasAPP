@@ -68,6 +68,41 @@
             text-align: center; display: none; font-weight: 500;
         }
 
+        /* DEBUG CONSOLE */
+        #debug-console {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.9);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            max-width: 400px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 9999;
+        }
+
+        #debug-console.show {
+            display: block;
+        }
+
+        #debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #2c3e50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            z-index: 9999;
+        }
+
         /* DASHBOARD */
         #dashboard-content { display: none; max-width: 1600px; margin: 0 auto; }
         
@@ -481,6 +516,10 @@
 </head>
 <body>
 
+<!-- DEBUG TOGGLE -->
+<div id="debug-toggle" onclick="toggleDebug()">🐛 Debug</div>
+<div id="debug-console"></div>
+
 <!-- TELA DE LOGIN -->
 <div id="login-screen">
     <div class="login-box">
@@ -683,24 +722,40 @@
 <script>
     // ========== CONFIGURAÇÕES ==========
     const CONFIG = {
-        // ⚠️ IMPORTANTE: Substitui pelo teu URL do Google Apps Script
         URL_SCRIPT: "https://script.google.com/macros/s/AKfycbxtySo4NTJLl224ACyHAE_kWWF9nxXMMef0qRLxJe-virQJLveAgb6p0MsUkyQgTdE/exec",
         PASS_CORRETA: "Tasko123",
         LOTACAO_MAX: 30,
-        DEBUG_MODE: false
+        DEBUG_MODE: true // Ativado para debug
     };
 
-    let todasReservas = {}; // Armazenar TODAS as reservas por data
+    let todasReservas = {};
+    let resumoCompleto = { almoco: {}, jantar: {} };
     let dataSelecionada = new Date().toISOString().split('T')[0];
     let turnoFiltro = 'todos';
 
-    // ========== FUNÇÕES AUXILIARES ==========
+    // ========== DEBUG CONSOLE ==========
+    let debugMessages = [];
+    
+    function toggleDebug() {
+        const console = document.getElementById('debug-console');
+        console.classList.toggle('show');
+    }
+    
     function debugLog(message, data = null) {
-        if (!CONFIG.DEBUG_MODE) return;
         const timestamp = new Date().toLocaleTimeString('pt-PT');
-        console.log(`[${timestamp}] ${message}`, data || '');
+        const logMessage = `[${timestamp}] ${message}`;
+        
+        console.log(logMessage, data || '');
+        
+        debugMessages.push(logMessage + (data ? ' ' + JSON.stringify(data).substring(0, 100) : ''));
+        if (debugMessages.length > 20) debugMessages.shift();
+        
+        const debugConsole = document.getElementById('debug-console');
+        debugConsole.innerHTML = debugMessages.join('<br>');
+        debugConsole.scrollTop = debugConsole.scrollHeight;
     }
 
+    // ========== FUNÇÕES AUXILIARES ==========
     function formatarData(dataISO) {
         const [ano, mes, dia] = dataISO.split('-');
         const data = new Date(ano, mes - 1, dia);
@@ -791,53 +846,71 @@
     // ========== CARREGAR DADOS ==========
     async function carregarDados() {
         debugLog('Iniciando carregamento de dados...');
+        debugLog('URL do script:', CONFIG.URL_SCRIPT);
         
         try {
+            const payload = { action: 'getDashboard' };
+            debugLog('Enviando payload:', payload);
+            
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                body: JSON.stringify({ action: 'getDashboard' })
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(payload)
             });
+            
+            debugLog('Status da resposta:', response.status);
             
             if (!response.ok) {
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
             
             const data = await response.json();
-            debugLog('Dados recebidos:', data);
+            debugLog('Dados recebidos (chaves):', Object.keys(data));
+            debugLog('todasReservas?', !!data.todasReservas);
+            debugLog('listaHoje?', !!data.listaHoje);
+            debugLog('resumoAlmoco?', !!data.resumoAlmoco);
             
-            // Armazenar todas as reservas
-            todasReservas = data.todasReservas || {};
-            
-            // Se não tiver o formato novo, criar a partir de listaHoje
-            if (Object.keys(todasReservas).length === 0 && data.listaHoje) {
+            // Processar todasReservas
+            if (data.todasReservas && Object.keys(data.todasReservas).length > 0) {
+                todasReservas = data.todasReservas;
+                debugLog('todasReservas carregadas:', Object.keys(todasReservas).length + ' datas');
+            } else if (data.listaHoje && Array.isArray(data.listaHoje)) {
                 const hoje = new Date().toISOString().split('T')[0];
-                todasReservas[hoje] = data.listaHoje;
+                todasReservas = { [hoje]: data.listaHoje };
+                debugLog('Criado todasReservas a partir de listaHoje');
+            } else {
+                todasReservas = {};
+                debugLog('AVISO: Nenhuma reserva encontrada');
             }
             
-            // Resumo
-            let resumoAlmoco = {};
-            let resumoJantar = {};
-            
+            // Processar resumo
             if (data.resumoAlmoco && data.resumoJantar) {
-                resumoAlmoco = data.resumoAlmoco;
-                resumoJantar = data.resumoJantar;
+                resumoCompleto.almoco = data.resumoAlmoco;
+                resumoCompleto.jantar = data.resumoJantar;
+                debugLog('Resumo novo formato carregado');
             } else if (data.resumo) {
-                // Compatibilidade com formato antigo
+                debugLog('Convertendo formato antigo de resumo');
                 Object.keys(data.resumo).forEach(dataKey => {
                     const total = data.resumo[dataKey];
-                    resumoAlmoco[dataKey] = Math.floor(total / 2);
-                    resumoJantar[dataKey] = Math.ceil(total / 2);
+                    resumoCompleto.almoco[dataKey] = Math.floor(total / 2);
+                    resumoCompleto.jantar[dataKey] = Math.ceil(total / 2);
                 });
+            } else {
+                resumoCompleto = { almoco: {}, jantar: {} };
+                debugLog('AVISO: Nenhum resumo encontrado');
             }
             
-            renderizarAvisoOcupacao(resumoAlmoco, resumoJantar);
-            renderizarResumo15Dias(resumoAlmoco, resumoJantar);
+            // Renderizar
+            renderizarAvisoOcupacao();
+            renderizarResumo15Dias();
             renderizarTabela();
             
-            debugLog('Dados carregados com sucesso!');
+            debugLog('✓ Dados carregados e renderizados');
             
         } catch (error) {
-            debugLog('ERRO ao carregar dados:', error);
+            debugLog('ERRO CRÍTICO ao carregar dados:', error);
             console.error('Erro detalhado:', error);
             
             document.getElementById('avisoOcupacao').innerHTML = `
@@ -845,8 +918,17 @@
                     <span class="aviso-icon">⚠️</span>
                     <div>
                         <strong>Erro ao carregar dados do servidor.</strong><br>
-                        <small>Verifica a conexão ou tenta novamente.</small>
+                        <small>${error.message}</small>
                     </div>
+                </div>
+            `;
+            
+            document.getElementById('resumo15').innerHTML = `
+                <div class="empty-state">
+                    Não foi possível carregar os dados.<br>
+                    <button onclick="carregarDados()" class="btn-add" style="margin-top:15px; width:auto; padding:10px 20px;">
+                        Tentar Novamente
+                    </button>
                 </div>
             `;
         }
@@ -856,13 +938,17 @@
     function mudarDataTabela() {
         dataSelecionada = document.getElementById('dataSelecionada').value;
         debugLog('Data selecionada alterada para:', dataSelecionada);
+        debugLog('Reservas para esta data:', todasReservas[dataSelecionada] ? todasReservas[dataSelecionada].length : 0);
+        renderizarAvisoOcupacao();
         renderizarTabela();
     }
 
     // ========== RENDERIZAR AVISO DE OCUPAÇÃO ==========
-    function renderizarAvisoOcupacao(resumoAlmoco, resumoJantar) {
-        const almocoHoje = resumoAlmoco[dataSelecionada] || 0;
-        const jantarHoje = resumoJantar[dataSelecionada] || 0;
+    function renderizarAvisoOcupacao() {
+        const almocoHoje = resumoCompleto.almoco[dataSelecionada] || 0;
+        const jantarHoje = resumoCompleto.jantar[dataSelecionada] || 0;
+        
+        debugLog(`Aviso ocupação para ${dataSelecionada}: Almoço=${almocoHoje}, Jantar=${jantarHoje}`);
         
         let avisoHTML = '<div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap;">';
         
@@ -921,14 +1007,16 @@
         document.getElementById('avisoOcupacao').innerHTML = avisoHTML;
     }
 
-    // ========== RENDERIZAR RESUMO 15 DIAS - APENAS FUTURO ==========
-    function renderizarResumo15Dias(resumoAlmoco, resumoJantar) {
+    // ========== RENDERIZAR RESUMO 15 DIAS ==========
+    function renderizarResumo15Dias() {
         const resumoDiv = document.getElementById('resumo15');
         
         const todasDatas = new Set([
-            ...Object.keys(resumoAlmoco),
-            ...Object.keys(resumoJantar)
+            ...Object.keys(resumoCompleto.almoco),
+            ...Object.keys(resumoCompleto.jantar)
         ]);
+        
+        debugLog('Resumo 15 dias: ' + todasDatas.size + ' datas encontradas');
         
         if (todasDatas.size === 0) {
             resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada.</div>';
@@ -937,11 +1025,12 @@
         
         const hoje = new Date().toISOString().split('T')[0];
         
-        // Filtrar apenas datas de hoje para frente
         const datasFuturas = Array.from(todasDatas)
             .filter(data => data >= hoje)
             .sort()
             .slice(0, 15);
+        
+        debugLog('Datas futuras filtradas:', datasFuturas.length);
         
         if (datasFuturas.length === 0) {
             resumoDiv.innerHTML = '<div class="empty-state">Sem reservas nos próximos dias.</div>';
@@ -949,8 +1038,8 @@
         }
         
         resumoDiv.innerHTML = datasFuturas.map(dataISO => {
-            const almoco = resumoAlmoco[dataISO] || 0;
-            const jantar = resumoJantar[dataISO] || 0;
+            const almoco = resumoCompleto.almoco[dataISO] || 0;
+            const jantar = resumoCompleto.jantar[dataISO] || 0;
             
             const isHoje = dataISO === hoje;
             const dataFormatada = formatarData(dataISO);
@@ -994,12 +1083,22 @@
         
         const reservasDoDia = todasReservas[dataSelecionada] || [];
         
+        debugLog(`Renderizando tabela para ${dataSelecionada}:`, reservasDoDia.length + ' reservas');
+        
         let listaFiltrada = reservasDoDia;
         if (turnoFiltro === 'almoco') {
-            listaFiltrada = reservasDoDia.filter(r => r.turno === 'Almoço' || r.hora < '16:00');
+            listaFiltrada = reservasDoDia.filter(r => {
+                if (r.turno) return r.turno === 'Almoço';
+                return r.hora && r.hora < '16:00';
+            });
         } else if (turnoFiltro === 'jantar') {
-            listaFiltrada = reservasDoDia.filter(r => r.turno === 'Jantar' || r.hora >= '16:00');
+            listaFiltrada = reservasDoDia.filter(r => {
+                if (r.turno) return r.turno === 'Jantar';
+                return r.hora && r.hora >= '16:00';
+            });
         }
+        
+        debugLog(`Após filtro ${turnoFiltro}:`, listaFiltrada.length + ' reservas');
         
         if (listaFiltrada.length === 0) {
             tbody.innerHTML = `
@@ -1013,17 +1112,17 @@
         }
         
         tbody.innerHTML = listaFiltrada
-            .sort((a, b) => a.hora.localeCompare(b.hora))
+            .sort((a, b) => (a.hora || '').localeCompare(b.hora || ''))
             .map(reserva => `
                 <tr>
-                    <td><span class="hora-badge">${reserva.hora}</span></td>
+                    <td><span class="hora-badge">${reserva.hora || '--:--'}</span></td>
                     <td>
                         <div class="cliente-info">
-                            <span class="cliente-nome">${reserva.nome}</span>
-                            ${reserva.tel ? `<span class="cliente-contato">📞 ${reserva.tel}</span>` : ''}
+                            <span class="cliente-nome">${reserva.nome || 'Sem nome'}</span>
+                            ${reserva.tel || reserva.telemovel ? `<span class="cliente-contato">📞 ${reserva.tel || reserva.telemovel}</span>` : ''}
                         </div>
                     </td>
-                    <td><span class="pax-badge">${reserva.pax}</span></td>
+                    <td><span class="pax-badge">${reserva.pax || 0}</span></td>
                     <td class="obs-text">${reserva.obs || '—'}</td>
                     <td>
                         <div class="acoes-reserva">
@@ -1034,7 +1133,7 @@
                             ` : reserva.status === 'Chegou' ? `
                                 <span style="color:#27ae60; font-weight:700; font-size:11px; padding:6px;">✓ Chegou</span>
                             ` : ''}
-                            <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome)}', '${reserva.hora}')">
+                            <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome || '')}', '${reserva.hora || ''}')">
                                 🗑️
                             </button>
                         </div>
@@ -1050,6 +1149,7 @@
     // ========== FILTRAR POR TURNO ==========
     function filtrarTurno(turno) {
         turnoFiltro = turno;
+        debugLog('Filtro alterado para:', turno);
         
         document.querySelectorAll('.filtro-btn').forEach(btn => {
             btn.classList.remove('ativo');
@@ -1070,6 +1170,9 @@
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify({
                     action: 'marcarChegada',
                     id: id
@@ -1102,6 +1205,9 @@
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify({
                     action: 'cancelarAdmin',
                     nome: nome,
@@ -1133,7 +1239,7 @@
         btn.disabled = true;
         btn.innerText = "⏳ Gravando...";
         
-        debugLog('Submetendo reserva manual...');
+        debugLog('=== INÍCIO SUBMISSÃO RESERVA MANUAL ===');
 
         try {
             const formData = new FormData(this);
@@ -1141,36 +1247,58 @@
             dados.action = "reservaManual";
             
             debugLog('Dados do formulário:', dados);
+            debugLog('URL destino:', CONFIG.URL_SCRIPT);
 
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify(dados)
             });
             
-            const resultado = await response.json();
-            debugLog('Resposta da reserva:', resultado);
+            debugLog('Status da resposta:', response.status);
+            debugLog('Headers:', Object.fromEntries(response.headers.entries()));
+            
+            const responseText = await response.text();
+            debugLog('Resposta (texto):', responseText.substring(0, 200));
+            
+            let resultado;
+            try {
+                resultado = JSON.parse(responseText);
+            } catch (parseError) {
+                debugLog('ERRO ao fazer parse da resposta:', parseError);
+                throw new Error('Resposta inválida do servidor: ' + responseText.substring(0, 100));
+            }
+            
+            debugLog('Resultado (JSON):', resultado);
             
             if (resultado.status === 'success') {
-                mostrarSucesso('Reserva criada com sucesso! ID: ' + resultado.id);
+                mostrarSucesso('Reserva criada com sucesso! ID: ' + (resultado.id || 'N/A'));
                 this.reset();
                 
                 const hoje = new Date().toISOString().split('T')[0];
                 document.getElementById('dataManual').value = hoje;
                 
+                debugLog('Recarregando dados após sucesso...');
                 await carregarDados();
             } else {
+                debugLog('Resposta indica erro:', resultado.message);
                 mostrarErro(resultado.message || 'Erro ao criar reserva');
             }
         } catch (error) {
-            debugLog('Erro ao gravar reserva:', error);
-            mostrarErro('Não foi possível gravar a reserva. Verifica os dados e tenta novamente.');
+            debugLog('ERRO CRÍTICO ao gravar reserva:', error);
+            debugLog('Error stack:', error.stack);
+            mostrarErro('Não foi possível gravar a reserva. Erro: ' + error.message);
         } finally {
             btn.disabled = false;
             btn.innerText = textoOriginal;
+            debugLog('=== FIM SUBMISSÃO RESERVA MANUAL ===');
         }
     };
 
     debugLog('Dashboard admin carregado e pronto');
+    debugLog('Versão com debug ativado');
 </script>
 
 </body>
