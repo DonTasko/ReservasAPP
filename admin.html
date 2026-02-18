@@ -179,7 +179,7 @@
             flex-wrap: wrap;
         }
         
-        /* FORMULÁRIO MANUAL */
+        /* FORMULÁRIO MANUAL - SIMPLIFICADO */
         .form-manual input, .form-manual select, .form-manual textarea { 
             width: 100%; padding: 12px 14px; margin-bottom: 14px; 
             border: 2px solid #e0e0e0; border-radius: 10px; 
@@ -193,9 +193,33 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
+        /* Labels obrigatórios */
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+        
+        .form-label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .form-label.optional {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .form-label.optional::after {
+            content: " (opcional)";
+            font-size: 11px;
+            color: #999;
+        }
+        
         .form-row { display: flex; gap: 12px; }
         .form-row > * { flex: 1; }
-        .form-row .pax-input { flex: 0.4; }
         
         .btn-add { 
             background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
@@ -269,6 +293,72 @@
         }
         
         /* TABELA */
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .filtros {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        
+        .filtro-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .filtro-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .filtro-btn.ativo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .data-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .data-selector label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+        
+        .data-selector input[type="date"] {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .data-selector input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
         .table-container { 
             overflow-x: auto; 
             border-radius: 12px;
@@ -351,36 +441,6 @@
             margin-bottom: 15px;
         }
 
-        /* FILTROS */
-        .filtros {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filtro-btn {
-            padding: 8px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .filtro-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-        
-        .filtro-btn.ativo {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: transparent;
-        }
-
         /* RESPONSIVE */
         @media (max-width: 1200px) {
             .container { grid-template-columns: 1fr; }
@@ -393,6 +453,19 @@
             .card { padding: 20px; }
             .btn-refresh, .btn-logout { padding: 10px 16px; font-size: 13px; }
             th, td { padding: 12px 8px; font-size: 12px; }
+            
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filtros {
+                justify-content: center;
+            }
+            
+            .data-selector {
+                justify-content: center;
+            }
         }
 
         /* ANIMAÇÕES SUAVES */
@@ -449,55 +522,59 @@
         <!-- COLUNA ESQUERDA -->
         <div>
             
-            <!-- FORMULÁRIO DE RESERVA MANUAL -->
+            <!-- FORMULÁRIO DE RESERVA MANUAL SIMPLIFICADO -->
             <div class="card fade-in">
                 <h2>
                     <span>➕</span>
                     <span>Criar Reserva Manual</span>
                 </h2>
                 <form id="formManual" class="form-manual">
+                    
+                    <label class="form-label required">Nome do Cliente</label>
                     <input 
                         type="text" 
                         name="nome" 
-                        placeholder="Nome do Cliente *" 
+                        placeholder="Nome completo" 
                         required
                         minlength="2"
                     >
-                    <input 
-                        type="email" 
-                        name="email" 
-                        placeholder="Email *" 
-                        required
-                    >
+                    
+                    <label class="form-label required">Número de Telefone</label>
                     <input 
                         type="tel" 
                         name="telemovel" 
-                        placeholder="Telemóvel *" 
+                        placeholder="912 345 678" 
                         required 
                         pattern="[0-9]{9,15}"
                     >
                     
                     <div class="form-row">
-                        <input 
-                            type="date" 
-                            name="data" 
-                            id="dataManual" 
-                            required
-                        >
-                        <input 
-                            type="number" 
-                            name="pax" 
-                            value="2" 
-                            min="1" 
-                            max="20" 
-                            required 
-                            class="pax-input" 
-                            title="Número de pessoas"
-                        >
+                        <div>
+                            <label class="form-label required">Data</label>
+                            <input 
+                                type="date" 
+                                name="data" 
+                                id="dataManual" 
+                                required
+                            >
+                        </div>
+                        <div>
+                            <label class="form-label required">Pessoas</label>
+                            <input 
+                                type="number" 
+                                name="pax" 
+                                value="2" 
+                                min="1" 
+                                required 
+                                placeholder="Nº"
+                                title="Número de pessoas"
+                            >
+                        </div>
                     </div>
                     
-                    <select name="horario" id="horarioManual" required>
-                        <option value="">Selecione o horário *</option>
+                    <label class="form-label optional">Horário</label>
+                    <select name="horario" id="horarioManual">
+                        <option value="">Selecione o horário (se aplicável)</option>
                         <option value="12:00">12:00</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
@@ -509,10 +586,18 @@
                         <option value="21:00">21:00</option>
                     </select>
                     
+                    <label class="form-label optional">Email</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="email@exemplo.com"
+                    >
+                    
+                    <label class="form-label optional">Notas Internas</label>
                     <textarea 
                         name="obs" 
                         rows="3" 
-                        placeholder="Notas internas (Mesa, Alergias, Ocasião especial...)"
+                        placeholder="Mesa específica, alergias, ocasião especial..."
                     ></textarea>
                     
                     <button type="submit" class="btn-add" id="btnManual">
@@ -521,7 +606,7 @@
                 </form>
             </div>
 
-            <!-- RESUMO 15 DIAS -->
+            <!-- RESUMO 15 DIAS - APENAS FUTURO -->
             <div class="card fade-in">
                 <h2>
                     <span>📅</span>
@@ -534,7 +619,7 @@
             
         </div>
 
-        <!-- COLUNA DIREITA - TABELA DE HOJE -->
+        <!-- COLUNA DIREITA - TABELA COM SELETOR DE DATA -->
         <div class="card fade-in">
             
             <!-- AVISO DE OCUPAÇÃO -->
@@ -542,20 +627,33 @@
             
             <h2>
                 <span>🍽️</span>
-                <span>Reservas para Hoje</span>
+                <span>Reservas do Dia</span>
             </h2>
             
-            <!-- FILTROS -->
-            <div class="filtros">
-                <button class="filtro-btn ativo" onclick="filtrarTurno('todos')">
-                    Todos
-                </button>
-                <button class="filtro-btn" onclick="filtrarTurno('almoco')">
-                    🌞 Almoço
-                </button>
-                <button class="filtro-btn" onclick="filtrarTurno('jantar')">
-                    🌙 Jantar
-                </button>
+            <!-- CONTROLES DA TABELA -->
+            <div class="table-controls">
+                <!-- FILTROS DE TURNO -->
+                <div class="filtros">
+                    <button class="filtro-btn ativo" onclick="filtrarTurno('todos')">
+                        Todos
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarTurno('almoco')">
+                        🌞 Almoço
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarTurno('jantar')">
+                        🌙 Jantar
+                    </button>
+                </div>
+                
+                <!-- SELETOR DE DATA -->
+                <div class="data-selector">
+                    <label for="dataSelecionada">📆 Data:</label>
+                    <input 
+                        type="date" 
+                        id="dataSelecionada" 
+                        onchange="mudarDataTabela()"
+                    >
+                </div>
             </div>
             
             <div class="table-container">
@@ -592,7 +690,8 @@
         DEBUG_MODE: false
     };
 
-    let reservasHoje = [];
+    let todasReservas = {}; // Armazenar TODAS as reservas por data
+    let dataSelecionada = new Date().toISOString().split('T')[0];
     let turnoFiltro = 'todos';
 
     // ========== FUNÇÕES AUXILIARES ==========
@@ -636,6 +735,7 @@
             const hoje = new Date().toISOString().split('T')[0];
             document.getElementById('dataManual').value = hoje;
             document.getElementById('dataManual').min = hoje;
+            document.getElementById('dataSelecionada').value = hoje;
             
             carregarDados();
             carregarConfigs();
@@ -688,7 +788,7 @@
         }
     }
 
-    // ========== CARREGAR DADOS (COMPATÍVEL COM AMBOS FORMATOS) ==========
+    // ========== CARREGAR DADOS ==========
     async function carregarDados() {
         debugLog('Iniciando carregamento de dados...');
         
@@ -705,54 +805,34 @@
             const data = await response.json();
             debugLog('Dados recebidos:', data);
             
-            reservasHoje = data.listaHoje || [];
+            // Armazenar todas as reservas
+            todasReservas = data.todasReservas || {};
             
-            // ✨ COMPATIBILIDADE: Detectar formato
+            // Se não tiver o formato novo, criar a partir de listaHoje
+            if (Object.keys(todasReservas).length === 0 && data.listaHoje) {
+                const hoje = new Date().toISOString().split('T')[0];
+                todasReservas[hoje] = data.listaHoje;
+            }
+            
+            // Resumo
             let resumoAlmoco = {};
             let resumoJantar = {};
             
             if (data.resumoAlmoco && data.resumoJantar) {
-                // Formato NOVO
                 resumoAlmoco = data.resumoAlmoco;
                 resumoJantar = data.resumoJantar;
-                debugLog('Formato NOVO detectado');
             } else if (data.resumo) {
-                // Formato ANTIGO - Dividir por turnos baseado nas reservas
-                debugLog('Formato ANTIGO detectado, convertendo...');
-                
-                // Processar reservas para separar por turno
-                const hoje = new Date().toISOString().split('T')[0];
-                const reservasAgrupadas = {};
-                
-                reservasHoje.forEach(r => {
-                    const data = hoje; // Assumir que são de hoje
-                    const turno = r.hora < '16:00' ? 'almoco' : 'jantar';
-                    
-                    if (!reservasAgrupadas[data]) {
-                        reservasAgrupadas[data] = { almoco: 0, jantar: 0 };
-                    }
-                    reservasAgrupadas[data][turno] += r.pax;
-                });
-                
-                // Para datas no resumo antigo, dividir meio a meio
+                // Compatibilidade com formato antigo
                 Object.keys(data.resumo).forEach(dataKey => {
                     const total = data.resumo[dataKey];
-                    if (!reservasAgrupadas[dataKey]) {
-                        resumoAlmoco[dataKey] = Math.floor(total / 2);
-                        resumoJantar[dataKey] = Math.ceil(total / 2);
-                    }
-                });
-                
-                // Adicionar dados processados das reservas
-                Object.keys(reservasAgrupadas).forEach(dataKey => {
-                    resumoAlmoco[dataKey] = reservasAgrupadas[dataKey].almoco;
-                    resumoJantar[dataKey] = reservasAgrupadas[dataKey].jantar;
+                    resumoAlmoco[dataKey] = Math.floor(total / 2);
+                    resumoJantar[dataKey] = Math.ceil(total / 2);
                 });
             }
             
             renderizarAvisoOcupacao(resumoAlmoco, resumoJantar);
             renderizarResumo15Dias(resumoAlmoco, resumoJantar);
-            renderizarTabelaHoje();
+            renderizarTabela();
             
             debugLog('Dados carregados com sucesso!');
             
@@ -769,23 +849,20 @@
                     </div>
                 </div>
             `;
-            
-            document.getElementById('resumo15').innerHTML = `
-                <div class="empty-state">
-                    Não foi possível carregar os dados.<br>
-                    <button onclick="carregarDados()" class="btn-add" style="margin-top:15px; width:auto; padding:10px 20px;">
-                        Tentar Novamente
-                    </button>
-                </div>
-            `;
         }
+    }
+
+    // ========== MUDAR DATA DA TABELA ==========
+    function mudarDataTabela() {
+        dataSelecionada = document.getElementById('dataSelecionada').value;
+        debugLog('Data selecionada alterada para:', dataSelecionada);
+        renderizarTabela();
     }
 
     // ========== RENDERIZAR AVISO DE OCUPAÇÃO ==========
     function renderizarAvisoOcupacao(resumoAlmoco, resumoJantar) {
-        const hoje = new Date().toISOString().split('T')[0];
-        const almocoHoje = resumoAlmoco[hoje] || 0;
-        const jantarHoje = resumoJantar[hoje] || 0;
+        const almocoHoje = resumoAlmoco[dataSelecionada] || 0;
+        const jantarHoje = resumoJantar[dataSelecionada] || 0;
         
         let avisoHTML = '<div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap;">';
         
@@ -844,7 +921,7 @@
         document.getElementById('avisoOcupacao').innerHTML = avisoHTML;
     }
 
-    // ========== RENDERIZAR RESUMO 15 DIAS ==========
+    // ========== RENDERIZAR RESUMO 15 DIAS - APENAS FUTURO ==========
     function renderizarResumo15Dias(resumoAlmoco, resumoJantar) {
         const resumoDiv = document.getElementById('resumo15');
         
@@ -860,65 +937,75 @@
         
         const hoje = new Date().toISOString().split('T')[0];
         
-        resumoDiv.innerHTML = Array.from(todasDatas)
+        // Filtrar apenas datas de hoje para frente
+        const datasFuturas = Array.from(todasDatas)
+            .filter(data => data >= hoje)
             .sort()
-            .slice(0, 15)
-            .map(dataISO => {
-                const almoco = resumoAlmoco[dataISO] || 0;
-                const jantar = resumoJantar[dataISO] || 0;
-                
-                const isHoje = dataISO === hoje;
-                const dataFormatada = formatarData(dataISO);
-                
-                const percAlmoco = (almoco / CONFIG.LOTACAO_MAX) * 100;
-                const percJantar = (jantar / CONFIG.LOTACAO_MAX) * 100;
-                
-                let classeAlmoco = "status-ok";
-                if (percAlmoco >= 100) classeAlmoco = "status-full";
-                else if (percAlmoco >= 75) classeAlmoco = "status-warning";
-                
-                let classeJantar = "status-ok";
-                if (percJantar >= 100) classeJantar = "status-full";
-                else if (percJantar >= 75) classeJantar = "status-warning";
-                
-                return `
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: 700; margin-bottom: 8px; color: #2c3e50; font-size: 14px;">
-                            <span class="dia-data-principal">${dataFormatada.principal}</span>
-                            ${isHoje ? ' <strong style="color:#667eea;">(HOJE)</strong>' : ''}
-                            <span class="dia-semana"> - ${dataFormatada.semana}</span>
+            .slice(0, 15);
+        
+        if (datasFuturas.length === 0) {
+            resumoDiv.innerHTML = '<div class="empty-state">Sem reservas nos próximos dias.</div>';
+            return;
+        }
+        
+        resumoDiv.innerHTML = datasFuturas.map(dataISO => {
+            const almoco = resumoAlmoco[dataISO] || 0;
+            const jantar = resumoJantar[dataISO] || 0;
+            
+            const isHoje = dataISO === hoje;
+            const dataFormatada = formatarData(dataISO);
+            
+            const percAlmoco = (almoco / CONFIG.LOTACAO_MAX) * 100;
+            const percJantar = (jantar / CONFIG.LOTACAO_MAX) * 100;
+            
+            let classeAlmoco = "status-ok";
+            if (percAlmoco >= 100) classeAlmoco = "status-full";
+            else if (percAlmoco >= 75) classeAlmoco = "status-warning";
+            
+            let classeJantar = "status-ok";
+            if (percJantar >= 100) classeJantar = "status-full";
+            else if (percJantar >= 75) classeJantar = "status-warning";
+            
+            return `
+                <div style="margin-bottom: 15px;">
+                    <div style="font-weight: 700; margin-bottom: 8px; color: #2c3e50; font-size: 14px;">
+                        <span class="dia-data-principal">${dataFormatada.principal}</span>
+                        ${isHoje ? ' <strong style="color:#667eea;">(HOJE)</strong>' : ''}
+                        <span class="dia-semana"> - ${dataFormatada.semana}</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <div class="dia-item ${classeAlmoco}" style="flex: 1; padding: 10px 12px;">
+                            <span style="font-size: 11px; color: #666;">🌞 Almoço</span>
+                            <span class="pax-badge" style="font-size: 12px;">${almoco}</span>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <div class="dia-item ${classeAlmoco}" style="flex: 1; padding: 10px 12px;">
-                                <span style="font-size: 11px; color: #666;">🌞 Almoço</span>
-                                <span class="pax-badge" style="font-size: 12px;">${almoco}</span>
-                            </div>
-                            <div class="dia-item ${classeJantar}" style="flex: 1; padding: 10px 12px;">
-                                <span style="font-size: 11px; color: #666;">🌙 Jantar</span>
-                                <span class="pax-badge" style="font-size: 12px;">${jantar}</span>
-                            </div>
+                        <div class="dia-item ${classeJantar}" style="flex: 1; padding: 10px 12px;">
+                            <span style="font-size: 11px; color: #666;">🌙 Jantar</span>
+                            <span class="pax-badge" style="font-size: 12px;">${jantar}</span>
                         </div>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `;
+        }).join('');
     }
 
-    // ========== RENDERIZAR TABELA DE HOJE ==========
-    function renderizarTabelaHoje() {
+    // ========== RENDERIZAR TABELA ==========
+    function renderizarTabela() {
         const tbody = document.querySelector('#tabelaHoje tbody');
         
-        let listaFiltrada = reservasHoje;
+        const reservasDoDia = todasReservas[dataSelecionada] || [];
+        
+        let listaFiltrada = reservasDoDia;
         if (turnoFiltro === 'almoco') {
-            listaFiltrada = reservasHoje.filter(r => r.turno === 'Almoço' || r.hora < '16:00');
+            listaFiltrada = reservasDoDia.filter(r => r.turno === 'Almoço' || r.hora < '16:00');
         } else if (turnoFiltro === 'jantar') {
-            listaFiltrada = reservasHoje.filter(r => r.turno === 'Jantar' || r.hora >= '16:00');
+            listaFiltrada = reservasDoDia.filter(r => r.turno === 'Jantar' || r.hora >= '16:00');
         }
         
         if (listaFiltrada.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="5" class="empty-state">
-                        ${turnoFiltro === 'todos' ? '📭 Sem reservas para hoje' : 'Sem reservas neste turno'}
+                        ${turnoFiltro === 'todos' ? '📭 Sem reservas para esta data' : 'Sem reservas neste turno'}
                     </td>
                 </tr>
             `;
@@ -969,7 +1056,7 @@
         });
         event.target.classList.add('ativo');
         
-        renderizarTabelaHoje();
+        renderizarTabela();
     }
 
     // ========== MARCAR CHEGADA ==========
