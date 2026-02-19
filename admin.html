@@ -1,281 +1,296 @@
-<script>
-    // CONFIG
-    const CONFIG = {
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbziBFUSKq2M1W4fZI84TJYPJ8SPLpdHr5X6ZaA0jYiQZyjJSsNdbl1O5ZIbgxvDz1dF/exec",
-        PASS_CORRETA: "Tasko123",
-        LOTACAO_MAX: 30
-    };
-
-    let dataSelecionada = new Date().toISOString().split('T')[0];
-    let todasReservas = {};
-    let todasMesas = [];
-    let resumoCompleto = { almoco: {}, jantar: {} };
-
-    // ========== DEBUG CONSOLE ==========
-    let debugMessages = [];
-    function toggleDebug() {
-        const console = document.getElementById('debug-console');
-        console.classList.toggle('show');
-    }
-    
-    function debugLog(message, data = null) {
-        const timestamp = new Date().toLocaleTimeString('pt-PT');
-        const logMessage = `[${timestamp}] ${message}`;
-        console.log(logMessage, data || '');
-        debugMessages.push(logMessage + (data ? '<br>➜ ' + JSON.stringify(data).substring(0, 150) : ''));
-        if (debugMessages.length > 30) debugMessages.shift();
-        const debugConsole = document.getElementById('debug-console');
-        debugConsole.innerHTML = debugMessages.join('<br>');
-        debugConsole.scrollTop = debugConsole.scrollHeight;
-    }
-
-    // LOGIN
-    function verificarPass() {
-        const senha = document.getElementById('passInput').value;
-        if (senha === CONFIG.PASS_CORRETA) {
-            debugLog('✓ Login bem-sucedido');
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard-content').style.display = 'block';
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('dataManual').value = hoje;
-            document.getElementById('dataManual').min = hoje;
-            document.getElementById('dataSelecionada').value = hoje;
-            inicializar();
-        } else {
-            debugLog('✗ Login falhou');
-            const erroEl = document.getElementById('erro');
-            erroEl.style.display = 'block';
-            setTimeout(() => erroEl.style.display = 'none', 3000);
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | Don Tasko</title>
+    <style>
+        /* CSS INTEGRADO */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5; min-height: 100vh; color: #1a1a1a;
         }
-    }
-
-    function logout() {
-        if (confirm('Sair do painel?')) {
-            document.getElementById('dashboard-content').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('passInput').value = '';
+        #login-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; 
         }
-    }
+        .login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; width: 320px; }
+        .dashboard-container { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stat-value { font-size: 24px; font-weight: bold; color: #764ba2; }
+        .main-grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        .sala-card { background: white; padding: 20px; border-radius: 12px; min-height: 600px; position: relative; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        #salaContainer { width: 100%; height: 550px; position: relative; background: #fafafa; border: 2px dashed #ddd; border-radius: 8px; }
+        .mesa { position: absolute; width: 80px; height: 80px; background: #4caf50; color: white; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: move; font-size: 11px; text-align: center; padding: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .mesa.reservada { background: #ff9800; }
+        .mesa.ocupada { background: #f44336; }
+        .mesa-cliente { font-weight: bold; margin-bottom: 2px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .lista-reservas { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); max-height: 500px; overflow-y: auto; }
+        .reserva-item { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .reserva-item:last-child { border-bottom: none; }
+        .reserva-item.chegou { border-left: 4px solid #4caf50; background: #f8fff8; }
+        .btn-pequeno { padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; margin-top: 5px; }
+        .btn-chegou { background: #4caf50; color: white; }
+        .btn-cancelar { background: #fee; color: #c00; }
+        #debug-console { position: fixed; bottom: 10px; right: 10px; width: 300px; height: 200px; background: rgba(0,0,0,0.8); color: #0f0; font-family: monospace; font-size: 10px; padding: 10px; border-radius: 5px; overflow-y: auto; display: none; z-index: 2000; }
+        #debug-console.show { display: block; }
+        input, select, button { padding: 10px; border-radius: 6px; border: 1px solid #ddd; }
+        .btn-add { background: #764ba2; color: white; border: none; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
 
-    document.getElementById('passInput').addEventListener('keypress', (e) => { 
-        if (e.key === 'Enter') verificarPass(); 
-    });
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>Don Tasko Admin</h2>
+            <p style="margin-bottom: 20px; color: #666;">Insira a palavra-passe</p>
+            <input type="password" id="passInput" placeholder="Senha..." style="width: 100%; margin-bottom: 15px;">
+            <button onclick="verificarPass()" style="width: 100%; background: #2c3e50; color: white; cursor: pointer;">Entrar</button>
+            <p id="erro" style="color: red; display: none; margin-top: 10px;">Senha incorreta!</p>
+        </div>
+    </div>
 
-    // INICIALIZAR
-    async function inicializar() {
-        debugLog('🚀 Inicializando dashboard...');
-        await carregarMesas();
-        await carregarDados();
-        renderizarSala();
-    }
+    <div id="dashboard-content" class="dashboard-container">
+        <div class="header">
+            <h1>🍷 Painel de Gestão</h1>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <input type="date" id="dataSelecionada" onchange="mudarData()">
+                <button onclick="carregarDados()" title="Atualizar">🔄</button>
+                <button onclick="logout()" style="background: #f44336; color: white; border: none;">Sair</button>
+            </div>
+        </div>
 
-    // CARREGAR MESAS
-    async function carregarMesas() {
-        debugLog('📍 Carregando mesas...');
-        try {
-            const response = await fetch(CONFIG.URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'getMesas' })
-            });
-            const data = await response.json();
-            if (data.mesas && data.mesas.length > 0) {
-                todasMesas = data.mesas;
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>Almoços</div>
+                <div class="stat-value" id="statAlmoco">0</div>
+            </div>
+            <div class="stat-card">
+                <div>Jantares</div>
+                <div class="stat-value" id="statJantar">0</div>
+            </div>
+            <div class="stat-card">
+                <div>Total Pax</div>
+                <div class="stat-value" id="totalPax">0</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="sala-card">
+                <h3>Mapa da Sala</h3>
+                <div id="salaContainer"></div>
+            </div>
+
+            <div class="sidebar">
+                <div class="lista-reservas">
+                    <h3>Reservas do Dia</h3>
+                    <div id="reservasList">Carregando...</div>
+                </div>
+
+                <div class="lista-reservas">
+                    <h3>Nova Reserva Manual</h3>
+                    <form id="formManual" style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="text" name="nome" placeholder="Nome do Cliente" required>
+                        <input type="tel" name="tel" placeholder="Telefone">
+                        <input type="number" name="pax" placeholder="Nº Pessoas" required>
+                        <input type="time" name="hora" required>
+                        <input type="date" name="data" id="dataManual" required>
+                        <select name="turno">
+                            <option value="Almoço">Almoço</option>
+                            <option value="Jantar">Jantar</option>
+                        </select>
+                        <button type="submit" class="btn-add">Adicionar Reserva</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="toggleDebug()" style="position: fixed; bottom: 10px; left: 10px; z-index: 2001; opacity: 0.5;">🐛 Debug</button>
+    <div id="debug-console"></div>
+
+    <script>
+        const CONFIG = {
+            URL_SCRIPT: "https://script.google.com/macros/s/AKfycbziBFUSKq2M1W4fZI84TJYPJ8SPLpdHr5X6ZaA0jYiQZyjJSsNdbl1O5ZIbgxvDz1dF/exec",
+            PASS_CORRETA: "Tasko123"
+        };
+
+        let dataSelecionada = new Date().toISOString().split('T')[0];
+        let todasReservas = {};
+        let todasMesas = [];
+        let resumoCompleto = { almoco: {}, jantar: {} };
+
+        // DEBUG
+        let debugMessages = [];
+        function debugLog(msg, data = null) {
+            const time = new Date().toLocaleTimeString();
+            const log = `[${time}] ${msg}`;
+            debugMessages.push(log + (data ? ' -> ' + JSON.stringify(data).substring(0,50) : ''));
+            const consoleEl = document.getElementById('debug-console');
+            if(consoleEl) consoleEl.innerHTML = debugMessages.join('<br>');
+        }
+        function toggleDebug() { document.getElementById('debug-console').classList.toggle('show'); }
+
+        // LOGIN
+        function verificarPass() {
+            const senha = document.getElementById('passInput').value;
+            if (senha === CONFIG.PASS_CORRETA) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                document.getElementById('dataSelecionada').value = dataSelecionada;
+                document.getElementById('dataManual').value = dataSelecionada;
+                inicializar();
             } else {
-                usarMesasPadrao();
+                document.getElementById('erro').style.display = 'block';
             }
-        } catch (error) {
-            usarMesasPadrao();
         }
-    }
 
-    function usarMesasPadrao() {
-        todasMesas = [
-            { id: 1, nome: 'Mesa 1', lugares: 4, x: 50, y: 50 },
-            { id: 2, nome: 'Mesa 2', lugares: 6, x: 200, y: 50 },
-            { id: 4, nome: 'Mesa 4', lugares: 4, x: 350, y: 50 },
-            { id: 5, nome: 'Mesa 5', lugares: 4, x: 50, y: 200 },
-            { id: 6, nome: 'Mesa 6', lugares: 4, x: 200, y: 200 },
-            { id: 7, nome: 'Mesa 7', lugares: 4, x: 350, y: 200 },
-            { id: 8, nome: 'Mesa 8', lugares: 4, x: 50, y: 350 },
-            { id: 9, nome: 'Mesa 9', lugares: 4, x: 200, y: 350 },
-        ];
-    }
+        async function inicializar() {
+            debugLog('Iniciando...');
+            await carregarMesas();
+            await carregarDados();
+            renderizarSala();
+        }
 
-    // --- FUNÇÃO CORRIGIDA ---
-    async function carregarDados() {
-        debugLog('📊 Carregando dados do dashboard...');
-        try {
-            const response = await fetch(CONFIG.URL_SCRIPT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'getDashboard' })
-            });
-            
-            const data = await response.json();
-            
-            // Garantir compatibilidade de formatos [cite: 74, 76]
-            if (data.todasReservas) {
-                todasReservas = data.todasReservas;
-            } else if (data.listaHoje) {
-                const hoje = new Date().toISOString().split('T')[0];
-                todasReservas = { [hoje]: data.listaHoje };
-            } else {
-                todasReservas = {};
-            }
-            
-            // Resumo por turnos [cite: 77]
-            if (data.resumoAlmoco && data.resumoJantar) {
-                resumoCompleto.almoco = data.resumoAlmoco;
-                resumoCompleto.jantar = data.resumoJantar;
-            }
-            
-            // Forçar atualização da UI após carregar [cite: 79]
+        function mudarData() {
+            dataSelecionada = document.getElementById('dataSelecionada').value;
+            debugLog('Data mudada para: ' + dataSelecionada);
             atualizarStats();
             renderizarLista();
             atualizarOcupacaoMesas();
-            debugLog('✓ Dados e interface atualizados');
-            
-        } catch (error) {
-            debugLog('✗ ERRO:', error);
-            alert('Erro ao carregar dados: ' + error.message);
         }
-    }
 
-    // ATUALIZAR STATS
-    function atualizarStats() {
-        const almoco = resumoCompleto.almoco[dataSelecionada] || 0;
-        const jantar = resumoCompleto.jantar[dataSelecionada] || 0;
-        document.getElementById('statAlmoco').textContent = almoco;
-        document.getElementById('statJantar').textContent = jantar;
-    }
-
-    // MUDAR DATA [cite: 83]
-    function mudarData() {
-        dataSelecionada = document.getElementById('dataSelecionada').value;
-        debugLog('📅 Data alterada para:', dataSelecionada);
-        atualizarStats();
-        renderizarLista();
-        atualizarOcupacaoMesas();
-    }
-
-    // RENDERIZAR SALA
-    function renderizarSala() {
-        const container = document.getElementById('salaContainer');
-        container.innerHTML = '';
-        todasMesas.forEach(mesa => {
-            const mesaEl = document.createElement('div');
-            mesaEl.className = 'mesa livre';
-            mesaEl.id = `mesa-${mesa.id}`;
-            mesaEl.style.left = (mesa.x || 50) + 'px';
-            mesaEl.style.top = (mesa.y || 50) + 'px';
-            mesaEl.draggable = true;
-            mesaEl.innerHTML = `<div class="mesa-cliente"></div><div class="mesa-numero">${mesa.nome}</div><div class="mesa-lugares">${mesa.lugares} lugares</div>`;
-            mesaEl.addEventListener('dragstart', handleDragStart);
-            mesaEl.addEventListener('dragend', handleDragEnd);
-            container.appendChild(mesaEl);
-        });
-        container.addEventListener('dragover', handleDragOver);
-        container.addEventListener('drop', handleDrop);
-    }
-
-    // ATUALIZAR OCUPAÇÃO [cite: 86, 88]
-    function atualizarOcupacaoMesas() {
-        const reservasDoDia = todasReservas[dataSelecionada] || [];
-        document.querySelectorAll('.mesa').forEach(mesaEl => {
-            mesaEl.className = 'mesa livre';
-            mesaEl.querySelector('.mesa-cliente').textContent = '';
-        });
-        reservasDoDia.forEach(reserva => {
-            if (reserva.mesa) {
-                const mesaEl = document.getElementById(`mesa-${reserva.mesa}`);
-                if (mesaEl) {
-                    mesaEl.className = reserva.status === 'Chegou' ? 'mesa ocupada' : 'mesa reservada';
-                    mesaEl.querySelector('.mesa-cliente').textContent = reserva.nome;
-                }
+        async function carregarMesas() {
+            try {
+                const resp = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'getMesas' }) });
+                const data = await resp.json();
+                todasMesas = data.mesas || getMesasPadrao();
+            } catch (e) {
+                todasMesas = getMesasPadrao();
             }
-        });
-    }
-
-    // RENDERIZAR LISTA [cite: 89, 91]
-    function renderizarLista() {
-        const lista = document.getElementById('reservasList');
-        const reservasDoDia = todasReservas[dataSelecionada] || [];
-        if (reservasDoDia.length === 0) {
-            lista.innerHTML = '<div class="empty-state">📭 Sem reservas para esta data</div>';
-            return;
         }
-        lista.innerHTML = reservasDoDia
-            .sort((a, b) => (a.hora || '').localeCompare(b.hora || ''))
-            .map(reserva => `
-                <div class="reserva-item ${reserva.status === 'Chegou' ? 'chegou' : ''}">
-                    <div class="hora">${reserva.hora || '--:--'}</div>
-                    <div class="nome">${reserva.nome}</div>
-                    <div class="detalhes">👥 ${reserva.pax} pessoas ${reserva.tel ? ' • 📞 ' + reserva.tel : ''}</div>
+
+        function getMesasPadrao() {
+            return [
+                { id: 1, nome: 'Mesa 1', lugares: 4, x: 50, y: 50 },
+                { id: 2, nome: 'Mesa 2', lugares: 4, x: 150, y: 50 },
+                { id: 3, nome: 'Mesa 3', lugares: 2, x: 250, y: 50 }
+            ];
+        }
+
+        async function carregarDados() {
+            debugLog('Buscando reservas...');
+            try {
+                const response = await fetch(CONFIG.URL_SCRIPT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'getDashboard' })
+                });
+                const data = await response.json();
+                
+                // CORREÇÃO: Mapeamento de dados
+                todasReservas = data.todasReservas || {};
+                resumoCompleto.almoco = data.resumoAlmoco || {};
+                resumoCompleto.jantar = data.resumoJantar || {};
+                
+                atualizarStats();
+                renderizarLista();
+                atualizarOcupacaoMesas();
+                debugLog('Dados carregados com sucesso');
+            } catch (e) {
+                debugLog('Erro ao carregar dados', e);
+            }
+        }
+
+        function atualizarStats() {
+            const alm = resumoCompleto.almoco[dataSelecionada] || 0;
+            const jan = resumoCompleto.jantar[dataSelecionada] || 0;
+            document.getElementById('statAlmoco').textContent = alm;
+            document.getElementById('statJantar').textContent = jan;
+            document.getElementById('totalPax').textContent = parseInt(alm) + parseInt(jan);
+        }
+
+        function renderizarLista() {
+            const lista = document.getElementById('reservasList');
+            const reservas = todasReservas[dataSelecionada] || [];
+            
+            if (reservas.length === 0) {
+                lista.innerHTML = '<p style="color:#999;text-align:center;">Sem reservas.</p>';
+                return;
+            }
+
+            lista.innerHTML = reservas.map(res => `
+                <div class="reserva-item ${res.status === 'Chegou' ? 'chegou' : ''}">
+                    <b>${res.hora}</b> - ${res.nome} (${res.pax}p)<br>
+                    <small>${res.tel || 'Sem tel'}</small>
                     <div class="acoes">
-                        ${reserva.status === 'Confirmada' ? `<button class="btn-pequeno btn-chegou" onclick="marcarChegada('${reserva.id}')">✅ Chegou</button>` : ''}
-                        <button class="btn-pequeno btn-cancelar" onclick="cancelarReserva('${reserva.id}', '${reserva.nome}')">🗑️ Cancelar</button>
+                        ${res.status !== 'Chegou' ? `<button class="btn-pequeno btn-chegou" onclick="marcarChegada('${res.id}')">Confirmar</button>` : ''}
+                        <button class="btn-pequeno btn-cancelar" onclick="cancelarReserva('${res.id}')">Eliminar</button>
                     </div>
-                </div>`).join('');
-    }
-
-    // DRAG & DROP
-    let draggedElement = null;
-    let offsetX, offsetY;
-    function handleDragStart(e) {
-        draggedElement = e.target;
-        const rect = draggedElement.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        draggedElement.style.opacity = '0.5';
-    }
-    function handleDragEnd(e) {
-        draggedElement.style.opacity = '1';
-        draggedElement = null;
-    }
-    function handleDragOver(e) { e.preventDefault(); }
-    function handleDrop(e) {
-        e.preventDefault();
-        if (draggedElement) {
-            const container = document.getElementById('salaContainer');
-            const rect = container.getBoundingClientRect();
-            const x = e.clientX - rect.left - offsetX;
-            const y = e.clientY - rect.top - offsetY;
-            draggedElement.style.left = Math.max(0, x) + 'px';
-            draggedElement.style.top = Math.max(0, y) + 'px';
+                </div>
+            `).join('');
         }
-    }
 
-    // AÇÕES (MARCAR CHEGADA / CANCELAR) [cite: 101, 105]
-    async function marcarChegada(id) {
-        if (!confirm('Confirma chegada?')) return;
-        const resp = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'marcarChegada', id: id }) });
-        const res = await resp.json();
-        if (res.status === 'success') carregarDados();
-    }
+        function renderizarSala() {
+            const container = document.getElementById('salaContainer');
+            container.innerHTML = '';
+            todasMesas.forEach(mesa => {
+                const div = document.createElement('div');
+                div.className = 'mesa';
+                div.id = `mesa-${mesa.id}`;
+                div.style.left = mesa.x + 'px';
+                div.style.top = mesa.y + 'px';
+                div.innerHTML = `<div class="mesa-cliente"></div><div>${mesa.nome}</div>`;
+                container.appendChild(div);
+            });
+            atualizarOcupacaoMesas();
+        }
 
-    async function cancelarReserva(id, nome) {
-        if (!confirm(`Cancelar reserva de ${nome}?`)) return;
-        const resp = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'cancelarReserva', id: id }) });
-        const res = await resp.json();
-        if (res.status === 'success') carregarDados();
-    }
+        function atualizarOcupacaoMesas() {
+            const reservas = todasReservas[dataSelecionada] || [];
+            document.querySelectorAll('.mesa').forEach(m => {
+                m.className = 'mesa';
+                m.querySelector('.mesa-cliente').textContent = '';
+            });
 
-    // FORMULÁRIO MANUAL [cite: 110, 111]
-    document.getElementById('formManual').onsubmit = async function(e) {
-        e.preventDefault();
-        const btn = this.querySelector('.btn-add');
-        btn.disabled = true;
-        try {
-            const formData = new FormData(this);
-            const dados = Object.fromEntries(formData.entries());
-            dados.action = "reservaManual";
-            const response = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
-            const resultado = await response.json();
-            if (resultado.status === 'success') {
-                alert('✅ Reserva criada!');
-                this.reset();
+            reservas.forEach(res => {
+                if (res.mesa) {
+                    const el = document.getElementById(`mesa-${res.mesa}`);
+                    if (el) {
+                        el.className = res.status === 'Chegou' ? 'mesa ocupada' : 'mesa reservada';
+                        el.querySelector('.mesa-cliente').textContent = res.nome;
+                    }
+                }
+            });
+        }
+
+        function logout() { location.reload(); }
+
+        // Ações de formulário e botões simplificadas para este exemplo
+        async function marcarChegada(id) {
+            await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'marcarChegada', id: id }) });
+            carregarDados();
+        }
+
+        async function cancelarReserva(id) {
+            if(confirm('Apagar reserva?')) {
+                await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'cancelarReserva', id: id }) });
                 carregarDados();
             }
-        } finally { btn.disabled = false; }
-    };
-</script>
+        }
+
+        document.getElementById('formManual').onsubmit = async function(e) {
+            e.preventDefault();
+            const dados = Object.fromEntries(new FormData(this));
+            dados.action = 'reservaManual';
+            await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
+            this.reset();
+            carregarDados();
+        };
+    </script>
+</body>
+</html>
