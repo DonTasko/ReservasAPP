@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin | Don Tasko</title>
     <style>
-        /* CSS ORIGINAL RECUPERADO */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -17,22 +16,14 @@
             background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 1000; 
         }
         .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; width: 350px; }
-        
         .dashboard-container { display: none; max-width: 1400px; margin: 0 auto; }
-        
         .header { 
             display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 20px; background: rgba(255,255,255,0.9); 
             padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);
         }
-
         .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
-
-        /* SALA E MESAS */
-        .sala-card { 
-            background: white; padding: 25px; border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative;
-        }
+        .sala-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         #salaContainer { 
             width: 100%; height: 600px; position: relative; 
             background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 15px;
@@ -42,46 +33,31 @@
             position: absolute; width: 90px; height: 90px; 
             background: #4caf50; color: white; border-radius: 15px; 
             display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; cursor: grab; transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 12px;
+            justify-content: center; cursor: grab; font-size: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); user-select: none;
         }
-        .mesa:active { cursor: grabbing; transform: scale(1.05); }
         .mesa.reservada { background: #ff9800; }
         .mesa.ocupada { background: #f44336; }
-        .mesa-cliente { font-weight: bold; font-size: 10px; margin-bottom: 4px; padding: 0 5px; text-align: center; }
-
-        /* SIDEBAR E LISTA */
+        .mesa-cliente { font-weight: bold; font-size: 10px; margin-bottom: 4px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 100%; padding: 0 5px; }
         .sidebar { display: flex; flex-direction: column; gap: 20px; }
-        .card-lateral { 
-            background: white; padding: 20px; border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .reservasList { max-height: 400px; overflow-y: auto; margin-top: 15px; }
-        .reserva-item { 
-            padding: 15px; border-radius: 12px; background: #f8f9fa; 
-            margin-bottom: 10px; border-left: 5px solid #ddd;
-        }
+        .card-lateral { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .reservasList { max-height: 350px; overflow-y: auto; margin-top: 15px; }
+        .reserva-item { padding: 12px; border-radius: 10px; background: #f8f9fa; margin-bottom: 8px; border-left: 5px solid #ddd; font-size: 13px; }
         .reserva-item.chegou { border-left-color: #4caf50; background: #e8f5e9; }
-        
-        /* BOTÕES */
-        button { padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .btn-chegou { background: #4caf50; color: white; margin-right: 5px; }
-        .btn-cancelar { background: #ffebee; color: #d32f2f; }
-        
-        #debug-console { 
-            position: fixed; bottom: 20px; left: 20px; width: 300px; height: 150px; 
-            background: rgba(0,0,0,0.8); color: #00ff00; font-family: monospace; 
-            padding: 10px; border-radius: 10px; display: none; overflow-y: auto; z-index: 2000;
-        }
+        input, select, button { padding: 10px; border-radius: 8px; border: 1px solid #ddd; width: 100%; }
+        button { cursor: pointer; font-weight: bold; border: none; }
+        #salvando-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 3000; font-size: 12px; }
     </style>
 </head>
 <body>
 
+    <div id="salvando-msg">💾 A guardar posição...</div>
+
     <div id="login-screen">
         <div class="login-box">
-            <h2 style="margin-bottom:20px">🔐 Admin Tasko</h2>
-            <input type="password" id="passInput" placeholder="Password" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd">
-            <button onclick="verificarPass()" style="width:100%; background:#764ba2; color:white">Entrar</button>
+            <h2 style="margin-bottom:20px">🔐 Don Tasko Admin</h2>
+            <input type="password" id="passInput" placeholder="Password">
+            <button onclick="verificarPass()" style="background:#764ba2; color:white; margin-top:10px">Entrar</button>
             <p id="erro" style="color:red; display:none; margin-top:10px">Incorreto!</p>
         </div>
     </div>
@@ -89,39 +65,42 @@
     <div id="dashboard-content" class="dashboard-container">
         <div class="header">
             <h2>🍷 Gestão de Reservas</h2>
-            <div style="display:flex; gap:10px">
-                <input type="date" id="dataSelecionada" onchange="mudarData()" style="padding:8px; border-radius:8px; border:1px solid #ddd">
-                <button onclick="carregarDados()" style="background:#eee">🔄</button>
-                <button onclick="location.reload()" style="background:#f44336; color:white">Sair</button>
+            <div style="display:flex; gap:10px; width: auto;">
+                <input type="date" id="dataSelecionada" onchange="mudarData()" style="width:160px">
+                <button onclick="carregarDados()" style="width:50px; background:#eee">🔄</button>
+                <button onclick="location.reload()" style="width:80px; background:#f44336; color:white">Sair</button>
             </div>
         </div>
 
         <div class="main-grid">
             <div class="sala-card">
-                <h3 style="margin-bottom:15px">Mapa de Mesas (Arraste para organizar)</h3>
+                <h3 style="margin-bottom:15px">Mapa da Sala</h3>
                 <div id="salaContainer"></div>
             </div>
 
             <div class="sidebar">
                 <div class="card-lateral">
-                    <h3>Lista de Hoje</h3>
+                    <h3>Reservas: <span id="labelData"></span></h3>
                     <div id="reservasList" class="reservasList">Carregando...</div>
                 </div>
                 
                 <div class="card-lateral">
-                    <h3>Nova Reserva</h3>
+                    <h3>Nova Reserva Manual</h3>
                     <form id="formManual" style="display:flex; flex-direction:column; gap:10px">
-                        <input type="text" name="nome" placeholder="Nome" required style="padding:8px; border-radius:5px; border:1px solid #ddd">
-                        <input type="number" name="pax" placeholder="Pessoas" required style="padding:8px; border-radius:5px; border:1px solid #ddd">
-                        <input type="time" name="hora" required style="padding:8px; border-radius:5px; border:1px solid #ddd">
-                        <button type="submit" style="background:#764ba2; color:white">Adicionar</button>
+                        <input type="text" name="nome" placeholder="Nome Cliente" required>
+                        <input type="number" name="pax" placeholder="Nº Pessoas" required>
+                        <input type="date" name="data" id="dataManual" required>
+                        <input type="time" name="hora" required>
+                        <select name="turno">
+                            <option value="Almoço">Almoço</option>
+                            <option value="Jantar">Jantar</option>
+                        </select>
+                        <button type="submit" style="background:#764ba2; color:white">Gravar Reserva</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="debug-console"></div>
 
     <script>
         const CONFIG = {
@@ -132,13 +111,15 @@
         let dataSelecionada = new Date().toISOString().split('T')[0];
         let todasReservas = {};
         let todasMesas = [];
+        let dragMesaId = null;
 
-        // LOGIN
         function verificarPass() {
             if (document.getElementById('passInput').value === CONFIG.PASS_CORRETA) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
                 document.getElementById('dataSelecionada').value = dataSelecionada;
+                document.getElementById('dataManual').value = dataSelecionada;
+                document.getElementById('labelData').textContent = dataSelecionada;
                 inicializar();
             } else {
                 document.getElementById('erro').style.display = 'block';
@@ -150,45 +131,34 @@
             await carregarDados();
         }
 
-        function mudarData() {
-            dataSelecionada = document.getElementById('dataSelecionada').value;
-            renderizarLista();
-            atualizarOcupacaoMesas();
+        async function carregarMesas() {
+            try {
+                const resp = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'getMesas' }) });
+                const data = await resp.json();
+                todasMesas = data.mesas || [];
+                renderizarSala();
+            } catch (e) { console.error(e); }
         }
 
-        // CARREGAR DADOS
         async function carregarDados() {
             try {
-                const response = await fetch(CONFIG.URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getDashboard' })
-                });
+                const response = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'getDashboard' }) });
                 const data = await response.json();
+                // Importante: O backend deve enviar o objeto 'todasReservas'
                 todasReservas = data.todasReservas || {};
                 renderizarLista();
                 atualizarOcupacaoMesas();
             } catch (e) { console.error(e); }
         }
 
-        async function carregarMesas() {
-            try {
-                const resp = await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'getMesas' }) });
-                const data = await resp.json();
-                todasMesas = data.mesas || getMesasPadrao();
-                renderizarSala();
-            } catch (e) { 
-                todasMesas = getMesasPadrao(); 
-                renderizarSala();
-            }
+        function mudarData() {
+            dataSelecionada = document.getElementById('dataSelecionada').value;
+            document.getElementById('labelData').textContent = dataSelecionada;
+            document.getElementById('dataManual').value = dataSelecionada;
+            renderizarLista();
+            atualizarOcupacaoMesas();
         }
 
-        function getMesasPadrao() {
-            let m = [];
-            for(let i=1; i<=10; i++) m.push({id: i, nome: 'Mesa '+i, x: i*40, y: 50});
-            return m;
-        }
-
-        // RENDERIZAÇÃO
         function renderizarSala() {
             const container = document.getElementById('salaContainer');
             container.innerHTML = '';
@@ -196,44 +166,55 @@
                 const div = document.createElement('div');
                 div.className = 'mesa';
                 div.id = `mesa-${mesa.id}`;
-                div.style.left = (mesa.x || 0) + 'px';
-                div.style.top = (mesa.y || 0) + 'px';
+                div.style.left = (mesa.x || 50) + 'px';
+                div.style.top = (mesa.y || 50) + 'px';
                 div.draggable = true;
                 div.innerHTML = `<div class="mesa-cliente"></div><div>${mesa.nome}</div>`;
                 
-                // Eventos Drag & Drop
-                div.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', mesa.id);
-                    offsetX = e.offsetX;
-                    offsetY = e.offsetY;
-                });
+                div.addEventListener('dragstart', (e) => dragMesaId = mesa.id);
                 container.appendChild(div);
             });
 
             container.addEventListener('dragover', (e) => e.preventDefault());
-            container.addEventListener('drop', (e) => {
+            container.addEventListener('drop', async (e) => {
                 e.preventDefault();
-                const id = e.dataTransfer.getData('text/plain');
-                const el = document.getElementById(`mesa-${id}`);
                 const rect = container.getBoundingClientRect();
-                el.style.left = (e.clientX - rect.left - 45) + 'px';
-                el.style.top = (e.clientY - rect.top - 45) + 'px';
+                const x = Math.round(e.clientX - rect.left - 45);
+                const y = Math.round(e.clientY - rect.top - 45);
+                const el = document.getElementById(`mesa-${dragMesaId}`);
+                if (el) {
+                    el.style.left = x + 'px';
+                    el.style.top = y + 'px';
+                    salvarPosicaoMesa(dragMesaId, x, y);
+                }
             });
+        }
+
+        async function salvarPosicaoMesa(id, x, y) {
+            document.getElementById('salvando-msg').style.display = 'block';
+            await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateMesaPos', id: id, x: x, y: y })
+            });
+            setTimeout(() => document.getElementById('salvando-msg').style.display = 'none', 800);
         }
 
         function renderizarLista() {
             const lista = document.getElementById('reservasList');
+            // Procura as reservas para a string da data selecionada (YYYY-MM-DD)
             const reservas = todasReservas[dataSelecionada] || [];
+            
             if (reservas.length === 0) {
-                lista.innerHTML = '<p style="text-align:center; color:#999">Sem reservas.</p>';
+                lista.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px">Vazio para este dia.</p>';
                 return;
             }
+
             lista.innerHTML = reservas.map(res => `
                 <div class="reserva-item ${res.status === 'Chegou' ? 'chegou' : ''}">
-                    <strong>${res.hora}</strong> - ${res.nome} (${res.pax}p)
-                    <div style="margin-top:10px">
-                        <button class="btn-chegou" onclick="marcarChegada('${res.id}')">OK</button>
-                        <button class="btn-cancelar" onclick="cancelar('${res.id}')">X</button>
+                    <b>${res.hora}</b> - ${res.nome} (${res.pax}p)
+                    <div style="margin-top:8px; display:flex; gap:5px">
+                        <button style="background:#4caf50; color:white; padding:5px; font-size:11px" onclick="acaoReserva('marcarChegada','${res.id}')">Confirmar</button>
+                        <button style="background:#f44336; color:white; padding:5px; font-size:11px" onclick="acaoReserva('cancelarReserva','${res.id}')">Apagar</button>
                     </div>
                 </div>
             `).join('');
@@ -256,18 +237,30 @@
             });
         }
 
-        // Ações simplificadas
-        async function marcarChegada(id) {
-            await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'marcarChegada', id: id }) });
+        async function acaoReserva(acao, id) {
+            await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: acao, id: id }) });
             carregarDados();
         }
 
-        async function cancelar(id) {
-            if(confirm('Apagar?')) {
-                await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify({ action: 'cancelarReserva', id: id }) });
-                carregarDados();
+        document.getElementById('formManual').onsubmit = async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'A gravar...';
+            
+            const dados = Object.fromEntries(new FormData(this));
+            dados.action = 'reservaManual';
+            
+            try {
+                await fetch(CONFIG.URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) });
+                this.reset();
+                document.getElementById('dataManual').value = dataSelecionada;
+                await carregarDados();
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Gravar Reserva';
             }
-        }
+        };
     </script>
 </body>
 </html>
