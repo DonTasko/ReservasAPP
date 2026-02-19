@@ -8,29 +8,22 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
-        /* LOGIN SCREEN */
+        /* LOGIN */
         #login-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 1000; 
+            display: flex; justify-content: center; align-items: center; z-index: 1000; 
         }
         
         .login-box { 
             background: white; padding: 50px 40px; border-radius: 20px; 
             box-shadow: 0 20px 80px rgba(0,0,0,0.4); min-width: 350px;
-            animation: slideIn 0.4s ease;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
         
         .login-box h2 { 
@@ -39,72 +32,23 @@
         }
         
         .login-box input { 
-            padding: 14px 16px; width: 100%; border: 2px solid #e0e0e0; 
+            padding: 14px; width: 100%; border: 2px solid #e0e0e0; 
             border-radius: 10px; margin-bottom: 20px; font-size: 15px;
-            transition: all 0.3s; font-family: inherit;
-        }
-        
-        .login-box input:focus { 
-            outline: none; border-color: #667eea; 
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .login-box button { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white; border: none; padding: 14px; border-radius: 10px; 
             cursor: pointer; font-weight: 600; font-size: 16px; width: 100%;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        
-        .login-box button:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-        
-        .login-box button:active { transform: translateY(0); }
         
         .erro { 
             color: #e74c3c; margin-top: 15px; font-size: 14px; 
             text-align: center; display: none; font-weight: 500;
         }
 
-        /* DEBUG CONSOLE */
-        #debug-console {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.9);
-            color: #0f0;
-            padding: 10px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 11px;
-            max-width: 400px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 9999;
-        }
-
-        #debug-console.show {
-            display: block;
-        }
-
-        #debug-toggle {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: #2c3e50;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-            z-index: 9999;
-        }
-
         /* DASHBOARD */
-        #dashboard-content { display: none; max-width: 1600px; margin: 0 auto; }
+        #dashboard-content { display: none; max-width: 2000px; margin: 0 auto; }
         
         .header { 
             background: white; padding: 25px 30px; border-radius: 16px;
@@ -127,109 +71,243 @@
             color: white; border: none; padding: 12px 24px; 
             border-radius: 10px; cursor: pointer; font-weight: 600;
             display: flex; align-items: center; gap: 8px; font-size: 14px;
-            transition: all 0.3s; border: 2px solid transparent;
+            transition: all 0.3s;
         }
         
         .btn-logout {
             background: white;
             color: #667eea;
-            border-color: #667eea;
+            border: 2px solid #667eea;
         }
         
-        .btn-refresh:hover, .btn-logout:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .container { 
-            display: grid; 
-            grid-template-columns: 420px 1fr; 
-            gap: 25px; 
+        .container-principal {
+            display: grid;
+            grid-template-columns: 350px 1fr 450px;
+            gap: 25px;
         }
         
         .card { 
             background: white; border-radius: 16px; padding: 30px; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
         
         .card h2 { 
-            margin: 0 0 25px 0; font-size: 20px; color: #2c3e50; 
-            border-bottom: 3px solid #f0f2f5; padding-bottom: 15px; 
+            margin: 0 0 20px 0; font-size: 18px; color: #2c3e50; 
+            border-bottom: 3px solid #f0f2f5; padding-bottom: 12px; 
             font-weight: 700; display: flex; align-items: center; gap: 10px;
         }
         
-        /* AVISO DE OCUPAÇÃO */
-        .aviso-ocupacao { 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-left: 5px solid #27ae60; padding: 18px 20px; 
-            border-radius: 12px; font-size: 15px; 
-            font-weight: 600; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.1);
-        }
-        
-        .aviso-ocupacao.warning { 
-            background: linear-gradient(135deg, #fff3cd 0%, #ffe9a6 100%);
-            border-left-color: #ffc107; color: #856404;
-            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.1);
-        }
-        
-        .aviso-ocupacao.critico { 
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-left-color: #e74c3c; color: #721c24;
-            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.1);
-        }
-        
-        .aviso-icon {
-            font-size: 24px;
-        }
-
-        /* Botão Chegou */
-        .btn-chegou {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .btn-chegou:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
-        }
-
-        .acoes-reserva {
+        /* SELETOR DE DATA */
+        .date-selector-large {
             display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
         
-        /* FORMULÁRIO MANUAL - SIMPLIFICADO */
-        .form-manual input, .form-manual select, .form-manual textarea { 
-            width: 100%; padding: 12px 14px; margin-bottom: 14px; 
-            border: 2px solid #e0e0e0; border-radius: 10px; 
-            font-size: 14px; font-family: inherit;
+        .date-selector-large label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .date-selector-large input[type="date"] {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+        
+        .stat-card.almoco {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        .stat-card.jantar {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        
+        .stat-card .label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        /* LAYOUT DA SALA */
+        .sala-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 600px;
+            position: relative;
+            overflow: auto;
+        }
+        
+        .mesa {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border: 3px solid #27ae60;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: move;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .mesa:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .mesa.ocupada {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+        
+        .mesa.reservada {
+            background: #f39c12;
+            border-color: #e67e22;
+            color: white;
+        }
+        
+        .mesa.livre {
+            background: white;
+            border-color: #27ae60;
+            color: #2c3e50;
+        }
+        
+        .mesa-numero {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .mesa-lugares {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        
+        .mesa-cliente {
+            position: absolute;
+            top: -30px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            display: none;
+        }
+        
+        .mesa.ocupada .mesa-cliente,
+        .mesa.reservada .mesa-cliente {
+            display: block;
+        }
+        
+        /* LISTA DE RESERVAS */
+        .reservas-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .reserva-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .reserva-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .reserva-item.chegou {
+            border-left-color: #27ae60;
+            opacity: 0.7;
+        }
+        
+        .reserva-item .hora {
+            font-weight: 700;
+            font-size: 16px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .reserva-item .nome {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .reserva-item .detalhes {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .reserva-item .acoes {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .btn-pequeno {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
         }
         
-        .form-manual input:focus, .form-manual select:focus, .form-manual textarea:focus {
-            outline: none; 
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .btn-chegou {
+            background: #27ae60;
+            color: white;
         }
         
-        /* Labels obrigatórios */
-        .form-label {
+        .btn-cancelar {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        /* FORMULÁRIO */
+        .form-manual label {
             display: block;
             margin-bottom: 6px;
             font-weight: 600;
@@ -237,309 +315,72 @@
             font-size: 13px;
         }
         
-        .form-label.required::after {
-            content: " *";
-            color: #e74c3c;
+        .form-manual input, .form-manual select, .form-manual textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
         }
         
-        .form-label.optional {
-            color: #666;
-            font-weight: 500;
-        }
-        
-        .form-label.optional::after {
-            content: " (opcional)";
-            font-size: 11px;
-            color: #999;
-        }
-        
-        .form-row { display: flex; gap: 12px; }
-        .form-row > * { flex: 1; }
-        
-        .btn-add { 
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-            color: white; border: none; width: 100%; padding: 14px; 
-            border-radius: 10px; cursor: pointer; font-weight: 700; 
-            font-size: 15px; transition: all 0.3s;
-        }
-        
-        .btn-add:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
-        }
-        
-        .btn-add:disabled { 
-            background: #95a5a6; 
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* LISTA 15 DIAS */
-        .scroll-resumo { 
-            max-height: 500px; overflow-y: auto; 
-            padding-right: 10px; margin-top: 10px;
-        }
-        
-        .scroll-resumo::-webkit-scrollbar { width: 8px; }
-        .scroll-resumo::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .scroll-resumo::-webkit-scrollbar-thumb { background: #bbb; border-radius: 10px; }
-        .scroll-resumo::-webkit-scrollbar-thumb:hover { background: #999; }
-        
-        .dia-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 18px; border-radius: 10px; margin-bottom: 10px;
-            transition: all 0.2s; cursor: default;
-        }
-        
-        .dia-item:hover { 
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .status-ok { 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-left: 5px solid #2ecc71; 
-        }
-        
-        .status-warning { 
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe9a6 100%);
-            border-left: 5px solid #f39c12; 
-        }
-        
-        .status-full { 
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-left: 5px solid #e74c3c; 
-        }
-
-        .dia-data { 
-            font-weight: 700; color: #2c3e50; font-size: 14px;
-            display: flex; flex-direction: column; gap: 2px;
-        }
-        
-        .dia-data-principal { font-size: 15px; }
-        .dia-semana { font-size: 12px; color: #666; font-weight: 500; }
-        
-        .pax-badge { 
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white; padding: 6px 14px; border-radius: 20px; 
-            font-weight: 700; font-size: 13px; 
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
-        }
-        
-        /* TABELA */
-        .table-controls {
+        .form-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 12px;
-            flex-wrap: wrap;
+            gap: 10px;
         }
         
-        .filtros {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+        .form-row > * {
             flex: 1;
         }
         
-        .filtro-btn {
-            padding: 8px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .filtro-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-        
-        .filtro-btn.ativo {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-add {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
             color: white;
-            border-color: transparent;
-        }
-        
-        .data-selector {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .data-selector label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #2c3e50;
-            white-space: nowrap;
-        }
-        
-        .data-selector input[type="date"] {
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .data-selector input[type="date"]:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .table-container { 
-            overflow-x: auto; 
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        table { width: 100%; border-collapse: collapse; }
-        
-        th { 
-            text-align: left; padding: 16px 14px; 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-bottom: 2px solid #dee2e6; font-size: 13px; 
-            font-weight: 700; color: #495057; text-transform: uppercase;
-            letter-spacing: 0.5px; position: sticky; top: 0;
-        }
-        
-        td { 
-            padding: 16px 14px; border-bottom: 1px solid #f0f2f5; 
-            font-size: 14px; 
-        }
-        
-        tr:hover td { background: #f8f9fa; }
-        tr:last-child td { border-bottom: none; }
-        
-        .cliente-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        
-        .cliente-nome { font-weight: 600; color: #2c3e50; }
-        .cliente-contato { font-size: 12px; color: #666; }
-        
-        .hora-badge {
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
             font-weight: 700;
-            color: #667eea;
             font-size: 15px;
         }
         
-        .obs-text { 
-            font-size: 12px; color: #606770; 
-            font-style: italic; max-width: 200px;
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
         }
         
-        .btn-cancel { 
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white; border: none; padding: 8px 16px; 
-            border-radius: 8px; cursor: pointer; font-size: 12px; 
-            font-weight: 600; transition: all 0.3s;
-        }
-        
-        .btn-cancel:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
-        }
-
-        /* ESTADOS VAZIOS E LOADING */
-        .loading, .empty-state { 
-            text-align: center; padding: 60px 20px; 
-            color: #95a5a6; font-size: 15px;
-        }
-        
-        .loading::before {
-            content: "⏳";
-            font-size: 40px;
-            display: block;
-            margin-bottom: 15px;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .empty-state::before {
-            content: "📭";
-            font-size: 60px;
-            display: block;
-            margin-bottom: 15px;
-        }
-
         /* RESPONSIVE */
-        @media (max-width: 1200px) {
-            .container { grid-template-columns: 1fr; }
-        }
-        
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .header { padding: 20px; }
-            .header h1 { font-size: 20px; }
-            .card { padding: 20px; }
-            .btn-refresh, .btn-logout { padding: 10px 16px; font-size: 13px; }
-            th, td { padding: 12px 8px; font-size: 12px; }
-            
-            .table-controls {
-                flex-direction: column;
-                align-items: stretch;
+        @media (max-width: 1400px) {
+            .container-principal {
+                grid-template-columns: 1fr;
             }
-            
-            .filtros {
-                justify-content: center;
-            }
-            
-            .data-selector {
-                justify-content: center;
-            }
-        }
-
-        /* ANIMAÇÕES SUAVES */
-        .fade-in {
-            animation: fadeIn 0.4s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-<!-- DEBUG TOGGLE -->
-<div id="debug-toggle" onclick="toggleDebug()">🐛 Debug</div>
-<div id="debug-console"></div>
-
-<!-- TELA DE LOGIN -->
+<!-- LOGIN -->
 <div id="login-screen">
     <div class="login-box">
         <h2>🔒 Acesso Admin</h2>
         <input 
             type="password" 
             id="passInput" 
-            placeholder="Digite a palavra-passe" 
+            placeholder="Palavra-passe" 
             autocomplete="current-password"
         >
-        <button onclick="verificarPass()">Entrar no Dashboard</button>
+        <button onclick="verificarPass()">Entrar</button>
         <p class="erro" id="erro">⚠️ Palavra-passe incorreta!</p>
     </div>
 </div>
 
-<!-- DASHBOARD PRINCIPAL -->
+<!-- DASHBOARD -->
 <div id="dashboard-content">
     
-    <!-- CABEÇALHO -->
-    <div class="header fade-in">
+    <!-- HEADER -->
+    <div class="header">
         <h1>
             <span>📊</span>
             <span>Painel Administrativo Don Tasko</span>
@@ -556,64 +397,59 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container-principal">
         
-        <!-- COLUNA ESQUERDA -->
+        <!-- COLUNA 1: CONTROLES -->
         <div>
             
-            <!-- FORMULÁRIO DE RESERVA MANUAL SIMPLIFICADO -->
-            <div class="card fade-in">
-                <h2>
-                    <span>➕</span>
-                    <span>Criar Reserva Manual</span>
-                </h2>
+            <!-- SELETOR DE DATA -->
+            <div class="card">
+                <div class="date-selector-large">
+                    <label>📆 Data de Consulta</label>
+                    <input 
+                        type="date" 
+                        id="dataSelecionada" 
+                        onchange="mudarData()"
+                    >
+                </div>
+                
+                <!-- STATS -->
+                <div class="stats-grid">
+                    <div class="stat-card almoco">
+                        <div class="label">🌞 Almoço</div>
+                        <div class="value" id="statAlmoco">0</div>
+                    </div>
+                    <div class="stat-card jantar">
+                        <div class="label">🌙 Jantar</div>
+                        <div class="value" id="statJantar">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FORMULÁRIO -->
+            <div class="card">
+                <h2>➕ Nova Reserva</h2>
                 <form id="formManual" class="form-manual">
+                    <label>Nome *</label>
+                    <input type="text" name="nome" required>
                     
-                    <label class="form-label required">Nome do Cliente</label>
-                    <input 
-                        type="text" 
-                        name="nome" 
-                        placeholder="Nome completo" 
-                        required
-                        minlength="2"
-                    >
-                    
-                    <label class="form-label required">Número de Telefone</label>
-                    <input 
-                        type="tel" 
-                        name="telemovel" 
-                        placeholder="912 345 678" 
-                        required 
-                        pattern="[0-9]{9,15}"
-                    >
+                    <label>Telefone *</label>
+                    <input type="tel" name="telemovel" required>
                     
                     <div class="form-row">
                         <div>
-                            <label class="form-label required">Data</label>
-                            <input 
-                                type="date" 
-                                name="data" 
-                                id="dataManual" 
-                                required
-                            >
+                            <label>Data *</label>
+                            <input type="date" name="data" id="dataManual" required>
                         </div>
                         <div>
-                            <label class="form-label required">Pessoas</label>
-                            <input 
-                                type="number" 
-                                name="pax" 
-                                value="2" 
-                                min="1" 
-                                required 
-                                placeholder="Nº"
-                                title="Número de pessoas"
-                            >
+                            <label>Pessoas *</label>
+                            <input type="number" name="pax" value="2" min="1" required>
                         </div>
                     </div>
                     
-                    <label class="form-label optional">Horário</label>
-                    <select name="horario" id="horarioManual">
-                        <option value="">Selecione o horário (se aplicável)</option>
+                    <label>Horário</label>
+                    <select name="horario">
+                        <option value="">Opcional</option>
                         <option value="12:00">12:00</option>
                         <option value="12:30">12:30</option>
                         <option value="13:00">13:00</option>
@@ -625,165 +461,57 @@
                         <option value="21:00">21:00</option>
                     </select>
                     
-                    <label class="form-label optional">Email</label>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        placeholder="email@exemplo.com"
-                    >
+                    <label>Email</label>
+                    <input type="email" name="email">
                     
-                    <label class="form-label optional">Notas Internas</label>
-                    <textarea 
-                        name="obs" 
-                        rows="3" 
-                        placeholder="Mesa específica, alergias, ocasião especial..."
-                    ></textarea>
+                    <label>Notas</label>
+                    <textarea name="obs" rows="2"></textarea>
                     
-                    <button type="submit" class="btn-add" id="btnManual">
-                        💾 Gravar Reserva
-                    </button>
+                    <button type="submit" class="btn-add">💾 Gravar</button>
                 </form>
-            </div>
-
-            <!-- RESUMO 15 DIAS - APENAS FUTURO -->
-            <div class="card fade-in">
-                <h2>
-                    <span>📅</span>
-                    <span>Ocupação (Próximos 15 Dias)</span>
-                </h2>
-                <div id="resumo15" class="scroll-resumo">
-                    <div class="loading">Carregando dados...</div>
-                </div>
             </div>
             
         </div>
 
-        <!-- COLUNA DIREITA - TABELA COM SELETOR DE DATA -->
-        <div class="card fade-in">
-            
-            <!-- AVISO DE OCUPAÇÃO -->
-            <div id="avisoOcupacao"></div>
-            
-            <h2>
-                <span>🍽️</span>
-                <span>Reservas do Dia</span>
-            </h2>
-            
-            <!-- CONTROLES DA TABELA -->
-            <div class="table-controls">
-                <!-- FILTROS DE TURNO -->
-                <div class="filtros">
-                    <button class="filtro-btn ativo" onclick="filtrarTurno('todos')">
-                        Todos
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarTurno('almoco')">
-                        🌞 Almoço
-                    </button>
-                    <button class="filtro-btn" onclick="filtrarTurno('jantar')">
-                        🌙 Jantar
-                    </button>
-                </div>
-                
-                <!-- SELETOR DE DATA -->
-                <div class="data-selector">
-                    <label for="dataSelecionada">📆 Data:</label>
-                    <input 
-                        type="date" 
-                        id="dataSelecionada" 
-                        onchange="mudarDataTabela()"
-                    >
+        <!-- COLUNA 2: LAYOUT DA SALA -->
+        <div class="card">
+            <h2>🍽️ Layout da Sala</h2>
+            <div class="sala-container" id="salaContainer">
+                <!-- Mesas serão adicionadas aqui dinamicamente -->
+            </div>
+        </div>
+
+        <!-- COLUNA 3: LISTA DE RESERVAS -->
+        <div class="card">
+            <h2>📋 Reservas do Dia</h2>
+            <div class="reservas-list" id="reservasList">
+                <div class="empty-state">
+                    Selecione uma data
                 </div>
             </div>
-            
-            <div class="table-container">
-                <table id="tabelaHoje">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Cliente</th>
-                            <th>Pax</th>
-                            <th>Notas</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="5" class="loading">Carregando reservas...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
         </div>
         
     </div>
 </div>
 
 <script>
-    // ========== CONFIGURAÇÕES ==========
+    // CONFIG
     const CONFIG = {
         URL_SCRIPT: "https://script.google.com/macros/s/AKfycbxtySo4NTJLl224ACyHAE_kWWF9nxXMMef0qRLxJe-virQJLveAgb6p0MsUkyQgTdE/exec",
         PASS_CORRETA: "Tasko123",
-        LOTACAO_MAX: 30,
-        DEBUG_MODE: true // Ativado para debug
+        LOTACAO_MAX: 30
     };
 
-    let todasReservas = {};
-    let resumoCompleto = { almoco: {}, jantar: {} };
     let dataSelecionada = new Date().toISOString().split('T')[0];
-    let turnoFiltro = 'todos';
+    let todasReservas = {};
+    let todasMesas = [];
+    let mesasOcupacao = {}; // { mesaId: { cliente, hora, pax } }
 
-    // ========== DEBUG CONSOLE ==========
-    let debugMessages = [];
-    
-    function toggleDebug() {
-        const console = document.getElementById('debug-console');
-        console.classList.toggle('show');
-    }
-    
-    function debugLog(message, data = null) {
-        const timestamp = new Date().toLocaleTimeString('pt-PT');
-        const logMessage = `[${timestamp}] ${message}`;
-        
-        console.log(logMessage, data || '');
-        
-        debugMessages.push(logMessage + (data ? ' ' + JSON.stringify(data).substring(0, 100) : ''));
-        if (debugMessages.length > 20) debugMessages.shift();
-        
-        const debugConsole = document.getElementById('debug-console');
-        debugConsole.innerHTML = debugMessages.join('<br>');
-        debugConsole.scrollTop = debugConsole.scrollHeight;
-    }
-
-    // ========== FUNÇÕES AUXILIARES ==========
-    function formatarData(dataISO) {
-        const [ano, mes, dia] = dataISO.split('-');
-        const data = new Date(ano, mes - 1, dia);
-        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        
-        return {
-            principal: `${dia} ${meses[data.getMonth()]}`,
-            semana: diasSemana[data.getDay()]
-        };
-    }
-
-    function mostrarErro(mensagem) {
-        alert('❌ ' + mensagem);
-        debugLog('ERRO: ' + mensagem);
-    }
-
-    function mostrarSucesso(mensagem) {
-        alert('✅ ' + mensagem);
-        debugLog('SUCESSO: ' + mensagem);
-    }
-
-    // ========== LOGIN ==========
+    // LOGIN
     function verificarPass() {
         const senha = document.getElementById('passInput').value;
         
         if (senha === CONFIG.PASS_CORRETA) {
-            debugLog('Login bem-sucedido');
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
             
@@ -792,26 +520,16 @@
             document.getElementById('dataManual').min = hoje;
             document.getElementById('dataSelecionada').value = hoje;
             
-            carregarDados();
-            carregarConfigs();
+            inicializar();
         } else {
-            debugLog('Tentativa de login falhou');
             const erroEl = document.getElementById('erro');
             erroEl.style.display = 'block';
-            
-            document.querySelector('.login-box').style.animation = 'none';
-            setTimeout(() => {
-                document.querySelector('.login-box').style.animation = 'slideIn 0.4s ease';
-            }, 10);
-            
-            setTimeout(() => {
-                erroEl.style.display = 'none';
-            }, 3000);
+            setTimeout(() => erroEl.style.display = 'none', 3000);
         }
     }
 
     function logout() {
-        if (confirm('Tem certeza que deseja sair?')) {
+        if (confirm('Sair do painel?')) {
             document.getElementById('dashboard-content').style.display = 'none';
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('passInput').value = '';
@@ -822,357 +540,225 @@
         if (e.key === 'Enter') verificarPass(); 
     });
 
-    // ========== CARREGAR CONFIGURAÇÕES ==========
-    async function carregarConfigs() {
-        debugLog('Carregando configurações...');
-        
-        try {
-            const response = await fetch(CONFIG.URL_SCRIPT, { 
-                method: 'POST',
-                body: JSON.stringify({ action: 'getConfigs' })
-            });
-            
-            const configs = await response.json();
-            debugLog('Configs recebidas:', configs);
-            
-            if (configs.LOTACAO_MAXIMA) {
-                CONFIG.LOTACAO_MAX = parseInt(configs.LOTACAO_MAXIMA);
-            }
-        } catch (error) {
-            debugLog('Erro ao carregar configs:', error);
-        }
+    // INICIALIZAR
+    async function inicializar() {
+        await carregarMesas();
+        await carregarDados();
+        renderizarSala();
     }
 
-    // ========== CARREGAR DADOS ==========
-    async function carregarDados() {
-        debugLog('Iniciando carregamento de dados...');
-        debugLog('URL do script:', CONFIG.URL_SCRIPT);
-        
+    // CARREGAR MESAS
+    async function carregarMesas() {
         try {
-            const payload = { action: 'getDashboard' };
-            debugLog('Enviando payload:', payload);
-            
-            const response = await fetch(CONFIG.URL_SCRIPT, { 
+            const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ action: 'getMesas' })
             });
-            
-            debugLog('Status da resposta:', response.status);
-            
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
             
             const data = await response.json();
-            debugLog('Dados recebidos (chaves):', Object.keys(data));
-            debugLog('todasReservas?', !!data.todasReservas);
-            debugLog('listaHoje?', !!data.listaHoje);
-            debugLog('resumoAlmoco?', !!data.resumoAlmoco);
+            todasMesas = data.mesas || [];
             
-            // Processar todasReservas
-            if (data.todasReservas && Object.keys(data.todasReservas).length > 0) {
-                todasReservas = data.todasReservas;
-                debugLog('todasReservas carregadas:', Object.keys(todasReservas).length + ' datas');
-            } else if (data.listaHoje && Array.isArray(data.listaHoje)) {
-                const hoje = new Date().toISOString().split('T')[0];
-                todasReservas = { [hoje]: data.listaHoje };
-                debugLog('Criado todasReservas a partir de listaHoje');
-            } else {
-                todasReservas = {};
-                debugLog('AVISO: Nenhuma reserva encontrada');
-            }
+            console.log('Mesas carregadas:', todasMesas);
+        } catch (error) {
+            console.error('Erro ao carregar mesas:', error);
+            // Mesas de exemplo se falhar
+            todasMesas = [
+                { id: 1, nome: 'Mesa 1', lugares: 4, x: 50, y: 50 },
+                { id: 2, nome: 'Mesa 2', lugares: 4, x: 200, y: 50 },
+                { id: 3, nome: 'Mesa 3', lugares: 6, x: 350, y: 50 },
+                { id: 4, nome: 'Mesa 4', lugares: 2, x: 50, y: 200 },
+                { id: 5, nome: 'Mesa 5', lugares: 4, x: 200, y: 200 },
+                { id: 6, nome: 'Mesa 6', lugares: 4, x: 350, y: 200 },
+                { id: 7, nome: 'Mesa 7', lugares: 4, x: 50, y: 350 },
+                { id: 8, nome: 'Mesa 8', lugares: 4, x: 200, y: 350 },
+                { id: 9, nome: 'Mesa 9', lugares: 6, x: 350, y: 350 },
+            ];
+        }
+    }
+
+    // CARREGAR DADOS
+    async function carregarDados() {
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getDashboard' })
+            });
+            
+            const data = await response.json();
+            todasReservas = data.todasReservas || {};
             
             // Processar resumo
-            if (data.resumoAlmoco && data.resumoJantar) {
-                resumoCompleto.almoco = data.resumoAlmoco;
-                resumoCompleto.jantar = data.resumoJantar;
-                debugLog('Resumo novo formato carregado');
-            } else if (data.resumo) {
-                debugLog('Convertendo formato antigo de resumo');
-                Object.keys(data.resumo).forEach(dataKey => {
-                    const total = data.resumo[dataKey];
-                    resumoCompleto.almoco[dataKey] = Math.floor(total / 2);
-                    resumoCompleto.jantar[dataKey] = Math.ceil(total / 2);
-                });
-            } else {
-                resumoCompleto = { almoco: {}, jantar: {} };
-                debugLog('AVISO: Nenhum resumo encontrado');
-            }
+            let resumoAlmoco = data.resumoAlmoco || {};
+            let resumoJantar = data.resumoJantar || {};
             
-            // Renderizar
-            renderizarAvisoOcupacao();
-            renderizarResumo15Dias();
-            renderizarTabela();
+            // Atualizar stats
+            document.getElementById('statAlmoco').textContent = resumoAlmoco[dataSelecionada] || 0;
+            document.getElementById('statJantar').textContent = resumoJantar[dataSelecionada] || 0;
             
-            debugLog('✓ Dados carregados e renderizados');
+            // Renderizar lista e sala
+            renderizarLista();
+            atualizarOcupacaoMesas();
             
         } catch (error) {
-            debugLog('ERRO CRÍTICO ao carregar dados:', error);
-            console.error('Erro detalhado:', error);
-            
-            document.getElementById('avisoOcupacao').innerHTML = `
-                <div class="aviso-ocupacao critico">
-                    <span class="aviso-icon">⚠️</span>
-                    <div>
-                        <strong>Erro ao carregar dados do servidor.</strong><br>
-                        <small>${error.message}</small>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('resumo15').innerHTML = `
-                <div class="empty-state">
-                    Não foi possível carregar os dados.<br>
-                    <button onclick="carregarDados()" class="btn-add" style="margin-top:15px; width:auto; padding:10px 20px;">
-                        Tentar Novamente
-                    </button>
-                </div>
-            `;
+            console.error('Erro ao carregar dados:', error);
         }
     }
 
-    // ========== MUDAR DATA DA TABELA ==========
-    function mudarDataTabela() {
+    // MUDAR DATA
+    function mudarData() {
         dataSelecionada = document.getElementById('dataSelecionada').value;
-        debugLog('Data selecionada alterada para:', dataSelecionada);
-        debugLog('Reservas para esta data:', todasReservas[dataSelecionada] ? todasReservas[dataSelecionada].length : 0);
-        renderizarAvisoOcupacao();
-        renderizarTabela();
+        carregarDados();
     }
 
-    // ========== RENDERIZAR AVISO DE OCUPAÇÃO ==========
-    function renderizarAvisoOcupacao() {
-        const almocoHoje = resumoCompleto.almoco[dataSelecionada] || 0;
-        const jantarHoje = resumoCompleto.jantar[dataSelecionada] || 0;
+    // RENDERIZAR SALA
+    function renderizarSala() {
+        const container = document.getElementById('salaContainer');
+        container.innerHTML = '';
         
-        debugLog(`Aviso ocupação para ${dataSelecionada}: Almoço=${almocoHoje}, Jantar=${jantarHoje}`);
-        
-        let avisoHTML = '<div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap;">';
-        
-        // Almoço
-        const percAlmoco = (almocoHoje / CONFIG.LOTACAO_MAX) * 100;
-        let classeAlmoco = '';
-        let emojiAlmoco = '✅';
-        
-        if (percAlmoco >= 100) {
-            classeAlmoco = 'critico';
-            emojiAlmoco = '🔴';
-        } else if (percAlmoco >= 80) {
-            classeAlmoco = 'critico';
-            emojiAlmoco = '⚠️';
-        } else if (percAlmoco >= 60) {
-            classeAlmoco = 'warning';
-            emojiAlmoco = '⚡';
-        }
-        
-        avisoHTML += `
-            <div class="aviso-ocupacao ${classeAlmoco}" style="flex:1; min-width:280px;">
-                <span class="aviso-icon">${emojiAlmoco}</span>
-                <div>
-                    <strong>🌞 Almoço:</strong> ${almocoHoje} pax • ${CONFIG.LOTACAO_MAX - almocoHoje} vagas
-                </div>
-            </div>
-        `;
-        
-        // Jantar
-        const percJantar = (jantarHoje / CONFIG.LOTACAO_MAX) * 100;
-        let classeJantar = '';
-        let emojiJantar = '✅';
-        
-        if (percJantar >= 100) {
-            classeJantar = 'critico';
-            emojiJantar = '🔴';
-        } else if (percJantar >= 80) {
-            classeJantar = 'critico';
-            emojiJantar = '⚠️';
-        } else if (percJantar >= 60) {
-            classeJantar = 'warning';
-            emojiJantar = '⚡';
-        }
-        
-        avisoHTML += `
-            <div class="aviso-ocupacao ${classeJantar}" style="flex:1; min-width:280px;">
-                <span class="aviso-icon">${emojiJantar}</span>
-                <div>
-                    <strong>🌙 Jantar:</strong> ${jantarHoje} pax • ${CONFIG.LOTACAO_MAX - jantarHoje} vagas
-                </div>
-            </div>
-        `;
-        
-        avisoHTML += '</div>';
-        
-        document.getElementById('avisoOcupacao').innerHTML = avisoHTML;
-    }
-
-    // ========== RENDERIZAR RESUMO 15 DIAS ==========
-    function renderizarResumo15Dias() {
-        const resumoDiv = document.getElementById('resumo15');
-        
-        const todasDatas = new Set([
-            ...Object.keys(resumoCompleto.almoco),
-            ...Object.keys(resumoCompleto.jantar)
-        ]);
-        
-        debugLog('Resumo 15 dias: ' + todasDatas.size + ' datas encontradas');
-        
-        if (todasDatas.size === 0) {
-            resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada.</div>';
-            return;
-        }
-        
-        const hoje = new Date().toISOString().split('T')[0];
-        
-        const datasFuturas = Array.from(todasDatas)
-            .filter(data => data >= hoje)
-            .sort()
-            .slice(0, 15);
-        
-        debugLog('Datas futuras filtradas:', datasFuturas.length);
-        
-        if (datasFuturas.length === 0) {
-            resumoDiv.innerHTML = '<div class="empty-state">Sem reservas nos próximos dias.</div>';
-            return;
-        }
-        
-        resumoDiv.innerHTML = datasFuturas.map(dataISO => {
-            const almoco = resumoCompleto.almoco[dataISO] || 0;
-            const jantar = resumoCompleto.jantar[dataISO] || 0;
+        todasMesas.forEach(mesa => {
+            const mesaEl = document.createElement('div');
+            mesaEl.className = 'mesa livre';
+            mesaEl.id = `mesa-${mesa.id}`;
+            mesaEl.style.left = (mesa.x || 50) + 'px';
+            mesaEl.style.top = (mesa.y || 50) + 'px';
+            mesaEl.draggable = true;
             
-            const isHoje = dataISO === hoje;
-            const dataFormatada = formatarData(dataISO);
-            
-            const percAlmoco = (almoco / CONFIG.LOTACAO_MAX) * 100;
-            const percJantar = (jantar / CONFIG.LOTACAO_MAX) * 100;
-            
-            let classeAlmoco = "status-ok";
-            if (percAlmoco >= 100) classeAlmoco = "status-full";
-            else if (percAlmoco >= 75) classeAlmoco = "status-warning";
-            
-            let classeJantar = "status-ok";
-            if (percJantar >= 100) classeJantar = "status-full";
-            else if (percJantar >= 75) classeJantar = "status-warning";
-            
-            return `
-                <div style="margin-bottom: 15px;">
-                    <div style="font-weight: 700; margin-bottom: 8px; color: #2c3e50; font-size: 14px;">
-                        <span class="dia-data-principal">${dataFormatada.principal}</span>
-                        ${isHoje ? ' <strong style="color:#667eea;">(HOJE)</strong>' : ''}
-                        <span class="dia-semana"> - ${dataFormatada.semana}</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <div class="dia-item ${classeAlmoco}" style="flex: 1; padding: 10px 12px;">
-                            <span style="font-size: 11px; color: #666;">🌞 Almoço</span>
-                            <span class="pax-badge" style="font-size: 12px;">${almoco}</span>
-                        </div>
-                        <div class="dia-item ${classeJantar}" style="flex: 1; padding: 10px 12px;">
-                            <span style="font-size: 11px; color: #666;">🌙 Jantar</span>
-                            <span class="pax-badge" style="font-size: 12px;">${jantar}</span>
-                        </div>
-                    </div>
-                </div>
+            mesaEl.innerHTML = `
+                <div class="mesa-cliente"></div>
+                <div class="mesa-numero">${mesa.nome}</div>
+                <div class="mesa-lugares">${mesa.lugares} lugares</div>
             `;
-        }).join('');
+            
+            // Drag & drop
+            mesaEl.addEventListener('dragstart', handleDragStart);
+            mesaEl.addEventListener('dragend', handleDragEnd);
+            
+            container.appendChild(mesaEl);
+        });
+        
+        // Allow drop
+        container.addEventListener('dragover', handleDragOver);
+        container.addEventListener('drop', handleDrop);
     }
 
-    // ========== RENDERIZAR TABELA ==========
-    function renderizarTabela() {
-        const tbody = document.querySelector('#tabelaHoje tbody');
+    // ATUALIZAR OCUPAÇÃO MESAS
+    function atualizarOcupacaoMesas() {
+        mesasOcupacao = {};
         
         const reservasDoDia = todasReservas[dataSelecionada] || [];
         
-        debugLog(`Renderizando tabela para ${dataSelecionada}:`, reservasDoDia.length + ' reservas');
+        // Resetar todas as mesas
+        document.querySelectorAll('.mesa').forEach(mesaEl => {
+            mesaEl.className = 'mesa livre';
+            mesaEl.querySelector('.mesa-cliente').textContent = '';
+        });
         
-        let listaFiltrada = reservasDoDia;
-        if (turnoFiltro === 'almoco') {
-            listaFiltrada = reservasDoDia.filter(r => {
-                if (r.turno) return r.turno === 'Almoço';
-                return r.hora && r.hora < '16:00';
-            });
-        } else if (turnoFiltro === 'jantar') {
-            listaFiltrada = reservasDoDia.filter(r => {
-                if (r.turno) return r.turno === 'Jantar';
-                return r.hora && r.hora >= '16:00';
-            });
-        }
+        // Marcar mesas ocupadas/reservadas
+        reservasDoDia.forEach(reserva => {
+            if (reserva.mesa) {
+                const mesaEl = document.getElementById(`mesa-${reserva.mesa}`);
+                if (mesaEl) {
+                    if (reserva.status === 'Chegou') {
+                        mesaEl.className = 'mesa ocupada';
+                    } else {
+                        mesaEl.className = 'mesa reservada';
+                    }
+                    mesaEl.querySelector('.mesa-cliente').textContent = reserva.nome;
+                }
+            }
+        });
+    }
+
+    // RENDERIZAR LISTA
+    function renderizarLista() {
+        const lista = document.getElementById('reservasList');
+        const reservasDoDia = todasReservas[dataSelecionada] || [];
         
-        debugLog(`Após filtro ${turnoFiltro}:`, listaFiltrada.length + ' reservas');
-        
-        if (listaFiltrada.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="empty-state">
-                        ${turnoFiltro === 'todos' ? '📭 Sem reservas para esta data' : 'Sem reservas neste turno'}
-                    </td>
-                </tr>
-            `;
+        if (reservasDoDia.length === 0) {
+            lista.innerHTML = '<div class="empty-state">📭 Sem reservas para esta data</div>';
             return;
         }
         
-        tbody.innerHTML = listaFiltrada
+        lista.innerHTML = reservasDoDia
             .sort((a, b) => (a.hora || '').localeCompare(b.hora || ''))
             .map(reserva => `
-                <tr>
-                    <td><span class="hora-badge">${reserva.hora || '--:--'}</span></td>
-                    <td>
-                        <div class="cliente-info">
-                            <span class="cliente-nome">${reserva.nome || 'Sem nome'}</span>
-                            ${reserva.tel || reserva.telemovel ? `<span class="cliente-contato">📞 ${reserva.tel || reserva.telemovel}</span>` : ''}
-                        </div>
-                    </td>
-                    <td><span class="pax-badge">${reserva.pax || 0}</span></td>
-                    <td class="obs-text">${reserva.obs || '—'}</td>
-                    <td>
-                        <div class="acoes-reserva">
-                            ${reserva.status === 'Confirmada' ? `
-                                <button class="btn-chegou" onclick="marcarChegada('${reserva.id}')" title="Marcar como chegou">
-                                    ✅
-                                </button>
-                            ` : reserva.status === 'Chegou' ? `
-                                <span style="color:#27ae60; font-weight:700; font-size:11px; padding:6px;">✓ Chegou</span>
-                            ` : ''}
-                            <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome || '')}', '${reserva.hora || ''}')">
-                                🗑️
+                <div class="reserva-item ${reserva.status === 'Chegou' ? 'chegou' : ''}">
+                    <div class="hora">${reserva.hora || '--:--'}</div>
+                    <div class="nome">${reserva.nome}</div>
+                    <div class="detalhes">
+                        👥 ${reserva.pax} pessoas
+                        ${reserva.tel ? ' • 📞 ' + reserva.tel : ''}
+                        ${reserva.mesa ? ' • 🪑 Mesa ' + reserva.mesa : ''}
+                    </div>
+                    ${reserva.obs ? `<div class="detalhes" style="margin-top:5px;">📝 ${reserva.obs}</div>` : ''}
+                    <div class="acoes">
+                        ${reserva.status === 'Confirmada' ? `
+                            <button class="btn-pequeno btn-chegou" onclick="marcarChegada('${reserva.id}')">
+                                ✅ Chegou
                             </button>
-                        </div>
-                    </td>
-                </tr>
+                        ` : ''}
+                        <button class="btn-pequeno btn-cancelar" onclick="cancelarReserva('${reserva.id}', '${reserva.nome}')">
+                            🗑️ Cancelar
+                        </button>
+                    </div>
+                </div>
             `).join('');
     }
 
-    function escaparTexto(texto) {
-        return texto.replace(/'/g, "\\'").replace(/"/g, '\\"');
+    // DRAG & DROP
+    let draggedElement = null;
+    let offsetX, offsetY;
+
+    function handleDragStart(e) {
+        draggedElement = e.target;
+        const rect = draggedElement.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        draggedElement.style.opacity = '0.5';
     }
 
-    // ========== FILTRAR POR TURNO ==========
-    function filtrarTurno(turno) {
-        turnoFiltro = turno;
-        debugLog('Filtro alterado para:', turno);
-        
-        document.querySelectorAll('.filtro-btn').forEach(btn => {
-            btn.classList.remove('ativo');
-        });
-        event.target.classList.add('ativo');
-        
-        renderizarTabela();
+    function handleDragEnd(e) {
+        draggedElement.style.opacity = '1';
+        draggedElement = null;
     }
 
-    // ========== MARCAR CHEGADA ==========
-    async function marcarChegada(id) {
-        if (!confirm('Confirma que o cliente chegou ao restaurante?')) {
-            return;
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        
+        if (draggedElement) {
+            const container = document.getElementById('salaContainer');
+            const rect = container.getBoundingClientRect();
+            
+            const x = e.clientX - rect.left - offsetX;
+            const y = e.clientY - rect.top - offsetY;
+            
+            // Limitar dentro do container
+            const maxX = container.clientWidth - draggedElement.offsetWidth;
+            const maxY = container.clientHeight - draggedElement.offsetHeight;
+            
+            const finalX = Math.max(0, Math.min(x, maxX));
+            const finalY = Math.max(0, Math.min(y, maxY));
+            
+            draggedElement.style.left = finalX + 'px';
+            draggedElement.style.top = finalY + 'px';
+            
+            // Salvar posição (poderia ser enviado ao servidor)
+            const mesaId = draggedElement.id.replace('mesa-', '');
+            console.log(`Mesa ${mesaId} movida para (${finalX}, ${finalY})`);
         }
-        
-        debugLog(`Marcando chegada: ${id}`);
+    }
+
+    // MARCAR CHEGADA
+    async function marcarChegada(id) {
+        if (!confirm('Confirma que o cliente chegou?')) return;
         
         try {
-            const response = await fetch(CONFIG.URL_SCRIPT, { 
+            const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
                 body: JSON.stringify({
                     action: 'marcarChegada',
                     id: id
@@ -1180,127 +766,80 @@
             });
             
             const resultado = await response.json();
-            debugLog('Resposta da chegada:', resultado);
             
             if (resultado.status === 'success') {
-                mostrarSucesso(resultado.message);
+                alert('✅ Cliente marcado como chegou!');
                 carregarDados();
             } else {
-                mostrarErro(resultado.message || 'Erro ao marcar chegada');
+                alert('❌ ' + (resultado.message || 'Erro ao marcar chegada'));
             }
         } catch (error) {
-            debugLog('Erro ao marcar chegada:', error);
-            mostrarErro('Não foi possível marcar a chegada. Tenta novamente.');
+            alert('❌ Erro ao processar. Tente novamente.');
         }
     }
 
-    // ========== CANCELAR RESERVA ==========
-    async function cancelarReserva(nome, hora) {
-        if (!confirm(`Confirma o cancelamento da reserva?\n\n👤 Cliente: ${nome}\n🕐 Horário: ${hora}`)) {
-            return;
-        }
-        
-        debugLog(`Cancelando reserva: ${nome} às ${hora}`);
+    // CANCELAR RESERVA
+    async function cancelarReserva(id, nome) {
+        if (!confirm(`Cancelar reserva de ${nome}?`)) return;
         
         try {
-            const response = await fetch(CONFIG.URL_SCRIPT, { 
+            const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
                 body: JSON.stringify({
-                    action: 'cancelarAdmin',
-                    nome: nome,
-                    hora: hora
+                    action: 'cancelarReserva',
+                    id: id
                 })
             });
             
             const resultado = await response.json();
-            debugLog('Resposta do cancelamento:', resultado);
             
             if (resultado.status === 'success') {
-                mostrarSucesso(resultado.message);
+                alert('✅ Reserva cancelada!');
                 carregarDados();
             } else {
-                mostrarErro(resultado.message || 'Erro desconhecido ao cancelar');
+                alert('❌ ' + (resultado.message || 'Erro ao cancelar'));
             }
         } catch (error) {
-            debugLog('Erro ao cancelar:', error);
-            mostrarErro('Não foi possível processar o cancelamento. Tenta novamente.');
+            alert('❌ Erro ao processar. Tente novamente.');
         }
     }
 
-    // ========== SUBMETER RESERVA MANUAL ==========
+    // SUBMETER FORMULÁRIO
     document.getElementById('formManual').onsubmit = async function(e) {
         e.preventDefault();
         
-        const btn = document.getElementById('btnManual');
-        const textoOriginal = btn.innerText;
+        const btn = this.querySelector('.btn-add');
         btn.disabled = true;
-        btn.innerText = "⏳ Gravando...";
+        btn.textContent = '⏳ Gravando...';
         
-        debugLog('=== INÍCIO SUBMISSÃO RESERVA MANUAL ===');
-
         try {
             const formData = new FormData(this);
             const dados = Object.fromEntries(formData.entries());
             dados.action = "reservaManual";
             
-            debugLog('Dados do formulário:', dados);
-            debugLog('URL destino:', CONFIG.URL_SCRIPT);
-
-            const response = await fetch(CONFIG.URL_SCRIPT, { 
+            const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
                 body: JSON.stringify(dados)
             });
             
-            debugLog('Status da resposta:', response.status);
-            debugLog('Headers:', Object.fromEntries(response.headers.entries()));
-            
-            const responseText = await response.text();
-            debugLog('Resposta (texto):', responseText.substring(0, 200));
-            
-            let resultado;
-            try {
-                resultado = JSON.parse(responseText);
-            } catch (parseError) {
-                debugLog('ERRO ao fazer parse da resposta:', parseError);
-                throw new Error('Resposta inválida do servidor: ' + responseText.substring(0, 100));
-            }
-            
-            debugLog('Resultado (JSON):', resultado);
+            const resultado = await response.json();
             
             if (resultado.status === 'success') {
-                mostrarSucesso('Reserva criada com sucesso! ID: ' + (resultado.id || 'N/A'));
+                alert('✅ Reserva criada com sucesso!');
                 this.reset();
-                
-                const hoje = new Date().toISOString().split('T')[0];
-                document.getElementById('dataManual').value = hoje;
-                
-                debugLog('Recarregando dados após sucesso...');
-                await carregarDados();
+                document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+                carregarDados();
             } else {
-                debugLog('Resposta indica erro:', resultado.message);
-                mostrarErro(resultado.message || 'Erro ao criar reserva');
+                alert('❌ ' + (resultado.message || 'Erro ao criar reserva'));
             }
         } catch (error) {
-            debugLog('ERRO CRÍTICO ao gravar reserva:', error);
-            debugLog('Error stack:', error.stack);
-            mostrarErro('Não foi possível gravar a reserva. Erro: ' + error.message);
+            alert('❌ Erro ao processar. Tente novamente.');
         } finally {
             btn.disabled = false;
-            btn.innerText = textoOriginal;
-            debugLog('=== FIM SUBMISSÃO RESERVA MANUAL ===');
+            btn.textContent = '💾 Gravar';
         }
     };
-
-    debugLog('Dashboard admin carregado e pronto');
-    debugLog('Versão com debug ativado');
 </script>
 
 </body>
 </html>
-
