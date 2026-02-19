@@ -47,6 +47,48 @@
             text-align: center; display: none; font-weight: 500;
         }
 
+        /* DEBUG CONSOLE */
+        #debug-console {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.95);
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-width: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 9999;
+            border: 2px solid #0f0;
+        }
+
+        #debug-console.show {
+            display: block;
+        }
+
+        #debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 9999;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+
+        #debug-toggle:hover {
+            background: #34495e;
+        }
+
         /* DASHBOARD */
         #dashboard-content { display: none; max-width: 2000px; margin: 0 auto; }
         
@@ -361,6 +403,10 @@
 </head>
 <body>
 
+<!-- DEBUG TOGGLE -->
+<div id="debug-toggle" onclick="toggleDebug()">🐛 Debug Console</div>
+<div id="debug-console"></div>
+
 <!-- LOGIN -->
 <div id="login-screen">
     <div class="login-box">
@@ -416,11 +462,11 @@
                 <!-- STATS -->
                 <div class="stats-grid">
                     <div class="stat-card almoco">
-                        <div class="label">🌞 Almoço</div>
+                        <div class="label">🌞 ALMOÇO</div>
                         <div class="value" id="statAlmoco">0</div>
                     </div>
                     <div class="stat-card jantar">
-                        <div class="label">🌙 Jantar</div>
+                        <div class="label">🌙 JANTAR</div>
                         <div class="value" id="statJantar">0</div>
                     </div>
                 </div>
@@ -477,7 +523,7 @@
         <div class="card">
             <h2>🍽️ Layout da Sala</h2>
             <div class="sala-container" id="salaContainer">
-                <!-- Mesas serão adicionadas aqui dinamicamente -->
+                <!-- Mesas serão adicionadas aqui -->
             </div>
         </div>
 
@@ -505,13 +551,36 @@
     let dataSelecionada = new Date().toISOString().split('T')[0];
     let todasReservas = {};
     let todasMesas = [];
-    let mesasOcupacao = {}; // { mesaId: { cliente, hora, pax } }
+    let resumoCompleto = { almoco: {}, jantar: {} };
+
+    // ========== DEBUG CONSOLE ==========
+    let debugMessages = [];
+    
+    function toggleDebug() {
+        const console = document.getElementById('debug-console');
+        console.classList.toggle('show');
+    }
+    
+    function debugLog(message, data = null) {
+        const timestamp = new Date().toLocaleTimeString('pt-PT');
+        const logMessage = `[${timestamp}] ${message}`;
+        
+        console.log(logMessage, data || '');
+        
+        debugMessages.push(logMessage + (data ? '<br>➜ ' + JSON.stringify(data).substring(0, 150) : ''));
+        if (debugMessages.length > 30) debugMessages.shift();
+        
+        const debugConsole = document.getElementById('debug-console');
+        debugConsole.innerHTML = debugMessages.join('<br>');
+        debugConsole.scrollTop = debugConsole.scrollHeight;
+    }
 
     // LOGIN
     function verificarPass() {
         const senha = document.getElementById('passInput').value;
         
         if (senha === CONFIG.PASS_CORRETA) {
+            debugLog('✓ Login bem-sucedido');
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
             
@@ -522,6 +591,7 @@
             
             inicializar();
         } else {
+            debugLog('✗ Login falhou');
             const erroEl = document.getElementById('erro');
             erroEl.style.display = 'block';
             setTimeout(() => erroEl.style.display = 'none', 3000);
@@ -542,6 +612,7 @@
 
     // INICIALIZAR
     async function inicializar() {
+        debugLog('🚀 Inicializando dashboard...');
         await carregarMesas();
         await carregarDados();
         renderizarSala();
@@ -549,6 +620,8 @@
 
     // CARREGAR MESAS
     async function carregarMesas() {
+        debugLog('📍 Carregando mesas...');
+        
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
@@ -556,62 +629,115 @@
             });
             
             const data = await response.json();
-            todasMesas = data.mesas || [];
+            debugLog('Resposta getMesas:', data);
             
-            console.log('Mesas carregadas:', todasMesas);
+            if (data.mesas && data.mesas.length > 0) {
+                todasMesas = data.mesas;
+                debugLog(`✓ ${todasMesas.length} mesas carregadas`);
+            } else {
+                debugLog('⚠ Nenhuma mesa retornada, usando padrão');
+                usarMesasPadrao();
+            }
         } catch (error) {
-            console.error('Erro ao carregar mesas:', error);
-            // Mesas de exemplo se falhar
-            todasMesas = [
-                { id: 1, nome: 'Mesa 1', lugares: 4, x: 50, y: 50 },
-                { id: 2, nome: 'Mesa 2', lugares: 4, x: 200, y: 50 },
-                { id: 3, nome: 'Mesa 3', lugares: 6, x: 350, y: 50 },
-                { id: 4, nome: 'Mesa 4', lugares: 2, x: 50, y: 200 },
-                { id: 5, nome: 'Mesa 5', lugares: 4, x: 200, y: 200 },
-                { id: 6, nome: 'Mesa 6', lugares: 4, x: 350, y: 200 },
-                { id: 7, nome: 'Mesa 7', lugares: 4, x: 50, y: 350 },
-                { id: 8, nome: 'Mesa 8', lugares: 4, x: 200, y: 350 },
-                { id: 9, nome: 'Mesa 9', lugares: 6, x: 350, y: 350 },
-            ];
+            debugLog('✗ Erro ao carregar mesas:', error);
+            usarMesasPadrao();
         }
+    }
+
+    function usarMesasPadrao() {
+        todasMesas = [
+            { id: 1, nome: 'Mesa 1', lugares: 4, x: 50, y: 50 },
+            { id: 2, nome: 'Mesa 2', lugares: 6, x: 200, y: 50 },
+            { id: 4, nome: 'Mesa 4', lugares: 4, x: 350, y: 50 },
+            { id: 5, nome: 'Mesa 5', lugares: 4, x: 50, y: 200 },
+            { id: 6, nome: 'Mesa 6', lugares: 4, x: 200, y: 200 },
+            { id: 7, nome: 'Mesa 7', lugares: 4, x: 350, y: 200 },
+            { id: 8, nome: 'Mesa 8', lugares: 4, x: 50, y: 350 },
+            { id: 9, nome: 'Mesa 9', lugares: 4, x: 200, y: 350 },
+        ];
+        debugLog('✓ Mesas padrão criadas');
     }
 
     // CARREGAR DADOS
     async function carregarDados() {
+        debugLog('📊 Carregando dados do dashboard...');
+        debugLog('URL:', CONFIG.URL_SCRIPT);
+        
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify({ action: 'getDashboard' })
             });
             
+            debugLog('Status HTTP:', response.status);
+            
             const data = await response.json();
-            todasReservas = data.todasReservas || {};
+            debugLog('Dados recebidos:', Object.keys(data));
+            
+            // ✨ COMPATIBILIDADE: Verificar formato
+            if (data.todasReservas) {
+                debugLog('✓ Formato NOVO detectado (todasReservas)');
+                todasReservas = data.todasReservas;
+                debugLog('Datas com reservas:', Object.keys(todasReservas));
+            } else if (data.listaHoje) {
+                debugLog('⚠ Formato ANTIGO detectado (só listaHoje)');
+                const hoje = new Date().toISOString().split('T')[0];
+                todasReservas = { [hoje]: data.listaHoje };
+                debugLog('Reservas hoje:', data.listaHoje.length);
+            } else {
+                debugLog('✗ Nenhum formato reconhecido!');
+                todasReservas = {};
+            }
             
             // Processar resumo
-            let resumoAlmoco = data.resumoAlmoco || {};
-            let resumoJantar = data.resumoJantar || {};
+            if (data.resumoAlmoco && data.resumoJantar) {
+                resumoCompleto.almoco = data.resumoAlmoco;
+                resumoCompleto.jantar = data.resumoJantar;
+                debugLog('✓ Resumo por turno carregado');
+            } else {
+                debugLog('⚠ Sem resumo por turno');
+                resumoCompleto = { almoco: {}, jantar: {} };
+            }
             
-            // Atualizar stats
-            document.getElementById('statAlmoco').textContent = resumoAlmoco[dataSelecionada] || 0;
-            document.getElementById('statJantar').textContent = resumoJantar[dataSelecionada] || 0;
-            
-            // Renderizar lista e sala
+            // Atualizar UI
+            atualizarStats();
             renderizarLista();
             atualizarOcupacaoMesas();
             
+            debugLog('✓ Dados processados com sucesso');
+            
         } catch (error) {
-            console.error('Erro ao carregar dados:', error);
+            debugLog('✗ ERRO ao carregar dados:', error);
+            alert('Erro ao carregar dados: ' + error.message);
         }
+    }
+
+    // ATUALIZAR STATS
+    function atualizarStats() {
+        const almoco = resumoCompleto.almoco[dataSelecionada] || 0;
+        const jantar = resumoCompleto.jantar[dataSelecionada] || 0;
+        
+        document.getElementById('statAlmoco').textContent = almoco;
+        document.getElementById('statJantar').textContent = jantar;
+        
+        debugLog(`Stats atualizados: Almoço=${almoco}, Jantar=${jantar}`);
     }
 
     // MUDAR DATA
     function mudarData() {
         dataSelecionada = document.getElementById('dataSelecionada').value;
-        carregarDados();
+        debugLog('📅 Data alterada para:', dataSelecionada);
+        atualizarStats();
+        renderizarLista();
+        atualizarOcupacaoMesas();
     }
 
     // RENDERIZAR SALA
     function renderizarSala() {
+        debugLog('🏠 Renderizando sala...');
         const container = document.getElementById('salaContainer');
         container.innerHTML = '';
         
@@ -629,31 +755,32 @@
                 <div class="mesa-lugares">${mesa.lugares} lugares</div>
             `;
             
-            // Drag & drop
             mesaEl.addEventListener('dragstart', handleDragStart);
             mesaEl.addEventListener('dragend', handleDragEnd);
             
             container.appendChild(mesaEl);
         });
         
-        // Allow drop
         container.addEventListener('dragover', handleDragOver);
         container.addEventListener('drop', handleDrop);
+        
+        debugLog(`✓ ${todasMesas.length} mesas renderizadas`);
     }
 
     // ATUALIZAR OCUPAÇÃO MESAS
     function atualizarOcupacaoMesas() {
-        mesasOcupacao = {};
+        debugLog('🔄 Atualizando ocupação das mesas...');
         
         const reservasDoDia = todasReservas[dataSelecionada] || [];
+        debugLog(`Reservas para ${dataSelecionada}:`, reservasDoDia.length);
         
-        // Resetar todas as mesas
+        // Resetar todas
         document.querySelectorAll('.mesa').forEach(mesaEl => {
             mesaEl.className = 'mesa livre';
             mesaEl.querySelector('.mesa-cliente').textContent = '';
         });
         
-        // Marcar mesas ocupadas/reservadas
+        // Marcar ocupadas/reservadas
         reservasDoDia.forEach(reserva => {
             if (reserva.mesa) {
                 const mesaEl = document.getElementById(`mesa-${reserva.mesa}`);
@@ -664,6 +791,7 @@
                         mesaEl.className = 'mesa reservada';
                     }
                     mesaEl.querySelector('.mesa-cliente').textContent = reserva.nome;
+                    debugLog(`Mesa ${reserva.mesa}: ${reserva.status} - ${reserva.nome}`);
                 }
             }
         });
@@ -673,6 +801,8 @@
     function renderizarLista() {
         const lista = document.getElementById('reservasList');
         const reservasDoDia = todasReservas[dataSelecionada] || [];
+        
+        debugLog(`Renderizando lista: ${reservasDoDia.length} reservas`);
         
         if (reservasDoDia.length === 0) {
             lista.innerHTML = '<div class="empty-state">📭 Sem reservas para esta data</div>';
@@ -736,7 +866,6 @@
             const x = e.clientX - rect.left - offsetX;
             const y = e.clientY - rect.top - offsetY;
             
-            // Limitar dentro do container
             const maxX = container.clientWidth - draggedElement.offsetWidth;
             const maxY = container.clientHeight - draggedElement.offsetHeight;
             
@@ -746,15 +875,16 @@
             draggedElement.style.left = finalX + 'px';
             draggedElement.style.top = finalY + 'px';
             
-            // Salvar posição (poderia ser enviado ao servidor)
             const mesaId = draggedElement.id.replace('mesa-', '');
-            console.log(`Mesa ${mesaId} movida para (${finalX}, ${finalY})`);
+            debugLog(`Mesa ${mesaId} movida para (${finalX}, ${finalY})`);
         }
     }
 
     // MARCAR CHEGADA
     async function marcarChegada(id) {
         if (!confirm('Confirma que o cliente chegou?')) return;
+        
+        debugLog('Marcando chegada:', id);
         
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, {
@@ -766,21 +896,25 @@
             });
             
             const resultado = await response.json();
+            debugLog('Resposta marcarChegada:', resultado);
             
             if (resultado.status === 'success') {
                 alert('✅ Cliente marcado como chegou!');
                 carregarDados();
             } else {
-                alert('❌ ' + (resultado.message || 'Erro ao marcar chegada'));
+                alert('❌ ' + (resultado.message || 'Erro'));
             }
         } catch (error) {
-            alert('❌ Erro ao processar. Tente novamente.');
+            debugLog('Erro:', error);
+            alert('❌ Erro ao processar');
         }
     }
 
     // CANCELAR RESERVA
     async function cancelarReserva(id, nome) {
         if (!confirm(`Cancelar reserva de ${nome}?`)) return;
+        
+        debugLog('Cancelando:', id);
         
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, {
@@ -792,15 +926,17 @@
             });
             
             const resultado = await response.json();
+            debugLog('Resposta cancelar:', resultado);
             
             if (resultado.status === 'success') {
                 alert('✅ Reserva cancelada!');
                 carregarDados();
             } else {
-                alert('❌ ' + (resultado.message || 'Erro ao cancelar'));
+                alert('❌ ' + (resultado.message || 'Erro'));
             }
         } catch (error) {
-            alert('❌ Erro ao processar. Tente novamente.');
+            debugLog('Erro:', error);
+            alert('❌ Erro ao processar');
         }
     }
 
@@ -812,10 +948,14 @@
         btn.disabled = true;
         btn.textContent = '⏳ Gravando...';
         
+        debugLog('📝 Submetendo formulário...');
+        
         try {
             const formData = new FormData(this);
             const dados = Object.fromEntries(formData.entries());
             dados.action = "reservaManual";
+            
+            debugLog('Dados:', dados);
             
             const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
@@ -823,22 +963,26 @@
             });
             
             const resultado = await response.json();
+            debugLog('Resposta:', resultado);
             
             if (resultado.status === 'success') {
-                alert('✅ Reserva criada com sucesso!');
+                alert('✅ Reserva criada!');
                 this.reset();
                 document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
                 carregarDados();
             } else {
-                alert('❌ ' + (resultado.message || 'Erro ao criar reserva'));
+                alert('❌ ' + (resultado.message || 'Erro'));
             }
         } catch (error) {
-            alert('❌ Erro ao processar. Tente novamente.');
+            debugLog('Erro:', error);
+            alert('❌ Erro ao processar');
         } finally {
             btn.disabled = false;
             btn.textContent = '💾 Gravar';
         }
     };
+
+    debugLog('✓ Admin carregado');
 </script>
 
 </body>
