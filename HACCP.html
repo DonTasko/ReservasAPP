@@ -1,70 +1,661 @@
-/* ================= INDEX.HTML ================= */
-
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-  <base target="_top">
-  <style>
-    body{font-family:Arial;text-align:center;background:#f5f5f5;padding:20px}
-    .card{background:#fff;padding:20px;border-radius:12px;max-width:420px;margin:auto;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-    button{width:100%;padding:14px;margin:6px 0;border:none;border-radius:10px;font-size:16px;background:#0B5ED7;color:#fff}
-    input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACCP - Don Tasko</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .btn-haccp {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-haccp:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-haccp .icon {
+            font-size: 32px;
+        }
+        
+        .btn-ocorrencia {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            grid-column: span 2;
+        }
+        
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            margin: 20px auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #7f8c8d;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .limite-info {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #856404;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="card" id="login">
-  <h2>Login HACCP</h2>
-  <select id="nome"></select>
-  <input type="password" id="pin" placeholder="PIN">
-  <button onclick="login()">Entrar</button>
+<div class="container">
+    
+    <!-- HEADER -->
+    <div class="header">
+        <h1>🧪 HACCP Digital</h1>
+        <p>Don Tasko - Registos de Segurança</p>
+    </div>
+    
+    <!-- REGISTOS RÁPIDOS -->
+    <div class="card">
+        <h2>📋 Registos Rápidos</h2>
+        <div class="btn-grid">
+            <button class="btn-haccp" onclick="abrirModal('temperaturas')">
+                <span class="icon">🌡️</span>
+                <span>Temperaturas</span>
+            </button>
+            
+            <button class="btn-haccp" onclick="abrirModal('limpeza')">
+                <span class="icon">🧼</span>
+                <span>Limpeza</span>
+            </button>
+            
+            <button class="btn-haccp" onclick="abrirModal('checklist')">
+                <span class="icon">✅</span>
+                <span>Checklist</span>
+            </button>
+            
+            <button class="btn-haccp" onclick="abrirModal('oleo')">
+                <span class="icon">🍟</span>
+                <span>Óleo Fritura</span>
+            </button>
+            
+            <button class="btn-haccp" onclick="abrirModal('rececao')">
+                <span class="icon">📦</span>
+                <span>Receção</span>
+            </button>
+            
+            <button class="btn-haccp btn-ocorrencia" onclick="abrirModal('ocorrencia')">
+                <span class="icon">⚠️</span>
+                <span>Ocorrência</span>
+            </button>
+        </div>
+    </div>
 </div>
 
-<div class="card" id="menu" style="display:none">
-  <h2>Registos HACCP</h2>
-  <button onclick="abrir('Temperatura')">Temperaturas</button>
-  <button onclick="abrir('Limpeza')">Limpeza</button>
-  <button onclick="abrir('Checklist')">Checklist</button>
-  <button onclick="abrir('Óleo')">Óleo fritura</button>
-  <button onclick="abrir('Receção')">Receção mercadoria</button>
-  <button onclick="abrir('Ocorrência')">Ocorrência</button>
+<!-- MODAL TEMPERATURAS -->
+<div id="modal-temperaturas" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🌡️ Registo de Temperaturas</h2>
+            <button class="btn-close" onclick="fecharModal('temperaturas')">×</button>
+        </div>
+        
+        <form id="form-temperaturas" onsubmit="submeterForm(event, 'temperaturas')">
+            <div class="form-group">
+                <label>Equipamento *</label>
+                <select name="equipamento" required>
+                    <option value="">Selecionar...</option>
+                    <option value="Frigorifico 1">Frigorífico 1</option>
+                    <option value="Frigorifico 2">Frigorífico 2</option>
+                    <option value="Arca Congeladora">Arca Congeladora</option>
+                    <option value="Vitrine Fria">Vitrine Fria</option>
+                    <option value="Balcao Refrigerado">Balcão Refrigerado</option>
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Temperatura (°C) *</label>
+                    <input type="number" step="0.1" name="temperatura" required>
+                    <div class="limite-info">
+                        Frio: 0-4°C<br>
+                        Congelação: -18°C ou inferior
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Turno *</label>
+                    <select name="turno" required>
+                        <option value="Abertura">Abertura</option>
+                        <option value="Almoco">Almoço</option>
+                        <option value="Jantar">Jantar</option>
+                        <option value="Fecho">Fecho</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea name="observacoes" placeholder="Opcional"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Registado por *</label>
+                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
+        </form>
+    </div>
 </div>
 
-<div class="card" id="form" style="display:none">
-  <h3 id="titulo"></h3>
-  <input id="zona" placeholder="Zona / Equipamento">
-  <input id="valor" placeholder="Valor">
-  <input id="obs" placeholder="Observações">
-  <button onclick="guardar()">Guardar</button>
+<!-- MODAL LIMPEZA -->
+<div id="modal-limpeza" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🧼 Registo de Limpeza</h2>
+            <button class="btn-close" onclick="fecharModal('limpeza')">×</button>
+        </div>
+        
+        <form id="form-limpeza" onsubmit="submeterForm(event, 'limpeza')">
+            <div class="form-group">
+                <label>Área/Equipamento *</label>
+                <select name="area" required>
+                    <option value="">Selecionar...</option>
+                    <option value="Cozinha Geral">Cozinha Geral</option>
+                    <option value="Zona de Preparacao">Zona de Preparação</option>
+                    <option value="Frigorifico">Frigorífico</option>
+                    <option value="Fogao/Grelhador">Fogão/Grelhador</option>
+                    <option value="Exaustor">Exaustor</option>
+                    <option value="Bancadas">Bancadas</option>
+                    <option value="Pavimento">Pavimento</option>
+                    <option value="Casa de Banho">Casa de Banho</option>
+                    <option value="Sala">Sala</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Tipo de Limpeza *</label>
+                <select name="tipo" required>
+                    <option value="Limpeza Diaria">Limpeza Diária</option>
+                    <option value="Limpeza Profunda">Limpeza Profunda</option>
+                    <option value="Desinfecao">Desinfeção</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Produtos Utilizados</label>
+                <input type="text" name="produtos" placeholder="Ex: Desengordurante, Lixívia">
+            </div>
+            
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea name="observacoes" placeholder="Opcional"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Realizado por *</label>
+                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL CHECKLIST -->
+<div id="modal-checklist" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>✅ Checklist Diária</h2>
+            <button class="btn-close" onclick="fecharModal('checklist')">×</button>
+        </div>
+        
+        <form id="form-checklist" onsubmit="submeterForm(event, 'checklist')">
+            <div class="form-group">
+                <label>Turno *</label>
+                <select name="turno" required>
+                    <option value="Abertura">Abertura</option>
+                    <option value="Fecho">Fecho</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="item1" value="1">
+                    <span>Temperaturas verificadas</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="item2" value="1">
+                    <span>Validades conferidas</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="item3" value="1">
+                    <span>Limpeza realizada</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="item4" value="1">
+                    <span>Uniformes limpos</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" name="item5" value="1">
+                    <span>Lixo retirado</span>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea name="observacoes" placeholder="Opcional"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Responsável *</label>
+                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">💾 Guardar Checklist</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL ÓLEO -->
+<div id="modal-oleo" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>🍟 Controlo Óleo Fritura</h2>
+            <button class="btn-close" onclick="fecharModal('oleo')">×</button>
+        </div>
+        
+        <form id="form-oleo" onsubmit="submeterForm(event, 'oleo')">
+            <div class="form-group">
+                <label>Ação *</label>
+                <select name="acao" required>
+                    <option value="">Selecionar...</option>
+                    <option value="Mudanca Completa">Mudança Completa</option>
+                    <option value="Filtragem">Filtragem</option>
+                    <option value="Controlo Visual">Controlo Visual</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Estado do Óleo *</label>
+                <select name="estado" required>
+                    <option value="Bom">✅ Bom</option>
+                    <option value="Aceitavel">🟡 Aceitável</option>
+                    <option value="Mudar">🔴 Mudar</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea name="observacoes" placeholder="Ex: Cor, cheiro, espuma"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Registado por *</label>
+                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL RECEÇÃO -->
+<div id="modal-rececao" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📦 Receção de Mercadoria</h2>
+            <button class="btn-close" onclick="fecharModal('rececao')">×</button>
+        </div>
+        
+        <form id="form-rececao" onsubmit="submeterForm(event, 'rececao')">
+            <div class="form-group">
+                <label>Fornecedor *</label>
+                <input type="text" name="fornecedor" placeholder="Nome do fornecedor" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Produtos Recebidos *</label>
+                <textarea name="produtos" placeholder="Lista de produtos" required></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Temperatura (°C)</label>
+                    <input type="number" step="0.1" name="temperatura" placeholder="Se aplicável">
+                </div>
+                
+                <div class="form-group">
+                    <label>Estado *</label>
+                    <select name="estado" required>
+                        <option value="Conforme">✅ Conforme</option>
+                        <option value="Nao Conforme">❌ Não Conforme</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea name="observacoes" placeholder="Embalagem, validade, rotulagem..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Recebido por *</label>
+                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL OCORRÊNCIA -->
+<div id="modal-ocorrencia" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>⚠️ Registo de Ocorrência</h2>
+            <button class="btn-close" onclick="fecharModal('ocorrencia')">×</button>
+        </div>
+        
+        <form id="form-ocorrencia" onsubmit="submeterForm(event, 'ocorrencia')">
+            <div class="form-group">
+                <label>Tipo de Ocorrência *</label>
+                <select name="tipo" required>
+                    <option value="">Selecionar...</option>
+                    <option value="Temperatura Fora Limite">🌡️ Temperatura Fora do Limite</option>
+                    <option value="Equipamento Avariado">🔧 Equipamento Avariado</option>
+                    <option value="Produto Fora Validade">📅 Produto Fora Validade</option>
+                    <option value="Falta Produto">📦 Falta de Produto</option>
+                    <option value="Contaminacao">🦠 Suspeita Contaminação</option>
+                    <option value="Outro">❓ Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Descrição da Ocorrência *</label>
+                <textarea name="descricao" placeholder="Descreva o que aconteceu" required rows="4"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Ação Imediata Tomada</label>
+                <textarea name="acao" placeholder="O que foi feito?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Reportado por *</label>
+                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-submit">⚠️ Registar Ocorrência</button>
+        </form>
+    </div>
 </div>
 
 <script>
-let funcionario='', tipo='';
+    const CONFIG = {
+        URL_SCRIPT: "COLE_AQUI_SUA_URL_DO_GOOGLE_APPS_SCRIPT"
+    };
 
-function carregar(){
- google.script.run.withSuccessHandler(data=>{
-   const sel=document.getElementById('nome');
-   data.forEach(r=> sel.innerHTML+=`<option>${r[0]}</option>`);
- }).getFuncionarios();
-}
+    function abrirModal(tipo) {
+        document.getElementById('modal-' + tipo).classList.add('show');
+    }
 
-function login(){
- const nome=document.getElementById('nome').value;
- const pin=document.getElementById('pin').value;
- google.script.run.withSuccessHandler(ok=>{
-   if(ok){ funcionario=nome; document.getElementById('login').style.display='none'; document.getElementById('menu').style.display='block'; }
-   else alert('PIN inválido');
- }).validarPIN(nome,pin);
-}
+    function fecharModal(tipo) {
+        document.getElementById('modal-' + tipo).classList.remove('show');
+        document.getElementById('form-' + tipo).reset();
+    }
 
-function abrir(t){ tipo=t; document.getElementById('menu').style.display='none'; document.getElementById('form').style.display='block'; document.getElementById('titulo').innerText=t; }
+    async function submeterForm(event, tipo) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const btn = form.querySelector('.btn-submit');
+        const textoOriginal = btn.textContent;
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ Guardando...';
+        
+        try {
+            const formData = new FormData(form);
+            const dados = Object.fromEntries(formData.entries());
+            
+            // Adicionar metadata
+            dados.tipo = tipo;
+            dados.data = new Date().toISOString().split('T')[0];
+            dados.hora = new Date().toTimeString().split(' ')[0].substring(0, 5);
+            dados.timestamp = new Date().toISOString();
+            
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'registarHACCP',
+                    dados: dados
+                })
+            });
+            
+            const resultado = await response.json();
+            
+            if (resultado.status === 'success') {
+                alert('✅ Registo guardado com sucesso!');
+                fecharModal(tipo);
+            } else {
+                alert('❌ Erro: ' + (resultado.message || 'Erro desconhecido'));
+            }
+            
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao guardar registo. Tente novamente.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
+        }
+    }
 
-function guardar(){
- const dados={ funcionario:funcionario, tipo:tipo, zona:zona.value, valor:valor.value, observacoes:obs.value };
- google.script.run.withSuccessHandler(()=>{ alert('Registo guardado'); location.reload(); }).registrarHACCP(dados);
-}
-
-carregar();
+    // Fechar modal ao clicar fora
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                const tipo = modal.id.replace('modal-', '');
+                fecharModal(tipo);
+            }
+        });
+    });
 </script>
 
 </body>
