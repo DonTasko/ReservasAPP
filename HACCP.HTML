@@ -1,0 +1,71 @@
+/* ================= INDEX.HTML ================= */
+
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body{font-family:Arial;text-align:center;background:#f5f5f5;padding:20px}
+    .card{background:#fff;padding:20px;border-radius:12px;max-width:420px;margin:auto;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    button{width:100%;padding:14px;margin:6px 0;border:none;border-radius:10px;font-size:16px;background:#0B5ED7;color:#fff}
+    input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:1px solid #ccc}
+  </style>
+</head>
+<body>
+
+<div class="card" id="login">
+  <h2>Login HACCP</h2>
+  <select id="nome"></select>
+  <input type="password" id="pin" placeholder="PIN">
+  <button onclick="login()">Entrar</button>
+</div>
+
+<div class="card" id="menu" style="display:none">
+  <h2>Registos HACCP</h2>
+  <button onclick="abrir('Temperatura')">Temperaturas</button>
+  <button onclick="abrir('Limpeza')">Limpeza</button>
+  <button onclick="abrir('Checklist')">Checklist</button>
+  <button onclick="abrir('Óleo')">Óleo fritura</button>
+  <button onclick="abrir('Receção')">Receção mercadoria</button>
+  <button onclick="abrir('Ocorrência')">Ocorrência</button>
+</div>
+
+<div class="card" id="form" style="display:none">
+  <h3 id="titulo"></h3>
+  <input id="zona" placeholder="Zona / Equipamento">
+  <input id="valor" placeholder="Valor">
+  <input id="obs" placeholder="Observações">
+  <button onclick="guardar()">Guardar</button>
+</div>
+
+<script>
+let funcionario='', tipo='';
+
+function carregar(){
+ google.script.run.withSuccessHandler(data=>{
+   const sel=document.getElementById('nome');
+   data.forEach(r=> sel.innerHTML+=`<option>${r[0]}</option>`);
+ }).getFuncionarios();
+}
+
+function login(){
+ const nome=document.getElementById('nome').value;
+ const pin=document.getElementById('pin').value;
+ google.script.run.withSuccessHandler(ok=>{
+   if(ok){ funcionario=nome; document.getElementById('login').style.display='none'; document.getElementById('menu').style.display='block'; }
+   else alert('PIN inválido');
+ }).validarPIN(nome,pin);
+}
+
+function abrir(t){ tipo=t; document.getElementById('menu').style.display='none'; document.getElementById('form').style.display='block'; document.getElementById('titulo').innerText=t; }
+
+function guardar(){
+ const dados={ funcionario:funcionario, tipo:tipo, zona:zona.value, valor:valor.value, observacoes:obs.value };
+ google.script.run.withSuccessHandler(()=>{ alert('Registo guardado'); location.reload(); }).registrarHACCP(dados);
+}
+
+carregar();
+</script>
+
+</body>
+</html>
