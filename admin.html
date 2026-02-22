@@ -16,61 +16,53 @@ body{
   margin-bottom:15px;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-h2{margin-top:0}
-.alerta{
-  color:#c0392b;
-  font-weight:bold;
-}
-.ok{
-  color:#27ae60;
-  font-weight:bold;
-}
+.alerta{color:#c0392b;font-weight:bold;}
+.ok{color:#27ae60;font-weight:bold;}
 </style>
 </head>
 
 <body>
 
 <h2>📊 Dashboard HACCP</h2>
-
 <div id="conteudo">A carregar...</div>
 
 <script>
 
-const CONFIG = {
-  URL_SCRIPT: "https://script.google.com/macros/s/AKfycby5RmGeAWc4BhYsKLDsIgpBKpx_ZRgg2cwuB-viaQkJiI-d_pHmWJWcRQxm-RVPqrq7/exec"
-};
+const URL = "https://script.google.com/macros/s/AKfycby5RmGeAWc4BhYsKLDsIgpBKpx_ZRgg2cwuB-viaQkJiI-d_pHmWJWcRQxm-RVPqrq7/exec";
 
 async function carregar(){
 
   try{
 
-    const response = await fetch(CONFIG.URL_SCRIPT,{
+    const response = await fetch(URL,{
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ action:"getDashboardHACCP" })
     });
 
-    const data = await response.json();
+    const json = await response.json();
 
-    if(!data || data.length==0){
-      document.getElementById("conteudo").innerHTML="Sem registos";
+    if(!json.registos || json.registos.length==0){
+      document.getElementById("conteudo").innerHTML="Sem registos HACCP";
       return;
     }
 
     let html="";
 
-    data.forEach(r=>{
+    json.registos.forEach(r=>{
 
-      const alertaTemp = (r.temperatura < 0 || r.temperatura > 5)
+      const temp = Number(r.temperatura);
+
+      const alerta = (temp < 0 || temp > 5)
         ? "<span class='alerta'>⚠ Fora do intervalo</span>"
         : "<span class='ok'>✔ OK</span>";
 
       html += `
         <div class="card">
-          <b>${r.equipamento}</b><br>
-          Temp: ${r.temperatura}ºC ${alertaTemp}<br>
-          Funcionário: ${r.funcionario}<br>
-          Data: ${r.data}
+          <b>${r.equipamento || "-"}</b><br>
+          🌡 ${temp}ºC ${alerta}<br>
+          👨‍🍳 ${r.funcionario || "-"}<br>
+          📅 ${r.data || "-"}
         </div>
       `;
     });
@@ -78,16 +70,15 @@ async function carregar(){
     document.getElementById("conteudo").innerHTML = html;
 
   }catch(e){
-    document.getElementById("conteudo").innerHTML="Erro ao carregar dados";
+    console.log(e);
+    document.getElementById("conteudo").innerHTML="Erro ao carregar dashboard";
   }
-
 }
 
 carregar();
-setInterval(carregar, 15000);
+setInterval(carregar,15000);
 
 </script>
 
 </body>
 </html>
-
