@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | Don Tasko</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* LOGIN */
+        #login-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; 
+        }
+        
+        .login-box { 
+            background: white; padding: 50px 40px; border-radius: 20px; 
+            box-shadow: 0 20px 80px rgba(0,0,0,0.4); min-width: 350px;
+        }
+        
+        .login-box h2 { 
+            margin-bottom: 30px; color: #2c3e50; font-size: 28px; 
+            text-align: center; font-weight: 700;
+        }
+        
+        .login-box input { 
+            padding: 14px; width: 100%; border: 2px solid #e0e0e0; 
+            border-radius: 10px; margin-bottom: 20px; font-size: 15px;
+        }
+        
+        .login-box button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 14px; border-radius: 10px; 
+            cursor: pointer; font-weight: 600; font-size: 16px; width: 100%;
+        }
+        
+        .erro { 
+            color: #e74c3c; margin-top: 15px; font-size: 14px; 
+            text-align: center; display: none; font-weight: 500;
+        }
+
+        /* DEBUG CONSOLE */
+        #debug-console {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.95);
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-width: 500px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 9999;
+            border: 2px solid #0f0;
+        }
+
+        #debug-console.show {
+            display: block;
+        }
+
+        #debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 9999;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+
+        #debug-toggle:hover {
+            background: #34495e;
+        }
+
+        /* DASHBOARD */
+        #dashboard-content { display: none; max-width: 2000px; margin: 0 auto; }
+        
+        .header { 
+            background: white; padding: 25px 30px; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px;
+        }
+        
+        .header h1 { 
+            font-size: 26px; color: #2c3e50; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        .header-actions {
+            display: flex; gap: 12px; flex-wrap: wrap;
+        }
+        
+        .btn-refresh, .btn-logout { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 12px 24px; 
+            border-radius: 10px; cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .container-principal {
+            display: grid;
+            grid-template-columns: 350px 1fr 450px;
+            gap: 25px;
+        }
+        
+        .card { 
+            background: white; border-radius: 16px; padding: 30px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 { 
+            margin: 0 0 20px 0; font-size: 18px; color: #2c3e50; 
+            border-bottom: 3px solid #f0f2f5; padding-bottom: 12px; 
+            font-weight: 700; display: flex; align-items: center; gap: 10px;
+        }
+        
+        /* SELETOR DE DATA */
+        .date-selector-large {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .date-selector-large label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .date-selector-large input[type="date"] {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+        
+        .stat-card.almoco {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        .stat-card.jantar {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        
+        .stat-card .label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        /* LAYOUT DA SALA */
+        .sala-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 600px;
+            position: relative;
+            overflow: auto;
+        }
+        
+        .mesa {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border: 3px solid #27ae60;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: move;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .mesa:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .mesa.ocupada {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+        
+        .mesa.reservada {
+            background: #f39c12;
+            border-color: #e67e22;
+            color: white;
+        }
+        
+        .mesa.livre {
+            background: white;
+            border-color: #27ae60;
+            color: #2c3e50;
+        }
+        
+        .mesa-numero {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .mesa-lugares {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        
+        .mesa-cliente {
+            position: absolute;
+            top: -30px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            display: none;
+        }
+        
+        .mesa.ocupada .mesa-cliente,
+        .mesa.reservada .mesa-cliente {
+            display: block;
+        }
+        
+        /* LISTA DE RESERVAS */
+        .reservas-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .reserva-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .reserva-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .reserva-item.chegou {
+            border-left-color: #27ae60;
+            opacity: 0.7;
+        }
+        
+        .reserva-item .hora {
+            font-weight: 700;
+            font-size: 16px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .reserva-item .nome {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .reserva-item .detalhes {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .reserva-item .acoes {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .btn-pequeno {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-chegou {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-cancelar {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        /* FORMULÁRIO */
+        .form-manual label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+        
+        .form-manual input, .form-manual select, .form-manual textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row > * {
+            flex: 1;
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1400px) {
+            .container-principal {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- DEBUG TOGGLE -->
+<div id="debug-toggle" onclick="toggleDebug()">🐛 Debug Console</div>
+<div id="debug-console"></div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+    <div class="login-box">
+        <h2>🔒 Acesso Admin</h2>
+        <input 
+            type="password" 
+            id="passInput" 
+            placeholder="Palavra-passe" 
+            autocomplete="current-password"
+        >
+        <button onclick="verificarPass()">Entrar</button>
+        <p class="erro" id="erro">⚠️ Palavra-passe incorreta!</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-content">
+    
+    <!-- HEADER -->
+    <div class="header">
+        <h1>
+            <span>📊</span>
+            <span>Painel Administrativo Don Tasko</span>
+        </h1>
+        <div class="header-actions">
+            <button class="btn-refresh" onclick="carregarDados()">
+                <span>🔄</span>
+                <span>Atualizar</span>
+            </button>
+            <button class="btn-logout" onclick="logout()">
+                <span>🚪</span>
+                <span>Sair</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container-principal">
+        
+        <!-- COLUNA 1: CONTROLES -->
+        <div>
+            
+            <!-- SELETOR DE DATA -->
+            <div class="card">
+                <div class="date-selector-large">
+                    <label>📆 Data de Consulta</label>
+                    <input 
+                        type="date" 
+                        id="dataSelecionada" 
+                        onchange="mudarData()"
+                    >
+                </div>
+                
+                <!-- STATS -->
+                <div class="stats-grid">
+                    <div class="stat-card almoco">
+                        <div class="label">🌞 ALMOÇO</div>
+                        <div class="value" id="statAlmoco">0</div>
+                    </div>
+                    <div class="stat-card jantar">
+                        <div class="label">🌙 JANTAR</div>
+                        <div class="value" id="statJantar">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FORMULÁRIO -->
+            <div class="card">
+                <h2>➕ Nova Reserva</h2>
+                <form id="formManual" class="form-manual">
+                    <label>Nome *</label>
+                    <input type="text" name="nome" required>
+                    
+                    <label>Telefone *</label>
+                    <input type="tel" name="telemovel" required>
+                    
+                    <div class="form-row">
+                        <div>
+                            <label>Data *</label>
+                            <input type="date" name="data" id="dataManual" required>
+                        </div>
+                        <div>
+                            <label>Pessoas *</label>
+                            <input type="number" name="pax" value="2" min="1" required>
+                        </div>
+                    </div>
+                    
+                    <label>Horário</label>
+                    <select name="horario">
+                        <option value="">Opcional</option>
+                        <option value="12:00">12:00</option>
+                        <option value="12:30">12:30</option>
+                        <option value="13:00">13:00</option>
+                        <option value="13:30">13:30</option>
+                        <option value="19:00">19:00</option>
+                        <option value="19:30">19:30</option>
+                        <option value="20:00">20:00</option>
+                        <option value="20:30">20:30</option>
+                        <option value="21:00">21:00</option>
+                    </select>
+                    
+                    <label>Email</label>
+                    <input type="email" name="email">
+                    
+                    <label>Notas</label>
+                    <textarea name="obs" rows="2"></textarea>
+                    
+                    <button type="submit" class="btn-add">💾 Gravar</button>
+                </form>
+            </div>
+            
+        </div>
+
+        <!-- COLUNA 2: LAYOUT DA SALA -->
+        <div class="card">
+            <h2>🍽️ Layout da Sala</h2>
+            <div class="sala-container" id="salaContainer">
+                <!-- Mesas serão adicionadas aqui -->
+            </div>
+        </div>
+
+        <!-- COLUNA 3: LISTA DE RESERVAS -->
+        <div class="card">
+            <h2>📋 Reservas do Dia</h2>
+            <div class="reservas-list" id="reservasList">
+                <div class="empty-state">
+                    Selecione uma data
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    // CONFIG
+    const CONFIG = {
+        URL_SCRIPT: "https://script.google.com/macros/s/AKfycby_R6A429soO_e4oTWTfe547gdNfpb9Y3pwIUuIUpYvdKI810AaHSLPkP_RSE1rGZCq/exec",
+        PASS_CORRETA: "Tasko123",
+        LOTACAO_MAX: 30
+    };
+
+    let dataSelecionada = new Date().toISOString().split('T')[0];
+    let todasReservas = {};
+    let todasMesas = [];
+    let resumoCompleto = { almoco: {}, jantar: {} };
+
+    // ========== DEBUG CONSOLE ==========
+    let debugMessages = [];
+    
+    function toggleDebug() {
+        const console = document.getElementById('debug-console');
+        console.classList.toggle('show');
+    }
+    
+    function debugLog(message, data = null) {
+        const timestamp = new Date().toLocaleTimeString('pt-PT');
+        const logMessage = `[${timestamp}] ${message}`;
+        
+        console.log(logMessage, data || '');
+        
+        debugMessages.push(logMessage + (data ? '<br>➜ ' + JSON.stringify(data).substring(0, 150) : ''));
+        if (debugMessages.length > 30) debugMessages.shift();
+        
+        const debugConsole = document.getElementById('debug-console');
+        debugConsole.innerHTML = debugMessages.join('<br>');
+        debugConsole.scrollTop = debugConsole.scrollHeight;
+    }
+
+    // LOGIN
+    function verificarPass() {
+        const senha = document.getElementById('passInput').value;
+        
+        if (senha === CONFIG.PASS_CORRETA) {
+            debugLog('✓ Login bem-sucedido');
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataManual').value = hoje;
+            document.getElementById('dataManual').min = hoje;
+            document.getElementById('dataSelecionada').value = hoje;
+            
+            inicializar();
+        } else {
+            debugLog('✗ Login falhou');
+            const erroEl = document.getElementById('erro');
+            erroEl.style.display = 'block';
+            setTimeout(() => erroEl.style.display = 'none', 3000);
+        }
+    }
+
+    function logout() {
+        if (confirm('Sair do painel?')) {
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('passInput').value = '';
+        }
+    }
+
+    document.getElementById('passInput').addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') verificarPass(); 
+    });
+
+    // INICIALIZAR
+    async function inicializar() {
+        debugLog('🚀 Inicializando dashboard...');
+        await carregarMesas();
+        await carregarDados();
+        renderizarSala();
+    }
+
+    // CARREGAR MESAS
+    async function carregarMesas() {
+        debugLog('📍 Carregando mesas...');
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getMesas' })
+            });
+            
+            const data = await response.json();
+            debugLog('Resposta getMesas:', data);
+            
+            if (data.mesas && data.mesas.length > 0) {
+                todasMesas = data.mesas;
+                debugLog(`✓ ${todasMesas.length} mesas carregadas`);
+            } else {
+                debugLog('⚠ Nenhuma mesa retornada, usando padrão');
+                usarMesasPadrao();
+            }
+        } catch (error) {
+            debugLog('✗ Erro ao carregar mesas:', error);
+            usarMesasPadrao();
+        }
+    }
+
+    function usarMesasPadrao() {
+        todasMesas = [
+            { id: 1, nome: 'Mesa 1', lugares: 4, x: 50, y: 50 },
+            { id: 2, nome: 'Mesa 2', lugares: 6, x: 200, y: 50 },
+            { id: 4, nome: 'Mesa 4', lugares: 4, x: 350, y: 50 },
+            { id: 5, nome: 'Mesa 5', lugares: 4, x: 50, y: 200 },
+            { id: 6, nome: 'Mesa 6', lugares: 4, x: 200, y: 200 },
+            { id: 7, nome: 'Mesa 7', lugares: 4, x: 350, y: 200 },
+            { id: 8, nome: 'Mesa 8', lugares: 4, x: 50, y: 350 },
+            { id: 9, nome: 'Mesa 9', lugares: 4, x: 200, y: 350 },
+        ];
+        debugLog('✓ Mesas padrão criadas');
+    }
+
+    // CARREGAR DADOS
+    async function carregarDados() {
+        debugLog('📊 Carregando dados do dashboard...');
+        debugLog('URL:', CONFIG.URL_SCRIPT);
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify({ action: 'getDashboard' })
+            });
+            
+            debugLog('Status HTTP:', response.status);
+            
+            const data = await response.json();
+            debugLog('Dados recebidos:', Object.keys(data));
+            
+            // ✨ COMPATIBILIDADE: Verificar formato
+            if (data.todasReservas) {
+                debugLog('✓ Formato NOVO detectado (todasReservas)');
+                todasReservas = data.todasReservas;
+                debugLog('Datas com reservas:', Object.keys(todasReservas));
+            } else if (data.listaHoje) {
+                debugLog('⚠ Formato ANTIGO detectado (só listaHoje)');
+                const hoje = new Date().toISOString().split('T')[0];
+                todasReservas = { [hoje]: data.listaHoje };
+                debugLog('Reservas hoje:', data.listaHoje.length);
+            } else {
+                debugLog('✗ Nenhum formato reconhecido!');
+                todasReservas = {};
+            }
+            
+            // Processar resumo
+            if (data.resumoAlmoco && data.resumoJantar) {
+                resumoCompleto.almoco = data.resumoAlmoco;
+                resumoCompleto.jantar = data.resumoJantar;
+                debugLog('✓ Resumo por turno carregado');
+            } else {
+                debugLog('⚠ Sem resumo por turno');
+                resumoCompleto = { almoco: {}, jantar: {} };
+            }
+            
+            // Atualizar UI
+            atualizarStats();
+            renderizarLista();
+            atualizarOcupacaoMesas();
+            
+            debugLog('✓ Dados processados com sucesso');
+            
+        } catch (error) {
+            debugLog('✗ ERRO ao carregar dados:', error);
+            alert('Erro ao carregar dados: ' + error.message);
+        }
+    }
+
+    // ATUALIZAR STATS
+    function atualizarStats() {
+        const almoco = resumoCompleto.almoco[dataSelecionada] || 0;
+        const jantar = resumoCompleto.jantar[dataSelecionada] || 0;
+        
+        document.getElementById('statAlmoco').textContent = almoco;
+        document.getElementById('statJantar').textContent = jantar;
+        
+        debugLog(`Stats atualizados: Almoço=${almoco}, Jantar=${jantar}`);
+    }
+
+    // MUDAR DATA
+    function mudarData() {
+        dataSelecionada = document.getElementById('dataSelecionada').value;
+        debugLog('📅 Data alterada para:', dataSelecionada);
+        atualizarStats();
+        renderizarLista();
+        atualizarOcupacaoMesas();
+    }
+
+    // RENDERIZAR SALA
+    function renderizarSala() {
+        debugLog('🏠 Renderizando sala...');
+        const container = document.getElementById('salaContainer');
+        container.innerHTML = '';
+        
+        todasMesas.forEach(mesa => {
+            const mesaEl = document.createElement('div');
+            mesaEl.className = 'mesa livre';
+            mesaEl.id = `mesa-${mesa.id}`;
+            mesaEl.style.left = (mesa.x || 50) + 'px';
+            mesaEl.style.top = (mesa.y || 50) + 'px';
+            mesaEl.draggable = true;
+            
+            mesaEl.innerHTML = `
+                <div class="mesa-cliente"></div>
+                <div class="mesa-numero">${mesa.nome}</div>
+                <div class="mesa-lugares">${mesa.lugares} lugares</div>
+            `;
+            
+            mesaEl.addEventListener('dragstart', handleDragStart);
+            mesaEl.addEventListener('dragend', handleDragEnd);
+            
+            container.appendChild(mesaEl);
+        });
+        
+        container.addEventListener('dragover', handleDragOver);
+        container.addEventListener('drop', handleDrop);
+        
+        debugLog(`✓ ${todasMesas.length} mesas renderizadas`);
+    }
+
+    // ATUALIZAR OCUPAÇÃO MESAS
+    function atualizarOcupacaoMesas() {
+        debugLog('🔄 Atualizando ocupação das mesas...');
+        
+        const reservasDoDia = todasReservas[dataSelecionada] || [];
+        debugLog(`Reservas para ${dataSelecionada}:`, reservasDoDia.length);
+        
+        // Resetar todas
+        document.querySelectorAll('.mesa').forEach(mesaEl => {
+            mesaEl.className = 'mesa livre';
+            mesaEl.querySelector('.mesa-cliente').textContent = '';
+        });
+        
+        // Marcar ocupadas/reservadas
+        reservasDoDia.forEach(reserva => {
+            if (reserva.mesa) {
+                const mesaEl = document.getElementById(`mesa-${reserva.mesa}`);
+                if (mesaEl) {
+                    if (reserva.status === 'Chegou') {
+                        mesaEl.className = 'mesa ocupada';
+                    } else {
+                        mesaEl.className = 'mesa reservada';
+                    }
+                    mesaEl.querySelector('.mesa-cliente').textContent = reserva.nome;
+                    debugLog(`Mesa ${reserva.mesa}: ${reserva.status} - ${reserva.nome}`);
+                }
+            }
+        });
+    }
+
+    // RENDERIZAR LISTA
+    function renderizarLista() {
+        const lista = document.getElementById('reservasList');
+        const reservasDoDia = todasReservas[dataSelecionada] || [];
+        
+        debugLog(`Renderizando lista: ${reservasDoDia.length} reservas`);
+        
+        if (reservasDoDia.length === 0) {
+            lista.innerHTML = '<div class="empty-state">📭 Sem reservas para esta data</div>';
+            return;
+        }
+        
+        lista.innerHTML = reservasDoDia
+            .sort((a, b) => (a.hora || '').localeCompare(b.hora || ''))
+            .map(reserva => `
+                <div class="reserva-item ${reserva.status === 'Chegou' ? 'chegou' : ''}">
+                    <div class="hora">${reserva.hora || '--:--'}</div>
+                    <div class="nome">${reserva.nome}</div>
+                    <div class="detalhes">
+                        👥 ${reserva.pax} pessoas
+                        ${reserva.tel ? ' • 📞 ' + reserva.tel : ''}
+                        ${reserva.mesa ? ' • 🪑 Mesa ' + reserva.mesa : ''}
+                    </div>
+                    ${reserva.obs ? `<div class="detalhes" style="margin-top:5px;">📝 ${reserva.obs}</div>` : ''}
+                    <div class="acoes">
+                        ${reserva.status === 'Confirmada' ? `
+                            <button class="btn-pequeno btn-chegou" onclick="marcarChegada('${reserva.id}')">
+                                ✅ Chegou
+                            </button>
+                        ` : ''}
+                        <button class="btn-pequeno btn-cancelar" onclick="cancelarReserva('${reserva.id}', '${reserva.nome}')">
+                            🗑️ Cancelar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    // DRAG & DROP
+    let draggedElement = null;
+    let offsetX, offsetY;
+
+    function handleDragStart(e) {
+        draggedElement = e.target;
+        const rect = draggedElement.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        draggedElement.style.opacity = '0.5';
+    }
+
+    function handleDragEnd(e) {
+        draggedElement.style.opacity = '1';
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        
+        if (draggedElement) {
+            const container = document.getElementById('salaContainer');
+            const rect = container.getBoundingClientRect();
+            
+            const x = e.clientX - rect.left - offsetX;
+            const y = e.clientY - rect.top - offsetY;
+            
+            const maxX = container.clientWidth - draggedElement.offsetWidth;
+            const maxY = container.clientHeight - draggedElement.offsetHeight;
+            
+            const finalX = Math.max(0, Math.min(x, maxX));
+            const finalY = Math.max(0, Math.min(y, maxY));
+            
+            draggedElement.style.left = finalX + 'px';
+            draggedElement.style.top = finalY + 'px';
+            
+            const mesaId = draggedElement.id.replace('mesa-', '');
+            debugLog(`Mesa ${mesaId} movida para (${finalX}, ${finalY})`);
+        }
+    }
+
+    // MARCAR CHEGADA
+    async function marcarChegada(id) {
+        if (!confirm('Confirma que o cliente chegou?')) return;
+        
+        debugLog('Marcando chegada:', id);
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'marcarChegada',
+                    id: id
+                })
+            });
+            
+            const resultado = await response.json();
+            debugLog('Resposta marcarChegada:', resultado);
+            
+            if (resultado.status === 'success') {
+                alert('✅ Cliente marcado como chegou!');
+                carregarDados();
+            } else {
+                alert('❌ ' + (resultado.message || 'Erro'));
+            }
+        } catch (error) {
+            debugLog('Erro:', error);
+            alert('❌ Erro ao processar');
+        }
+    }
+
+    // CANCELAR RESERVA
+    async function cancelarReserva(id, nome) {
+        if (!confirm(`Cancelar reserva de ${nome}?`)) return;
+        
+        debugLog('Cancelando:', id);
+        
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'cancelarReserva',
+                    id: id
+                })
+            });
+            
+            const resultado = await response.json();
+            debugLog('Resposta cancelar:', resultado);
+            
+            if (resultado.status === 'success') {
+                alert('✅ Reserva cancelada!');
+                carregarDados();
+            } else {
+                alert('❌ ' + (resultado.message || 'Erro'));
+            }
+        } catch (error) {
+            debugLog('Erro:', error);
+            alert('❌ Erro ao processar');
+        }
+    }
+
+    // SUBMETER FORMULÁRIO
+    document.getElementById('formManual').onsubmit = async function(e) {
+        e.preventDefault();
+        
+        const btn = this.querySelector('.btn-add');
+        btn.disabled = true;
+        btn.textContent = '⏳ Gravando...';
+        
+        debugLog('📝 Submetendo formulário...');
+        
+        try {
+            const formData = new FormData(this);
+            const dados = Object.fromEntries(formData.entries());
+            dados.action = "reservaManual";
+            
+            debugLog('Dados:', dados);
+            
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify(dados)
+            });
+            
+            const resultado = await response.json();
+            debugLog('Resposta:', resultado);
+            
+            if (resultado.status === 'success') {
+                alert('✅ Reserva criada!');
+                this.reset();
+                document.getElementById('dataManual').value = new Date().toISOString().split('T')[0];
+                carregarDados();
+            } else {
+                alert('❌ ' + (resultado.message || 'Erro'));
+            }
+        } catch (error) {
+            debugLog('Erro:', error);
+            alert('❌ Erro ao processar');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '💾 Gravar';
+        }
+    };
+
+    debugLog('✓ Admin carregado');
+</script>
+
+</body>
+</html>
