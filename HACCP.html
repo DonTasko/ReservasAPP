@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACCP - Don Tasko</title>
+    <title>Admin + HACCP | Don Tasko</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -14,144 +14,239 @@
             padding: 20px;
         }
         
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
+        /* LOGIN */
+        #login-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; 
         }
         
-        .header {
+        .login-box { 
+            background: white; padding: 50px 40px; border-radius: 20px; 
+            box-shadow: 0 20px 80px rgba(0,0,0,0.4); min-width: 350px;
+        }
+        
+        .login-box h2 { 
+            margin-bottom: 30px; color: #2c3e50; font-size: 28px; 
+            text-align: center; font-weight: 700;
+        }
+        
+        .login-box input { 
+            padding: 14px; width: 100%; border: 2px solid #e0e0e0; 
+            border-radius: 10px; margin-bottom: 20px; font-size: 15px;
+        }
+        
+        .login-box button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 14px; border-radius: 10px; 
+            cursor: pointer; font-weight: 600; font-size: 16px; width: 100%;
+        }
+        
+        .erro { 
+            color: #e74c3c; margin-top: 15px; font-size: 14px; 
+            text-align: center; display: none; font-weight: 500;
+        }
+
+        /* DASHBOARD */
+        #dashboard-content { display: none; max-width: 1800px; margin: 0 auto; }
+        
+        .header { 
+            background: white; padding: 25px 30px; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px;
+        }
+        
+        .header h1 { 
+            font-size: 26px; color: #2c3e50; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        .header-actions {
+            display: flex; gap: 12px; flex-wrap: wrap;
+        }
+        
+        .btn-header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 12px 24px; 
+            border-radius: 10px; cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout {
             background: white;
-            padding: 25px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            color: #667eea;
+            border: 2px solid #667eea;
         }
         
-        .header h1 {
-            font-size: 24px;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        
-        .header p {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-        
-        .card {
+        /* TABS */
+        .tabs {
             background: white;
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 10px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .card h2 {
-            font-size: 16px;
-            color: #2c3e50;
-            margin-bottom: 15px;
             display: flex;
-            align-items: center;
             gap: 10px;
         }
         
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        
-        .btn-haccp {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
             border: none;
-            padding: 20px 15px;
-            border-radius: 12px;
-            font-size: 14px;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            color: #7f8c8d;
             transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
         
-        .btn-haccp:active {
-            transform: scale(0.95);
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         
-        .btn-haccp .icon {
-            font-size: 32px;
-        }
-        
-        .btn-ocorrencia {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            grid-column: span 2;
-        }
-        
-        /* MODAL */
-        .modal {
+        .tab-content {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            overflow-y: auto;
-            padding: 20px;
         }
         
-        .modal.show {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
+        .tab-content.active {
+            display: block;
         }
         
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            margin: 20px auto;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* CARDS */
+        .card { 
+            background: white; border-radius: 16px; padding: 30px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
         
-        .modal-header h2 {
-            font-size: 20px;
+        .card h2 { 
+            margin: 0 0 20px 0; font-size: 18px; color: #2c3e50; 
+            border-bottom: 3px solid #f0f2f5; padding-bottom: 12px; 
+            font-weight: 700; display: flex; align-items: center; gap: 10px;
+        }
+        
+        /* HACCP GRID */
+        .haccp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .haccp-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .haccp-card.warning {
+            border-left-color: #f39c12;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        }
+        
+        .haccp-card.danger {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        }
+        
+        .haccp-card .title {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .haccp-card .value {
+            font-size: 32px;
+            font-weight: 700;
             color: #2c3e50;
         }
         
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            color: #7f8c8d;
-            cursor: pointer;
-            padding: 0;
-            width: 32px;
-            height: 32px;
+        .haccp-card .subtitle {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        /* TABELA */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        /* FILTROS */
+        .filters {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
-        .form-group {
-            margin-bottom: 15px;
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
         }
         
-        .form-group label {
+        .filter-group label {
             display: block;
             margin-bottom: 6px;
             font-weight: 600;
@@ -159,503 +254,567 @@
             font-size: 14px;
         }
         
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .filter-group input,
+        .filter-group select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
-            font-family: inherit;
         }
         
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        
-        .btn-submit {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        .btn-filter {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .alert {
-            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            align-self: flex-end;
         }
         
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
         }
         
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
         }
         
-        .limite-info {
-            background: #fff3cd;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #856404;
-            margin-top: 5px;
+        /* RESERVAS (do código anterior) */
+        .container-principal {
+            display: grid;
+            grid-template-columns: 350px 1fr 450px;
+            gap: 25px;
+        }
+        
+        @media (max-width: 1400px) {
+            .container-principal {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- LOGIN -->
+<div id="login-screen">
+    <div class="login-box">
+        <h2>🔒 Acesso Admin</h2>
+        <input 
+            type="password" 
+            id="passInput" 
+            placeholder="Palavra-passe" 
+            autocomplete="current-password"
+        >
+        <button onclick="verificarPass()">Entrar</button>
+        <p class="erro" id="erro">⚠️ Palavra-passe incorreta!</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-content">
     
     <!-- HEADER -->
     <div class="header">
-        <h1>🧪 HACCP Digital</h1>
-        <p>Don Tasko - Registos de Segurança</p>
-    </div>
-    
-    <!-- REGISTOS RÁPIDOS -->
-    <div class="card">
-        <h2>📋 Registos Rápidos</h2>
-        <div class="btn-grid">
-            <button class="btn-haccp" onclick="abrirModal('temperaturas')">
-                <span class="icon">🌡️</span>
-                <span>Temperaturas</span>
+        <h1>
+            <span>📊</span>
+            <span>Painel Administrativo Don Tasko</span>
+        </h1>
+        <div class="header-actions">
+            <button class="btn-header" onclick="carregarDados()">
+                <span>🔄</span>
+                <span>Atualizar</span>
             </button>
-            
-            <button class="btn-haccp" onclick="abrirModal('limpeza')">
-                <span class="icon">🧼</span>
-                <span>Limpeza</span>
-            </button>
-            
-            <button class="btn-haccp" onclick="abrirModal('checklist')">
-                <span class="icon">✅</span>
-                <span>Checklist</span>
-            </button>
-            
-            <button class="btn-haccp" onclick="abrirModal('oleo')">
-                <span class="icon">🍟</span>
-                <span>Óleo Fritura</span>
-            </button>
-            
-            <button class="btn-haccp" onclick="abrirModal('rececao')">
-                <span class="icon">📦</span>
-                <span>Receção</span>
-            </button>
-            
-            <button class="btn-haccp btn-ocorrencia" onclick="abrirModal('ocorrencia')">
-                <span class="icon">⚠️</span>
-                <span>Ocorrência</span>
+            <button class="btn-header btn-logout" onclick="logout()">
+                <span>🚪</span>
+                <span>Sair</span>
             </button>
         </div>
     </div>
-</div>
 
-<!-- MODAL TEMPERATURAS -->
-<div id="modal-temperaturas" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🌡️ Registo de Temperaturas</h2>
-            <button class="btn-close" onclick="fecharModal('temperaturas')">×</button>
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="mudarTab('reservas')">
+            🍽️ Reservas
+        </button>
+        <button class="tab-btn" onclick="mudarTab('haccp')">
+            🧪 HACCP
+        </button>
+    </div>
+
+    <!-- TAB RESERVAS -->
+    <div id="tab-reservas" class="tab-content active">
+        <div class="card">
+            <h2>🍽️ Sistema de Reservas</h2>
+            <p style="color: #7f8c8d; margin-top: -10px;">
+                Ver <a href="admin-fixed.html" style="color: #667eea; font-weight: 600;">página completa de reservas →</a>
+            </p>
         </div>
+    </div>
+
+    <!-- TAB HACCP -->
+    <div id="tab-haccp" class="tab-content">
         
-        <form id="form-temperaturas" onsubmit="submeterForm(event, 'temperaturas')">
-            <div class="form-group">
-                <label>Equipamento *</label>
-                <select name="equipamento" required>
-                    <option value="">Selecionar...</option>
-                    <option value="Frigorifico 1">Frigorífico 1</option>
-                    <option value="Frigorifico 2">Frigorífico 2</option>
-                    <option value="Arca Congeladora">Arca Congeladora</option>
-                    <option value="Vitrine Fria">Vitrine Fria</option>
-                    <option value="Balcao Refrigerado">Balcão Refrigerado</option>
-                </select>
-            </div>
+        <!-- RESUMO DO DIA -->
+        <div class="card">
+            <h2>📊 Resumo de Hoje</h2>
             
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Temperatura (°C) *</label>
-                    <input type="number" step="0.1" name="temperatura" required>
-                    <div class="limite-info">
-                        Frio: 0-4°C<br>
-                        Congelação: -18°C ou inferior
-                    </div>
+            <div class="haccp-grid">
+                <div class="haccp-card">
+                    <div class="title">🌡️ Temperaturas</div>
+                    <div class="value" id="stat-temperaturas">-</div>
+                    <div class="subtitle">registos hoje</div>
                 </div>
                 
-                <div class="form-group">
-                    <label>Turno *</label>
-                    <select name="turno" required>
-                        <option value="Abertura">Abertura</option>
-                        <option value="Almoco">Almoço</option>
-                        <option value="Jantar">Jantar</option>
-                        <option value="Fecho">Fecho</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea name="observacoes" placeholder="Opcional"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Registado por *</label>
-                <input type="text" name="funcionario" placeholder="Seu nome" required>
-            </div>
-            
-            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
-        </form>
-    </div>
-</div>
-
-<!-- MODAL LIMPEZA -->
-<div id="modal-limpeza" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🧼 Registo de Limpeza</h2>
-            <button class="btn-close" onclick="fecharModal('limpeza')">×</button>
-        </div>
-        
-        <form id="form-limpeza" onsubmit="submeterForm(event, 'limpeza')">
-            <div class="form-group">
-                <label>Área/Equipamento *</label>
-                <select name="area" required>
-                    <option value="">Selecionar...</option>
-                    <option value="Cozinha Geral">Cozinha Geral</option>
-                    <option value="Zona de Preparacao">Zona de Preparação</option>
-                    <option value="Frigorifico">Frigorífico</option>
-                    <option value="Fogao/Grelhador">Fogão/Grelhador</option>
-                    <option value="Exaustor">Exaustor</option>
-                    <option value="Bancadas">Bancadas</option>
-                    <option value="Pavimento">Pavimento</option>
-                    <option value="Casa de Banho">Casa de Banho</option>
-                    <option value="Sala">Sala</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Tipo de Limpeza *</label>
-                <select name="tipo" required>
-                    <option value="Limpeza Diaria">Limpeza Diária</option>
-                    <option value="Limpeza Profunda">Limpeza Profunda</option>
-                    <option value="Desinfecao">Desinfeção</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Produtos Utilizados</label>
-                <input type="text" name="produtos" placeholder="Ex: Desengordurante, Lixívia">
-            </div>
-            
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea name="observacoes" placeholder="Opcional"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Realizado por *</label>
-                <input type="text" name="funcionario" placeholder="Seu nome" required>
-            </div>
-            
-            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
-        </form>
-    </div>
-</div>
-
-<!-- MODAL CHECKLIST -->
-<div id="modal-checklist" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>✅ Checklist Diária</h2>
-            <button class="btn-close" onclick="fecharModal('checklist')">×</button>
-        </div>
-        
-        <form id="form-checklist" onsubmit="submeterForm(event, 'checklist')">
-            <div class="form-group">
-                <label>Turno *</label>
-                <select name="turno" required>
-                    <option value="Abertura">Abertura</option>
-                    <option value="Fecho">Fecho</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" name="item1" value="1">
-                    <span>Temperaturas verificadas</span>
-                </label>
-            </div>
-            
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" name="item2" value="1">
-                    <span>Validades conferidas</span>
-                </label>
-            </div>
-            
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" name="item3" value="1">
-                    <span>Limpeza realizada</span>
-                </label>
-            </div>
-            
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" name="item4" value="1">
-                    <span>Uniformes limpos</span>
-                </label>
-            </div>
-            
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" name="item5" value="1">
-                    <span>Lixo retirado</span>
-                </label>
-            </div>
-            
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea name="observacoes" placeholder="Opcional"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Responsável *</label>
-                <input type="text" name="funcionario" placeholder="Seu nome" required>
-            </div>
-            
-            <button type="submit" class="btn-submit">💾 Guardar Checklist</button>
-        </form>
-    </div>
-</div>
-
-<!-- MODAL ÓLEO -->
-<div id="modal-oleo" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>🍟 Controlo Óleo Fritura</h2>
-            <button class="btn-close" onclick="fecharModal('oleo')">×</button>
-        </div>
-        
-        <form id="form-oleo" onsubmit="submeterForm(event, 'oleo')">
-            <div class="form-group">
-                <label>Ação *</label>
-                <select name="acao" required>
-                    <option value="">Selecionar...</option>
-                    <option value="Mudanca Completa">Mudança Completa</option>
-                    <option value="Filtragem">Filtragem</option>
-                    <option value="Controlo Visual">Controlo Visual</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Estado do Óleo *</label>
-                <select name="estado" required>
-                    <option value="Bom">✅ Bom</option>
-                    <option value="Aceitavel">🟡 Aceitável</option>
-                    <option value="Mudar">🔴 Mudar</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea name="observacoes" placeholder="Ex: Cor, cheiro, espuma"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Registado por *</label>
-                <input type="text" name="funcionario" placeholder="Seu nome" required>
-            </div>
-            
-            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
-        </form>
-    </div>
-</div>
-
-<!-- MODAL RECEÇÃO -->
-<div id="modal-rececao" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>📦 Receção de Mercadoria</h2>
-            <button class="btn-close" onclick="fecharModal('rececao')">×</button>
-        </div>
-        
-        <form id="form-rececao" onsubmit="submeterForm(event, 'rececao')">
-            <div class="form-group">
-                <label>Fornecedor *</label>
-                <input type="text" name="fornecedor" placeholder="Nome do fornecedor" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Produtos Recebidos *</label>
-                <textarea name="produtos" placeholder="Lista de produtos" required></textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Temperatura (°C)</label>
-                    <input type="number" step="0.1" name="temperatura" placeholder="Se aplicável">
+                <div class="haccp-card">
+                    <div class="title">🧼 Limpezas</div>
+                    <div class="value" id="stat-limpezas">-</div>
+                    <div class="subtitle">concluídas</div>
                 </div>
                 
-                <div class="form-group">
-                    <label>Estado *</label>
-                    <select name="estado" required>
-                        <option value="Conforme">✅ Conforme</option>
-                        <option value="Nao Conforme">❌ Não Conforme</option>
-                    </select>
+                <div class="haccp-card">
+                    <div class="title">✅ Checklists</div>
+                    <div class="value" id="stat-checklists">-</div>
+                    <div class="subtitle">preenchidas</div>
+                </div>
+                
+                <div class="haccp-card" id="card-alertas">
+                    <div class="title">⚠️ Alertas</div>
+                    <div class="value" id="stat-alertas">-</div>
+                    <div class="subtitle">ocorrências</div>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea name="observacoes" placeholder="Embalagem, validade, rotulagem..."></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Recebido por *</label>
-                <input type="text" name="funcionario" placeholder="Seu nome" required>
-            </div>
-            
-            <button type="submit" class="btn-submit">💾 Guardar Registo</button>
-        </form>
-    </div>
-</div>
-
-<!-- MODAL OCORRÊNCIA -->
-<div id="modal-ocorrencia" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>⚠️ Registo de Ocorrência</h2>
-            <button class="btn-close" onclick="fecharModal('ocorrencia')">×</button>
         </div>
         
-        <form id="form-ocorrencia" onsubmit="submeterForm(event, 'ocorrencia')">
-            <div class="form-group">
-                <label>Tipo de Ocorrência *</label>
-                <select name="tipo" required>
-                    <option value="">Selecionar...</option>
-                    <option value="Temperatura Fora Limite">🌡️ Temperatura Fora do Limite</option>
-                    <option value="Equipamento Avariado">🔧 Equipamento Avariado</option>
-                    <option value="Produto Fora Validade">📅 Produto Fora Validade</option>
-                    <option value="Falta Produto">📦 Falta de Produto</option>
-                    <option value="Contaminacao">🦠 Suspeita Contaminação</option>
-                    <option value="Outro">❓ Outro</option>
-                </select>
-            </div>
+        <!-- FILTROS -->
+        <div class="card">
+            <h2>🔍 Consultar Registos</h2>
             
-            <div class="form-group">
-                <label>Descrição da Ocorrência *</label>
-                <textarea name="descricao" placeholder="Descreva o que aconteceu" required rows="4"></textarea>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Tipo de Registo</label>
+                    <select id="filtro-tipo">
+                        <option value="">Todos</option>
+                        <option value="temperaturas">🌡️ Temperaturas</option>
+                        <option value="limpeza">🧼 Limpeza</option>
+                        <option value="checklist">✅ Checklist</option>
+                        <option value="oleo">🍟 Óleo</option>
+                        <option value="rececao">📦 Receção</option>
+                        <option value="ocorrencia">⚠️ Ocorrências</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Data Início</label>
+                    <input type="date" id="filtro-data-inicio">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Data Fim</label>
+                    <input type="date" id="filtro-data-fim">
+                </div>
+                
+                <button class="btn-filter" onclick="filtrarRegistos()">
+                    🔍 Filtrar
+                </button>
+                
+                <button class="btn-filter" onclick="exportarPDF()" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                    📄 Exportar PDF
+                </button>
             </div>
+        </div>
+        
+        <!-- REGISTOS RECENTES -->
+        <div class="card">
+            <h2>📋 Registos Recentes</h2>
             
-            <div class="form-group">
-                <label>Ação Imediata Tomada</label>
-                <textarea name="acao" placeholder="O que foi feito?"></textarea>
+            <div class="table-container" id="registos-container">
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <p>Nenhum registo encontrado</p>
+                </div>
             </div>
+        </div>
+        
+        <!-- ALERTAS E OCORRÊNCIAS -->
+        <div class="card">
+            <h2>⚠️ Ocorrências e Alertas</h2>
             
-            <div class="form-group">
-                <label>Reportado por *</label>
-                <input type="text" name="funcionario" placeholder="Seu nome" required>
+            <div id="ocorrencias-container">
+                <div class="empty-state">
+                    <div class="icon">✅</div>
+                    <p>Nenhuma ocorrência registada</p>
+                </div>
             </div>
-            
-            <button type="submit" class="btn-submit">⚠️ Registar Ocorrência</button>
-        </form>
+        </div>
+        
     </div>
+
 </div>
 
 <script>
     const CONFIG = {
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycby5RmGeAWc4BhYsKLDsIgpBKpx_ZRgg2cwuB-viaQkJiI-d_pHmWJWcRQxm-RVPqrq7/exec"
+        URL_SCRIPT: "https://script.google.com/macros/s/AKfycbxGMkwgd7msSqQooFRZinJjqQO2-Py13cLnFR_QRVFUCxe6PyZtK6m-G2BiWUz1oD0/exec",
+        PASS_CORRETA: "Tasko123"
     };
 
-    function abrirModal(tipo) {
-        document.getElementById('modal-' + tipo).classList.add('show');
-    }
+    let dadosHACCP = [];
 
-    function fecharModal(tipo) {
-        document.getElementById('modal-' + tipo).classList.remove('show');
-        document.getElementById('form-' + tipo).reset();
-    }
-
-    async function submeterForm(event, tipo) {
-        event.preventDefault();
+    // LOGIN
+    function verificarPass() {
+        const senha = document.getElementById('passInput').value;
         
-        const form = event.target;
-        const btn = form.querySelector('.btn-submit');
-        const textoOriginal = btn.textContent;
+        if (senha === CONFIG.PASS_CORRETA) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('filtro-data-inicio').value = hoje;
+            document.getElementById('filtro-data-fim').value = hoje;
+            
+            carregarDados();
+        } else {
+            const erroEl = document.getElementById('erro');
+            erroEl.style.display = 'block';
+            setTimeout(() => erroEl.style.display = 'none', 3000);
+        }
+    }
+
+    function logout() {
+        if (confirm('Sair do painel?')) {
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('passInput').value = '';
+        }
+    }
+
+    document.getElementById('passInput').addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') verificarPass(); 
+    });
+
+    // TABS
+    function mudarTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+        
+        if (tab === 'haccp') {
+            carregarDadosHACCP();
+        }
+    }
+
+    // CARREGAR DADOS
+    async function carregarDados() {
+        carregarDadosHACCP();
+    }
+
+    async function carregarDadosHACCP() {
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getDashboardHACCP' })
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                dadosHACCP = data.registos || [];
+                atualizarStats(dadosHACCP);
+                renderizarRegistos(dadosHACCP);
+                renderizarOcorrencias(dadosHACCP);
+            }
+            
+        } catch (error) {
+            console.error('Erro ao carregar HACCP:', error);
+        }
+    }
+
+    function atualizarStats(registos) {
+        const hoje = new Date().toISOString().split('T')[0];
+        const registosHoje = registos.filter(r => r.data === hoje);
+        
+        const temperaturas = registosHoje.filter(r => r.tipo === 'temperaturas').length;
+        const limpezas = registosHoje.filter(r => r.tipo === 'limpeza').length;
+        const checklists = registosHoje.filter(r => r.tipo === 'checklist').length;
+        const alertas = registosHoje.filter(r => r.tipo === 'ocorrencia').length;
+        
+        document.getElementById('stat-temperaturas').textContent = temperaturas;
+        document.getElementById('stat-limpezas').textContent = limpezas;
+        document.getElementById('stat-checklists').textContent = checklists;
+        document.getElementById('stat-alertas').textContent = alertas;
+        
+        const cardAlertas = document.getElementById('card-alertas');
+        if (alertas > 0) {
+            cardAlertas.classList.add('danger');
+        } else {
+            cardAlertas.classList.remove('danger');
+        }
+    }
+
+    function renderizarRegistos(registos) {
+        const container = document.getElementById('registos-container');
+        
+        if (registos.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <p>Nenhum registo encontrado</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const icones = {
+            'temperaturas': '🌡️',
+            'limpeza': '🧼',
+            'checklist': '✅',
+            'oleo': '🍟',
+            'rececao': '📦',
+            'ocorrencia': '⚠️'
+        };
+        
+        const html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Tipo</th>
+                        <th>Detalhes</th>
+                        <th>Funcionário</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${registos.slice(0, 50).map(r => `
+                        <tr>
+                            <td>${r.data} ${r.hora}</td>
+                            <td>${icones[r.tipo] || '📝'} ${formatarTipo(r.tipo)}</td>
+                            <td>${formatarDetalhes(r)}</td>
+                            <td>${r.funcionario || '-'}</td>
+                            <td>${getBadgeStatus(r)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        
+        container.innerHTML = html;
+    }
+
+    function renderizarOcorrencias(registos) {
+        const container = document.getElementById('ocorrencias-container');
+        const ocorrencias = registos.filter(r => r.tipo === 'ocorrencia');
+        
+        if (ocorrencias.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">✅</div>
+                    <p>Nenhuma ocorrência registada</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const html = ocorrencias.map(o => `
+            <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #e74c3c;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <strong>${o.tipoOcorrencia || 'Ocorrência'}</strong>
+                    <span style="font-size: 12px; color: #666;">${o.data} ${o.hora}</span>
+                </div>
+                <p style="margin-bottom: 8px;">${o.descricao || '-'}</p>
+                ${o.acao ? `<p style="font-size: 13px; color: #666;"><strong>Ação:</strong> ${o.acao}</p>` : ''}
+                <p style="font-size: 12px; color: #666; margin-top: 8px;">Reportado por: ${o.funcionario}</p>
+            </div>
+        `).join('');
+        
+        container.innerHTML = html;
+    }
+
+    function filtrarRegistos() {
+        const tipo = document.getElementById('filtro-tipo').value;
+        const dataInicio = document.getElementById('filtro-data-inicio').value;
+        const dataFim = document.getElementById('filtro-data-fim').value;
+        
+        let filtrados = dadosHACCP;
+        
+        if (tipo) {
+            filtrados = filtrados.filter(r => r.tipo === tipo);
+        }
+        
+        if (dataInicio) {
+            filtrados = filtrados.filter(r => r.data >= dataInicio);
+        }
+        
+        if (dataFim) {
+            filtrados = filtrados.filter(r => r.data <= dataFim);
+        }
+        
+        renderizarRegistos(filtrados);
+    }
+
+    // ✨ EXPORTAR PARA PDF
+    async function exportarPDF() {
+        const btn = event.target;
+        const textoOriginal = btn.innerHTML;
         
         btn.disabled = true;
-        btn.textContent = '⏳ Guardando...';
+        btn.innerHTML = '⏳ Gerando PDF...';
         
         try {
-            const formData = new FormData(form);
-            const dados = Object.fromEntries(formData.entries());
-            
-            // Adicionar metadata
-            dados.tipo = tipo;
-            dados.data = new Date().toISOString().split('T')[0];
-            dados.hora = new Date().toTimeString().split(' ')[0].substring(0, 5);
-            dados.timestamp = new Date().toISOString();
+            const tipo = document.getElementById('filtro-tipo').value;
+            const dataInicio = document.getElementById('filtro-data-inicio').value;
+            const dataFim = document.getElementById('filtro-data-fim').value;
             
             const response = await fetch(CONFIG.URL_SCRIPT, {
                 method: 'POST',
                 body: JSON.stringify({
-                    action: 'registarHACCP',
-                    dados: dados
+                    action: 'gerarPDFHACCP',
+                    filtros: {
+                        tipo: tipo,
+                        dataInicio: dataInicio,
+                        dataFim: dataFim
+                    }
                 })
             });
             
             const resultado = await response.json();
             
             if (resultado.status === 'success') {
-                alert('✅ Registo guardado com sucesso!');
-                fecharModal(tipo);
+                mostrarModalPDF(resultado);
             } else {
-                alert('❌ Erro: ' + (resultado.message || 'Erro desconhecido'));
+                alert('❌ Erro ao gerar PDF: ' + resultado.message);
             }
             
         } catch (error) {
             console.error('Erro:', error);
-            alert('❌ Erro ao guardar registo. Tente novamente.');
+            alert('❌ Erro ao gerar PDF: ' + error.message);
         } finally {
             btn.disabled = false;
-            btn.textContent = textoOriginal;
+            btn.innerHTML = textoOriginal;
         }
     }
 
-    // Fechar modal ao clicar fora
-    document.querySelectorAll('.modal').forEach(modal => {
+    function mostrarModalPDF(resultado) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 40px; border-radius: 16px; max-width: 500px; width: 90%;">
+                <h2 style="margin: 0 0 20px 0; color: #2c3e50;">✅ PDF Gerado!</h2>
+                
+                <p style="margin-bottom: 20px; color: #666;">
+                    Relatório com <strong>${resultado.totalRegistos}</strong> registos gerado com sucesso.
+                </p>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="${resultado.pdfUrl}" 
+                       target="_blank"
+                       style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
+                              color: white; padding: 14px; border-radius: 10px; 
+                              text-decoration: none; text-align: center; font-weight: 600;">
+                        📄 Baixar PDF
+                    </a>
+                    
+                    <a href="${resultado.spreadsheetUrl}" 
+                       target="_blank"
+                       style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); 
+                              color: white; padding: 14px; border-radius: 10px; 
+                              text-decoration: none; text-align: center; font-weight: 600;">
+                        📊 Ver no Google Sheets
+                    </a>
+                    
+                    <button onclick="this.closest('div').parentElement.parentElement.remove()"
+                            style="background: #95a5a6; color: white; padding: 14px; 
+                                   border: none; border-radius: 10px; cursor: pointer; 
+                                   font-weight: 600; font-size: 15px;">
+                        Fechar
+                    </button>
+                </div>
+                
+                <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                    💡 Dica: O PDF ficará disponível por 24 horas
+                </p>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                const tipo = modal.id.replace('modal-', '');
-                fecharModal(tipo);
+                modal.remove();
             }
         });
-    });
+    }
+
+    function formatarTipo(tipo) {
+        const tipos = {
+            'temperaturas': 'Temperatura',
+            'limpeza': 'Limpeza',
+            'checklist': 'Checklist',
+            'oleo': 'Óleo',
+            'rececao': 'Receção',
+            'ocorrencia': 'Ocorrência'
+        };
+        return tipos[tipo] || tipo;
+    }
+
+    function formatarDetalhes(r) {
+        switch(r.tipo) {
+            case 'temperaturas':
+                return `${r.equipamento}: ${r.temperatura}°C`;
+            case 'limpeza':
+                return `${r.area} - ${r.tipoLimpeza}`;
+            case 'oleo':
+                return `${r.acao} - Estado: ${r.estado}`;
+            case 'rececao':
+                return `${r.fornecedor}`;
+            case 'ocorrencia':
+                return `${r.tipoOcorrencia}`;
+            default:
+                return '-';
+        }
+    }
+
+    function getBadgeStatus(r) {
+        if (r.tipo === 'temperaturas') {
+            const temp = parseFloat(r.temperatura);
+            if (temp > 4 && temp < 60) {
+                return '<span class="badge badge-danger">⚠️ Zona Perigo</span>';
+            }
+            return '<span class="badge badge-success">✅ OK</span>';
+        }
+        
+        if (r.tipo === 'rececao') {
+            if (r.estado === 'Nao Conforme') {
+                return '<span class="badge badge-danger">❌ Não Conforme</span>';
+            }
+            return '<span class="badge badge-success">✅ Conforme</span>';
+        }
+        
+        if (r.tipo === 'ocorrencia') {
+            return '<span class="badge badge-danger">⚠️ Alerta</span>';
+        }
+        
+        return '<span class="badge badge-info">📝 Registado</span>';
+    }
 </script>
 
 </body>
