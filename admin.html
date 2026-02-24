@@ -422,6 +422,10 @@
                 <button class="btn-filter" onclick="filtrarRegistos()">
                     🔍 Filtrar
                 </button>
+                
+                <button class="btn-filter" onclick="exportarPDF()" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                    📄 Exportar PDF
+                </button>
             </div>
         </div>
         
@@ -455,7 +459,7 @@
 
 <script>
     const CONFIG = {
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycby5RmGeAWc4BhYsKLDsIgpBKpx_ZRgg2cwuB-viaQkJiI-d_pHmWJWcRQxm-RVPqrq7/exec",
+        URL_SCRIPT: "https://script.google.com/macros/s/AKfycby_R6A429soO_e4oTWTfe547gdNfpb9Y3pwIUuIUpYvdKI810AaHSLPkP_RSE1rGZCq/exec",
         PASS_CORRETA: "Tasko123"
     };
 
@@ -653,6 +657,111 @@
         }
         
         renderizarRegistos(filtrados);
+    }
+
+    // ✨ EXPORTAR PARA PDF
+    async function exportarPDF() {
+        const btn = event.target;
+        const textoOriginal = btn.innerHTML;
+        
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Gerando PDF...';
+        
+        try {
+            const tipo = document.getElementById('filtro-tipo').value;
+            const dataInicio = document.getElementById('filtro-data-inicio').value;
+            const dataFim = document.getElementById('filtro-data-fim').value;
+            
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'gerarPDFHACCP',
+                    filtros: {
+                        tipo: tipo,
+                        dataInicio: dataInicio,
+                        dataFim: dataFim
+                    }
+                })
+            });
+            
+            const resultado = await response.json();
+            
+            if (resultado.status === 'success') {
+                mostrarModalPDF(resultado);
+            } else {
+                alert('❌ Erro ao gerar PDF: ' + resultado.message);
+            }
+            
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao gerar PDF: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = textoOriginal;
+        }
+    }
+
+    function mostrarModalPDF(resultado) {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; padding: 40px; border-radius: 16px; max-width: 500px; width: 90%;">
+                <h2 style="margin: 0 0 20px 0; color: #2c3e50;">✅ PDF Gerado!</h2>
+                
+                <p style="margin-bottom: 20px; color: #666;">
+                    Relatório com <strong>${resultado.totalRegistos}</strong> registos gerado com sucesso.
+                </p>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="${resultado.pdfUrl}" 
+                       target="_blank"
+                       style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
+                              color: white; padding: 14px; border-radius: 10px; 
+                              text-decoration: none; text-align: center; font-weight: 600;">
+                        📄 Baixar PDF
+                    </a>
+                    
+                    <a href="${resultado.spreadsheetUrl}" 
+                       target="_blank"
+                       style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); 
+                              color: white; padding: 14px; border-radius: 10px; 
+                              text-decoration: none; text-align: center; font-weight: 600;">
+                        📊 Ver no Google Sheets
+                    </a>
+                    
+                    <button onclick="this.closest('div').parentElement.parentElement.remove()"
+                            style="background: #95a5a6; color: white; padding: 14px; 
+                                   border: none; border-radius: 10px; cursor: pointer; 
+                                   font-weight: 600; font-size: 15px;">
+                        Fechar
+                    </button>
+                </div>
+                
+                <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                    💡 Dica: O PDF ficará disponível por 24 horas
+                </p>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
     }
 
     function formatarTipo(tipo) {
