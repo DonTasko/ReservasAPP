@@ -215,6 +215,48 @@ header {
   font-style: italic;
 }
 
+/* Sold Out Badge */
+.item-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.sold-out-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.sold-out-text {
+  background: var(--error);
+  color: white;
+  padding: 0.8rem 2rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transform: rotate(-15deg);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  border: 3px solid white;
+}
+
+.item.sold-out {
+  opacity: 0.7;
+}
+
+.item.sold-out .item-image {
+  filter: grayscale(100%);
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .header-content {
@@ -240,9 +282,9 @@ header {
 <body>
 <header>
   <div class="header-content">
-    <a href="index.html" class="logo">Don Tasko</a>
+    <a href="don-tasko.html" class="logo">Don Tasko</a>
     <div class="nav-links">
-      <a href="index.html">Início</a>
+      <a href="don-tasko.html">Início</a>
       <a href="menu.html">Menu</a>
       <a href="reservas.html">Reservas</a>
     </div>
@@ -338,16 +380,28 @@ function renderDrinks(drinks) {
     };
     
     drinks[categoria].forEach(drink => {
-      const div = document.createElement('div');
-      div.className = 'item';
+      const isSoldOut = drink.Rotura && drink.Rotura.trim().toUpperCase() === 'X';
       
-      // Imagem
+      const div = document.createElement('div');
+      div.className = isSoldOut ? 'item sold-out' : 'item';
+      
+      // Imagem com badge de esgotado
       let imageHTML = '';
+      const soldOutBadge = isSoldOut ? '<div class="sold-out-badge"><div class="sold-out-text">Esgotado!</div></div>' : '';
+      
       if (drink.Link_Imagem && drink.Link_Imagem.trim()) {
-        imageHTML = `<img src="${drink.Link_Imagem}" alt="${drink.Nome}" class="item-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                     <div class="item-image placeholder" style="display:none;">🍷</div>`;
+        imageHTML = `
+          <div class="item-image-container">
+            <img src="${drink.Link_Imagem}" alt="${drink.Nome}" class="item-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="item-image placeholder" style="display:none;">🍷</div>
+            ${soldOutBadge}
+          </div>`;
       } else {
-        imageHTML = `<div class="item-image placeholder">🍷</div>`;
+        imageHTML = `
+          <div class="item-image-container">
+            <div class="item-image placeholder">🍷</div>
+            ${soldOutBadge}
+          </div>`;
       }
       
       // Observações
@@ -380,5 +434,3 @@ loadDrinks();
 <script src="cookie-banner.js"></script>
 </body>
 </html>
-
-
