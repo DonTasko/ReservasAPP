@@ -3,819 +3,667 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin + HACCP | Don Tasko</title>
+    <title>Administração - Don Tasko</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        /* LOGIN */
-        #login-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            display: flex; justify-content: center; align-items: center; z-index: 1000; 
-        }
-        
-        .login-box { 
-            background: white; padding: 50px 40px; border-radius: 20px; 
-            box-shadow: 0 20px 80px rgba(0,0,0,0.4); min-width: 350px;
-        }
-        
-        .login-box h2 { 
-            margin-bottom: 30px; color: #2c3e50; font-size: 28px; 
-            text-align: center; font-weight: 700;
-        }
-        
-        .login-box input { 
-            padding: 14px; width: 100%; border: 2px solid #e0e0e0; 
-            border-radius: 10px; margin-bottom: 20px; font-size: 15px;
-        }
-        
-        .login-box button { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; padding: 14px; border-radius: 10px; 
-            cursor: pointer; font-weight: 600; font-size: 16px; width: 100%;
-        }
-        
-        .erro { 
-            color: #e74c3c; margin-top: 15px; font-size: 14px; 
-            text-align: center; display: none; font-weight: 500;
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
         }
 
-        /* DASHBOARD */
-        #dashboard-content { display: none; max-width: 1800px; margin: 0 auto; }
-        
-        .header { 
-            background: white; padding: 25px 30px; border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 25px;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 15px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .header h1 { 
-            font-size: 26px; color: #2c3e50; font-weight: 700;
-            display: flex; align-items: center; gap: 10px;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            padding: 20px;
         }
-        
-        .header-actions {
-            display: flex; gap: 12px; flex-wrap: wrap;
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        
-        .btn-header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; padding: 12px 24px; 
-            border-radius: 10px; cursor: pointer; font-weight: 600;
-            display: flex; align-items: center; gap: 8px; font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .btn-logout {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-        
-        /* TABS */
-        .tabs {
-            background: white;
-            border-radius: 16px;
-            padding: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            display: flex;
-            gap: 10px;
-        }
-        
-        .tab-btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            background: transparent;
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem 2rem;
             border-radius: 10px;
-            font-size: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Quick Booking Form */
+        .quick-booking {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .quick-booking h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .form-group label .required {
+            color: var(--danger);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-submit {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            color: #7f8c8d;
             transition: all 0.3s;
-        }
-        
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* CARDS */
-        .card { 
-            background: white; border-radius: 16px; padding: 30px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .card h2 { 
-            margin: 0 0 20px 0; font-size: 18px; color: #2c3e50; 
-            border-bottom: 3px solid #f0f2f5; padding-bottom: 12px; 
-            font-weight: 700; display: flex; align-items: center; gap: 10px;
-        }
-        
-        /* HACCP GRID */
-        .haccp-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .haccp-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 5px solid #667eea;
-        }
-        
-        .haccp-card.warning {
-            border-left-color: #f39c12;
-            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
-        }
-        
-        .haccp-card.danger {
-            border-left-color: #e74c3c;
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        }
-        
-        .haccp-card .title {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        .haccp-card .value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2c3e50;
-        }
-        
-        .haccp-card .subtitle {
-            font-size: 12px;
-            color: #95a5a6;
-            margin-top: 5px;
-        }
-        
-        /* TABELA */
-        .table-container {
-            overflow-x: auto;
-        }
-        
-        table {
             width: 100%;
-            border-collapse: collapse;
         }
-        
-        table th {
-            background: #f8f9fa;
-            padding: 12px;
-            text-align: left;
-            font-size: 13px;
-            color: #2c3e50;
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
+
+        .btn-submit:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
         }
-        
-        table td {
-            padding: 12px;
-            border-bottom: 1px solid #dee2e6;
-            font-size: 14px;
-            color: #495057;
+
+        .btn-submit:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
         }
-        
-        table tr:hover {
-            background: #f8f9fa;
+
+        /* Success/Error Messages */
+        .message {
+            display: none;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
         }
-        
-        .badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
-        
-        .badge-success {
+
+        .message.success {
             background: #d4edda;
             color: #155724;
+            border-left: 4px solid var(--success);
         }
-        
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .badge-danger {
+
+        .message.error {
             background: #f8d7da;
             color: #721c24;
+            border-left: 4px solid var(--danger);
         }
-        
-        .badge-info {
-            background: #d1ecf1;
-            color: #0c5460;
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        /* FILTROS */
-        .filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .filter-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
-        }
-        
-        .filter-group input,
-        .filter-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .btn-filter {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            align-self: flex-end;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #95a5a6;
-        }
-        
-        .empty-state .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-        
-        /* RESERVAS (do código anterior) */
-        .container-principal {
+
+        /* Dashboard */
+        .dashboard {
             display: grid;
-            grid-template-columns: 350px 1fr 450px;
-            gap: 25px;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
-        
-        @media (max-width: 1400px) {
-            .container-principal {
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .occupancy-display {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .occupancy-number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 1rem 0;
+        }
+
+        .occupancy-label {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .occupancy-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .occupancy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--accent));
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .occupancy-fill.warning {
+            background: linear-gradient(90deg, var(--warning), #e67e22);
+        }
+
+        .occupancy-fill.danger {
+            background: linear-gradient(90deg, var(--danger), #c0392b);
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-selector input {
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-top: 0.5rem;
+        }
+
+        /* Admin Buttons */
+        .admin-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .admin-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 2rem;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(44, 62, 80, 0.2);
+        }
+
+        .admin-btn .icon {
+            font-size: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="login-screen">
-    <div class="login-box">
-        <h2>🔒 Acesso Admin</h2>
-        <input 
-            type="password" 
-            id="passInput" 
-            placeholder="Palavra-passe" 
-            autocomplete="current-password"
-        >
-        <button onclick="verificarPass()">Entrar</button>
-        <p class="erro" id="erro">⚠️ Palavra-passe incorreta!</p>
-    </div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard-content">
-    
-    <!-- HEADER -->
-    <div class="header">
-        <h1>
-            <span>📊</span>
-            <span>Painel Administrativo Don Tasko</span>
-        </h1>
-        <div class="header-actions">
-            <button class="btn-header" onclick="carregarDados()">
-                <span>🔄</span>
-                <span>Atualizar</span>
-            </button>
-            <button class="btn-header btn-logout" onclick="logout()">
-                <span>🚪</span>
-                <span>Sair</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- TABS -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="mudarTab('reservas')">
-            🍽️ Reservas
-        </button>
-        <button class="tab-btn" onclick="mudarTab('haccp')">
-            🧪 HACCP
-        </button>
-    </div>
-
-    <!-- TAB RESERVAS -->
-    <div id="tab-reservas" class="tab-content active">
-        <div class="card">
-            <h2>🍽️ Sistema de Reservas</h2>
-            <p style="color: #7f8c8d; margin-top: -10px;">
-                Ver <a href="admin-fixed.html" style="color: #667eea; font-weight: 600;">página completa de reservas →</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- TAB HACCP -->
-    <div id="tab-haccp" class="tab-content">
-        
-        <!-- RESUMO DO DIA -->
-        <div class="card">
-            <h2>📊 Resumo de Hoje</h2>
-            
-            <div class="haccp-grid">
-                <div class="haccp-card">
-                    <div class="title">🌡️ Temperaturas</div>
-                    <div class="value" id="stat-temperaturas">-</div>
-                    <div class="subtitle">registos hoje</div>
-                </div>
-                
-                <div class="haccp-card">
-                    <div class="title">🧼 Limpezas</div>
-                    <div class="value" id="stat-limpezas">-</div>
-                    <div class="subtitle">concluídas</div>
-                </div>
-                
-                <div class="haccp-card">
-                    <div class="title">✅ Checklists</div>
-                    <div class="value" id="stat-checklists">-</div>
-                    <div class="subtitle">preenchidas</div>
-                </div>
-                
-                <div class="haccp-card" id="card-alertas">
-                    <div class="title">⚠️ Alertas</div>
-                    <div class="value" id="stat-alertas">-</div>
-                    <div class="subtitle">ocorrências</div>
-                </div>
+    <div class="container">
+        <header>
+            <h1>🍽️ Administração Don Tasko</h1>
+            <div class="user-info">
+                <div>Bem-vindo, Equipa</div>
+                <div id="currentDateTime"></div>
             </div>
-        </div>
-        
-        <!-- FILTROS -->
-        <div class="card">
-            <h2>🔍 Consultar Registos</h2>
+        </header>
+
+        <!-- Quick Booking Form -->
+        <div class="quick-booking">
+            <h2>⚡ Reserva Rápida</h2>
             
-            <div class="filters">
-                <div class="filter-group">
-                    <label>Tipo de Registo</label>
-                    <select id="filtro-tipo">
-                        <option value="">Todos</option>
-                        <option value="temperaturas">🌡️ Temperaturas</option>
-                        <option value="limpeza">🧼 Limpeza</option>
-                        <option value="checklist">✅ Checklist</option>
-                        <option value="oleo">🍟 Óleo</option>
-                        <option value="rececao">📦 Receção</option>
-                        <option value="ocorrencia">⚠️ Ocorrências</option>
-                    </select>
+            <div id="message" class="message"></div>
+
+            <form id="quickBookingForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome <span class="required">*</span></label>
+                        <input type="text" name="nome" id="nome" placeholder="Nome do cliente" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data <span class="required">*</span></label>
+                        <input type="date" name="data" id="data" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Horário <span class="required">*</span></label>
+                        <select name="horario" id="horario" required>
+                            <option value="">A carregar...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pessoas <span class="required">*</span></label>
+                        <input type="number" name="pax" id="pax" value="2" min="1" max="20" required>
+                    </div>
                 </div>
-                
-                <div class="filter-group">
-                    <label>Data Início</label>
-                    <input type="date" id="filtro-data-inicio">
+
+                <div class="form-grid" style="grid-template-columns: 2fr 1fr;">
+                    <div class="form-group">
+                        <label>Telefone/Email (opcional)</label>
+                        <input type="text" name="contato" id="contato" placeholder="Telefone ou email">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Observações (opcional)</label>
+                        <input type="text" name="obs" id="obs" placeholder="Notas...">
+                    </div>
                 </div>
-                
-                <div class="filter-group">
-                    <label>Data Fim</label>
-                    <input type="date" id="filtro-data-fim">
-                </div>
-                
-                <button class="btn-filter" onclick="filtrarRegistos()">
-                    🔍 Filtrar
+
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    ✓ Registar Reserva
                 </button>
+            </form>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Occupancy Card -->
+            <div class="dashboard-card">
+                <h3>📊 Ocupação</h3>
                 
-                <button class="btn-filter" onclick="exportarPDF()" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
-                    📄 Exportar PDF
-                </button>
+                <div class="date-selector">
+                    <label>Visualizar dia:</label>
+                    <input type="date" id="dashboardDate" onchange="updateOccupancy()">
+                </div>
+
+                <div class="occupancy-display">
+                    <div class="occupancy-label">Taxa de Ocupação</div>
+                    <div class="occupancy-number" id="occupancyRate">--%</div>
+                    
+                    <div class="occupancy-bar">
+                        <div class="occupancy-fill" id="occupancyFill" style="width: 0%">
+                            0%
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalReservations">0</div>
+                            <div class="stat-label">Reservas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalPeople">0</div>
+                            <div class="stat-label">Pessoas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="availableSeats">--</div>
+                            <div class="stat-label">Lugares Livres</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <!-- REGISTOS RECENTES -->
-        <div class="card">
-            <h2>📋 Registos Recentes</h2>
-            
-            <div class="table-container" id="registos-container">
-                <div class="empty-state">
-                    <div class="icon">📭</div>
-                    <p>Nenhum registo encontrado</p>
+
+            <!-- Quick Stats -->
+            <div class="dashboard-card">
+                <h3>📈 Estatísticas Rápidas</h3>
+                <div id="quickStats" style="padding: 1rem 0;">
+                    <p style="color: #7f8c8d; text-align: center;">Selecione uma data para ver estatísticas</p>
                 </div>
             </div>
         </div>
-        
-        <!-- ALERTAS E OCORRÊNCIAS -->
-        <div class="card">
-            <h2>⚠️ Ocorrências e Alertas</h2>
-            
-            <div id="ocorrencias-container">
-                <div class="empty-state">
-                    <div class="icon">✅</div>
-                    <p>Nenhuma ocorrência registada</p>
+
+        <!-- Admin Buttons -->
+        <div class="admin-buttons">
+            <a href="admin-completo.html" class="admin-btn">
+                <div class="icon">⚙️</div>
+                <div>Administrador Completo</div>
+                <div style="font-size: 0.9rem; font-weight: normal; opacity: 0.8;">
+                    Gestão de reservas, configurações
                 </div>
-            </div>
+            </a>
+
+            <a href="haccp.html" class="admin-btn">
+                <div class="icon">🧊</div>
+                <div>HACCP</div>
+                <div style="font-size: 0.9rem; font-weight: normal; opacity: 0.8;">
+                    Controlo de temperaturas
+                </div>
+            </a>
         </div>
-        
     </div>
 
-</div>
-
-<script>
-    const CONFIG = {
-        URL_SCRIPT: "https://script.google.com/macros/s/AKfycby_R6A429soO_e4oTWTfe547gdNfpb9Y3pwIUuIUpYvdKI810AaHSLPkP_RSE1rGZCq/exec",
-        PASS_CORRETA: "Tasko123"
-    };
-
-    let dadosHACCP = [];
-
-    // LOGIN
-    function verificarPass() {
-        const senha = document.getElementById('passInput').value;
+    <script>
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycby_R6A429soO_e4oTWTfe547gdNfpb9Y3pwIUuIUpYvdKI810AaHSLPkP_RSE1rGZCq/exec";
         
-        if (senha === CONFIG.PASS_CORRETA) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard-content').style.display = 'block';
-            
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('filtro-data-inicio').value = hoje;
-            document.getElementById('filtro-data-fim').value = hoje;
-            
-            carregarDados();
-        } else {
-            const erroEl = document.getElementById('erro');
-            erroEl.style.display = 'block';
-            setTimeout(() => erroEl.style.display = 'none', 3000);
+        let configsGlobal = {};
+        let horarios = {};
+
+        // Initialize
+        async function init() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Set today as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('data').value = today;
+            document.getElementById('data').min = today;
+            document.getElementById('dashboardDate').value = today;
+
+            // Load data
+            await loadConfigs();
+            await generateTimeSlots();
+            await updateOccupancy();
         }
-    }
 
-    function logout() {
-        if (confirm('Sair do painel?')) {
-            document.getElementById('dashboard-content').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('passInput').value = '';
-        }
-    }
-
-    document.getElementById('passInput').addEventListener('keypress', (e) => { 
-        if (e.key === 'Enter') verificarPass(); 
-    });
-
-    // TABS
-    function mudarTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        
-        event.target.classList.add('active');
-        document.getElementById('tab-' + tab).classList.add('active');
-        
-        if (tab === 'haccp') {
-            carregarDadosHACCP();
-        }
-    }
-
-    // CARREGAR DADOS
-    async function carregarDados() {
-        carregarDadosHACCP();
-    }
-
-    async function carregarDadosHACCP() {
-        try {
-            const response = await fetch(CONFIG.URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'getDashboardHACCP' })
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = now.toLocaleString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
-            
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                dadosHACCP = data.registos || [];
-                atualizarStats(dadosHACCP);
-                renderizarRegistos(dadosHACCP);
-                renderizarOcorrencias(dadosHACCP);
+            document.getElementById('currentDateTime').textContent = formatted;
+        }
+
+        async function loadConfigs() {
+            try {
+                const [configs, hors] = await Promise.all([
+                    fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json()),
+                    fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getHorarios'})}).then(r => r.json())
+                ]);
+                
+                configsGlobal = configs;
+                horarios = hors;
+            } catch(e) {
+                console.error("Erro ao carregar configurações:", e);
+                showMessage("Erro ao carregar configurações", "error");
             }
-            
-        } catch (error) {
-            console.error('Erro ao carregar HACCP:', error);
         }
-    }
 
-    function atualizarStats(registos) {
-        const hoje = new Date().toISOString().split('T')[0];
-        const registosHoje = registos.filter(r => r.data === hoje);
-        
-        const temperaturas = registosHoje.filter(r => r.tipo === 'temperaturas').length;
-        const limpezas = registosHoje.filter(r => r.tipo === 'limpeza').length;
-        const checklists = registosHoje.filter(r => r.tipo === 'checklist').length;
-        const alertas = registosHoje.filter(r => r.tipo === 'ocorrencia').length;
-        
-        document.getElementById('stat-temperaturas').textContent = temperaturas;
-        document.getElementById('stat-limpezas').textContent = limpezas;
-        document.getElementById('stat-checklists').textContent = checklists;
-        document.getElementById('stat-alertas').textContent = alertas;
-        
-        const cardAlertas = document.getElementById('card-alertas');
-        if (alertas > 0) {
-            cardAlertas.classList.add('danger');
-        } else {
-            cardAlertas.classList.remove('danger');
-        }
-    }
+        function generateTimeSlots() {
+            const select = document.getElementById('horario');
+            select.innerHTML = '';
 
-    function renderizarRegistos(registos) {
-        const container = document.getElementById('registos-container');
-        
-        if (registos.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">📭</div>
-                    <p>Nenhum registo encontrado</p>
-                </div>
-            `;
-            return;
-        }
-        
-        const icones = {
-            'temperaturas': '🌡️',
-            'limpeza': '🧼',
-            'checklist': '✅',
-            'oleo': '🍟',
-            'rececao': '📦',
-            'ocorrencia': '⚠️'
-        };
-        
-        const html = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data/Hora</th>
-                        <th>Tipo</th>
-                        <th>Detalhes</th>
-                        <th>Funcionário</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${registos.slice(0, 50).map(r => `
-                        <tr>
-                            <td>${r.data} ${r.hora}</td>
-                            <td>${icones[r.tipo] || '📝'} ${formatarTipo(r.tipo)}</td>
-                            <td>${formatarDetalhes(r)}</td>
-                            <td>${r.funcionario || '-'}</td>
-                            <td>${getBadgeStatus(r)}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-        
-        container.innerHTML = html;
-    }
+            [horarios.almoco, horarios.jantar].forEach(intervalo => {
+                if (!intervalo) return;
 
-    function renderizarOcorrencias(registos) {
-        const container = document.getElementById('ocorrencias-container');
-        const ocorrencias = registos.filter(r => r.tipo === 'ocorrencia');
-        
-        if (ocorrencias.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">✅</div>
-                    <p>Nenhuma ocorrência registada</p>
-                </div>
-            `;
-            return;
-        }
-        
-        const html = ocorrencias.map(o => `
-            <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #e74c3c;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <strong>${o.tipoOcorrencia || 'Ocorrência'}</strong>
-                    <span style="font-size: 12px; color: #666;">${o.data} ${o.hora}</span>
-                </div>
-                <p style="margin-bottom: 8px;">${o.descricao || '-'}</p>
-                ${o.acao ? `<p style="font-size: 13px; color: #666;"><strong>Ação:</strong> ${o.acao}</p>` : ''}
-                <p style="font-size: 12px; color: #666; margin-top: 8px;">Reportado por: ${o.funcionario}</p>
-            </div>
-        `).join('');
-        
-        container.innerHTML = html;
-    }
+                const parts = intervalo.replace(/–|—/g, '-').split('-');
+                let [hAt, mAt] = parts[0].trim().split(':').map(Number);
+                const [hFim, mFim] = parts[1].trim().split(':').map(Number);
 
-    function filtrarRegistos() {
-        const tipo = document.getElementById('filtro-tipo').value;
-        const dataInicio = document.getElementById('filtro-data-inicio').value;
-        const dataFim = document.getElementById('filtro-data-fim').value;
-        
-        let filtrados = dadosHACCP;
-        
-        if (tipo) {
-            filtrados = filtrados.filter(r => r.tipo === tipo);
-        }
-        
-        if (dataInicio) {
-            filtrados = filtrados.filter(r => r.data >= dataInicio);
-        }
-        
-        if (dataFim) {
-            filtrados = filtrados.filter(r => r.data <= dataFim);
-        }
-        
-        renderizarRegistos(filtrados);
-    }
-
-    // ✨ EXPORTAR PARA PDF
-    async function exportarPDF() {
-        const btn = event.target;
-        const textoOriginal = btn.innerHTML;
-        
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Gerando PDF...';
-        
-        try {
-            const tipo = document.getElementById('filtro-tipo').value;
-            const dataInicio = document.getElementById('filtro-data-inicio').value;
-            const dataFim = document.getElementById('filtro-data-fim').value;
-            
-            const response = await fetch(CONFIG.URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'gerarPDFHACCP',
-                    filtros: {
-                        tipo: tipo,
-                        dataInicio: dataInicio,
-                        dataFim: dataFim
+                while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
+                    const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
+                    const opt = document.createElement('option');
+                    opt.value = opt.text = tempo;
+                    select.appendChild(opt);
+                    mAt += 15;
+                    if (mAt >= 60) {
+                        mAt = 0;
+                        hAt++;
                     }
-                })
+                }
+            });
+        }
+
+        async function updateOccupancy() {
+            const date = document.getElementById('dashboardDate').value;
+            if (!date) return;
+
+            try {
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'getOccupancyForDate',
+                        data: date
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Update occupancy display
+                const rate = Math.round(data.occupancyRate || 0);
+                document.getElementById('occupancyRate').textContent = rate + '%';
+                document.getElementById('totalReservations').textContent = data.totalReservations || 0;
+                document.getElementById('totalPeople').textContent = data.totalPeople || 0;
+                document.getElementById('availableSeats').textContent = data.availableSeats || '--';
+
+                // Update progress bar
+                const fill = document.getElementById('occupancyFill');
+                fill.style.width = rate + '%';
+                fill.textContent = rate + '%';
+                
+                // Color coding
+                fill.className = 'occupancy-fill';
+                if (rate >= 90) {
+                    fill.classList.add('danger');
+                } else if (rate >= 70) {
+                    fill.classList.add('warning');
+                }
+
+                // Update quick stats
+                updateQuickStats(data);
+
+            } catch(error) {
+                console.error("Erro ao carregar ocupação:", error);
+            }
+        }
+
+        function updateQuickStats(data) {
+            const container = document.getElementById('quickStats');
+            
+            if (!data.byTimeSlot || data.byTimeSlot.length === 0) {
+                container.innerHTML = '<p style="color: #7f8c8d; text-align: center;">Sem reservas para este dia</p>';
+                return;
+            }
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.8rem;">';
+            
+            // Show busiest times
+            const sorted = [...data.byTimeSlot].sort((a, b) => b.count - a.count).slice(0, 5);
+            
+            html += '<div style="font-weight: 600; margin-bottom: 0.5rem;">Horários mais ocupados:</div>';
+            sorted.forEach(slot => {
+                const percentage = Math.round((slot.count / (data.totalReservations || 1)) * 100);
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--light); border-radius: 5px;">
+                        <span>${slot.time}</span>
+                        <span style="font-weight: 600; color: var(--accent);">${slot.count} reservas (${percentage}%)</span>
+                    </div>
+                `;
             });
             
-            const resultado = await response.json();
-            
-            if (resultado.status === 'success') {
-                mostrarModalPDF(resultado);
-            } else {
-                alert('❌ Erro ao gerar PDF: ' + resultado.message);
-            }
-            
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('❌ Erro ao gerar PDF: ' + error.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = textoOriginal;
+            html += '</div>';
+            container.innerHTML = html;
         }
-    }
 
-    function mostrarModalPDF(resultado) {
-        const modal = document.createElement('div');
-        modal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        `;
-        
-        modal.innerHTML = `
-            <div style="background: white; padding: 40px; border-radius: 16px; max-width: 500px; width: 90%;">
-                <h2 style="margin: 0 0 20px 0; color: #2c3e50;">✅ PDF Gerado!</h2>
-                
-                <p style="margin-bottom: 20px; color: #666;">
-                    Relatório com <strong>${resultado.totalRegistos}</strong> registos gerado com sucesso.
-                </p>
-                
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <a href="${resultado.pdfUrl}" 
-                       target="_blank"
-                       style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
-                              color: white; padding: 14px; border-radius: 10px; 
-                              text-decoration: none; text-align: center; font-weight: 600;">
-                        📄 Baixar PDF
-                    </a>
+        // Form submission
+        document.getElementById('quickBookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.textContent = '⏳ A registar...';
+
+            try {
+                const formData = new FormData(e.target);
+                const dados = Object.fromEntries(formData);
+                dados.action = 'reservaAdmin';
+                dados.origem = 'admin_rapido';
+
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify(dados)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showMessage('✓ Reserva registada com sucesso!', 'success');
+                    e.target.reset();
                     
-                    <a href="${resultado.spreadsheetUrl}" 
-                       target="_blank"
-                       style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); 
-                              color: white; padding: 14px; border-radius: 10px; 
-                              text-decoration: none; text-align: center; font-weight: 600;">
-                        📊 Ver no Google Sheets
-                    </a>
+                    // Reset to today
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('data').value = today;
+                    document.getElementById('pax').value = 2;
                     
-                    <button onclick="this.closest('div').parentElement.parentElement.remove()"
-                            style="background: #95a5a6; color: white; padding: 14px; 
-                                   border: none; border-radius: 10px; cursor: pointer; 
-                                   font-weight: 600; font-size: 15px;">
-                        Fechar
-                    </button>
-                </div>
-                
-                <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                    💡 Dica: O PDF ficará disponível por 24 horas
-                </p>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
+                    // Update occupancy
+                    await updateOccupancy();
+                } else {
+                    showMessage('✗ ' + (result.message || 'Erro ao registar reserva'), 'error');
+                }
+            } catch(error) {
+                console.error("Erro:", error);
+                showMessage('✗ Erro ao processar. Verifique a conexão.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✓ Registar Reserva';
             }
         });
-    }
 
-    function formatarTipo(tipo) {
-        const tipos = {
-            'temperaturas': 'Temperatura',
-            'limpeza': 'Limpeza',
-            'checklist': 'Checklist',
-            'oleo': 'Óleo',
-            'rececao': 'Receção',
-            'ocorrencia': 'Ocorrência'
-        };
-        return tipos[tipo] || tipo;
-    }
+        function showMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            msg.style.display = 'block';
 
-    function formatarDetalhes(r) {
-        switch(r.tipo) {
-            case 'temperaturas':
-                return `${r.equipamento}: ${r.temperatura}°C`;
-            case 'limpeza':
-                return `${r.area} - ${r.tipoLimpeza}`;
-            case 'oleo':
-                return `${r.acao} - Estado: ${r.estado}`;
-            case 'rececao':
-                return `${r.fornecedor}`;
-            case 'ocorrencia':
-                return `${r.tipoOcorrencia}`;
-            default:
-                return '-';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 5000);
         }
-    }
 
-    function getBadgeStatus(r) {
-        if (r.tipo === 'temperaturas') {
-            const temp = parseFloat(r.temperatura);
-            if (temp > 4 && temp < 60) {
-                return '<span class="badge badge-danger">⚠️ Zona Perigo</span>';
-            }
-            return '<span class="badge badge-success">✅ OK</span>';
-        }
-        
-        if (r.tipo === 'rececao') {
-            if (r.estado === 'Nao Conforme') {
-                return '<span class="badge badge-danger">❌ Não Conforme</span>';
-            }
-            return '<span class="badge badge-success">✅ Conforme</span>';
-        }
-        
-        if (r.tipo === 'ocorrencia') {
-            return '<span class="badge badge-danger">⚠️ Alerta</span>';
-        }
-        
-        return '<span class="badge badge-info">📝 Registado</span>';
-    }
-</script>
-
+        // Initialize on load
+        init();
+    </script>
 </body>
 </html>
