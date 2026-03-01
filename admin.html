@@ -544,19 +544,20 @@
                 const response = await fetch(URL_SCRIPT, {
                     method: 'POST',
                     body: JSON.stringify({
-                        action: 'getOccupancyForDate',
+                        action: 'getOcupacaoDia',
                         data: date
                     })
                 });
 
                 const data = await response.json();
+                console.log('Dados de ocupação:', data);
                 
                 // Update occupancy display
-                const rate = Math.round(data.occupancyRate || 0);
+                const rate = Math.round(data.occupancyRate || data.taxaOcupacao || 0);
                 document.getElementById('occupancyRate').textContent = rate + '%';
-                document.getElementById('totalReservations').textContent = data.totalReservations || 0;
-                document.getElementById('totalPeople').textContent = data.totalPeople || 0;
-                document.getElementById('availableSeats').textContent = data.availableSeats || '--';
+                document.getElementById('totalReservations').textContent = data.totalReservations || data.totalReservas || 0;
+                document.getElementById('totalPeople').textContent = data.totalPeople || data.totalPessoas || 0;
+                document.getElementById('availableSeats').textContent = data.availableSeats || data.lugaresDisponiveis || '--';
 
                 // Update progress bar
                 const fill = document.getElementById('occupancyFill');
