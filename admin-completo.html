@@ -643,14 +643,28 @@
                 const response = await fetch(URL_SCRIPT, {
                     method: 'POST',
                     body: JSON.stringify({
-                        action: 'getAllReservations',
-                        dateStart: document.getElementById('filterDateStart').value,
-                        dateEnd: document.getElementById('filterDateEnd').value
+                        action: 'listarReservas',
+                        dataInicio: document.getElementById('filterDateStart').value,
+                        dataFim: document.getElementById('filterDateEnd').value
                     })
                 });
 
                 const data = await response.json();
-                allReservations = data.reservations || [];
+                console.log('Dados recebidos:', data);
+                
+                // Tentar diferentes formatos de resposta
+                if (Array.isArray(data)) {
+                    allReservations = data;
+                } else if (data.reservations && Array.isArray(data.reservations)) {
+                    allReservations = data.reservations;
+                } else if (data.data && Array.isArray(data.data)) {
+                    allReservations = data.data;
+                } else {
+                    console.error('Formato de dados não reconhecido:', data);
+                    allReservations = [];
+                }
+
+                console.log('Total de reservas carregadas:', allReservations.length);
                 applyFilters();
                 updateStats();
             } catch(error) {
@@ -659,6 +673,7 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">⚠️</div>
                         <p>Erro ao carregar reservas</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">${error.message}</p>
                     </div>
                 `;
             }
@@ -693,11 +708,17 @@
             const end = start + itemsPerPage;
             const pageData = filteredReservations.slice(start, end);
 
+            console.log('Renderizando página', currentPage, 'com', pageData.length, 'reservas');
+
             if (pageData.length === 0) {
                 document.getElementById('tableContent').innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
                         <p>Nenhuma reserva encontrada</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                            Total no sistema: ${allReservations.length} | 
+                            Após filtros: ${filteredReservations.length}
+                        </p>
                     </div>
                 `;
                 document.getElementById('pagination').innerHTML = '';
@@ -721,20 +742,32 @@
             `;
 
             pageData.forEach(res => {
-                const statusClass = `status-${res.status.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`;
+                // Normalizar campos que podem ter nomes diferentes
+                const nome = res.nome || res.Nome || res.name || '-';
+                const data = res.data || res.Data || res.date || '-';
+                const horario = res.horario || res.Horario || res.time || res.hora || '-';
+                const pax = res.pax || res.Pax || res.pessoas || res.Pessoas || '0';
+                const status = res.status || res.Status || res.estado || res.Estado || 'Pendente';
+                const telefone = res.telemovel || res.telefone || res.Telefone || res.phone || '';
+                const email = res.email || res.Email || '';
+                const id = res.id || res.Id || res.rowId || Math.random().toString();
+
+                const statusClass = `status-${status.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '')}`;
+                const contacto = telefone || email || '-';
+                
                 html += `
                     <tr>
-                        <td>${formatDate(res.data)}</td>
-                        <td>${res.horario}</td>
-                        <td><strong>${res.nome}</strong></td>
-                        <td>${res.telefone || res.email || '-'}</td>
-                        <td>${res.pax} pax</td>
-                        <td><span class="status-badge ${statusClass}">${res.status}</span></td>
+                        <td>${typeof data === 'string' ? formatDate(data) : data}</td>
+                        <td>${horario}</td>
+                        <td><strong>${nome}</strong></td>
+                        <td>${contacto}</td>
+                        <td>${pax} pax</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-small btn-edit" onclick='editReservation(${JSON.stringify(res)})'>✏️</button>
-                                ${res.status !== 'Concluída' ? `<button class="btn-small btn-complete" onclick="completeReservation('${res.id}')">✓</button>` : ''}
-                                <button class="btn-small btn-delete" onclick="deleteReservation('${res.id}')">🗑️</button>
+                                <button class="btn-small btn-edit" onclick='editReservation(${JSON.stringify(res).replace(/'/g, "&#39;")})'>✏️</button>
+                                ${status !== 'Concluída' && status !== 'Concluida' ? `<button class="btn-small btn-complete" onclick="completeReservation('${id}')">✓</button>` : ''}
+                                <button class="btn-small btn-delete" onclick="deleteReservation('${id}', '${nome}')">🗑️</button>
                             </div>
                         </td>
                     </tr>
@@ -818,45 +851,49 @@
                 const response = await fetch(URL_SCRIPT, {
                     method: 'POST',
                     body: JSON.stringify({
-                        action: 'updateReservationStatus',
+                        action: 'atualizarStatusReserva',
                         id: id,
                         status: 'Concluída'
                     })
                 });
 
                 const result = await response.json();
-                if (result.status === 'success') {
+                console.log('Resultado atualização:', result);
+                
+                if (result.status === 'success' || result.success) {
                     await loadReservations();
                 } else {
-                    alert('Erro ao atualizar: ' + result.message);
+                    alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
                 }
             } catch(error) {
                 console.error("Erro:", error);
-                alert('Erro ao processar pedido');
+                alert('Erro ao processar pedido: ' + error.message);
             }
         }
 
-        async function deleteReservation(id) {
-            if (!confirm('Tem certeza que deseja cancelar esta reserva?')) return;
+        async function deleteReservation(id, nome) {
+            if (!confirm(`Tem certeza que deseja cancelar a reserva de ${nome || 'este cliente'}?`)) return;
 
             try {
                 const response = await fetch(URL_SCRIPT, {
                     method: 'POST',
                     body: JSON.stringify({
-                        action: 'deleteReservation',
+                        action: 'cancelarReserva',
                         id: id
                     })
                 });
 
                 const result = await response.json();
-                if (result.status === 'success') {
+                console.log('Resultado cancelamento:', result);
+                
+                if (result.status === 'success' || result.success) {
                     await loadReservations();
                 } else {
-                    alert('Erro ao cancelar: ' + result.message);
+                    alert('Erro ao cancelar: ' + (result.message || 'Erro desconhecido'));
                 }
             } catch(error) {
                 console.error("Erro:", error);
-                alert('Erro ao processar pedido');
+                alert('Erro ao processar pedido: ' + error.message);
             }
         }
 
@@ -878,10 +915,10 @@
             e.preventDefault();
 
             const data = {
-                action: 'updateReservation',
+                action: 'editarReserva',
                 id: document.getElementById('editId').value,
                 nome: document.getElementById('editNome').value,
-                telefone: document.getElementById('editTelefone').value,
+                telemovel: document.getElementById('editTelefone').value,
                 email: document.getElementById('editEmail').value,
                 data: document.getElementById('editData').value,
                 horario: document.getElementById('editHorario').value,
@@ -890,6 +927,8 @@
                 obs: document.getElementById('editObs').value
             };
 
+            console.log('Enviando atualização:', data);
+
             try {
                 const response = await fetch(URL_SCRIPT, {
                     method: 'POST',
@@ -897,15 +936,17 @@
                 });
 
                 const result = await response.json();
-                if (result.status === 'success') {
+                console.log('Resultado edição:', result);
+                
+                if (result.status === 'success' || result.success) {
                     closeModal();
                     await loadReservations();
                 } else {
-                    alert('Erro ao guardar: ' + result.message);
+                    alert('Erro ao guardar: ' + (result.message || 'Erro desconhecido'));
                 }
             } catch(error) {
                 console.error("Erro:", error);
-                alert('Erro ao processar pedido');
+                alert('Erro ao processar pedido: ' + error.message);
             }
         });
 
