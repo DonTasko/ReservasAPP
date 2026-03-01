@@ -406,7 +406,7 @@
                 </div>
 
                 <div class="occupancy-display">
-                    <div class="occupancy-label">Taxa de Ocupação</div>
+                    <div class="occupancy-label">Taxa de Ocupação Geral</div>
                     <div class="occupancy-number" id="occupancyRate">--%</div>
                     
                     <div class="occupancy-bar">
@@ -427,6 +427,27 @@
                         <div class="stat-item">
                             <div class="stat-number" id="availableSeats">--</div>
                             <div class="stat-label">Lugares Livres</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Divisão Almoço/Jantar -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
+                        <div style="background: var(--light); padding: 1rem; border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; text-align: center;">🌞 Almoço</div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent); text-align: center;" id="almocoRate">0%</div>
+                            <div style="font-size: 0.85rem; color: var(--dark); margin-top: 0.5rem; text-align: center;">
+                                <span id="almocoReservas">0</span> reservas | 
+                                <span id="almocoPessoas">0</span> pax
+                            </div>
+                        </div>
+                        
+                        <div style="background: var(--light); padding: 1rem; border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; text-align: center;">🌙 Jantar</div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent); text-align: center;" id="jantarRate">0%</div>
+                            <div style="font-size: 0.85rem; color: var(--dark); margin-top: 0.5rem; text-align: center;">
+                                <span id="jantarReservas">0</span> reservas | 
+                                <span id="jantarPessoas">0</span> pax
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -552,12 +573,12 @@
                 const data = await response.json();
                 console.log('Dados de ocupação:', data);
                 
-                // Update occupancy display
-                const rate = Math.round(data.occupancyRate || data.taxaOcupacao || 0);
+                // Update occupancy display - GERAL
+                const rate = Math.round(data.taxaOcupacao || data.taxaOcupacao || 0);
                 document.getElementById('occupancyRate').textContent = rate + '%';
-                document.getElementById('totalReservations').textContent = data.totalReservations || data.totalReservas || 0;
-                document.getElementById('totalPeople').textContent = data.totalPeople || data.totalPessoas || 0;
-                document.getElementById('availableSeats').textContent = data.availableSeats || data.lugaresDisponiveis || '--';
+                document.getElementById('totalReservations').textContent = data.totalReservas || 0;
+                document.getElementById('totalPeople').textContent = data.totalPessoas || 0;
+                document.getElementById('availableSeats').textContent = data.lugaresDisponiveis || '--';
 
                 // Update progress bar
                 const fill = document.getElementById('occupancyFill');
@@ -570,6 +591,20 @@
                     fill.classList.add('danger');
                 } else if (rate >= 70) {
                     fill.classList.add('warning');
+                }
+                
+                // Update ALMOÇO
+                if (data.almoco) {
+                    document.getElementById('almocoRate').textContent = data.almoco.taxaOcupacao + '%';
+                    document.getElementById('almocoReservas').textContent = data.almoco.reservas;
+                    document.getElementById('almocoPessoas').textContent = data.almoco.pessoas;
+                }
+                
+                // Update JANTAR
+                if (data.jantar) {
+                    document.getElementById('jantarRate').textContent = data.jantar.taxaOcupacao + '%';
+                    document.getElementById('jantarReservas').textContent = data.jantar.reservas;
+                    document.getElementById('jantarPessoas').textContent = data.jantar.pessoas;
                 }
 
                 // Update quick stats
@@ -668,5 +703,3 @@
     </script>
 </body>
 </html>
-
-
