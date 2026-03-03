@@ -281,13 +281,7 @@
                     <div class="form-group">
                         <label>Equipamento *</label>
                         <select id="tempEquipamento" required>
-                            <option value="">Selecione...</option>
-                            <option value="Frigorifico 1">Frigorifico 1</option>
-                            <option value="Frigorifico 2">Frigorifico 2</option>
-                            <option value="Arca Congeladora 1">Arca Congeladora 1</option>
-                            <option value="Arca Congeladora 2">Arca Congeladora 2</option>
-                            <option value="Câmara Fria">Câmara Fria</option>
-                            <option value="Vitrine Refrigerada">Vitrine Refrigerada</option>
+                            <option value="">A carregar...</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -300,11 +294,7 @@
                     <div class="form-group">
                         <label>Turno *</label>
                         <select id="tempTurno" required>
-                            <option value="">Selecione...</option>
-                            <option value="Abertura">Abertura</option>
-                            <option value="Almoço">Almoço</option>
-                            <option value="Jantar">Jantar</option>
-                            <option value="Fecho">Fecho</option>
+                            <option value="">A carregar...</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -341,18 +331,7 @@
                     <div class="form-group">
                         <label>Área *</label>
                         <select id="limpArea" required>
-                            <option value="">Selecione...</option>
-                            <option value="Cozinha Geral">Cozinha Geral</option>
-                            <option value="Zona de Preparação">Zona de Preparação</option>
-                            <option value="Zona de Cocção">Zona de Cocção</option>
-                            <option value="Zona de Lavagem">Zona de Lavagem</option>
-                            <option value="Armazenamento">Armazenamento</option>
-                            <option value="Instalações Sanitárias WC Homens">WC Clientes Masculino</option>
-                             <option value="Instalações Sanitárias WC Mulheres">WC Clientes Feminino</option>
-                            <option value="Salão">Salão</option>
-                             <option value="Instalações Sanitárias WC Funcionários">WC Clientes Balneários</option>
-                             <option value="Instalações Sanitárias - Balneários">Balneários</option>
-                             <option value="Zona de Armazém">Zona de Armazém Geral</option>
+                            <option value="">A carregar...</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -461,6 +440,7 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             setDefaultDates();
+            carregarConfiguracoesDinamicas();
         });
 
         function setDefaultDates() {
@@ -473,6 +453,158 @@
             document.getElementById('limpHora').value = now;
             document.getElementById('ocorData').value = today;
             document.getElementById('ocorHora').value = now;
+        }
+
+        // ========== CARREGAR CONFIGURAÇÕES DINÂMICAS ==========
+        async function carregarConfiguracoesDinamicas() {
+            await Promise.all([
+                carregarEquipamentos(),
+                carregarAreas(),
+                carregarTurnos(),
+                carregarFuncionarios()
+            ]);
+            console.log('✅ Todas as configurações HACCP carregadas');
+        }
+
+        async function carregarEquipamentos() {
+            try {
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'getConfigHACCP',
+                        tipo: 'EQUIPAMENTO'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.items && result.items.length > 0) {
+                    const select = document.getElementById('tempEquipamento');
+                    select.innerHTML = '<option value="">Selecione...</option>';
+                    
+                    result.items.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item;
+                        option.textContent = item;
+                        select.appendChild(option);
+                    });
+                    
+                    console.log('✅ Equipamentos carregados:', result.items.length);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar equipamentos:', error);
+            }
+        }
+
+        async function carregarAreas() {
+            try {
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'getConfigHACCP',
+                        tipo: 'AREA_LIMPEZA'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.items && result.items.length > 0) {
+                    const select = document.getElementById('limpArea');
+                    select.innerHTML = '<option value="">Selecione...</option>';
+                    
+                    result.items.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item;
+                        option.textContent = item;
+                        select.appendChild(option);
+                    });
+                    
+                    console.log('✅ Áreas carregadas:', result.items.length);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar áreas:', error);
+            }
+        }
+
+        async function carregarTurnos() {
+            try {
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'getConfigHACCP',
+                        tipo: 'TURNO'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.items && result.items.length > 0) {
+                    // Aplicar em todos os selects de turno
+                    const selectIds = ['tempTurno'];
+                    
+                    selectIds.forEach(id => {
+                        const select = document.getElementById(id);
+                        if (select) {
+                            select.innerHTML = '<option value="">Selecione...</option>';
+                            
+                            result.items.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item;
+                                option.textContent = item;
+                                select.appendChild(option);
+                            });
+                        }
+                    });
+                    
+                    console.log('✅ Turnos carregados:', result.items.length);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar turnos:', error);
+            }
+        }
+
+        async function carregarFuncionarios() {
+            try {
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'getConfigHACCP',
+                        tipo: 'FUNCIONARIO'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.items && result.items.length > 0) {
+                    // Aplicar em todos os inputs de funcionário - converter para datalist
+                    const inputIds = ['tempFuncionario', 'limpFuncionario', 'ocorFuncionario'];
+                    
+                    // Criar datalist
+                    let datalistHTML = '<datalist id="funcionariosList">';
+                    result.items.forEach(item => {
+                        datalistHTML += `<option value="${item}">`;
+                    });
+                    datalistHTML += '</datalist>';
+                    
+                    // Adicionar datalist ao body se não existir
+                    if (!document.getElementById('funcionariosList')) {
+                        document.body.insertAdjacentHTML('beforeend', datalistHTML);
+                    }
+                    
+                    // Associar datalist aos inputs
+                    inputIds.forEach(id => {
+                        const input = document.getElementById(id);
+                        if (input) {
+                            input.setAttribute('list', 'funcionariosList');
+                            input.setAttribute('autocomplete', 'off');
+                        }
+                    });
+                    
+                    console.log('✅ Funcionários carregados:', result.items.length);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar funcionários:', error);
+            }
         }
 
         function switchTab(tab) {
@@ -719,6 +851,3 @@
     </script>
 </body>
 </html>
-
-
-
