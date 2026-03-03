@@ -6,6 +6,7 @@
 <title>FaturaApp</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="config.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -132,7 +133,7 @@ select option{background:var(--surface2)}
   <button class="sheets-status ss-wait" id="sheets-btn" onclick="nav('config',document.querySelector('.ni:nth-child(6)'))">
     <div class="ss-dot"></div><span id="sheets-btn-text">Sheets não configurado</span>
   </button>
-  <div class="sf"><div class="ub"><div class="av">JM</div><div class="ui"><p>João Moreira</p><span>Administrador</span></div></div></div>
+  <div class="sf"><div class="ub"><div class="av" id="user-av">JM</div><div class="ui"><p id="user-name">João Moreira</p><span>Administrador</span></div></div></div>
 </aside>
 
 <main class="main">
@@ -226,7 +227,7 @@ select option{background:var(--surface2)}
       <div class="so sel" data-m="email" onclick="selSend(this)"><div class="soi">📧</div><div><p style="font-weight:600;font-size:13px">Email</p><p style="font-size:12px;color:var(--muted)">Enviar ao contabilista</p></div></div>
       <div class="so" data-m="csv" onclick="selSend(this)"><div class="soi">📊</div><div><p style="font-weight:600;font-size:13px">Exportar CSV</p><p style="font-size:12px;color:var(--muted)">Descarregar ficheiro Excel/CSV</p></div></div>
       <div id="email-f" style="margin-top:14px">
-        <div class="fgi" style="margin-bottom:10px"><label>EMAIL DO CONTABILISTA</label><input type="email" id="acc-email" value="contabilidade@firma.pt"></div>
+        <div class="fgi" style="margin-bottom:10px"><label>EMAIL DO CONTABILISTA</label><input type="email" id="acc-email" id="acc-email" value="contabilidade@firma.pt"></div>
         <div class="fgi"><label>MENSAGEM</label><textarea rows="3" style="resize:none">Bom dia,
 Envio as faturas do período para processamento.
 Cumprimentos</textarea></div>
@@ -329,7 +330,11 @@ const CC={"mercadorias":"#22D3A5","serviços":"#5B6EF5","combustível":"#F59E0B"
 const CI={"mercadorias":"🛒","serviços":"⚙️","combustível":"⛽","despesas gerais":"📋","investimento":"📈"};
 const CB={"mercadorias":"bg0","serviços":"bg-b","combustível":"bg1","despesas gerais":"bg-p","investimento":"bg-r"};
 
-let SHEETS_URL=localStorage.getItem("sheets_url")||"";
+// ── Lê config.js (tem prioridade sobre localStorage)
+const _cfg=(typeof APP_CONFIG!=="undefined")?APP_CONFIG:{};
+let SHEETS_URL=_cfg.SHEETS_URL||localStorage.getItem("sheets_url")||"";
+const SCAN_W=_cfg.SCAN_WIDTH||640;
+const SCAN_H=_cfg.SCAN_HEIGHT||480;
 
 let invoices=[
   {id:1,supplier:"Galp Energia",nif:"500069143",nifClient:"123456789",num:"FT 2024/001234",date:"2024-02-28",amount:87.50,vat:17.50,atcud:"ABCD1234-5",category:"combustível",status:"enviada"},
@@ -347,7 +352,8 @@ let suppliers=[
 ];
 
 let activeFilter="todas",scanData=null,scanCat="serviços";
-let barCI=null,donutCI=null,camStream=null,camAF=null,facing="environment";
+let barCI=null,donutCI=null,camStream=null,camAF=null;
+let facing=(_cfg&&_cfg.DEFAULT_CAMERA)||"environment";
 
 const eur=v=>new Intl.NumberFormat("pt-PT",{style:"currency",currency:"EUR"}).format(v);
 const fd=d=>{try{return new Date(d).toLocaleDateString("pt-PT",{day:"2-digit",month:"short",year:"numeric"})}catch{return d}};
@@ -406,8 +412,8 @@ async function startCam(){
   const v=document.getElementById("cam-video"),st=document.getElementById("cam-st");
   // Try progressively simpler constraints if needed
   const constraints=[
-    {video:{facingMode:{exact:"environment"},width:{ideal:640},height:{ideal:480}}},
-    {video:{facingMode:{ideal:"environment"},width:{ideal:640},height:{ideal:480}}},
+    {video:{facingMode:{exact:"environment"},width:{ideal:SCAN_W},height:{ideal:SCAN_H}}},
+    {video:{facingMode:{ideal:"environment"},width:{ideal:SCAN_W},height:{ideal:SCAN_H}}},
     {video:{facingMode:{ideal:"environment"}}},
     {video:true}
   ];
@@ -598,9 +604,30 @@ function exportCSV(){
 
 // ── INIT ──
 (function(){
-  const url=localStorage.getItem("sheets_url")||"";
-  if(url){SHEETS_URL=url;setSheetsStatus("wait","A verificar...");
-    fetch(url).then(r=>r.json()).then(d=>{if(d.success!==undefined)setSheetsStatus("ok","✓ Sheets ligado");else setSheetsStatus("err","Sheets com erro");}).catch(()=>setSheetsStatus("err","Sheets não ligado"));
+  // Aplica valores do config.js
+  if(typeof APP_CONFIG!=="undefined"){
+    if(APP_CONFIG.SHEETS_URL) SHEETS_URL=APP_CONFIG.SHEETS_URL;
+    if(APP_CONFIG.USER_NAME){
+      const un=document.getElementById("user-name");if(un)un.textContent=APP_CONFIG.USER_NAME;
+    }
+    if(APP_CONFIG.USER_INITIALS){
+      const av=document.getElementById("user-av");if(av)av.textContent=APP_CONFIG.USER_INITIALS;
+    }
+    if(APP_CONFIG.ACCOUNTANT_EMAIL){
+      const ae=document.getElementById("acc-email");if(ae)ae.value=APP_CONFIG.ACCOUNTANT_EMAIL;
+    }
+    if(APP_CONFIG.BUSINESS_NAME){
+      document.title="FaturaApp — "+APP_CONFIG.BUSINESS_NAME;
+    }
+  }
+  // Verifica ligação ao Sheets
+  const urlToCheck=SHEETS_URL||localStorage.getItem("sheets_url")||"";
+  if(urlToCheck){
+    SHEETS_URL=urlToCheck;
+    setSheetsStatus("wait","A verificar...");
+    fetch(urlToCheck).then(r=>r.json())
+      .then(d=>{if(d.success!==undefined)setSheetsStatus("ok","✓ Sheets ligado");else setSheetsStatus("err","Sheets com erro");})
+      .catch(()=>setSheetsStatus("err","Sheets não ligado"));
   }else setSheetsStatus("err","Sheets não configurado");
   renderDash();
 })();
