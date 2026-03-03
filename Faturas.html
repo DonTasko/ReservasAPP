@@ -196,7 +196,7 @@ select option{background:var(--surface2)}
       <div style="padding:36px 20px">
         <div style="font-size:52px;margin-bottom:14px">📷</div>
         <p style="font-size:15px;font-weight:600;margin-bottom:6px">Câmara do dispositivo</p>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:22px">Aponte para o QR Code da fatura AT.<br><strong style="color:var(--orange)">Use o Google Chrome para melhor compatibilidade.</strong></p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:22px">Aponte para o QR Code da fatura AT.<br><strong style="color:var(--orange)">⚠️ Obrigatório: Google Chrome no Android</strong></p>
         <button class="btn bp btn-lg" onclick="openCam()" style="width:100%;justify-content:center">📷 Abrir Câmara</button>
         <div style="margin:16px 0;display:flex;align-items:center;gap:10px"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:12px;color:var(--muted)">ou</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
         <button class="btn bg2" style="width:100%;justify-content:center" onclick="openManual()">✏️ Introduzir manualmente</button>
@@ -490,20 +490,20 @@ async function startCam(){
   const v=document.getElementById("cam-video");
   const st=document.getElementById("cam-st");
 
-  // Tenta várias configurações progressivamente mais simples
+  // Tenta câmara traseira primeiro, depois fallbacks
   const attempts=[
-    {video:{facingMode:{exact:"environment"},width:{ideal:SCAN_W},height:{ideal:SCAN_H}}},
-    {video:{facingMode:{ideal:"environment"},width:{ideal:SCAN_W},height:{ideal:SCAN_H}}},
-    {video:{facingMode:{ideal:"environment"}}},
+    {video:{facingMode:{exact:"environment"}}},
+    {video:{facingMode:"environment"}},
     {video:true},
   ];
-
   let ok=false;
   for(const c of attempts){
     try{camStream=await navigator.mediaDevices.getUserMedia(c);ok=true;break;}
     catch(e){
-      if(e.name==="NotAllowedError"){st.textContent="❌ Permissão negada. Autorize a câmara nas definições do browser.";return;}
-      if(e.name==="NotFoundError"){st.textContent="❌ Câmara não encontrada.";return;}
+      if(e.name==="NotAllowedError"){
+        st.textContent="❌ Permissão negada. Vai às definições do Chrome → Privacidade → Câmara e autoriza este site.";
+        return;
+      }
     }
   }
   if(!ok){st.textContent="❌ Câmara inacessível. Abre no Google Chrome.";return;}
@@ -511,33 +511,58 @@ async function startCam(){
   v.srcObject=camStream;
   await new Promise(res=>{v.onloadedmetadata=()=>res();});
   await v.play();
+  try{
+    const tk=camStream.getVideoTracks()[0];
+    await tk.applyConstraints({advanced:[{focusMode:"continuous"},{zoom:1}]});
+  }catch(_){}
 
-  // Autofocus contínuo (funciona em muitos Android)
-  try{const tk=camStream.getVideoTracks()[0];await tk.applyConstraints({advanced:[{focusMode:"continuous"}]});}catch(_){}
-
-  st.textContent="📷 A procurar QR Code...";
-  qrLoop();
+  // Escolhe o melhor método disponível
+  if(typeof BarcodeDetector!=="undefined"){
+    st.innerHTML='✅ <strong>BarcodeDetector nativo ativo</strong> — aponte para o QR Code';
+    qrNative();
+  } else {
+    st.textContent='📷 A procurar QR Code (jsQR)...';
+    qrJsQR();
+  }
 }
 
-function qrLoop(){
+// ── MÉTODO 1: BarcodeDetector (Android Chrome nativo — mais fiável) ──
+function qrNative(){
+  const v=document.getElementById("cam-video");
+  const detector=new BarcodeDetector({formats:["qr_code"]});
+  async function tick(){
+    if(!camStream)return;
+    if(v.readyState===v.HAVE_ENOUGH_DATA){
+      try{
+        const codes=await detector.detect(v);
+        if(codes.length>0){
+          try{navigator.vibrate&&navigator.vibrate(150);}catch(_){}
+          handleQR(codes[0].rawValue);
+          return;
+        }
+      }catch(_){}
+    }
+    camAF=setTimeout(tick,150);
+  }
+  tick();
+}
+
+// ── MÉTODO 2: jsQR (fallback para browsers sem BarcodeDetector) ──
+function qrJsQR(){
   const v=document.getElementById("cam-video");
   const c=document.getElementById("cam-canvas");
   const ctx=c.getContext("2d",{willReadFrequently:true});
   let last=0;
-
   function tick(ts){
     if(!camStream)return;
-    if(ts-last>200 && v.readyState===v.HAVE_ENOUGH_DATA){
+    if(ts-last>250 && v.readyState===v.HAVE_ENOUGH_DATA){
       last=ts;
-      const W=Math.min(v.videoWidth,SCAN_W);
-      const H=Math.min(v.videoHeight,SCAN_H);
-      c.width=W;c.height=H;
-      ctx.drawImage(v,0,0,W,H);
-      const imgData=ctx.getImageData(0,0,W,H);
-      const code=jsQR(imgData.data,imgData.width,imgData.height,{inversionAttempts:"attemptBoth"});
+      c.width=v.videoWidth;c.height=v.videoHeight;
+      ctx.drawImage(v,0,0,c.width,c.height);
+      const img=ctx.getImageData(0,0,c.width,c.height);
+      const code=jsQR(img.data,img.width,img.height,{inversionAttempts:"attemptBoth"});
       if(code){
-        // Vibração de feedback no Android
-        try{navigator.vibrate&&navigator.vibrate(120);}catch(_){}
+        try{navigator.vibrate&&navigator.vibrate(150);}catch(_){}
         handleQR(code.data);
         return;
       }
