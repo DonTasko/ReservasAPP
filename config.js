@@ -16,7 +16,7 @@ const APP_CONFIG = {
   //   4. Copia o URL que aparece (começa com https://script.google.com/macros/s/...)
   //
   // Exemplo: "https://script.google.com/macros/s/AKfycbxXXXXXXXXXX/exec"
-  SHEETS_URL: "",
+  SHEETS_URL: "https://script.google.com/macros/s/AKfycbx_aPXYzdp2CSOWfk-fO69kxJ2RxsECs12xUVKSPDGsgP2sZdHhQFtYrZGmWOWkZVi7/exec",
 
   // ── 2. IDENTIFICAÇÃO DO NEGÓCIO ───────────────────────────────────
   // Nome que aparece na sidebar e nos exports
