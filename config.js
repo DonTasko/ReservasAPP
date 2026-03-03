@@ -20,7 +20,7 @@
 const CONFIG = {
   // ========== GOOGLE APPS SCRIPT URL ==========
   // Cole aqui o URL da implementação do Google Apps Script
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwLWYOiyK_1KXoVXiwSh4pFFHgMS44yAQr_1nW6fRcdHo91PtUykxfpo8LmLDw4QCo/exec",
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxWsGkR4nHELL0JMeV-I6xFj5m9LSggbVHm2wl6gndl3qwgsF_F1_2XdqWckQOp991N/exec",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   // ID da Google Sheet (para menu e bebidas)
