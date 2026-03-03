@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservas | Don Tasko</title>
+    
+    <!-- Configuração Centralizada -->
+    <script src="config.js"></script>
+    
     <style>
         :root { 
             --primary: #2c3e50; 
@@ -349,7 +353,7 @@
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwLWYOiyK_1KXoVXiwSh4pFFHgMS44yAQr_1nW6fRcdHo91PtUykxfpo8LmLDw4QCo/exec";
+    // URL_SCRIPT vem do config.js
     const campoData = document.getElementById('dataReserva');
     const selectHorario = document.getElementById('selectHorario');
     const campoPax = document.getElementById('numPax');
@@ -506,7 +510,7 @@
             const resultado = await response.json();
             
             if (!resultado.disponivel) {
-                avisoDisp.textContent = "⚠️ Sem disponibilidade para esta refeição. Escolhe outra refeição.";
+                avisoDisp.textContent = "⚠️ Sem disponibilidade para este horário. Escolhe outro.";
                 avisoDisp.classList.add('indisponivel');
                 selectHorario.style.borderColor = '#e74c3c';
                 btnEnviar.disabled = true;
@@ -600,8 +604,3 @@
 <script src="cookie-banner.js"></script>
 </body>
 </html>
-
-
-
-
-
