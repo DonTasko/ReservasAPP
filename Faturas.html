@@ -26,7 +26,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .ub{display:flex;align-items:center;gap:9px}
 .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .ui p{font-size:12px;font-weight:600}.ui span{font-size:11px;color:var(--muted)}
-.sheets-status{margin:8px 8px 0;padding:8px 10px;border-radius:8px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;border:none;width:calc(100% - 16px);text-align:left;transition:.15s}
+.ss-pill{margin:8px 8px 0;padding:8px 10px;border-radius:8px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:6px;border:none;width:calc(100% - 16px);text-align:left}
 .ss-ok{background:#22D3A511;color:var(--green);border:1px solid #22D3A533}
 .ss-err{background:#F43F5E11;color:var(--red);border:1px solid #F43F5E33}
 .ss-wait{background:#F59E0B11;color:var(--orange);border:1px solid #F59E0B33}
@@ -38,7 +38,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
 .content{padding:24px;flex:1}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:.15s;font-family:var(--sans)}
 .bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
-.bp:hover{opacity:.9;transform:translateY(-1px)}
+.bp:hover{opacity:.9}
 .bg2{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .bg2:hover{border-color:var(--accent);color:var(--accent)}
 .bd{background:#F43F5E22;color:var(--red);border:1px solid #F43F5E44}
@@ -62,7 +62,7 @@ tr.cr:hover td{background:var(--surface2);cursor:pointer}
 .sb2{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px}
 .sb2 input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:180px;font-family:var(--sans)}
 .sb2 input::placeholder{color:var(--muted)}
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
 .mo.open{display:flex}
 .md{background:var(--surface);border:1px solid var(--border);border-radius:18px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:su .2s ease}
 @keyframes su{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -70,8 +70,7 @@ tr.cr:hover td{background:var(--surface2);cursor:pointer}
 .mh h3{font-size:17px;font-weight:700}
 .mb2{padding:20px}.mf{padding:0 20px 20px;display:flex;gap:8px;justify-content:flex-end}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fgi{display:flex;flex-direction:column;gap:5px}
-.fgi.full{grid-column:1/-1}
+.fgi{display:flex;flex-direction:column;gap:5px}.fgi.full{grid-column:1/-1}
 label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.3px}
 input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:.15s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #5B6EF518}
@@ -81,59 +80,72 @@ select option{background:var(--surface2)}
 .cp{display:flex;flex-wrap:wrap;gap:7px}
 .cpi{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:.15s;font-family:var(--sans)}
 .cpi:hover,.cpi.active{border-color:var(--accent);background:#5B6EF520;color:var(--accent)}
-#toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 18px;font-size:13px;font-weight:500;z-index:999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.4);max-width:300px}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 18px;font-size:13px;font-weight:500;z-index:999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.4);max-width:320px}
 .fp{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .fpi{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:.15s;font-family:var(--sans)}
 .fpi:hover,.fpi.active{border-color:var(--accent);background:#5B6EF520;color:var(--accent)}
 .sec{display:none}.sec.active{display:block}
 .ab{background:#F59E0B11;border:1px solid #F59E0B44;border-radius:10px;padding:12px;margin-bottom:16px;display:flex;gap:9px;align-items:flex-start}
 .ab p{font-size:13px;color:#F59E0B;line-height:1.5}
-.so{background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:14px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.so{background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:11px;margin-bottom:9px;transition:.15s}
 .so:hover{border-color:var(--accent)}.so.sel{border-color:var(--accent);background:#5B6EF514}
 .soi{font-size:22px;width:38px;height:38px;background:var(--surface);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* CAMERA */
 #cam-ov{position:fixed;inset:0;background:#000;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center}
 #cam-ov.open{display:flex}
-#cam-video{width:100%;max-width:500px}
+#cam-video{width:100%;max-width:500px;display:block}
 #cam-canvas{display:none}
 .cf{position:relative;width:100%;max-width:500px}
 .cc{position:absolute;inset:0;pointer-events:none}
-.cor{position:absolute;width:30px;height:30px;border-color:#5B6EF5;border-style:solid}
+.cor{position:absolute;width:32px;height:32px;border-color:#5B6EF5;border-style:solid}
 .cor.tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:5px 0 0 0}
 .cor.tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 5px 0 0}
 .cor.bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 5px}
 .cor.br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 5px 0}
 .slr{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#5B6EF5,transparent);box-shadow:0 0 8px #5B6EF5;animation:sm 2s ease-in-out infinite}
 @keyframes sm{0%{top:0}50%{top:calc(100% - 2px)}100%{top:0}}
-.cc-hint{color:rgba(255,255,255,.7);font-size:14px;margin-top:18px;text-align:center;padding:0 20px}
-.cc-st{color:#fff;font-size:13px;margin-top:8px;min-height:20px;text-align:center;padding:0 16px}
-.cc-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer}
-.cc-sw{position:absolute;top:18px;left:18px;background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer}
-.setup-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
-.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
-.stn{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.stt p{font-size:13px;font-weight:600;margin-bottom:3px}.stt span{font-size:12px;color:var(--muted)}
-.spin{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0;display:inline-block}
+.cc-hint{color:rgba(255,255,255,.75);font-size:14px;margin-top:18px;text-align:center;padding:0 20px}
+.cc-st{font-size:13px;margin-top:8px;min-height:20px;text-align:center;padding:4px 16px;color:#fff}
+.cc-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;z-index:1}
+.cc-sw{position:absolute;top:18px;left:18px;background:rgba(255,255,255,.18);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;z-index:1}
+/* LEGENDA TABLE */
+.leg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.leg-row{background:var(--surface2);border-radius:9px;padding:10px;display:flex;gap:10px;align-items:center}
+.leg-col{width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.spin{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes sp{to{transform:rotate(360deg)}}
+/* LOADING OVERLAY */
+#loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+#loading-overlay p{color:var(--muted);font-size:14px}
 @media(max-width:860px){.sg{grid-template-columns:1fr 1fr}.cg{grid-template-columns:1fr}}
 @media(max-width:600px){.sidebar{display:none}.sg{grid-template-columns:1fr 1fr}.topbar{padding:12px 14px}.topbar h2{font-size:15px}.content{padding:14px}.sb2 input{width:110px}.btn span{display:none}}
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- LOADING -->
+<div id="loading-overlay">
+  <div class="spin" style="width:32px;height:32px;border-width:3px"></div>
+  <p id="loading-msg">A carregar faturas do Google Sheets...</p>
+</div>
+
+<div class="app" style="display:none" id="app-root">
 <aside class="sidebar">
-  <div class="logo"><h1>⬡ FaturaApp</h1><p>Gestão de faturas</p></div>
+  <div class="logo"><h1>⬡ FaturaApp</h1><p id="biz-name">A carregar...</p></div>
   <nav class="nav">
     <button class="ni active" onclick="nav('dashboard',this)"><span class="ni-ic">◎</span>Dashboard</button>
     <button class="ni" onclick="nav('faturas',this)"><span class="ni-ic">≡</span>Faturas</button>
     <button class="ni" onclick="nav('scan',this)"><span class="ni-ic">⊡</span>Ler QR Code</button>
     <button class="ni" onclick="nav('fornecedores',this)"><span class="ni-ic">⊕</span>Fornecedores</button>
     <button class="ni" onclick="nav('envio',this)"><span class="ni-ic">↑</span>Envio</button>
-    <button class="ni" onclick="nav('config',this)"><span class="ni-ic">⚙</span>Configuração</button>
   </nav>
-  <button class="sheets-status ss-wait" id="sheets-btn" onclick="nav('config',document.querySelector('.ni:nth-child(6)'))">
-    <div class="ss-dot"></div><span id="sheets-btn-text">Sheets não configurado</span>
-  </button>
-  <div class="sf"><div class="ub"><div class="av" id="user-av">JM</div><div class="ui"><p id="user-name">João Moreira</p><span>Administrador</span></div></div></div>
+  <div class="ss-pill ss-wait" id="sheets-pill">
+    <div class="ss-dot"></div><span id="sheets-pill-txt">A ligar...</span>
+  </div>
+  <div class="sf"><div class="ub">
+    <div class="av" id="user-av">??</div>
+    <div class="ui"><p id="user-name">...</p><span>Administrador</span></div>
+  </div></div>
 </aside>
 
 <main class="main">
@@ -143,7 +155,7 @@ select option{background:var(--surface2)}
   <div class="topbar"><h2>Dashboard</h2>
     <div class="tr">
       <select id="dash-period" onchange="renderDash()" style="font-size:12px;padding:6px 10px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text)">
-        <option value="all">Todos</option><option value="0">Janeiro</option><option value="1" selected>Fevereiro</option>
+        <option value="all">Todos</option>
       </select>
       <button class="btn bp" onclick="openCam()">⊡ <span>Nova Fatura</span></button>
     </div>
@@ -151,10 +163,10 @@ select option{background:var(--surface2)}
   <div class="content">
     <div class="sg" id="stat-grid"></div>
     <div class="cg">
-      <div class="card"><div style="margin-bottom:12px;font-size:13px;font-weight:600">Despesas Mensais</div><div class="cw"><canvas id="barChart"></canvas></div></div>
-      <div class="card"><div style="margin-bottom:12px;font-size:13px;font-weight:600">Por Categoria</div><div class="cw"><canvas id="donutChart"></canvas></div></div>
+      <div class="card"><p style="font-size:13px;font-weight:600;margin-bottom:12px">Despesas Mensais</p><div class="cw"><canvas id="barChart"></canvas></div></div>
+      <div class="card"><p style="font-size:13px;font-weight:600;margin-bottom:12px">Por Categoria</p><div class="cw"><canvas id="donutChart"></canvas></div></div>
     </div>
-    <div class="card"><div style="margin-bottom:14px;font-size:13px;font-weight:600">Top Fornecedores</div><div id="top-sup"></div></div>
+    <div class="card"><p style="font-size:13px;font-weight:600;margin-bottom:14px">Top Fornecedores</p><div id="top-sup"></div></div>
   </div>
 </div>
 
@@ -169,8 +181,10 @@ select option{background:var(--surface2)}
   </div>
   <div class="content">
     <div class="fp" id="filter-bar"></div>
-    <div class="tw"><table><thead><tr><th>Nº Fatura</th><th>Fornecedor</th><th>Data</th><th>Categoria</th><th>Valor</th><th>IVA</th><th>Estado</th><th></th></tr></thead>
-    <tbody id="inv-tbody"></tbody></table></div>
+    <div class="tw"><table>
+      <thead><tr><th>Nº Fatura</th><th>Fornecedor</th><th>Data</th><th>Categoria</th><th>Valor</th><th>IVA</th><th>Estado</th><th></th></tr></thead>
+      <tbody id="inv-tbody"></tbody>
+    </table></div>
   </div>
 </div>
 
@@ -178,11 +192,11 @@ select option{background:var(--surface2)}
 <div id="s-scan" class="sec">
   <div class="topbar"><h2>Ler QR Code</h2></div>
   <div class="content" style="max-width:540px;margin:0 auto">
-    <div class="card" style="text-align:center;margin-bottom:16px" id="scan-start">
+    <div class="card" style="text-align:center;margin-bottom:16px">
       <div style="padding:36px 20px">
         <div style="font-size:52px;margin-bottom:14px">📷</div>
         <p style="font-size:15px;font-weight:600;margin-bottom:6px">Câmara do dispositivo</p>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:22px">Aponte a câmara para o QR Code da fatura AT</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:22px">Aponte para o QR Code da fatura AT.<br><strong style="color:var(--orange)">Use o Google Chrome para melhor compatibilidade.</strong></p>
         <button class="btn bp btn-lg" onclick="openCam()" style="width:100%;justify-content:center">📷 Abrir Câmara</button>
         <div style="margin:16px 0;display:flex;align-items:center;gap:10px"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:12px;color:var(--muted)">ou</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
         <button class="btn bg2" style="width:100%;justify-content:center" onclick="openManual()">✏️ Introduzir manualmente</button>
@@ -191,7 +205,7 @@ select option{background:var(--surface2)}
     <div class="card" id="scan-result" style="display:none">
       <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
         <span style="font-size:22px">✅</span>
-        <div><p style="font-weight:600;font-size:14px">Dados extraídos — confirme e guarde</p><p style="font-size:12px;color:var(--muted)">Pode editar qualquer campo</p></div>
+        <div><p style="font-weight:600;font-size:14px">Confirme e edite os dados</p><p style="font-size:12px;color:var(--muted)">Todos os campos são editáveis</p></div>
       </div>
       <div class="fg" id="scan-fields"></div>
       <div style="margin-top:14px"><label style="margin-bottom:7px;display:block">CATEGORIA</label><div class="cp" id="cat-pills"></div></div>
@@ -212,8 +226,10 @@ select option{background:var(--surface2)}
     </div>
   </div>
   <div class="content">
-    <div class="tw"><table><thead><tr><th>Nome</th><th>NIF</th><th>Categoria</th><th>Nº Faturas</th><th>Total Gasto</th></tr></thead>
-    <tbody id="sup-tbody"></tbody></table></div>
+    <div class="tw"><table>
+      <thead><tr><th>Nome</th><th>NIF</th><th>Categoria</th><th>Nº Faturas</th><th>Total Gasto</th></tr></thead>
+      <tbody id="sup-tbody"></tbody>
+    </table></div>
   </div>
 </div>
 
@@ -221,14 +237,14 @@ select option{background:var(--surface2)}
 <div id="s-envio" class="sec">
   <div class="topbar"><h2>Envio para Contabilidade</h2></div>
   <div class="content" style="max-width:600px">
-    <div class="card" style="margin-bottom:16px"><div style="font-size:13px;font-weight:600;margin-bottom:14px">Faturas pendentes</div><div id="pend-list"></div></div>
+    <div class="card" style="margin-bottom:16px"><p style="font-size:13px;font-weight:600;margin-bottom:14px">Faturas pendentes</p><div id="pend-list"></div></div>
     <div class="card">
-      <div style="font-size:13px;font-weight:600;margin-bottom:14px">Método de envio</div>
+      <p style="font-size:13px;font-weight:600;margin-bottom:14px">Método de envio</p>
       <div class="so sel" data-m="email" onclick="selSend(this)"><div class="soi">📧</div><div><p style="font-weight:600;font-size:13px">Email</p><p style="font-size:12px;color:var(--muted)">Enviar ao contabilista</p></div></div>
       <div class="so" data-m="csv" onclick="selSend(this)"><div class="soi">📊</div><div><p style="font-weight:600;font-size:13px">Exportar CSV</p><p style="font-size:12px;color:var(--muted)">Descarregar ficheiro Excel/CSV</p></div></div>
       <div id="email-f" style="margin-top:14px">
-        <div class="fgi" style="margin-bottom:10px"><label>EMAIL DO CONTABILISTA</label><input type="email" id="acc-email" id="acc-email" value="contabilidade@firma.pt"></div>
-        <div class="fgi"><label>MENSAGEM</label><textarea rows="3" style="resize:none">Bom dia,
+        <div class="fgi" style="margin-bottom:10px"><label>EMAIL DO CONTABILISTA</label><input type="email" id="acc-email" placeholder="contabilista@exemplo.pt"></div>
+        <div class="fgi"><label>MENSAGEM</label><textarea rows="3" style="resize:none" id="acc-msg">Bom dia,
 Envio as faturas do período para processamento.
 Cumprimentos</textarea></div>
       </div>
@@ -237,52 +253,21 @@ Cumprimentos</textarea></div>
   </div>
 </div>
 
-<!-- CONFIG -->
-<div id="s-config" class="sec">
-  <div class="topbar"><h2>Configuração</h2></div>
-  <div class="content" style="max-width:620px">
-    <div class="card" style="margin-bottom:16px">
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">🔗 Ligação ao Google Sheets</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Liga a app à aba <strong>Faturas</strong> do teu ficheiro de gestão</p>
-      <div class="setup-box">
-        <div class="step"><div class="stn">1</div><div class="stt"><p>Abre o teu Google Sheets</p><span>O ficheiro com as abas de reservas, stock, etc.</span></div></div>
-        <div class="step"><div class="stn">2</div><div class="stt"><p>Extensões → Apps Script → Novo script</p><span>Cola o código do ficheiro <strong>sheets-script.gs</strong> (em baixo para download)</span></div></div>
-        <div class="step"><div class="stn">3</div><div class="stt"><p>Implementar → Nova implementação → App Web</p><span>Executar como: <strong>Eu</strong> · Quem tem acesso: <strong>Qualquer pessoa</strong></span></div></div>
-        <div class="step" style="margin-bottom:0"><div class="stn">4</div><div class="stt"><p>Copia o URL e cola abaixo</p><span>Começa com <code style="font-size:11px;color:var(--accent)">https://script.google.com/macros/s/...</code></span></div></div>
-      </div>
-      <div class="fgi" style="margin-bottom:12px"><label>URL DO APPS SCRIPT</label><input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveSheetsUrl()"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn bp" onclick="testSheets()">⚡ Testar Ligação</button>
-        <button class="btn bg2" onclick="loadFromSheets()">↓ Carregar do Sheets</button>
-      </div>
-      <div id="test-result" style="margin-top:12px;font-size:13px;display:none"></div>
-    </div>
-
-    <div class="card">
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">📋 Legenda da aba "Faturas"</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">A aba é criada automaticamente com estas colunas:</p>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
-        ${[["A","ID","Identificador único"],["B","Nº Fatura","Ex: FT 2024/001234"],["C","Fornecedor","Nome do fornecedor"],["D","NIF Fornecedor","NIF da empresa emitente"],["E","NIF Cliente","NIF do teu negócio"],["F","Data","Data da fatura (AAAA-MM-DD)"],["G","Valor Total (€)","Valor total com IVA"],["H","IVA (€)","Montante de IVA"],["I","ATCUD","Código único documento AT"],["J","Categoria","Tipo de despesa"],["K","Estado","pendente / enviada"],["L","Data Registo","Quando foi registada na app"]].map(([col,name,desc])=>`
-        <div style="background:var(--surface2);border-radius:9px;padding:10px;display:flex;gap:10px;align-items:center">
-          <div style="width:26px;height:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${col}</div>
-          <div><p style="font-size:12px;font-weight:600">${name}</p><p style="font-size:11px;color:var(--muted)">${desc}</p></div>
-        </div>`).join("")}
-      </div>
-    </div>
-  </div>
-</div>
-
 </main>
-</div>
+</div><!-- #app-root -->
 
 <!-- CAMERA -->
 <div id="cam-ov">
   <button class="cc-close" onclick="closeCam()">✕</button>
-  <button class="cc-sw" onclick="switchCam()">🔄</button>
+  <button class="cc-sw" onclick="switchCam()" title="Trocar câmara">🔄</button>
   <div class="cf">
     <video id="cam-video" autoplay playsinline muted></video>
     <canvas id="cam-canvas"></canvas>
-    <div class="cc"><div class="cor tl"></div><div class="cor tr"></div><div class="cor bl"></div><div class="cor br"></div><div class="slr"></div></div>
+    <div class="cc">
+      <div class="cor tl"></div><div class="cor tr"></div>
+      <div class="cor bl"></div><div class="cor br"></div>
+      <div class="slr"></div>
+    </div>
   </div>
   <p class="cc-hint">Aponte para o QR Code da fatura AT</p>
   <p class="cc-st" id="cam-st">A iniciar câmara...</p>
@@ -291,107 +276,194 @@ Cumprimentos</textarea></div>
 
 <!-- MODAL Detalhe -->
 <div class="mo" id="m-detail">
-  <div class="md"><div class="mh"><h3 id="d-title">Fatura</h3><button onclick="cm('m-detail')" style="background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer">✕</button></div>
-  <div class="mb2" id="d-body"></div>
-  <div class="mf"><button class="btn bd" id="d-del">🗑 Eliminar</button><button class="btn bs" id="d-send">📤 Marcar Enviada</button><button class="btn bg2" onclick="cm('m-detail')">Fechar</button></div></div>
+  <div class="md">
+    <div class="mh"><h3 id="d-title">Fatura</h3><button onclick="cm('m-detail')" style="background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer">✕</button></div>
+    <div class="mb2" id="d-body"></div>
+    <div class="mf"><button class="btn bd" id="d-del">🗑 Eliminar</button><button class="btn bs" id="d-send">📤 Marcar Enviada</button><button class="btn bg2" onclick="cm('m-detail')">Fechar</button></div>
+  </div>
 </div>
 
 <!-- MODAL Novo Fornecedor -->
 <div class="mo" id="m-newsup">
-  <div class="md"><div class="mh"><h3>Novo Fornecedor</h3><button onclick="cm('m-newsup')" style="background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer">✕</button></div>
-  <div class="mb2">
-    <div class="ab"><span style="font-size:16px">⚠️</span><p id="ns-alert">Fornecedor não encontrado. Pretende adicionar?</p></div>
-    <div class="fg">
-      <div class="fgi full"><label>NOME</label><input id="ns-name" type="text"></div>
-      <div class="fgi"><label>NIF</label><input id="ns-nif" type="text"></div>
-      <div class="fgi"><label>CATEGORIA</label><select id="ns-cat"><option value="mercadorias">🛒 Mercadorias</option><option value="serviços">⚙️ Serviços</option><option value="combustível">⛽ Combustível</option><option value="despesas gerais">📋 Despesas Gerais</option><option value="investimento">📈 Investimento</option></select></div>
+  <div class="md">
+    <div class="mh"><h3>Novo Fornecedor</h3><button onclick="cm('m-newsup')" style="background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer">✕</button></div>
+    <div class="mb2">
+      <div class="ab"><span style="font-size:16px">⚠️</span><p id="ns-alert">Fornecedor não encontrado. Pretende adicionar?</p></div>
+      <div class="fg">
+        <div class="fgi full"><label>NOME</label><input id="ns-name" type="text"></div>
+        <div class="fgi"><label>NIF</label><input id="ns-nif" type="text"></div>
+        <div class="fgi"><label>CATEGORIA</label><select id="ns-cat">
+          <option value="mercadorias">🛒 Mercadorias</option>
+          <option value="serviços">⚙️ Serviços</option>
+          <option value="combustível">⛽ Combustível</option>
+          <option value="despesas gerais">📋 Despesas Gerais</option>
+          <option value="investimento">📈 Investimento</option>
+        </select></div>
+      </div>
     </div>
+    <div class="mf"><button class="btn bg2" id="ns-skip">Ignorar</button><button class="btn bp" onclick="confirmSup()">Adicionar</button></div>
   </div>
-  <div class="mf"><button class="btn bg2" id="ns-skip">Ignorar</button><button class="btn bp" onclick="confirmSup()">Adicionar</button></div></div>
 </div>
 
-<!-- MODAL Add Supplier -->
+<!-- MODAL Add Supplier manual -->
 <div class="mo" id="m-addsup">
-  <div class="md"><div class="mh"><h3>Adicionar Fornecedor</h3><button onclick="cm('m-addsup')" style="background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer">✕</button></div>
-  <div class="mb2">
-    <div class="fg">
-      <div class="fgi full"><label>NOME</label><input id="as-name" type="text" placeholder="Nome da empresa"></div>
-      <div class="fgi"><label>NIF</label><input id="as-nif" type="text" placeholder="500000000"></div>
-      <div class="fgi"><label>CATEGORIA</label><select id="as-cat"><option value="mercadorias">🛒 Mercadorias</option><option value="serviços">⚙️ Serviços</option><option value="combustível">⛽ Combustível</option><option value="despesas gerais">📋 Despesas Gerais</option><option value="investimento">📈 Investimento</option></select></div>
+  <div class="md">
+    <div class="mh"><h3>Adicionar Fornecedor</h3><button onclick="cm('m-addsup')" style="background:none;border:none;color:var(--muted);font-size:19px;cursor:pointer">✕</button></div>
+    <div class="mb2">
+      <div class="fg">
+        <div class="fgi full"><label>NOME</label><input id="as-name" type="text" placeholder="Nome da empresa"></div>
+        <div class="fgi"><label>NIF</label><input id="as-nif" type="text" placeholder="500000000"></div>
+        <div class="fgi"><label>CATEGORIA</label><select id="as-cat">
+          <option value="mercadorias">🛒 Mercadorias</option>
+          <option value="serviços">⚙️ Serviços</option>
+          <option value="combustível">⛽ Combustível</option>
+          <option value="despesas gerais">📋 Despesas Gerais</option>
+          <option value="investimento">📈 Investimento</option>
+        </select></div>
+      </div>
     </div>
+    <div class="mf"><button class="btn bg2" onclick="cm('m-addsup')">Cancelar</button><button class="btn bp" onclick="saveSup()">Guardar</button></div>
   </div>
-  <div class="mf"><button class="btn bg2" onclick="cm('m-addsup')">Cancelar</button><button class="btn bp" onclick="saveSup()">Guardar</button></div></div>
 </div>
 
 <div id="toast"></div>
 
 <script>
+// ════════════════════════════════════════════════════════════════
+// CONFIGURAÇÃO — lida exclusivamente do config.js
+// ════════════════════════════════════════════════════════════════
+if(typeof APP_CONFIG==="undefined"){
+  document.getElementById("loading-msg").textContent="❌ config.js não encontrado! Certifica-te que está na mesma pasta que o index.html.";
+  throw new Error("APP_CONFIG not defined");
+}
+const CFG=APP_CONFIG;
+const SHEETS_URL=CFG.SHEETS_URL||"";
+const SCAN_W=CFG.SCAN_WIDTH||640;
+const SCAN_H=CFG.SCAN_HEIGHT||480;
+let facing=CFG.DEFAULT_CAMERA||"environment";
+
+// ════════════════════════════════════════════════════════════════
+// CONSTANTES UI
+// ════════════════════════════════════════════════════════════════
 const CC={"mercadorias":"#22D3A5","serviços":"#5B6EF5","combustível":"#F59E0B","despesas gerais":"#A855F7","investimento":"#F43F5E"};
 const CI={"mercadorias":"🛒","serviços":"⚙️","combustível":"⛽","despesas gerais":"📋","investimento":"📈"};
 const CB={"mercadorias":"bg0","serviços":"bg-b","combustível":"bg1","despesas gerais":"bg-p","investimento":"bg-r"};
 
-// ── Lê config.js (tem prioridade sobre localStorage)
-const _cfg=(typeof APP_CONFIG!=="undefined")?APP_CONFIG:{};
-let SHEETS_URL=_cfg.SHEETS_URL||localStorage.getItem("sheets_url")||"";
-const SCAN_W=_cfg.SCAN_WIDTH||640;
-const SCAN_H=_cfg.SCAN_HEIGHT||480;
-
-let invoices=[
-  {id:1,supplier:"Galp Energia",nif:"500069143",nifClient:"123456789",num:"FT 2024/001234",date:"2024-02-28",amount:87.50,vat:17.50,atcud:"ABCD1234-5",category:"combustível",status:"enviada"},
-  {id:2,supplier:"NOS Comunicações",nif:"502230009",nifClient:"123456789",num:"FT 2024/009876",date:"2024-02-15",amount:45.99,vat:9.20,atcud:"EFGH5678-2",category:"serviços",status:"pendente"},
-  {id:3,supplier:"Continente",nif:"500471695",nifClient:"123456789",num:"FR 2024/445566",date:"2024-01-30",amount:234.10,vat:27.32,atcud:"IJKL9012-8",category:"mercadorias",status:"enviada"},
-  {id:4,supplier:"EDP Comercial",nif:"507172017",nifClient:"123456789",num:"FT 2024/002211",date:"2024-01-20",amount:120.75,vat:24.15,atcud:"MNOP3456-1",category:"despesas gerais",status:"pendente"},
-  {id:5,supplier:"Worten",nif:"505226195",nifClient:"123456789",num:"FT 2024/778899",date:"2024-01-10",amount:599.00,vat:137.77,atcud:"QRST7890-3",category:"investimento",status:"enviada"},
-];
-let suppliers=[
-  {nif:"500069143",name:"Galp Energia",category:"combustível"},
-  {nif:"502230009",name:"NOS Comunicações",category:"serviços"},
-  {nif:"500471695",name:"Continente",category:"mercadorias"},
-  {nif:"507172017",name:"EDP Comercial",category:"despesas gerais"},
-  {nif:"505226195",name:"Worten",category:"investimento"},
-];
-
+// ════════════════════════════════════════════════════════════════
+// ESTADO DA APLICAÇÃO — começa SEMPRE vazio, carregado do Sheets
+// ════════════════════════════════════════════════════════════════
+let invoices=[];
+let suppliers=[];
 let activeFilter="todas",scanData=null,scanCat="serviços";
 let barCI=null,donutCI=null,camStream=null,camAF=null;
-let facing=(_cfg&&_cfg.DEFAULT_CAMERA)||"environment";
 
+// ════════════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════════════
 const eur=v=>new Intl.NumberFormat("pt-PT",{style:"currency",currency:"EUR"}).format(v);
-const fd=d=>{try{return new Date(d).toLocaleDateString("pt-PT",{day:"2-digit",month:"short",year:"numeric"})}catch{return d}};
+const fd=d=>{try{return new Date(d).toLocaleDateString("pt-PT",{day:"2-digit",month:"short",year:"numeric"})}catch{return d||""}};
 const uid=()=>Date.now()+Math.floor(Math.random()*999);
-
-function toast(msg,dur=3000){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(t._t);t._t=setTimeout(()=>t.style.display="none",dur);}
+function toast(msg,dur=3200){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(t._t);t._t=setTimeout(()=>t.style.display="none",dur);}
 function om(id){document.getElementById(id).classList.add("open")}
 function cm(id){document.getElementById(id).classList.remove("open")}
+function setSheetsPill(state,msg){const p=document.getElementById("sheets-pill");p.className="ss-pill "+(state==="ok"?"ss-ok":state==="err"?"ss-err":"ss-wait");document.getElementById("sheets-pill-txt").textContent=msg;}
 
-// ── SHEETS ──
-function saveSheetsUrl(){SHEETS_URL=document.getElementById("sheets-url").value.trim();localStorage.setItem("sheets_url",SHEETS_URL);}
-function setSheetsStatus(state,msg){const b=document.getElementById("sheets-btn"),t=document.getElementById("sheets-btn-text");b.className="sheets-status "+(state==="ok"?"ss-ok":state==="err"?"ss-err":"ss-wait");t.textContent=msg;}
-async function sheetsPost(payload){if(!SHEETS_URL)return null;try{const r=await fetch(SHEETS_URL,{method:"POST",body:JSON.stringify(payload)});return await r.json();}catch(e){console.warn("Sheets:",e);return null;}}
-async function testSheets(){
-  const url=document.getElementById("sheets-url").value.trim();
-  if(!url){toast("⚠️ Cola o URL do Apps Script primeiro");return;}
-  SHEETS_URL=url;localStorage.setItem("sheets_url",url);
-  const res=document.getElementById("test-result");res.style.display="block";
-  res.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div class="spin"></div><span>A testar...</span></div>';
-  try{
-    const r=await fetch(url);const d=await r.json();
-    if(d.success!==undefined){res.innerHTML='<span style="color:var(--green)">✅ Ligação OK! Aba "Faturas" pronta.</span>';setSheetsStatus("ok","✓ Sheets ligado");}
-    else throw new Error("Resposta inesperada");
-  }catch(e){res.innerHTML=`<span style="color:var(--red)">❌ Erro: ${e.message}</span>`;setSheetsStatus("err","Sheets com erro");}
+// ════════════════════════════════════════════════════════════════
+// SHEETS API
+// ════════════════════════════════════════════════════════════════
+async function sheetsGet(){
+  if(!SHEETS_URL)throw new Error("SHEETS_URL não definido no config.js");
+  const r=await fetch(SHEETS_URL+"?t="+Date.now());
+  const d=await r.json();
+  if(!d.success)throw new Error(d.error||"Erro desconhecido");
+  return d.invoices||[];
 }
-async function loadFromSheets(){
-  if(!SHEETS_URL){toast("⚠️ Configura o URL primeiro");return;}
-  toast("↓ A carregar...");
-  try{
-    const r=await fetch(SHEETS_URL);const d=await r.json();
-    if(d.success&&d.invoices&&d.invoices.length){
-      invoices=d.invoices.map(row=>({id:row["ID"]||uid(),num:row["Nº Fatura"]||"",supplier:row["Fornecedor"]||"",nif:row["NIF Fornecedor"]||"",nifClient:row["NIF Cliente"]||"",date:row["Data"]||"",amount:parseFloat(row["Valor Total (€)"])||0,vat:parseFloat(row["IVA (€)"])||0,atcud:row["ATCUD"]||"",category:row["Categoria"]||"serviços",status:row["Estado"]||"pendente"}));
-      renderDash();renderTable();toast(`✅ ${invoices.length} faturas carregadas!`);
-    }else toast("Sheets vazio — sem faturas registadas.");
-  }catch(e){toast("❌ "+e.message);}
+async function sheetsPost(payload){
+  if(!SHEETS_URL)return null;
+  try{const r=await fetch(SHEETS_URL,{method:"POST",body:JSON.stringify(payload)});return await r.json();}
+  catch(e){console.warn("Sheets POST:",e);return null;}
 }
 
-// ── NAV ──
+function rowToInvoice(row){
+  return{
+    id:       row["ID"]||uid(),
+    num:      row["Nº Fatura"]||"",
+    supplier: row["Fornecedor"]||"",
+    nif:      row["NIF Fornecedor"]||"",
+    nifClient:row["NIF Cliente"]||"",
+    date:     row["Data"]||"",
+    amount:   parseFloat(row["Valor Total (€)"])||0,
+    vat:      parseFloat(row["IVA (€)"])||0,
+    atcud:    row["ATCUD"]||"",
+    category: row["Categoria"]||"serviços",
+    status:   row["Estado"]||"pendente",
+  };
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT — arranca aqui, carrega do Sheets antes de mostrar a app
+// ════════════════════════════════════════════════════════════════
+async function init(){
+  // Aplica config.js à UI
+  if(CFG.BUSINESS_NAME){document.getElementById("biz-name").textContent=CFG.BUSINESS_NAME;document.title="FaturaApp — "+CFG.BUSINESS_NAME;}
+  if(CFG.USER_NAME)document.getElementById("user-name").textContent=CFG.USER_NAME;
+  if(CFG.USER_INITIALS)document.getElementById("user-av").textContent=CFG.USER_INITIALS;
+  if(CFG.ACCOUNTANT_EMAIL)document.getElementById("acc-email").value=CFG.ACCOUNTANT_EMAIL;
+
+  if(!SHEETS_URL){
+    document.getElementById("loading-msg").textContent="⚠️ SHEETS_URL não definido no config.js";
+    setSheetsPill("err","Sheets não configurado");
+    showApp();
+    return;
+  }
+
+  setSheetsPill("wait","A carregar...");
+  try{
+    const rows=await sheetsGet();
+    invoices=rows.map(rowToInvoice);
+    // Extrai fornecedores únicos a partir das faturas
+    const supMap={};
+    invoices.forEach(i=>{if(i.nif&&!supMap[i.nif])supMap[i.nif]={nif:i.nif,name:i.supplier,category:i.category};});
+    suppliers=Object.values(supMap);
+    setSheetsPill("ok","✓ Sheets ligado ("+invoices.length+" faturas)");
+  }catch(e){
+    console.error(e);
+    setSheetsPill("err","Erro: "+e.message);
+    document.getElementById("loading-msg").textContent="❌ Erro ao carregar: "+e.message;
+    // Mostra a app na mesma, mas vazia
+  }
+  populatePeriodFilter();
+  showApp();
+}
+
+function showApp(){
+  document.getElementById("loading-overlay").style.display="none";
+  document.getElementById("app-root").style.display="flex";
+  renderDash();
+}
+
+function populatePeriodFilter(){
+  // Preenche o filtro de período com os meses existentes nas faturas
+  const sel=document.getElementById("dash-period");
+  sel.innerHTML='<option value="all">Todos</option>';
+  const seen=new Set();
+  invoices.forEach(i=>{
+    if(!i.date)return;
+    const d=new Date(i.date);
+    const key=d.getFullYear()+"-"+d.getMonth();
+    if(!seen.has(key)){
+      seen.add(key);
+      const label=d.toLocaleDateString("pt-PT",{month:"long",year:"numeric"});
+      const opt=document.createElement("option");
+      opt.value=key;opt.textContent=label;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════════════════════════════
 function nav(id,btn){
   document.querySelectorAll(".sec").forEach(s=>s.classList.remove("active"));
   document.getElementById("s-"+id).classList.add("active");
@@ -401,94 +473,128 @@ function nav(id,btn){
   if(id==="faturas"){renderFilters();renderTable();}
   if(id==="fornecedores")renderSup();
   if(id==="envio")renderPending();
-  if(id==="config"){const u=localStorage.getItem("sheets_url")||"";document.getElementById("sheets-url").value=u;}
 }
 
-// ── CAMERA ──
-async function openCam(){document.getElementById("cam-ov").classList.add("open");document.getElementById("cam-st").textContent="A iniciar câmara...";await startCam();}
+// ════════════════════════════════════════════════════════════════
+// CÂMARA & QR
+// ════════════════════════════════════════════════════════════════
+async function openCam(){
+  document.getElementById("cam-ov").classList.add("open");
+  document.getElementById("cam-st").textContent="A iniciar câmara...";
+  await startCam();
+}
+
 async function startCam(){
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
   if(camAF){cancelAnimationFrame(camAF);camAF=null;}
-  const v=document.getElementById("cam-video"),st=document.getElementById("cam-st");
-  // Try progressively simpler constraints if needed
-  const constraints=[
+  const v=document.getElementById("cam-video");
+  const st=document.getElementById("cam-st");
+
+  // Tenta várias configurações progressivamente mais simples
+  const attempts=[
     {video:{facingMode:{exact:"environment"},width:{ideal:SCAN_W},height:{ideal:SCAN_H}}},
     {video:{facingMode:{ideal:"environment"},width:{ideal:SCAN_W},height:{ideal:SCAN_H}}},
     {video:{facingMode:{ideal:"environment"}}},
-    {video:true}
+    {video:true},
   ];
-  let started=false;
-  for(const c of constraints){
-    try{
-      camStream=await navigator.mediaDevices.getUserMedia(c);
-      started=true;break;
-    }catch(e){
-      if(e.name==="NotAllowedError"){st.textContent="❌ Permissão negada. Autorize a câmara nas definições.";return;}
+
+  let ok=false;
+  for(const c of attempts){
+    try{camStream=await navigator.mediaDevices.getUserMedia(c);ok=true;break;}
+    catch(e){
+      if(e.name==="NotAllowedError"){st.textContent="❌ Permissão negada. Autorize a câmara nas definições do browser.";return;}
       if(e.name==="NotFoundError"){st.textContent="❌ Câmara não encontrada.";return;}
     }
   }
-  if(!started){st.textContent="❌ Não foi possível aceder à câmara. Usa o Chrome.";return;}
+  if(!ok){st.textContent="❌ Câmara inacessível. Abre no Google Chrome.";return;}
+
   v.srcObject=camStream;
-  await new Promise(res=>{v.onloadedmetadata=res;});
+  await new Promise(res=>{v.onloadedmetadata=()=>res();});
   await v.play();
-  // Try to enable torch/autofocus on Android
-  try{
-    const track=camStream.getVideoTracks()[0];
-    await track.applyConstraints({advanced:[{focusMode:"continuous"},{zoom:1}]});
-  }catch(_){}
-  st.textContent="📷 Aponte para o QR Code — use o Chrome para melhor desempenho";
+
+  // Autofocus contínuo (funciona em muitos Android)
+  try{const tk=camStream.getVideoTracks()[0];await tk.applyConstraints({advanced:[{focusMode:"continuous"}]});}catch(_){}
+
+  st.textContent="📷 A procurar QR Code...";
   qrLoop();
 }
 
 function qrLoop(){
-  const v=document.getElementById("cam-video"),c=document.getElementById("cam-canvas"),ctx=c.getContext("2d",{willReadFrequently:true});
-  let lastScan=0;
+  const v=document.getElementById("cam-video");
+  const c=document.getElementById("cam-canvas");
+  const ctx=c.getContext("2d",{willReadFrequently:true});
+  let last=0;
+
   function tick(ts){
     if(!camStream)return;
-    // Scan every 150ms max to avoid overloading
-    if(ts-lastScan>150 && v.readyState===v.HAVE_ENOUGH_DATA){
-      lastScan=ts;
-      // Use smaller canvas for faster processing
-      const W=Math.min(v.videoWidth,640),H=Math.min(v.videoHeight,480);
+    if(ts-last>200 && v.readyState===v.HAVE_ENOUGH_DATA){
+      last=ts;
+      const W=Math.min(v.videoWidth,SCAN_W);
+      const H=Math.min(v.videoHeight,SCAN_H);
       c.width=W;c.height=H;
       ctx.drawImage(v,0,0,W,H);
-      const img=ctx.getImageData(0,0,W,H);
-      // Try both normal and inverted (handles dark-background QR codes)
-      let code=jsQR(img.data,img.width,img.height,{inversionAttempts:"attemptBoth"});
-      if(code){handleQR(code.data);return;}
+      const imgData=ctx.getImageData(0,0,W,H);
+      const code=jsQR(imgData.data,imgData.width,imgData.height,{inversionAttempts:"attemptBoth"});
+      if(code){
+        // Vibração de feedback no Android
+        try{navigator.vibrate&&navigator.vibrate(120);}catch(_){}
+        handleQR(code.data);
+        return;
+      }
     }
     camAF=requestAnimationFrame(tick);
   }
   camAF=requestAnimationFrame(tick);
 }
+
 function handleQR(raw){
   closeCam();
   const p=parseAT(raw);
   const sup=suppliers.find(s=>s.nif===p.nif);
-  scanData={supplier:sup?sup.name:(p.nif||"Desconhecido"),nif:p.nif||"",nifClient:p.nifClient||"",
-    num:p.num||`FT ${new Date().getFullYear()}/${uid().toString().slice(-6)}`,
-    date:p.date||new Date().toISOString().split("T")[0],
-    amount:p.total||0,vat:p.vat||0,atcud:p.atcud||"",category:sup?sup.category:"serviços"};
+  const businessNif=CFG.BUSINESS_NIF||"";
+  scanData={
+    supplier: sup?sup.name:(p.nif||"Desconhecido"),
+    nif:      p.nif||"",
+    nifClient:p.nifClient||businessNif,
+    num:      p.num||"",
+    date:     p.date||new Date().toISOString().split("T")[0],
+    amount:   p.total||0,
+    vat:      p.vat||0,
+    atcud:    p.atcud||"",
+    category: sup?sup.category:"serviços",
+  };
   scanCat=scanData.category;
   nav("scan",document.querySelector(".ni:nth-child(3)"));
-  if(!sup){
+
+  if(!sup&&p.nif){
     document.getElementById("ns-alert").textContent=`NIF "${p.nif}" não está na base de dados. Pretende adicionar?`;
     document.getElementById("ns-name").value=scanData.supplier;
-    document.getElementById("ns-nif").value=p.nif||"";
+    document.getElementById("ns-nif").value=p.nif;
     document.getElementById("ns-cat").value="serviços";
     document.getElementById("ns-skip").onclick=()=>{cm("m-newsup");buildForm();};
     om("m-newsup");
-  }else buildForm();
+  }else{
+    buildForm();
+  }
 }
+
+// Formato QR Code AT: A:NIF*B:NIF_CLI*F:AAAAMMDD*G:NUM*H:ATCUD*N:IVA*O:TOTAL
 function parseAT(raw){
   const r={};
-  raw.split("*").forEach(pair=>{const i=pair.indexOf(":");if(i===-1)return;const k=pair.substring(0,i).trim(),v=pair.substring(i+1).trim();
-    if(k==="A")r.nif=v;else if(k==="B")r.nifClient=v;
-    else if(k==="F"&&v.length===8)r.date=`${v.slice(0,4)}-${v.slice(4,6)}-${v.slice(6,8)}`;
-    else if(k==="G")r.num=v;else if(k==="H")r.atcud=v;
-    else if(k==="O")r.total=parseFloat(v)||0;else if(k==="N")r.vat=parseFloat(v)||0;
-  });return r;
+  raw.split("*").forEach(pair=>{
+    const i=pair.indexOf(":");if(i<0)return;
+    const k=pair.slice(0,i).trim(),v=pair.slice(i+1).trim();
+    if(k==="A")r.nif=v;
+    else if(k==="B")r.nifClient=v;
+    else if(k==="F"&&v.length===8)r.date=v.slice(0,4)+"-"+v.slice(4,6)+"-"+v.slice(6,8);
+    else if(k==="G")r.num=v;
+    else if(k==="H")r.atcud=v;
+    else if(k==="N")r.vat=parseFloat(v)||0;
+    else if(k==="O")r.total=parseFloat(v)||0;
+  });
+  return r;
 }
+
 function closeCam(){
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
   if(camAF){cancelAnimationFrame(camAF);camAF=null;}
@@ -497,33 +603,71 @@ function closeCam(){
 }
 function switchCam(){facing=facing==="environment"?"user":"environment";startCam();}
 
-// ── SCAN FORM ──
-function openManual(){scanData={supplier:"",nif:"",nifClient:"",num:"",date:new Date().toISOString().split("T")[0],amount:0,vat:0,atcud:"",category:"serviços"};scanCat="serviços";nav("scan",document.querySelector(".ni:nth-child(3)"));buildForm();}
+// ════════════════════════════════════════════════════════════════
+// FORMULÁRIO DE SCAN
+// ════════════════════════════════════════════════════════════════
+function openManual(){
+  scanData={supplier:"",nif:"",nifClient:CFG.BUSINESS_NIF||"",num:"",date:new Date().toISOString().split("T")[0],amount:0,vat:0,atcud:"",category:"serviços"};
+  scanCat="serviços";
+  nav("scan",document.querySelector(".ni:nth-child(3)"));
+  buildForm();
+}
+
 function buildForm(){
   document.getElementById("scan-result").style.display="block";
-  const fields=[["Nº FATURA","num","text",true],["FORNECEDOR","supplier","text",true],["NIF FORNECEDOR","nif","text",false],["NIF CLIENTE","nifClient","text",false],["DATA","date","date",false],["VALOR TOTAL (€)","amount","number",false],["IVA (€)","vat","number",false],["ATCUD","atcud","text",false]];
-  document.getElementById("scan-fields").innerHTML=fields.map(([l,k,t,full])=>`<div class="fgi${full?" full":""}"><label>${l}</label><input type="${t}" id="sf-${k}" value="${scanData[k]||""}" ${t==="number"?'step="0.01"':''}></div>`).join("");
-  document.getElementById("cat-pills").innerHTML=Object.keys(CC).map(c=>`<button class="cpi${scanCat===c?" active":""}" onclick="setSC('${c}',this)">${CI[c]} ${c}</button>`).join("");
+  const fields=[
+    ["Nº FATURA","num","text",true],["FORNECEDOR","supplier","text",true],
+    ["NIF FORNECEDOR","nif","text",false],["NIF CLIENTE","nifClient","text",false],
+    ["DATA","date","date",false],["VALOR TOTAL (€)","amount","number",false],
+    ["IVA (€)","vat","number",false],["ATCUD","atcud","text",false],
+  ];
+  document.getElementById("scan-fields").innerHTML=fields.map(([l,k,t,full])=>
+    `<div class="fgi${full?" full":""}"><label>${l}</label>
+     <input type="${t}" id="sf-${k}" value="${scanData[k]||""}" ${t==="number"?'step="0.01"':''}></div>`
+  ).join("");
+  document.getElementById("cat-pills").innerHTML=Object.keys(CC).map(c=>
+    `<button class="cpi${scanCat===c?" active":""}" onclick="setSC('${c}',this)">${CI[c]} ${c}</button>`
+  ).join("");
 }
-function setSC(c,btn){scanCat=c;document.querySelectorAll("#cat-pills .cpi").forEach(p=>p.classList.remove("active"));btn.classList.add("active");}
+
+function setSC(c,btn){
+  scanCat=c;
+  document.querySelectorAll("#cat-pills .cpi").forEach(p=>p.classList.remove("active"));
+  btn.classList.add("active");
+}
+
 async function saveInvoice(){
   const g=id=>document.getElementById("sf-"+id)?.value||"";
   const num=g("num");
   if(num&&invoices.find(i=>i.num===num)){toast("⚠️ Fatura duplicada detectada!");return;}
-  const inv={id:uid(),supplier:g("supplier"),nif:g("nif"),nifClient:g("nifClient"),
-    num:num||`FT ${new Date().getFullYear()}/${uid().toString().slice(-6)}`,
-    date:g("date"),amount:parseFloat(g("amount"))||0,vat:parseFloat(g("vat"))||0,
-    atcud:g("atcud"),category:scanCat,status:"pendente"};
+  const inv={
+    id:       uid(),
+    supplier: g("supplier"),
+    nif:      g("nif"),
+    nifClient:g("nifClient"),
+    num:      num||"FT/"+uid().toString().slice(-8),
+    date:     g("date"),
+    amount:   parseFloat(g("amount"))||0,
+    vat:      parseFloat(g("vat"))||0,
+    atcud:    g("atcud"),
+    category: scanCat,
+    status:   "pendente",
+  };
   invoices.unshift(inv);
-  const btn=document.getElementById("save-btn");btn.innerHTML='<div class="spin"></div> A guardar...';btn.disabled=true;
-  if(SHEETS_URL){
-    const r=await sheetsPost({action:"save",invoice:inv});
-    toast(r&&r.success?"🧾 Fatura guardada no Sheets!":"🧾 Guardada localmente (Sheets offline)");
-  }else toast("🧾 Guardada! Configura o Sheets para sincronizar.");
+  populatePeriodFilter();
+
+  const btn=document.getElementById("save-btn");
+  btn.innerHTML='<div class="spin"></div> A guardar...';btn.disabled=true;
+  const res=await sheetsPost({action:"save",invoice:inv});
   btn.innerHTML="✓ Guardar Fatura";btn.disabled=false;
-  resetScan();nav("faturas",document.querySelector(".ni:nth-child(2)"));
+
+  toast(res&&res.success?"🧾 Fatura guardada no Sheets!":"🧾 Guardada localmente (verifica o Sheets)");
+  resetScan();
+  nav("faturas",document.querySelector(".ni:nth-child(2)"));
 }
+
 function resetScan(){document.getElementById("scan-result").style.display="none";scanData=null;}
+
 function confirmSup(){
   const s={nif:document.getElementById("ns-nif").value,name:document.getElementById("ns-name").value,category:document.getElementById("ns-cat").value};
   if(!suppliers.find(x=>x.nif===s.nif))suppliers.push(s);
@@ -531,106 +675,189 @@ function confirmSup(){
   cm("m-newsup");toast("✅ Fornecedor adicionado!");buildForm();
 }
 
-// ── DASHBOARD ──
-function getInv(){const p=document.getElementById("dash-period").value;return p==="all"?invoices:invoices.filter(i=>new Date(i.date).getMonth()===parseInt(p));}
+// ════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════════════
+function getInv(){
+  const p=document.getElementById("dash-period").value;
+  if(p==="all")return invoices;
+  const[y,m]=p.split("-").map(Number);
+  return invoices.filter(i=>{const d=new Date(i.date);return d.getFullYear()===y&&d.getMonth()===m;});
+}
+
 function renderDash(){
   const inv=getInv();
-  const tot=inv.reduce((a,i)=>a+i.amount,0),vat=inv.reduce((a,i)=>a+i.vat,0),pend=inv.filter(i=>i.status==="pendente").length;
+  const tot=inv.reduce((a,i)=>a+i.amount,0);
+  const vat=inv.reduce((a,i)=>a+i.vat,0);
+  const pend=inv.filter(i=>i.status==="pendente").length;
   document.getElementById("stat-grid").innerHTML=`
     <div class="sc blue"><div class="sl">Total Despesas</div><div class="sv">${eur(tot)}</div><div class="ss2">${inv.length} faturas</div></div>
     <div class="sc green"><div class="sl">IVA Dedutível</div><div class="sv">${eur(vat)}</div><div class="ss2">a recuperar</div></div>
     <div class="sc orange"><div class="sl">Pendentes</div><div class="sv">${pend}</div><div class="ss2">${pend>0?"⚠ Enviar":"✓ Em dia"}</div></div>
     <div class="sc purple"><div class="sl">Valor Líquido</div><div class="sv">${eur(tot-vat)}</div><div class="ss2">sem IVA</div></div>`;
-  const months=["Out","Nov","Dez","Jan","Fev","Mar"];
-  const vals=months.map((_,i)=>{if(i===3)return invoices.filter(x=>new Date(x.date).getMonth()===0).reduce((a,x)=>a+x.amount,0);if(i===4)return invoices.filter(x=>new Date(x.date).getMonth()===1).reduce((a,x)=>a+x.amount,0);return Math.floor(Math.random()*500+80);});
+
+  // Agrupa por mês para o gráfico de barras
+  const byMonth={};
+  invoices.forEach(i=>{
+    if(!i.date)return;
+    const d=new Date(i.date);
+    const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+    byMonth[k]=(byMonth[k]||0)+i.amount;
+  });
+  const mKeys=Object.keys(byMonth).sort().slice(-6);
+  const mLabels=mKeys.map(k=>{const[y,m]=k.split("-");return new Date(y,m-1).toLocaleDateString("pt-PT",{month:"short"});});
+  const mVals=mKeys.map(k=>byMonth[k]);
+
   if(barCI)barCI.destroy();
-  barCI=new Chart(document.getElementById("barChart"),{type:"bar",data:{labels:months,datasets:[{data:vals,backgroundColor:months.map((_,i)=>i===4?"#5B6EF5":"#5B6EF555"),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:"#6B6B8A",font:{size:11}}},y:{grid:{color:"#2A2A3A"},ticks:{color:"#6B6B8A",font:{size:11},callback:v=>eur(v)}}}}});
+  barCI=new Chart(document.getElementById("barChart"),{
+    type:"bar",
+    data:{labels:mLabels,datasets:[{data:mVals,backgroundColor:mKeys.map((_,i)=>i===mKeys.length-1?"#5B6EF5":"#5B6EF555"),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:"#6B6B8A",font:{size:11}}},y:{grid:{color:"#2A2A3A"},ticks:{color:"#6B6B8A",font:{size:11},callback:v=>eur(v)}}}}
+  });
+
   const cats=Object.keys(CC).map(c=>({label:c,val:inv.filter(x=>x.category===c).reduce((a,x)=>a+x.amount,0)})).filter(c=>c.val>0);
   if(donutCI)donutCI.destroy();
-  if(cats.length)donutCI=new Chart(document.getElementById("donutChart"),{type:"doughnut",data:{labels:cats.map(c=>c.label),datasets:[{data:cats.map(c=>c.val),backgroundColor:cats.map(c=>CC[c.label]),borderWidth:0,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:"70%",plugins:{legend:{position:"bottom",labels:{color:"#6B6B8A",font:{size:11},padding:10,boxWidth:9,boxHeight:9}}}}});
+  if(cats.length){
+    donutCI=new Chart(document.getElementById("donutChart"),{
+      type:"doughnut",
+      data:{labels:cats.map(c=>c.label),datasets:[{data:cats.map(c=>c.val),backgroundColor:cats.map(c=>CC[c.label]),borderWidth:0,hoverOffset:5}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:"70%",plugins:{legend:{position:"bottom",labels:{color:"#6B6B8A",font:{size:11},padding:10,boxWidth:9,boxHeight:9}}}}
+    });
+  }
+
   const sm=inv.reduce((acc,x)=>{acc[x.supplier]=(acc[x.supplier]||0)+x.amount;return acc;},{});
   const st=Object.entries(sm).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const mx=st[0]?.[1]||1;
-  document.getElementById("top-sup").innerHTML=st.map(([n,v])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px"><span>${n}</span><span style="color:var(--muted);font-family:var(--mono)">${eur(v)}</span></div><div style="height:4px;background:var(--surface2);border-radius:2px"><div style="height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:${(v/mx)*100}%"></div></div></div>`).join("");
+  document.getElementById("top-sup").innerHTML=st.length?st.map(([n,v])=>`
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px"><span>${n}</span><span style="color:var(--muted);font-family:var(--mono)">${eur(v)}</span></div>
+      <div style="height:4px;background:var(--surface2);border-radius:2px"><div style="height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:${(v/mx)*100}%"></div></div>
+    </div>`).join(""):'<p style="color:var(--muted);font-size:13px">Sem faturas no período selecionado.</p>';
 }
 
-// ── TABLE ──
-function renderFilters(){document.getElementById("filter-bar").innerHTML=["todas","pendente","enviada",...Object.keys(CC)].map(p=>`<button class="fpi${activeFilter===p?" active":""}" onclick="setF('${p}')">${p}</button>`).join("");}
+// ════════════════════════════════════════════════════════════════
+// TABELA DE FATURAS
+// ════════════════════════════════════════════════════════════════
+function renderFilters(){
+  document.getElementById("filter-bar").innerHTML=
+    ["todas","pendente","enviada",...Object.keys(CC)].map(p=>
+      `<button class="fpi${activeFilter===p?" active":""}" onclick="setF('${p}')">${p}</button>`
+    ).join("");
+}
 function setF(f){activeFilter=f;renderFilters();renderTable();}
 function renderTable(){
   const q=(document.getElementById("srch").value||"").toLowerCase();
-  const filtered=invoices.filter(i=>{const ms=!q||i.supplier.toLowerCase().includes(q)||i.num.toLowerCase().includes(q)||String(i.amount).includes(q);const mf=activeFilter==="todas"||i.status===activeFilter||i.category===activeFilter;return ms&&mf;});
-  document.getElementById("inv-tbody").innerHTML=filtered.length?filtered.map(i=>`<tr class="cr" onclick="showDet(${i.id})"><td><span style="font-family:var(--mono);font-size:12px">${i.num}</span></td><td><strong>${i.supplier}</strong></td><td style="color:var(--muted);font-size:12px">${fd(i.date)}</td><td><span class="badge ${CB[i.category]}">${CI[i.category]} ${i.category}</span></td><td><strong style="font-family:var(--mono)">${eur(i.amount)}</strong></td><td style="color:var(--muted);font-family:var(--mono);font-size:12px">${eur(i.vat)}</td><td><span class="badge ${i.status==="enviada"?"bg0":"bg1"}">${i.status==="enviada"?"✓ enviada":"⏳ pendente"}</span></td><td><button class="btn bg2" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();showDet(${i.id})">Ver</button></td></tr>`).join(""):`<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--muted)">Nenhuma fatura encontrada</td></tr>`;
+  const filtered=invoices.filter(i=>{
+    const ms=!q||i.supplier.toLowerCase().includes(q)||i.num.toLowerCase().includes(q)||String(i.amount).includes(q);
+    const mf=activeFilter==="todas"||i.status===activeFilter||i.category===activeFilter;
+    return ms&&mf;
+  });
+  document.getElementById("inv-tbody").innerHTML=filtered.length?filtered.map(i=>`
+    <tr class="cr" onclick="showDet('${i.id}')">
+      <td><span style="font-family:var(--mono);font-size:12px">${i.num}</span></td>
+      <td><strong>${i.supplier}</strong></td>
+      <td style="color:var(--muted);font-size:12px">${fd(i.date)}</td>
+      <td><span class="badge ${CB[i.category]||"bg-b"}">${CI[i.category]||"📄"} ${i.category}</span></td>
+      <td><strong style="font-family:var(--mono)">${eur(i.amount)}</strong></td>
+      <td style="color:var(--muted);font-family:var(--mono);font-size:12px">${eur(i.vat)}</td>
+      <td><span class="badge ${i.status==="enviada"?"bg0":"bg1"}">${i.status==="enviada"?"✓ enviada":"⏳ pendente"}</span></td>
+      <td><button class="btn bg2" style="padding:4px 9px;font-size:12px" onclick="event.stopPropagation();showDet('${i.id}')">Ver</button></td>
+    </tr>`).join("")
+    :`<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--muted)">${invoices.length===0?"Nenhuma fatura no Sheets ainda.":"Nenhuma fatura encontrada."}</td></tr>`;
 }
+
 async function showDet(id){
-  const inv=invoices.find(i=>i.id===id);if(!inv)return;
-  document.getElementById("d-title").textContent=inv.num;
-  document.getElementById("d-body").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">${[["Fornecedor",inv.supplier],["NIF Forn.",inv.nif],["NIF Cliente",inv.nifClient],["Data",fd(inv.date)],["Valor Total",eur(inv.amount)],["IVA",eur(inv.vat)],["ATCUD",inv.atcud],["Categoria",`${CI[inv.category]} ${inv.category}`]].map(([k,v])=>`<div style="background:var(--surface2);border-radius:9px;padding:10px"><div style="font-size:11px;color:var(--muted);margin-bottom:3px;font-weight:600">${k.toUpperCase()}</div><div style="font-size:13px;font-weight:500">${v}</div></div>`).join("")}</div><span class="badge ${inv.status==="enviada"?"bg0":"bg1"}" style="font-size:13px;padding:5px 12px">${inv.status==="enviada"?"✓ Enviada":"⏳ Pendente"}</span>`;
-  document.getElementById("d-del").onclick=async()=>{invoices=invoices.filter(i=>i.id!==id);if(SHEETS_URL)await sheetsPost({action:"delete",id});cm("m-detail");renderTable();renderDash();toast("🗑️ Eliminada");};
+  const inv=invoices.find(i=>String(i.id)===String(id));if(!inv)return;
+  document.getElementById("d-title").textContent=inv.num||"Fatura";
+  document.getElementById("d-body").innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      ${[["Fornecedor",inv.supplier],["NIF Forn.",inv.nif],["NIF Cliente",inv.nifClient],["Data",fd(inv.date)],["Valor Total",eur(inv.amount)],["IVA",eur(inv.vat)],["ATCUD",inv.atcud||"—"],["Categoria",`${CI[inv.category]||"📄"} ${inv.category}`]].map(([k,v])=>`
+        <div style="background:var(--surface2);border-radius:9px;padding:10px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:3px;font-weight:600">${k.toUpperCase()}</div>
+          <div style="font-size:13px;font-weight:500">${v||"—"}</div>
+        </div>`).join("")}
+    </div>
+    <span class="badge ${inv.status==="enviada"?"bg0":"bg1"}" style="font-size:13px;padding:5px 12px">${inv.status==="enviada"?"✓ Enviada":"⏳ Pendente"}</span>`;
+  document.getElementById("d-del").onclick=async()=>{
+    invoices=invoices.filter(i=>String(i.id)!==String(id));
+    await sheetsPost({action:"delete",id});
+    cm("m-detail");renderTable();renderDash();toast("🗑️ Eliminada");
+  };
   const sb=document.getElementById("d-send");
-  if(inv.status==="pendente"){sb.style.display="";sb.onclick=async()=>{inv.status="enviada";if(SHEETS_URL)await sheetsPost({action:"updateStatus",id,status:"enviada"});cm("m-detail");renderTable();renderDash();toast("📤 Marcada como enviada!");};}
-  else sb.style.display="none";
+  if(inv.status==="pendente"){
+    sb.style.display="";
+    sb.onclick=async()=>{
+      inv.status="enviada";
+      await sheetsPost({action:"updateStatus",id,status:"enviada"});
+      cm("m-detail");renderTable();renderDash();toast("📤 Marcada como enviada!");
+    };
+  }else sb.style.display="none";
   om("m-detail");
 }
 
-// ── SUPPLIERS ──
+// ════════════════════════════════════════════════════════════════
+// FORNECEDORES
+// ════════════════════════════════════════════════════════════════
 function renderSup(){
   const q=(document.getElementById("sup-srch").value||"").toLowerCase();
   const f=suppliers.filter(s=>!q||s.name.toLowerCase().includes(q)||s.nif.includes(q));
-  document.getElementById("sup-tbody").innerHTML=f.length?f.map(s=>{const si=invoices.filter(i=>i.nif===s.nif);return`<tr><td><strong>${s.name}</strong></td><td style="font-family:var(--mono);font-size:12px;color:var(--muted)">${s.nif}</td><td><span class="badge ${CB[s.category]}">${CI[s.category]} ${s.category}</span></td><td style="color:var(--muted)">${si.length}</td><td style="font-family:var(--mono);font-weight:600">${eur(si.reduce((a,i)=>a+i.amount,0))}</td></tr>`;}).join(""):`<tr><td colspan="5" style="text-align:center;padding:36px;color:var(--muted)">Nenhum fornecedor</td></tr>`;
+  document.getElementById("sup-tbody").innerHTML=f.length?f.map(s=>{
+    const si=invoices.filter(i=>i.nif===s.nif);
+    return`<tr>
+      <td><strong>${s.name}</strong></td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--muted)">${s.nif}</td>
+      <td><span class="badge ${CB[s.category]||"bg-b"}">${CI[s.category]||"📄"} ${s.category}</span></td>
+      <td style="color:var(--muted)">${si.length}</td>
+      <td style="font-family:var(--mono);font-weight:600">${eur(si.reduce((a,i)=>a+i.amount,0))}</td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="5" style="text-align:center;padding:36px;color:var(--muted)">Nenhum fornecedor</td></tr>`;
 }
 function openAddSup(){om("m-addsup");}
-function saveSup(){const s={nif:document.getElementById("as-nif").value,name:document.getElementById("as-name").value,category:document.getElementById("as-cat").value};if(!s.name||!s.nif){toast("⚠️ Preencha nome e NIF");return;}if(suppliers.find(x=>x.nif===s.nif)){toast("⚠️ NIF já existe");return;}suppliers.push(s);cm("m-addsup");renderSup();toast("✅ Fornecedor adicionado!");}
+function saveSup(){
+  const s={nif:document.getElementById("as-nif").value.trim(),name:document.getElementById("as-name").value.trim(),category:document.getElementById("as-cat").value};
+  if(!s.name||!s.nif){toast("⚠️ Preencha nome e NIF");return;}
+  if(suppliers.find(x=>x.nif===s.nif)){toast("⚠️ NIF já existe");return;}
+  suppliers.push(s);cm("m-addsup");renderSup();toast("✅ Fornecedor adicionado!");
+}
 
-// ── ENVIO ──
-function renderPending(){const p=invoices.filter(i=>i.status==="pendente");document.getElementById("pend-list").innerHTML=p.length?p.map(i=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--surface2);border-radius:9px;margin-bottom:7px"><div><p style="font-weight:600;font-size:13px">${i.supplier}</p><p style="font-size:11px;color:var(--muted);font-family:var(--mono)">${i.num} · ${fd(i.date)}</p></div><span style="font-family:var(--mono);font-weight:600">${eur(i.amount)}</span></div>`).join("")+`<div style="font-size:12px;color:var(--muted);margin-top:7px">${p.length} fatura${p.length!==1?"s":""} · Total: <strong style="color:var(--text)">${eur(p.reduce((a,i)=>a+i.amount,0))}</strong></div>`:`<div style="text-align:center;padding:26px;color:var(--muted)">✓ Todas as faturas foram enviadas</div>`;}
+// ════════════════════════════════════════════════════════════════
+// ENVIO
+// ════════════════════════════════════════════════════════════════
+function renderPending(){
+  const p=invoices.filter(i=>i.status==="pendente");
+  document.getElementById("pend-list").innerHTML=p.length
+    ?p.map(i=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--surface2);border-radius:9px;margin-bottom:7px">
+        <div><p style="font-weight:600;font-size:13px">${i.supplier}</p><p style="font-size:11px;color:var(--muted);font-family:var(--mono)">${i.num} · ${fd(i.date)}</p></div>
+        <span style="font-family:var(--mono);font-weight:600">${eur(i.amount)}</span>
+      </div>`).join("")
+      +`<div style="font-size:12px;color:var(--muted);margin-top:7px">${p.length} fatura${p.length!==1?"s":""} · Total: <strong style="color:var(--text)">${eur(p.reduce((a,i)=>a+i.amount,0))}</strong></div>`
+    :`<div style="text-align:center;padding:26px;color:var(--muted)">✓ Todas as faturas foram enviadas</div>`;
+}
 let selMethod="email";
 function selSend(el){document.querySelectorAll(".so").forEach(s=>s.classList.remove("sel"));el.classList.add("sel");selMethod=el.dataset.m;document.getElementById("email-f").style.display=selMethod==="email"?"block":"none";}
 async function sendAcc(){
-  const p=invoices.filter(i=>i.status==="pendente");if(!p.length){toast("Nenhuma fatura pendente!");return;}
+  const p=invoices.filter(i=>i.status==="pendente");
+  if(!p.length){toast("Nenhuma fatura pendente!");return;}
   if(selMethod==="csv")exportCSV();
   const ids=p.map(i=>String(i.id));
   invoices.forEach(i=>{if(i.status==="pendente")i.status="enviada";});
-  if(SHEETS_URL)await sheetsPost({action:"bulkSend",ids});
+  await sheetsPost({action:"bulkSend",ids});
   renderPending();toast(`📤 ${p.length} fatura${p.length!==1?"s":""} enviada${p.length!==1?"s":""}!`);
 }
+
 function exportCSV(){
   const h=["ID","Nº Fatura","Fornecedor","NIF","NIF Cliente","Data","Valor","IVA","ATCUD","Categoria","Estado"];
-  const rows=invoices.map(i=>[i.id,`"${i.num}"`,`"${i.supplier}"`,i.nif,i.nifClient,i.date,i.amount,i.vat,i.atcud,i.category,i.status].join(","));
+  const rows=invoices.map(i=>[i.id,`"${i.num}"`,`"${i.supplier}"`,i.nif,i.nifClient,i.date,i.amount.toFixed(2),i.vat.toFixed(2),i.atcud,i.category,i.status].join(","));
   const csv=[h.join(","),...rows].join("\n");
   const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,\uFEFF"+encodeURIComponent(csv);a.download="faturas.csv";a.click();
   toast("📊 CSV exportado!");
 }
 
-// ── INIT ──
-(function(){
-  // Aplica valores do config.js
-  if(typeof APP_CONFIG!=="undefined"){
-    if(APP_CONFIG.SHEETS_URL) SHEETS_URL=APP_CONFIG.SHEETS_URL;
-    if(APP_CONFIG.USER_NAME){
-      const un=document.getElementById("user-name");if(un)un.textContent=APP_CONFIG.USER_NAME;
-    }
-    if(APP_CONFIG.USER_INITIALS){
-      const av=document.getElementById("user-av");if(av)av.textContent=APP_CONFIG.USER_INITIALS;
-    }
-    if(APP_CONFIG.ACCOUNTANT_EMAIL){
-      const ae=document.getElementById("acc-email");if(ae)ae.value=APP_CONFIG.ACCOUNTANT_EMAIL;
-    }
-    if(APP_CONFIG.BUSINESS_NAME){
-      document.title="FaturaApp — "+APP_CONFIG.BUSINESS_NAME;
-    }
-  }
-  // Verifica ligação ao Sheets
-  const urlToCheck=SHEETS_URL||localStorage.getItem("sheets_url")||"";
-  if(urlToCheck){
-    SHEETS_URL=urlToCheck;
-    setSheetsStatus("wait","A verificar...");
-    fetch(urlToCheck).then(r=>r.json())
-      .then(d=>{if(d.success!==undefined)setSheetsStatus("ok","✓ Sheets ligado");else setSheetsStatus("err","Sheets com erro");})
-      .catch(()=>setSheetsStatus("err","Sheets não ligado"));
-  }else setSheetsStatus("err","Sheets não configurado");
-  renderDash();
-})();
+// ════════════════════════════════════════════════════════════════
+// ARRANQUE
+// ════════════════════════════════════════════════════════════════
+init();
 </script>
 </body>
 </html>
