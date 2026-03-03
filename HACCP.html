@@ -419,13 +419,59 @@
 
         <!-- Registos Tab -->
         <div id="tab-registos" class="content-card hidden">
-            <h2 style="margin-bottom: 1.5rem;">Histórico de Registos</h2>
+            <h2 style="margin-bottom: 1.5rem;">Histórico de Registos HACCP</h2>
             
+            <!-- Filtros -->
+            <div style="background: var(--light); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">🔍 Filtros</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo de Registo</label>
+                        <select id="filtroTipo">
+                            <option value="">Todos</option>
+                            <option value="temperaturas">🌡️ Temperaturas</option>
+                            <option value="limpeza">🧼 Limpeza</option>
+                            <option value="ocorrencia">⚠️ Ocorrências</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Data Início</label>
+                        <input type="date" id="filtroDataInicio">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Data Fim</label>
+                        <input type="date" id="filtroDataFim">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Funcionário</label>
+                        <select id="filtroFuncionario">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button onclick="aplicarFiltros()" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                    <button onclick="limparFiltros()" class="btn btn-secondary">🔄 Limpar</button>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
             <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
                 <button onclick="carregarRegistos()" class="btn btn-secondary">🔄 Atualizar</button>
                 <button onclick="exportarPDF()" class="btn btn-secondary">📄 Exportar PDF</button>
             </div>
 
+            <!-- Estatísticas Rápidas -->
+            <div id="statsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <!-- Stats will be inserted here -->
+            </div>
+
+            <!-- Lista de Registos -->
             <div id="registosList" class="registos-list">
                 <div class="loading">Carregando registos...</div>
             </div>
@@ -821,6 +867,199 @@
                 return `<strong>Descrição:</strong> ${reg.descricao || 'N/A'}`;
             }
             return reg.observacoes || '';
+        }
+
+        function getDetalhesCompletos(reg) {
+            let html = `<div style="display: grid; gap: 0.5rem;">`;
+            html += `<div><strong>👤 Funcionário:</strong> ${reg.funcionario || 'N/A'}</div>`;
+            
+            if (reg.tipo === 'temperaturas') {
+                html += `<div><strong>🌡️ Equipamento:</strong> ${reg.equipamento || 'N/A'}</div>`;
+                html += `<div><strong>📊 Temperatura:</strong> ${reg.temperatura || 'N/A'}°C</div>`;
+                if (reg.observacoes) {
+                    html += `<div><strong>📝 Observações:</strong> ${reg.observacoes}</div>`;
+                }
+            } else if (reg.tipo === 'limpeza') {
+                html += `<div><strong>📍 Área:</strong> ${reg.area || 'N/A'}</div>`;
+                html += `<div><strong>🧼 Tipo:</strong> ${reg.tipo || 'N/A'}</div>`;
+                if (reg.observacoes) {
+                    html += `<div><strong>📝 Observações:</strong> ${reg.observacoes}</div>`;
+                }
+            } else if (reg.tipo === 'ocorrencia') {
+                html += `<div><strong>⚠️ Descrição:</strong> ${reg.descricao || 'N/A'}</div>`;
+                if (reg.observacoes) {
+                    html += `<div><strong>📝 Observações:</strong> ${reg.observacoes}</div>`;
+                }
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+
+        async function carregarRegistos() {
+            const container = document.getElementById('registosList');
+            container.innerHTML = '<div class="loading">Carregando registos...</div>';
+            
+            try {
+                const response = await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'getDashboardHACCP' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.registos) {
+                    // Guardar todos os registos globalmente
+                    window.todosRegistos = result.registos;
+                    
+                    // Carregar funcionários no filtro
+                    carregarFuncionariosFiltro(result.registos);
+                    
+                    // Aplicar filtros (se houver)
+                    aplicarFiltros();
+                    
+                } else {
+                    container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Erro ao carregar registos</p>';
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Erro ao carregar registos</p>';
+            }
+        }
+
+        function carregarFuncionariosFiltro(registos) {
+            const select = document.getElementById('filtroFuncionario');
+            const funcionarios = [...new Set(registos.map(r => r.funcionario).filter(Boolean))].sort();
+            
+            select.innerHTML = '<option value="">Todos</option>';
+            funcionarios.forEach(func => {
+                const option = document.createElement('option');
+                option.value = func;
+                option.textContent = func;
+                select.appendChild(option);
+            });
+        }
+
+        function aplicarFiltros() {
+            if (!window.todosRegistos) {
+                carregarRegistos();
+                return;
+            }
+            
+            const container = document.getElementById('registosList');
+            const statsContainer = document.getElementById('statsContainer');
+            
+            // Obter valores dos filtros
+            const filtroTipo = document.getElementById('filtroTipo').value;
+            const filtroDataInicio = document.getElementById('filtroDataInicio').value;
+            const filtroDataFim = document.getElementById('filtroDataFim').value;
+            const filtroFunc = document.getElementById('filtroFuncionario').value;
+            
+            // Filtrar registos
+            let registosFiltrados = window.todosRegistos.filter(reg => {
+                // Filtro por tipo
+                if (filtroTipo && reg.tipo !== filtroTipo) return false;
+                
+                // Filtro por data início
+                if (filtroDataInicio && reg.data < filtroDataInicio) return false;
+                
+                // Filtro por data fim
+                if (filtroDataFim && reg.data > filtroDataFim) return false;
+                
+                // Filtro por funcionário
+                if (filtroFunc && reg.funcionario !== filtroFunc) return false;
+                
+                return true;
+            });
+            
+            // Mostrar estatísticas
+            mostrarEstatisticas(registosFiltrados);
+            
+            // Mostrar registos
+            if (registosFiltrados.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Nenhum registo encontrado com os filtros aplicados</p>';
+                return;
+            }
+            
+            let html = '';
+            registosFiltrados.forEach(reg => {
+                html += `
+                    <div class="registo-item">
+                        <div class="registo-header">
+                            <span class="registo-tipo">${getTipoIcon(reg.tipo)} ${formatarTipoNome(reg.tipo)}</span>
+                            <span class="registo-data">${formatarData(reg.data)} às ${reg.hora}</span>
+                        </div>
+                        <div style="font-size: 0.9rem; color: #555; margin-top: 0.5rem;">
+                            ${getDetalhesCompletos(reg)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function mostrarEstatisticas(registos) {
+            const container = document.getElementById('statsContainer');
+            
+            if (registos.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            // Contar por tipo
+            const porTipo = {};
+            registos.forEach(reg => {
+                porTipo[reg.tipo] = (porTipo[reg.tipo] || 0) + 1;
+            });
+            
+            let html = `
+                <div style="background: var(--light); padding: 1rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">${registos.length}</div>
+                    <div style="font-size: 0.9rem; color: #555;">Total de Registos</div>
+                </div>
+            `;
+            
+            // Stats por tipo
+            Object.keys(porTipo).forEach(tipo => {
+                html += `
+                    <div style="background: var(--light); padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">${porTipo[tipo]}</div>
+                        <div style="font-size: 0.9rem; color: #555;">${getTipoIcon(tipo)} ${formatarTipoNome(tipo)}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function limparFiltros() {
+            document.getElementById('filtroTipo').value = '';
+            document.getElementById('filtroDataInicio').value = '';
+            document.getElementById('filtroDataFim').value = '';
+            document.getElementById('filtroFuncionario').value = '';
+            aplicarFiltros();
+        }
+
+        function formatarTipoNome(tipo) {
+            const nomes = {
+                'temperaturas': 'Temperatura',
+                'limpeza': 'Limpeza',
+                'ocorrencia': 'Ocorrência',
+                'checklist': 'Checklist',
+                'oleo': 'Óleo',
+                'rececao': 'Receção'
+            };
+            return nomes[tipo] || tipo;
+        }
+
+        function formatarData(data) {
+            if (!data) return 'N/A';
+            const partes = data.split('-');
+            if (partes.length === 3) {
+                return `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+            return data;
         }
 
         async function exportarPDF() {
