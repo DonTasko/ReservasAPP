@@ -1,50 +1,36 @@
 // ═══════════════════════════════════════════════════════════════════
-// FaturaApp — Ficheiro de Configuração
-// ───────────────────────────────────────────────────────────────────
-// Preenche os valores abaixo e faz upload deste ficheiro para o
-// GitHub no mesmo repositório que o index.html
+// config.js — Configuração Central Don Tasko
+// Usado por: admin.html, admin-completo.html, HACCP.html, Faturas.html
 // ═══════════════════════════════════════════════════════════════════
 
+// ── URL DO APPS SCRIPT DO RESTAURANTE (reservas, HACCP, ocupação) ──
+// Usado por admin.html, admin-completo.html, HACCP.html
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbx_aPXYzdp2CSOWfk-fO69kxJ2RxsECs12xUVKSPDGsgP2sZdHhQFtYrZGmWOWkZVi7/exec";
+
+// ── CONFIGURAÇÃO DA APP DE FATURAS ────────────────────────────────
+// Usado por Faturas.html
 const APP_CONFIG = {
 
-  // ── 1. GOOGLE SHEETS ──────────────────────────────────────────────
-  // URL do teu Google Apps Script (Web App)
-  // Como obter:
-  //   1. Abre o teu Google Sheets
-  //   2. Extensões → Apps Script → cola o sheets-script.gs
-  //   3. Implementar → Nova implementação → App Web
-  //   4. Copia o URL que aparece (começa com https://script.google.com/macros/s/...)
-  //
-  // Exemplo: "https://script.google.com/macros/s/AKfycbxXXXXXXXXXX/exec"
+  // URL do Apps Script das FATURAS
+  // Se as faturas estiverem numa sheet separada, muda este URL
+  // Se estiverem na mesma sheet do restaurante, deixa igual ao URL_SCRIPT
   SHEETS_URL: "https://script.google.com/macros/s/AKfycbx_aPXYzdp2CSOWfk-fO69kxJ2RxsECs12xUVKSPDGsgP2sZdHhQFtYrZGmWOWkZVi7/exec",
 
-  // ── 2. IDENTIFICAÇÃO DO NEGÓCIO ───────────────────────────────────
-  // Nome que aparece na sidebar e nos exports
+  // Negócio
   BUSINESS_NAME: "Maria Helena Afonso, Lda",
+  BUSINESS_NIF:  "516763482",
 
-  // NIF do teu negócio (preenchido automaticamente no campo NIF Cliente)
-  BUSINESS_NIF: "516763482",
-
-  // Nome do utilizador (aparece no canto inferior esquerdo)
-  USER_NAME: "Luis Afonso",
-
-  // Iniciais do avatar (máx. 2 letras)
+  // Utilizador
+  USER_NAME:     "Luis Afonso",
   USER_INITIALS: "LA",
 
-  // ── 3. CONTABILIDADE ──────────────────────────────────────────────
-  // Email do contabilista (pré-preenchido no ecrã de Envio)
+  // Contabilidade
   ACCOUNTANT_EMAIL: "dontasko.geral@gmail.com",
 
-  // ── 4. CÂMARA ─────────────────────────────────────────────────────
-  // Câmara a usar por defeito
-  // "environment" = câmara traseira (recomendado para faturas)
-  // "user"        = câmara frontal
+  // Câmara (environment = traseira, user = frontal)
   DEFAULT_CAMERA: "environment",
 
-  // Resolução do scan (menor = mais rápido, maior = mais preciso)
-  // Recomendado para Android: 640
-  // Recomendado para iOS/desktop: 1280
-  SCAN_WIDTH: 640,
+  // Resolução scan — Android: 640 / iPhone ou PC: 1280
+  SCAN_WIDTH:  640,
   SCAN_HEIGHT: 480,
-
 };
