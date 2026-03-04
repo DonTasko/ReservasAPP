@@ -402,8 +402,8 @@ async function carregarConfiguracoesDinamicas() {
         const banner = document.getElementById('debug-banner');
         banner.style.display = 'block';
         banner.innerHTML = `<strong>ℹ️ Aviso:</strong> ${falhou} configuração(ões) HACCP não encontrada(s) na sheet. 
-            A usar valores predefinidos. Para personalizar, adiciona uma aba <strong>ConfigHACCP</strong> 
-            na tua Google Sheet com colunas <em>tipo</em> e <em>valor</em>.`;
+            A usar valores predefinidos. Para personalizar, verifica se a aba <strong>HACCP-Config</strong> 
+            existe na tua Google Sheet com colunas <em>Tipo</em>, <em>Item</em> e <em>Ativo</em> (SIM/NÃO).`;
     }
 }
 
@@ -522,21 +522,24 @@ async function registarOcorrencia(event) {
 // ── Carregar Registos ────────────────────────────────────────────
 async function carregarRegistos() {
     document.getElementById('registosList').innerHTML = '<div class="loading">⏳ Carregando registos...</div>';
+    window.todosRegistos = undefined; // reset para evitar aplicarFiltros prematuro
     try {
         const result = await postScript({ action: 'getDashboardHACCP' });
-        if ((result.status === 'success' || result.success) && result.registos) {
-            window.todosRegistos = result.registos;
-            carregarFuncionariosFiltro(result.registos);
+        if (result.status === 'success' || result.success) {
+            window.todosRegistos = result.registos || [];
+            carregarFuncionariosFiltro(window.todosRegistos);
             aplicarFiltros();
         } else {
+            window.todosRegistos = [];
             document.getElementById('registosList').innerHTML =
-                `<p style="text-align:center;color:#e74c3c">
-                    Erro ao carregar registos: ${result.message || JSON.stringify(result)}
+                `<p style="text-align:center;padding:2rem;color:#e74c3c">
+                    ❌ Erro ao carregar registos: ${result.message || JSON.stringify(result)}
                 </p>`;
         }
     } catch(e) {
+        window.todosRegistos = [];
         document.getElementById('registosList').innerHTML =
-            `<p style="text-align:center;color:#e74c3c">Erro: ${e.message}</p>`;
+            `<p style="text-align:center;padding:2rem;color:#e74c3c">❌ Erro: ${e.message}</p>`;
     }
 }
 
@@ -548,12 +551,14 @@ function carregarFuncionariosFiltro(registos) {
 }
 
 function aplicarFiltros() {
-    if (!window.todosRegistos || !window.todosRegistos.length) { carregarRegistos(); return; }
+    // Não chamar carregarRegistos() aqui — evita loop infinito
+    // Se todosRegistos não foi ainda carregado, mostra mensagem estática
+    if (window.todosRegistos === undefined) return;
     const tipo   = document.getElementById('filtroTipo').value;
     const dIni   = document.getElementById('filtroDataInicio').value;
     const dFim   = document.getElementById('filtroDataFim').value;
     const func   = document.getElementById('filtroFuncionario').value;
-    const filtrados = window.todosRegistos.filter(r =>
+    const filtrados = (window.todosRegistos || []).filter(r =>
         (!tipo || r.tipo === tipo) &&
         (!dIni || r.data >= dIni) &&
         (!dFim || r.data <= dFim) &&
@@ -562,7 +567,8 @@ function aplicarFiltros() {
     mostrarEstatisticas(filtrados);
     const container = document.getElementById('registosList');
     if (!filtrados.length) {
-        container.innerHTML = '<p style="text-align:center;color:#7f8c8d">Nenhum registo encontrado com os filtros aplicados</p>';
+        container.innerHTML = '<p style="text-align:center;padding:2rem;color:#7f8c8d">📭 Nenhum registo encontrado' +
+            (window.todosRegistos.length ? ' com os filtros aplicados' : ' — ainda não há registos HACCP na sheet') + '</p>';
         return;
     }
     container.innerHTML = filtrados.map(reg => `
