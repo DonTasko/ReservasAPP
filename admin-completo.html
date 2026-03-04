@@ -4,958 +4,465 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador Completo - Don Tasko</title>
-    
-    <!-- Configuração Centralizada -->
     <script src="config.js"></script>
-    
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #34495e;
+            --primary: #2c3e50; --accent: #3498db; --success: #27ae60;
+            --warning: #f39c12; --danger: #e74c3c; --light: #ecf0f1; --dark: #34495e;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light);
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; }
         header {
-            background: var(--primary);
-            color: white;
-            padding: 1.5rem 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: var(--primary); color: white; padding: 1.5rem 2rem;
+            border-radius: 10px; margin-bottom: 2rem;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        header h1 {
-            font-size: 1.8rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
+        header h1 { font-size: 1.8rem; }
         .btn-back {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background 0.3s;
+            background: rgba(255,255,255,0.2); color: white; border: none;
+            padding: .7rem 1.5rem; border-radius: 6px; cursor: pointer;
+            text-decoration: none; display: inline-block; transition: background .3s;
         }
-
-        .btn-back:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        /* Filters Section */
+        .btn-back:hover { background: rgba(255,255,255,0.35); }
         .filters {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+            background: white; padding: 1.5rem; border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.1); margin-bottom: 2rem;
         }
-
-        .filters h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-group label {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--dark);
-        }
-
-        .filter-group input,
-        .filter-group select {
-            padding: 0.7rem;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .btn {
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-
-        .btn-secondary {
-            background: var(--light);
-            color: var(--dark);
-        }
-
-        .btn-secondary:hover {
-            background: #d5d8dc;
-        }
-
-        /* Stats Cards */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-
-        /* Reservations Table */
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .table-header {
-            padding: 1.5rem;
-            border-bottom: 2px solid var(--light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-header h3 {
-            color: var(--primary);
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-icon {
-            background: var(--light);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-icon:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: var(--primary);
-            color: white;
-        }
-
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--light);
-            transition: background 0.2s;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        td {
-            padding: 1rem;
-            font-size: 0.95rem;
-        }
-
-        .status-badge {
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-confirmada {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-pendente {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-cancelada {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .status-concluida {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-small {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.85rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-edit {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #2980b9;
-        }
-
-        .btn-delete {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #c0392b;
-        }
-
-        .btn-complete {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-complete:hover {
-            background: #229954;
-        }
-
-        /* Loading & Empty States */
-        .loading {
-            text-align: center;
-            padding: 3rem;
-            color: var(--dark);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #7f8c8d;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light);
-        }
-
-        .modal-header h3 {
-            color: var(--primary);
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--dark);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1.5rem;
-        }
-
-        .pagination button {
-            padding: 0.5rem 1rem;
-            border: 2px solid var(--accent);
-            background: white;
-            color: var(--accent);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .pagination button:hover:not(:disabled) {
-            background: var(--accent);
-            color: white;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .pagination button.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Responsive */
+        .filters h3 { color: var(--primary); margin-bottom: 1rem; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .filter-group { display: flex; flex-direction: column; }
+        .filter-group label { font-weight: 600; margin-bottom: .5rem; font-size: .9rem; color: var(--dark); }
+        .filter-group input, .filter-group select { padding: .7rem; border: 2px solid #ddd; border-radius: 6px; font-size: .95rem; }
+        .filter-actions { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+        .btn { padding: .7rem 1.5rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all .3s; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-secondary { background: var(--light); color: var(--dark); }
+        .btn-secondary:hover { background: #d5d8dc; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.1); text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: 700; color: var(--accent); margin-bottom: .5rem; }
+        .stat-label { color: var(--dark); font-size: .95rem; }
+        .table-container { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.1); overflow: hidden; }
+        .table-header { padding: 1.5rem; border-bottom: 2px solid var(--light); display: flex; justify-content: space-between; align-items: center; }
+        .table-header h3 { color: var(--primary); }
+        .btn-icon { background: var(--light); border: none; padding: .5rem 1rem; border-radius: 6px; cursor: pointer; transition: all .3s; }
+        .btn-icon:hover { background: var(--accent); color: white; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--primary); color: white; }
+        th { padding: 1rem; text-align: left; font-weight: 600; font-size: .9rem; }
+        tbody tr { border-bottom: 1px solid var(--light); transition: background .2s; }
+        tbody tr:hover { background: #f8f9fa; }
+        td { padding: .9rem 1rem; font-size: .95rem; vertical-align: middle; }
+        .status-badge { padding: .35rem .75rem; border-radius: 20px; font-size: .85rem; font-weight: 600; display: inline-block; }
+        .status-confirmada  { background: #d4edda; color: #155724; }
+        .status-pendente    { background: #fff3cd; color: #856404; }
+        .status-cancelada   { background: #f8d7da; color: #721c24; }
+        .status-concluida   { background: #d1ecf1; color: #0c5460; }
+        .status-chegou      { background: #cce5ff; color: #004085; }
+        .action-buttons { display: flex; gap: .4rem; flex-wrap: wrap; }
+        .btn-small { padding: .35rem .7rem; font-size: .82rem; border: none; border-radius: 4px; cursor: pointer; transition: all .3s; font-weight: 500; }
+        .btn-edit   { background: var(--accent); color: white; } .btn-edit:hover   { background: #2980b9; }
+        .btn-chegou { background: var(--warning); color: white; } .btn-chegou:hover { background: #d68910; }
+        .btn-delete { background: var(--danger);  color: white; } .btn-delete:hover { background: #c0392b; }
+        .loading    { text-align: center; padding: 3rem; color: var(--dark); font-size: 1.1rem; }
+        .empty-state { text-align: center; padding: 3rem; color: #7f8c8d; }
+        .empty-state-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1.2rem; border-radius: 8px; margin: 1.5rem; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 10px; padding: 2rem; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--light); }
+        .modal-header h3 { color: var(--primary); }
+        .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--dark); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: .5rem; color: var(--dark); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: .8rem; border: 2px solid #ddd; border-radius: 6px; font-size: 1rem; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
+        .pagination { display: flex; justify-content: center; gap: .5rem; padding: 1.5rem; flex-wrap: wrap; }
+        .pagination button { padding: .5rem 1rem; border: 2px solid var(--accent); background: white; color: var(--accent); border-radius: 6px; cursor: pointer; transition: all .3s; }
+        .pagination button:hover:not(:disabled) { background: var(--accent); color: white; }
+        .pagination button:disabled { opacity: .3; cursor: not-allowed; }
+        .pagination button.active { background: var(--accent); color: white; }
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .filter-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-row {
-                grid-template-columns: 1fr;
-            }
-
-            table {
-                font-size: 0.85rem;
-            }
-
-            th, td {
-                padding: 0.7rem 0.5rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
+            header { flex-direction: column; gap: 1rem; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            table { font-size: .82rem; }
+            th, td { padding: .6rem .4rem; }
+            .action-buttons { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>⚙️ Administrador Completo</h1>
-            <div class="header-actions">
-                <a href="admin.html" class="btn-back">← Voltar ao Dashboard</a>
-            </div>
-        </header>
+<div class="container">
 
-        <!-- Filters -->
-        <div class="filters">
-            <h3>🔍 Filtros</h3>
-            <div class="filter-grid">
-                <div class="filter-group">
-                    <label>Data Início</label>
-                    <input type="date" id="filterDateStart">
-                </div>
-                <div class="filter-group">
-                    <label>Data Fim</label>
-                    <input type="date" id="filterDateEnd">
-                </div>
-                <div class="filter-group">
-                    <label>Estado</label>
-                    <select id="filterStatus">
-                        <option value="">Todos</option>
-                        <option value="Confirmada">Confirmada</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Cancelada">Cancelada</option>
-                        <option value="Concluída">Concluída</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Buscar</label>
-                    <input type="text" id="filterSearch" placeholder="Nome, telefone, email...">
-                </div>
+    <header>
+        <h1>⚙️ Administrador Completo</h1>
+        <a href="admin.html" class="btn-back">← Voltar ao Dashboard</a>
+    </header>
+
+    <div class="filters">
+        <h3>🔍 Filtros</h3>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label>Data Início</label>
+                <input type="date" id="filterDateStart">
             </div>
-            <div class="filter-actions">
-                <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
-                <button class="btn btn-secondary" onclick="clearFilters()">Limpar</button>
-                <button class="btn btn-secondary" onclick="exportToExcel()">📥 Exportar Excel</button>
+            <div class="filter-group">
+                <label>Data Fim</label>
+                <input type="date" id="filterDateEnd">
+            </div>
+            <div class="filter-group">
+                <label>Estado</label>
+                <select id="filterStatus">
+                    <option value="">Todos</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="Chegou">Chegou</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Cancelada">Cancelada</option>
+                    <option value="Concluída">Concluída</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Buscar</label>
+                <input type="text" id="filterSearch" placeholder="Nome, telemóvel, email...">
             </div>
         </div>
-
-        <!-- Stats -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-number" id="statTotal">0</div>
-                <div class="stat-label">Total Reservas</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="statConfirmed">0</div>
-                <div class="stat-label">Confirmadas</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="statPending">0</div>
-                <div class="stat-label">Pendentes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="statPeople">0</div>
-                <div class="stat-label">Total Pessoas</div>
-            </div>
-        </div>
-
-        <!-- Reservations Table -->
-        <div class="table-container">
-            <div class="table-header">
-                <h3>📋 Lista de Reservas</h3>
-                <div class="table-actions">
-                    <button class="btn-icon" onclick="refreshTable()" title="Atualizar">🔄</button>
-                    <button class="btn-icon" onclick="openNewReservationModal()" title="Nova Reserva">➕</button>
-                </div>
-            </div>
-
-            <div id="tableContent">
-                <div class="loading">
-                    <p>Carregando reservas...</p>
-                </div>
-            </div>
-
-            <div class="pagination" id="pagination"></div>
+        <div class="filter-actions">
+            <button class="btn btn-primary" onclick="applyFilters()">🔍 Filtrar</button>
+            <button class="btn btn-secondary" onclick="clearFilters()">🔄 Limpar</button>
+            <button class="btn btn-secondary" onclick="loadReservations()">↻ Recarregar</button>
+            <button class="btn btn-secondary" onclick="exportToCSV()">📥 Exportar CSV</button>
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>✏️ Editar Reserva</h3>
-                <button class="btn-close" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="editForm">
-                <input type="hidden" id="editId">
-                
-                <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" id="editNome" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Telefone</label>
-                    <input type="tel" id="editTelefone">
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="editEmail">
-                </div>
-
-                <div class="form-group">
-                    <label>Data</label>
-                    <input type="date" id="editData" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Horário</label>
-                    <input type="time" id="editHorario" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Pessoas</label>
-                    <input type="number" id="editPax" min="1" max="20" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select id="editStatus">
-                        <option value="Confirmada">Confirmada</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Cancelada">Cancelada</option>
-                        <option value="Concluída">Concluída</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="editObs"></textarea>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Alterações</button>
-                </div>
-            </form>
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-number" id="statTotal">—</div>
+            <div class="stat-label">Total Reservas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statConfirmed">—</div>
+            <div class="stat-label">Confirmadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statCancelled">—</div>
+            <div class="stat-label">Canceladas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="statPeople">—</div>
+            <div class="stat-label">Total Pessoas</div>
         </div>
     </div>
 
-    <script>
-        // URL_SCRIPT vem do config.js
-        
-        let allReservations = [];
-        let filteredReservations = [];
-        let currentPage = 1;
-        const itemsPerPage = 20;
+    <div class="table-container">
+        <div class="table-header">
+            <h3>📋 Lista de Reservas</h3>
+            <div>
+                <button class="btn-icon" onclick="loadReservations()">🔄 Atualizar</button>
+            </div>
+        </div>
+        <div id="tableContent">
+            <div class="loading">⏳ A carregar reservas...</div>
+        </div>
+        <div class="pagination" id="pagination"></div>
+    </div>
 
-        // Initialize
-        async function init() {
-            // Set date range to this month
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            
-            document.getElementById('filterDateStart').value = firstDay.toISOString().split('T')[0];
-            document.getElementById('filterDateEnd').value = lastDay.toISOString().split('T')[0];
+</div>
 
-            await loadReservations();
-        }
+<!-- Modal de Edição -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>✏️ Editar Reserva</h3>
+            <button class="btn-close" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="editForm">
+            <input type="hidden" id="editId">
+            <div class="form-group"><label>Nome</label><input type="text" id="editNome" required></div>
+            <div class="form-group"><label>Telemóvel</label><input type="tel" id="editTelemovel"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="editEmail"></div>
+            <div class="form-group"><label>Data</label><input type="date" id="editData" required></div>
+            <div class="form-group"><label>Horário</label><input type="time" id="editHorario" required></div>
+            <div class="form-group"><label>Pessoas</label><input type="number" id="editPax" min="1" max="50" required></div>
+            <div class="form-group">
+                <label>Estado</label>
+                <select id="editStatus">
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="Chegou">Chegou</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Cancelada">Cancelada</option>
+                    <option value="Concluída">Concluída</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Observações</label><textarea id="editObs"></textarea></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">💾 Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-        async function loadReservations() {
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'listarReservas',
-                        dataInicio: document.getElementById('filterDateStart').value,
-                        dataFim: document.getElementById('filterDateEnd').value
-                    })
-                });
+<script>
+// ── config.js deve definir URL_SCRIPT ───────────────────────────
+if (typeof URL_SCRIPT === 'undefined' || !URL_SCRIPT) {
+    document.getElementById('tableContent').innerHTML =
+        '<div class="error-box"><strong>⚠️ URL_SCRIPT não definido!</strong><br>' +
+        'Verifica se o config.js está na mesma pasta e tem a variável URL_SCRIPT preenchida.</div>';
+}
 
-                const data = await response.json();
-                console.log('Dados recebidos:', data);
-                
-                // Tentar diferentes formatos de resposta
-                if (Array.isArray(data)) {
-                    allReservations = data;
-                } else if (data.reservations && Array.isArray(data.reservations)) {
-                    allReservations = data.reservations;
-                } else if (data.data && Array.isArray(data.data)) {
-                    allReservations = data.data;
-                } else {
-                    console.error('Formato de dados não reconhecido:', data);
-                    allReservations = [];
-                }
+let allReservations      = [];
+let filteredReservations = [];
+let currentPage          = 1;
+const itemsPerPage       = 25;
 
-                console.log('Total de reservas carregadas:', allReservations.length);
-                applyFilters();
-                updateStats();
-            } catch(error) {
-                console.error("Erro ao carregar reservas:", error);
-                document.getElementById('tableContent').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">⚠️</div>
-                        <p>Erro ao carregar reservas</p>
-                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">${error.message}</p>
-                    </div>
-                `;
-            }
-        }
+// ── Normaliza um objecto de reserva (lida com nomes de campos variáveis)
+function norm(r) {
+    return {
+        id:       r.id        || r.Id        || '',
+        nome:     r.nome      || r.Nome      || '-',
+        telemovel:r.telemovel || r.telefone  || r['Telemóvel'] || '',
+        email:    r.email     || r.Email     || '',
+        data:     r.data      || r.Data      || '-',
+        horario:  r.horario   || r.Horario   || r.hora || '-',
+        pax:      parseInt(r.pax || r.Pax || 0),
+        status:   r.status    || r.Status    || 'Pendente',
+        obs:      r.obs       || r.Obs       || '',
+        origem:   r.origem    || ''
+    };
+}
 
-        function applyFilters() {
-            const status = document.getElementById('filterStatus').value;
-            const search = document.getElementById('filterSearch').value.toLowerCase();
+async function init() {
+    const today    = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDay  = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    document.getElementById('filterDateStart').value = firstDay.toISOString().split('T')[0];
+    document.getElementById('filterDateEnd').value   = lastDay.toISOString().split('T')[0];
+    await loadReservations();
+}
 
-            filteredReservations = allReservations.filter(res => {
-                const matchStatus = !status || res.status === status;
-                const matchSearch = !search || 
-                    res.nome.toLowerCase().includes(search) ||
-                    (res.telefone && res.telefone.includes(search)) ||
-                    (res.email && res.email.toLowerCase().includes(search));
-                
-                return matchStatus && matchSearch;
-            });
-
-            currentPage = 1;
-            renderTable();
-        }
-
-        function clearFilters() {
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('filterSearch').value = '';
-            applyFilters();
-        }
-
-        function renderTable() {
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageData = filteredReservations.slice(start, end);
-
-            console.log('Renderizando página', currentPage, 'com', pageData.length, 'reservas');
-
-            if (pageData.length === 0) {
-                document.getElementById('tableContent').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <p>Nenhuma reserva encontrada</p>
-                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
-                            Total no sistema: ${allReservations.length} | 
-                            Após filtros: ${filteredReservations.length}
-                        </p>
-                    </div>
-                `;
-                document.getElementById('pagination').innerHTML = '';
-                return;
-            }
-
-            let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Hora</th>
-                            <th>Nome</th>
-                            <th>Contacto</th>
-                            <th>Pessoas</th>
-                            <th>Estado</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            pageData.forEach(res => {
-                // Normalizar campos que podem ter nomes diferentes
-                const nome = res.nome || res.Nome || res.name || '-';
-                const data = res.data || res.Data || res.date || '-';
-                const horario = res.horario || res.Horario || res.time || res.hora || '-';
-                const pax = res.pax || res.Pax || res.pessoas || res.Pessoas || '0';
-                const status = res.status || res.Status || res.estado || res.Estado || 'Pendente';
-                const telefone = res.telemovel || res.telefone || res.Telefone || res.phone || '';
-                const email = res.email || res.Email || '';
-                const id = res.id || res.Id || res.rowId || Math.random().toString();
-
-                const statusClass = `status-${status.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '')}`;
-                const contacto = telefone || email || '-';
-                
-                html += `
-                    <tr>
-                        <td>${typeof data === 'string' ? formatDate(data) : data}</td>
-                        <td>${horario}</td>
-                        <td><strong>${nome}</strong></td>
-                        <td>${contacto}</td>
-                        <td>${pax} pax</td>
-                        <td><span class="status-badge ${statusClass}">${status}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-small btn-edit" onclick='editReservation(${JSON.stringify(res).replace(/'/g, "&#39;")})'>✏️</button>
-                                ${status !== 'Concluída' && status !== 'Concluida' ? `<button class="btn-small btn-complete" onclick="completeReservation('${id}')">✓</button>` : ''}
-                                <button class="btn-small btn-delete" onclick="deleteReservation('${id}', '${nome}')">🗑️</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += '</tbody></table>';
-            document.getElementById('tableContent').innerHTML = html;
-
-            renderPagination();
-        }
-
-        function renderPagination() {
-            const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
-            if (totalPages <= 1) {
-                document.getElementById('pagination').innerHTML = '';
-                return;
-            }
-
-            let html = '';
-            
-            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">« Anterior</button>`;
-            
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-                    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                } else if (i === currentPage - 3 || i === currentPage + 3) {
-                    html += '<span>...</span>';
-                }
-            }
-            
-            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Seguinte »</button>`;
-            
-            document.getElementById('pagination').innerHTML = html;
-        }
-
-        function changePage(page) {
-            currentPage = page;
-            renderTable();
-        }
-
-        function updateStats() {
-            const total = allReservations.length;
-            const confirmed = allReservations.filter(r => r.status === 'Confirmada').length;
-            const pending = allReservations.filter(r => r.status === 'Pendente').length;
-            const totalPeople = allReservations.reduce((sum, r) => sum + parseInt(r.pax || 0), 0);
-
-            document.getElementById('statTotal').textContent = total;
-            document.getElementById('statConfirmed').textContent = confirmed;
-            document.getElementById('statPending').textContent = pending;
-            document.getElementById('statPeople').textContent = totalPeople;
-        }
-
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        }
-
-        function editReservation(res) {
-            document.getElementById('editId').value = res.id;
-            document.getElementById('editNome').value = res.nome;
-            document.getElementById('editTelefone').value = res.telefone || '';
-            document.getElementById('editEmail').value = res.email || '';
-            document.getElementById('editData').value = res.data;
-            document.getElementById('editHorario').value = res.horario;
-            document.getElementById('editPax').value = res.pax;
-            document.getElementById('editStatus').value = res.status;
-            document.getElementById('editObs').value = res.obs || '';
-
-            document.getElementById('editModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
-
-        async function completeReservation(id) {
-            if (!confirm('Marcar esta reserva como concluída?')) return;
-
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'atualizarStatusReserva',
-                        id: id,
-                        status: 'Concluída'
-                    })
-                });
-
-                const result = await response.json();
-                console.log('Resultado atualização:', result);
-                
-                if (result.status === 'success' || result.success) {
-                    await loadReservations();
-                } else {
-                    alert('Erro ao atualizar: ' + (result.message || 'Erro desconhecido'));
-                }
-            } catch(error) {
-                console.error("Erro:", error);
-                alert('Erro ao processar pedido: ' + error.message);
-            }
-        }
-
-        async function deleteReservation(id, nome) {
-            if (!confirm(`Tem certeza que deseja cancelar a reserva de ${nome || 'este cliente'}?`)) return;
-
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'cancelarReserva',
-                        id: id
-                    })
-                });
-
-                const result = await response.json();
-                console.log('Resultado cancelamento:', result);
-                
-                if (result.status === 'success' || result.success) {
-                    await loadReservations();
-                } else {
-                    alert('Erro ao cancelar: ' + (result.message || 'Erro desconhecido'));
-                }
-            } catch(error) {
-                console.error("Erro:", error);
-                alert('Erro ao processar pedido: ' + error.message);
-            }
-        }
-
-        async function refreshTable() {
-            await loadReservations();
-        }
-
-        function openNewReservationModal() {
-            window.location.href = 'admin.html';
-        }
-
-        function exportToExcel() {
-            // Implementar exportação para Excel
-            alert('Funcionalidade de exportação em desenvolvimento');
-        }
-
-        // Form submission
-        document.getElementById('editForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const data = {
-                action: 'editarReserva',
-                id: document.getElementById('editId').value,
-                nome: document.getElementById('editNome').value,
-                telemovel: document.getElementById('editTelefone').value,
-                email: document.getElementById('editEmail').value,
-                data: document.getElementById('editData').value,
-                horario: document.getElementById('editHorario').value,
-                pax: document.getElementById('editPax').value,
-                status: document.getElementById('editStatus').value,
-                obs: document.getElementById('editObs').value
-            };
-
-            console.log('Enviando atualização:', data);
-
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-                console.log('Resultado edição:', result);
-                
-                if (result.status === 'success' || result.success) {
-                    closeModal();
-                    await loadReservations();
-                } else {
-                    alert('Erro ao guardar: ' + (result.message || 'Erro desconhecido'));
-                }
-            } catch(error) {
-                console.error("Erro:", error);
-                alert('Erro ao processar pedido: ' + error.message);
-            }
+async function loadReservations() {
+    document.getElementById('tableContent').innerHTML = '<div class="loading">⏳ A carregar reservas da sheet...</div>';
+    try {
+        const response = await fetch(URL_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify({
+                action:     'listarReservas',
+                dataInicio: document.getElementById('filterDateStart').value || null,
+                dataFim:    document.getElementById('filterDateEnd').value   || null
+            })
         });
+        const data = await response.json();
+        console.log('📦 Resposta listarReservas:', data);
 
-        // Initialize
-        init();
-    </script>
+        if (Array.isArray(data)) {
+            allReservations = data;
+        } else if (data && data.status === 'error') {
+            throw new Error(data.message || 'Erro do servidor');
+        } else {
+            allReservations = data.reservas || data.reservations || data.data || [];
+        }
+
+        console.log('✅ Reservas:', allReservations.length);
+        updateStats();
+        applyFilters();
+
+    } catch(error) {
+        console.error('❌', error);
+        document.getElementById('tableContent').innerHTML =
+            `<div class="error-box"><strong>❌ Erro ao carregar reservas</strong><br>${error.message}<br>
+            <small>Abre F12 → Consola para mais detalhes.</small></div>`;
+    }
+}
+
+function applyFilters() {
+    const status = document.getElementById('filterStatus').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase().trim();
+    filteredReservations = allReservations.filter(r => {
+        const res = norm(r);
+        return (!status || res.status === status) &&
+               (!search || res.nome.toLowerCase().includes(search) ||
+                           res.telemovel.includes(search) ||
+                           res.email.toLowerCase().includes(search));
+    });
+    currentPage = 1;
+    renderTable();
+}
+
+function clearFilters() {
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterSearch').value = '';
+    applyFilters();
+}
+
+function renderTable() {
+    const start    = (currentPage - 1) * itemsPerPage;
+    const pageData = filteredReservations.slice(start, start + itemsPerPage);
+
+    if (!filteredReservations.length) {
+        document.getElementById('tableContent').innerHTML =
+            `<div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>Nenhuma reserva encontrada</p>
+                <p style="font-size:.9rem;margin-top:.5rem">
+                    Carregadas: <strong>${allReservations.length}</strong> &nbsp;|&nbsp;
+                    Após filtros: <strong>${filteredReservations.length}</strong>
+                </p>
+            </div>`;
+        document.getElementById('pagination').innerHTML = '';
+        return;
+    }
+
+    let html = `<table>
+        <thead><tr>
+            <th>Data</th><th>Hora</th><th>Nome</th>
+            <th>Telemóvel</th><th>Pax</th><th>Estado</th><th>Obs</th><th>Ações</th>
+        </tr></thead><tbody>`;
+
+    pageData.forEach(raw => {
+        const res = norm(raw);
+        const cssStatus = res.status.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '');
+        const dataFmt = (res.data && res.data !== '-')
+            ? new Date(res.data).toLocaleDateString('pt-PT', {day:'2-digit',month:'2-digit',year:'numeric'})
+            : '-';
+
+        // Serializa res limpo para evitar problemas com apóstrofos
+        const resJson = JSON.stringify(res).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+        html += `<tr>
+            <td>${dataFmt}</td>
+            <td>${res.horario}</td>
+            <td><strong>${res.nome}</strong></td>
+            <td>${res.telemovel ? `<a href="tel:${res.telemovel}">${res.telemovel}</a>` : '-'}</td>
+            <td>${res.pax} pax</td>
+            <td><span class="status-badge status-${cssStatus}">${res.status}</span></td>
+            <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                title="${res.obs}">${res.obs}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-small btn-edit"
+                        onclick='openEdit(${JSON.stringify(res)})'>✏️ Editar</button>
+                    ${res.status !== 'Chegou' && res.status !== 'Cancelada'
+                        ? `<button class="btn-small btn-chegou"
+                              onclick="updateStatus('${res.id}','Chegou')">✅ Chegou</button>`
+                        : ''}
+                    ${res.status !== 'Cancelada'
+                        ? `<button class="btn-small btn-delete"
+                              onclick="cancelarReserva('${res.id}','${res.nome.replace(/'/g, "\\'")}')">🗑️ Cancelar</button>`
+                        : ''}
+                </div>
+            </td>
+        </tr>`;
+    });
+
+    html += '</tbody></table>';
+    document.getElementById('tableContent').innerHTML = html;
+    renderPagination();
+}
+
+function renderPagination() {
+    const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
+    if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+    let html = `<button ${currentPage===1?'disabled':''} onclick="changePage(${currentPage-1})">« Anterior</button>`;
+    for (let i = 1; i <= totalPages; i++) {
+        if (i===1 || i===totalPages || (i>=currentPage-2 && i<=currentPage+2))
+            html += `<button class="${i===currentPage?'active':''}" onclick="changePage(${i})">${i}</button>`;
+        else if (i===currentPage-3 || i===currentPage+3)
+            html += '<span style="padding:.5rem">…</span>';
+    }
+    html += `<button ${currentPage===totalPages?'disabled':''} onclick="changePage(${currentPage+1})">Seguinte »</button>`;
+    document.getElementById('pagination').innerHTML = html;
+}
+
+function changePage(p) { currentPage = p; renderTable(); window.scrollTo(0,0); }
+
+function updateStats() {
+    document.getElementById('statTotal').textContent     = allReservations.length;
+    document.getElementById('statConfirmed').textContent = allReservations.filter(r => norm(r).status === 'Confirmada').length;
+    document.getElementById('statCancelled').textContent = allReservations.filter(r => norm(r).status === 'Cancelada').length;
+    document.getElementById('statPeople').textContent    = allReservations.reduce((s,r) => s + norm(r).pax, 0);
+}
+
+function openEdit(res) {
+    document.getElementById('editId').value        = res.id;
+    document.getElementById('editNome').value      = res.nome;
+    document.getElementById('editTelemovel').value = res.telemovel;   // ← telemovel correto
+    document.getElementById('editEmail').value     = res.email;
+    document.getElementById('editData').value      = res.data;
+    document.getElementById('editHorario').value   = res.horario;
+    document.getElementById('editPax').value       = res.pax;
+    document.getElementById('editStatus').value    = res.status;
+    document.getElementById('editObs').value       = res.obs;
+    document.getElementById('editModal').classList.add('active');
+}
+
+function closeModal() { document.getElementById('editModal').classList.remove('active'); }
+
+document.getElementById('editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+        action:    'editarReserva',
+        id:        document.getElementById('editId').value,
+        nome:      document.getElementById('editNome').value,
+        telemovel: document.getElementById('editTelemovel').value,   // ← telemovel correto
+        email:     document.getElementById('editEmail').value,
+        data:      document.getElementById('editData').value,
+        horario:   document.getElementById('editHorario').value,
+        pax:       document.getElementById('editPax').value,
+        status:    document.getElementById('editStatus').value,
+        obs:       document.getElementById('editObs').value
+    };
+    try {
+        const r = await fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify(payload) });
+        const result = await r.json();
+        if (result.status === 'success' || result.success) { closeModal(); await loadReservations(); }
+        else alert('Erro ao guardar: ' + (result.message || JSON.stringify(result)));
+    } catch(e) { alert('Erro: ' + e.message); }
+});
+
+async function updateStatus(id, novoStatus) {
+    if (!confirm(`Marcar como "${novoStatus}"?`)) return;
+    try {
+        const r = await fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify({ action:'atualizarStatusReserva', id, status: novoStatus }) });
+        const result = await r.json();
+        if (result.status === 'success' || result.success) await loadReservations();
+        else alert('Erro: ' + (result.message || JSON.stringify(result)));
+    } catch(e) { alert('Erro: ' + e.message); }
+}
+
+async function cancelarReserva(id, nome) {
+    if (!confirm(`Cancelar a reserva de ${nome}?`)) return;
+    try {
+        const r = await fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify({ action:'cancelarReserva', id }) });
+        const result = await r.json();
+        if (result.status === 'success' || result.success) await loadReservations();
+        else alert('Erro: ' + (result.message || JSON.stringify(result)));
+    } catch(e) { alert('Erro: ' + e.message); }
+}
+
+function exportToCSV() {
+    if (!allReservations.length) { alert('Sem dados para exportar.'); return; }
+    const headers = ['Data','Hora','Nome','Telemóvel','Email','Pax','Estado','Observações'];
+    const rows = allReservations.map(raw => {
+        const r = norm(raw);
+        return [r.data, r.horario, r.nome, r.telemovel, r.email, r.pax, r.status, r.obs]
+            .map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',');
+    });
+    const csv  = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'reservas_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click(); URL.revokeObjectURL(url);
+}
+
+init();
+</script>
 </body>
 </html>
