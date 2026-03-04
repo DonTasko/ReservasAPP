@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HACCP - Don Tasko</title>
-    
-    <!-- Configuração Centralizada -->
     <script src="config.js"></script>
-    
     <style>
         :root {
             --primary: #2c3e50;
@@ -18,25 +15,14 @@
             --light: #ecf0f1;
             --dark: #34495e;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
+        .container { max-width: 1200px; margin: 0 auto; }
         .header {
             background: white;
             padding: 2rem;
@@ -47,1046 +33,617 @@
             justify-content: space-between;
             align-items: center;
         }
-
-        .header h1 {
-            color: var(--primary);
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
+        .header h1 { color: var(--primary); font-size: 2rem; display: flex; align-items: center; gap: 1rem; }
         .back-btn {
-            background: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
+            background: var(--primary); color: white;
+            padding: 12px 24px; border-radius: 8px;
+            text-decoration: none; font-weight: 500; transition: all 0.3s;
         }
-
-        .back-btn:hover {
-            background: var(--dark);
-            transform: translateY(-2px);
-        }
-
+        .back-btn:hover { background: var(--dark); transform: translateY(-2px); }
         .tabs {
-            background: white;
-            padding: 1rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
+            background: white; padding: 1rem; border-radius: 15px;
+            margin-bottom: 2rem; display: flex; gap: 1rem;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
         .tab-btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            background: var(--light);
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
+            flex: 1; padding: 1rem; border: none;
+            background: var(--light); border-radius: 10px;
+            font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s;
         }
-
-        .tab-btn.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: #d5dbdb;
-        }
-
+        .tab-btn.active { background: var(--accent); color: white; }
+        .tab-btn:hover:not(.active) { background: #d5dbdb; }
         .content-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: white; padding: 2rem;
+            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark); }
         .form-group input,
         .form-group select,
         .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
+            width: 100%; padding: 12px; border: 2px solid var(--light);
+            border-radius: 8px; font-size: 1rem; transition: border 0.3s;
         }
-
         .form-group input:focus,
         .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #229954;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--accent);
-            color: white;
-        }
-
-        .registos-list {
-            margin-top: 2rem;
-        }
-
+        .form-group textarea:focus { outline: none; border-color: var(--accent); }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .btn { padding: 14px 28px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: var(--success); color: white; }
+        .btn-primary:hover { background: #229954; transform: translateY(-2px); }
+        .btn-secondary { background: var(--accent); color: white; }
+        .btn-secondary:hover { background: #2980b9; }
+        .registos-list { margin-top: 2rem; }
         .registo-item {
-            background: var(--light);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid var(--accent);
+            background: var(--light); padding: 1rem; border-radius: 8px;
+            margin-bottom: 1rem; border-left: 4px solid var(--accent);
         }
+        .registo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .registo-tipo { font-weight: 600; color: var(--primary); }
+        .registo-data { color: #7f8c8d; font-size: 0.9rem; }
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger  { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .hidden { display: none !important; }
+        .loading { text-align: center; padding: 2rem; color: #7f8c8d; }
 
-        .registo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
+        /* Debug banner */
+        #debug-banner {
+            background: #fff3cd; border: 1px solid #ffc107;
+            border-radius: 8px; padding: 12px 16px;
+            margin-bottom: 1rem; font-size: 13px; display: none;
         }
-
-        .registo-tipo {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .registo-data {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #7f8c8d;
-        }
+        #debug-banner strong { color: #856404; }
 
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .tabs {
-                flex-direction: column;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            .header { flex-direction: column; gap: 1rem; text-align: center; }
+            .tabs { flex-direction: column; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🧊 HACCP - Don Tasko</h1>
-            <a href="admin.html" class="back-btn">← Voltar</a>
-        </div>
+<div class="container">
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('temperaturas')">🌡️ Temperaturas</button>
-            <button class="tab-btn" onclick="switchTab('limpeza')">🧼 Limpeza</button>
-            <button class="tab-btn" onclick="switchTab('ocorrencias')">⚠️ Ocorrências</button>
-            <button class="tab-btn" onclick="switchTab('registos')">📋 Registos</button>
-        </div>
+    <div class="header">
+        <h1>🧊 HACCP - Don Tasko</h1>
+        <a href="admin.html" class="back-btn">← Voltar</a>
+    </div>
 
-        <!-- Alert Messages -->
-        <div id="alertContainer"></div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('temperaturas', this)">🌡️ Temperaturas</button>
+        <button class="tab-btn" onclick="switchTab('limpeza', this)">🧼 Limpeza</button>
+        <button class="tab-btn" onclick="switchTab('ocorrencias', this)">⚠️ Ocorrências</button>
+        <button class="tab-btn" onclick="switchTab('registos', this)">📋 Registos</button>
+    </div>
 
-        <!-- Temperaturas Tab -->
-        <div id="tab-temperaturas" class="content-card">
-            <h2 style="margin-bottom: 1.5rem;">Controlo de Temperaturas</h2>
-            <form id="formTemperaturas" onsubmit="registarTemperatura(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Data *</label>
-                        <input type="date" id="tempData" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Hora *</label>
-                        <input type="time" id="tempHora" required>
-                    </div>
-                </div>
+    <div id="alertContainer"></div>
+    <div id="debug-banner"></div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Equipamento *</label>
-                        <select id="tempEquipamento" required>
-                            <option value="">A carregar...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Temperatura (°C) *</label>
-                        <input type="number" id="tempTemperatura" step="0.1" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Turno *</label>
-                        <select id="tempTurno" required>
-                            <option value="">A carregar...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Funcionário *</label>
-                        <input type="text" id="tempFuncionario" required placeholder="Nome do funcionário">
-                    </div>
-                </div>
-
+    <!-- TEMPERATURAS -->
+    <div id="tab-temperaturas" class="content-card">
+        <h2 style="margin-bottom:1.5rem">Controlo de Temperaturas</h2>
+        <form id="formTemperaturas" onsubmit="registarTemperatura(event)">
+            <div class="form-row">
                 <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="tempObservacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
+                    <label>Data *</label>
+                    <input type="date" id="tempData" required>
                 </div>
-
-                <button type="submit" class="btn btn-primary">✅ Registar Temperatura</button>
-            </form>
-        </div>
-
-        <!-- Limpeza Tab -->
-        <div id="tab-limpeza" class="content-card hidden">
-            <h2 style="margin-bottom: 1.5rem;">Registo de Limpeza</h2>
-            <form id="formLimpeza" onsubmit="registarLimpeza(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Data *</label>
-                        <input type="date" id="limpData" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Hora *</label>
-                        <input type="time" id="limpHora" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Área *</label>
-                        <select id="limpArea" required>
-                            <option value="">A carregar...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Tipo de Limpeza *</label>
-                        <select id="limpTipo" required>
-                            <option value="">Selecione...</option>
-                            <option value="Limpeza Diária">Limpeza Diária</option>
-                            <option value="Limpeza Profunda">Limpeza Profunda</option>
-                            <option value="Desinfeção">Desinfeção</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Produtos Utilizados *</label>
-                        <input type="text" id="limpProdutos" required placeholder="Ex: Desengordurante, Detergente">
-                    </div>
-                    <div class="form-group">
-                        <label>Funcionário *</label>
-                        <input type="text" id="limpFuncionario" required placeholder="Nome do funcionário">
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="limpObservacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">✅ Registar Limpeza</button>
-            </form>
-        </div>
-
-        <!-- Ocorrências Tab -->
-        <div id="tab-ocorrencias" class="content-card hidden">
-            <h2 style="margin-bottom: 1.5rem;">Registo de Ocorrências</h2>
-            <form id="formOcorrencia" onsubmit="registarOcorrencia(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Data *</label>
-                        <input type="date" id="ocorData" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Hora *</label>
-                        <input type="time" id="ocorHora" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Tipo de Ocorrência *</label>
-                        <select id="ocorTipo" required>
-                            <option value="">Selecione...</option>
-                            <option value="Temperatura Fora do Normal">Temperatura Fora do Normal</option>
-                            <option value="Equipamento Avariado">Equipamento Avariado</option>
-                            <option value="Produto Não Conforme">Produto Não Conforme</option>
-                            <option value="Contaminação">Contaminação</option>
-                            <option value="Outro">Outro</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Funcionário *</label>
-                        <input type="text" id="ocorFuncionario" required placeholder="Nome do funcionário">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Descrição da Ocorrência *</label>
-                    <textarea id="ocorDescricao" rows="3" required placeholder="Descreva o que aconteceu"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Ação Imediata Tomada *</label>
-                    <textarea id="ocorAcao" rows="3" required placeholder="Que medidas foram tomadas?"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="ocorObservacoes" rows="2" placeholder="Observações adicionais (opcional)"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">✅ Registar Ocorrência</button>
-            </form>
-        </div>
-
-        <!-- Registos Tab -->
-        <div id="tab-registos" class="content-card hidden">
-            <h2 style="margin-bottom: 1.5rem;">Histórico de Registos HACCP</h2>
-            
-            <!-- Filtros -->
-            <div style="background: var(--light); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
-                <h3 style="margin-bottom: 1rem;">🔍 Filtros</h3>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Tipo de Registo</label>
-                        <select id="filtroTipo">
-                            <option value="">Todos</option>
-                            <option value="temperaturas">🌡️ Temperaturas</option>
-                            <option value="limpeza">🧼 Limpeza</option>
-                            <option value="ocorrencia">⚠️ Ocorrências</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Data Início</label>
-                        <input type="date" id="filtroDataInicio">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Data Fim</label>
-                        <input type="date" id="filtroDataFim">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Funcionário</label>
-                        <select id="filtroFuncionario">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button onclick="aplicarFiltros()" class="btn btn-primary">🔍 Aplicar Filtros</button>
-                    <button onclick="limparFiltros()" class="btn btn-secondary">🔄 Limpar</button>
+                    <label>Hora *</label>
+                    <input type="time" id="tempHora" required>
                 </div>
             </div>
-
-            <!-- Botões de Ação -->
-            <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-                <button onclick="carregarRegistos()" class="btn btn-secondary">🔄 Atualizar</button>
-                <button onclick="exportarPDF()" class="btn btn-secondary">📄 Exportar PDF</button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Equipamento *</label>
+                    <select id="tempEquipamento" required>
+                        <option value="">A carregar...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Temperatura (°C) *</label>
+                    <input type="number" id="tempTemperatura" step="0.1" required>
+                </div>
             </div>
-
-            <!-- Estatísticas Rápidas -->
-            <div id="statsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                <!-- Stats will be inserted here -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Turno *</label>
+                    <select id="tempTurno" required>
+                        <option value="">A carregar...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Funcionário *</label>
+                    <input type="text" id="tempFuncionario" required placeholder="Nome do funcionário">
+                </div>
             </div>
-
-            <!-- Lista de Registos -->
-            <div id="registosList" class="registos-list">
-                <div class="loading">Carregando registos...</div>
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="tempObservacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
             </div>
+            <button type="submit" class="btn btn-primary">✅ Registar Temperatura</button>
+        </form>
+    </div>
+
+    <!-- LIMPEZA -->
+    <div id="tab-limpeza" class="content-card hidden">
+        <h2 style="margin-bottom:1.5rem">Registo de Limpeza</h2>
+        <form id="formLimpeza" onsubmit="registarLimpeza(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data *</label>
+                    <input type="date" id="limpData" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora *</label>
+                    <input type="time" id="limpHora" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Área *</label>
+                    <select id="limpArea" required>
+                        <option value="">A carregar...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Limpeza *</label>
+                    <select id="limpTipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="Limpeza Diária">Limpeza Diária</option>
+                        <option value="Limpeza Profunda">Limpeza Profunda</option>
+                        <option value="Desinfeção">Desinfeção</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Produtos Utilizados *</label>
+                    <input type="text" id="limpProdutos" required placeholder="Ex: Desengordurante, Detergente">
+                </div>
+                <div class="form-group">
+                    <label>Funcionário *</label>
+                    <input type="text" id="limpFuncionario" required placeholder="Nome do funcionário">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="limpObservacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">✅ Registar Limpeza</button>
+        </form>
+    </div>
+
+    <!-- OCORRÊNCIAS -->
+    <div id="tab-ocorrencias" class="content-card hidden">
+        <h2 style="margin-bottom:1.5rem">Registo de Ocorrências</h2>
+        <form id="formOcorrencia" onsubmit="registarOcorrencia(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data *</label>
+                    <input type="date" id="ocorData" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora *</label>
+                    <input type="time" id="ocorHora" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tipo de Ocorrência *</label>
+                    <select id="ocorTipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="Temperatura Fora do Normal">Temperatura Fora do Normal</option>
+                        <option value="Equipamento Avariado">Equipamento Avariado</option>
+                        <option value="Produto Não Conforme">Produto Não Conforme</option>
+                        <option value="Contaminação">Contaminação</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Funcionário *</label>
+                    <input type="text" id="ocorFuncionario" required placeholder="Nome do funcionário">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Descrição da Ocorrência *</label>
+                <textarea id="ocorDescricao" rows="3" required placeholder="Descreva o que aconteceu"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Ação Imediata Tomada *</label>
+                <textarea id="ocorAcao" rows="3" required placeholder="Que medidas foram tomadas?"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="ocorObservacoes" rows="2" placeholder="Observações adicionais (opcional)"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">✅ Registar Ocorrência</button>
+        </form>
+    </div>
+
+    <!-- REGISTOS -->
+    <div id="tab-registos" class="content-card hidden">
+        <h2 style="margin-bottom:1.5rem">Histórico de Registos HACCP</h2>
+        <div style="background:var(--light);padding:1.5rem;border-radius:10px;margin-bottom:2rem">
+            <h3 style="margin-bottom:1rem">🔍 Filtros</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tipo de Registo</label>
+                    <select id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="temperaturas">🌡️ Temperaturas</option>
+                        <option value="limpeza">🧼 Limpeza</option>
+                        <option value="ocorrencia">⚠️ Ocorrências</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data Início</label>
+                    <input type="date" id="filtroDataInicio">
+                </div>
+                <div class="form-group">
+                    <label>Data Fim</label>
+                    <input type="date" id="filtroDataFim">
+                </div>
+                <div class="form-group">
+                    <label>Funcionário</label>
+                    <select id="filtroFuncionario"><option value="">Todos</option></select>
+                </div>
+            </div>
+            <div style="display:flex;gap:1rem;margin-top:1rem">
+                <button onclick="aplicarFiltros()" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                <button onclick="limparFiltros()" class="btn btn-secondary">🔄 Limpar</button>
+            </div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-bottom:2rem">
+            <button onclick="carregarRegistos()" class="btn btn-secondary">🔄 Atualizar</button>
+            <button onclick="exportarPDF()" class="btn btn-secondary">📄 Exportar PDF</button>
+        </div>
+        <div id="statsContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem"></div>
+        <div id="registosList" class="registos-list">
+            <div class="loading">Carregando registos...</div>
         </div>
     </div>
 
-    <script>
-        // URL_SCRIPT vem do config.js
+</div>
 
-        let currentTab = 'temperaturas';
+<script>
+// ── Verifica se URL_SCRIPT está disponível ──────────────────────
+if (typeof URL_SCRIPT === 'undefined' || !URL_SCRIPT) {
+    document.getElementById('debug-banner').style.display = 'block';
+    document.getElementById('debug-banner').innerHTML =
+        '<strong>⚠️ Erro de configuração:</strong> URL_SCRIPT não está definido no config.js. ' +
+        'Certifica-te que o ficheiro config.js está na mesma pasta e tem a variável URL_SCRIPT preenchida.';
+}
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            setDefaultDates();
-            carregarConfiguracoesDinamicas();
+let currentTab = 'temperaturas';
+window.todosRegistos = [];
+
+// ── Fallbacks para quando a sheet não tem a config HACCP ────────
+const FALLBACKS = {
+    EQUIPAMENTO: ['Frigorífico 1','Frigorífico 2','Arca Congeladora','Vitrina Frios','Câmara Fria'],
+    AREA_LIMPEZA: ['Cozinha','Sala','Casas de Banho','Bar','Zona de Lavagem','Exterior'],
+    TURNO:        ['Manhã','Tarde','Noite'],
+    FUNCIONARIO:  []
+};
+
+function preencherSelect(selectId, items, placeholder = 'Selecione...') {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = opt.textContent = item;
+        select.appendChild(opt);
+    });
+}
+
+function preencherDatalist(items) {
+    let dl = document.getElementById('funcionariosList');
+    if (!dl) {
+        dl = document.createElement('datalist');
+        dl.id = 'funcionariosList';
+        document.body.appendChild(dl);
+    }
+    dl.innerHTML = items.map(i => `<option value="${i}">`).join('');
+    ['tempFuncionario','limpFuncionario','ocorFuncionario'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.setAttribute('list','funcionariosList'); el.setAttribute('autocomplete','off'); }
+    });
+}
+
+// ── Carrega config da sheet, com fallback se falhar ─────────────
+async function carregarConfig(tipo, selectId) {
+    try {
+        const r = await fetch(URL_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'getConfigHACCP', tipo })
         });
+        const data = await r.json();
 
-        function setDefaultDates() {
-            const today = new Date().toISOString().split('T')[0];
-            const now = new Date().toTimeString().slice(0, 5);
-            
-            document.getElementById('tempData').value = today;
-            document.getElementById('tempHora').value = now;
-            document.getElementById('limpData').value = today;
-            document.getElementById('limpHora').value = now;
-            document.getElementById('ocorData').value = today;
-            document.getElementById('ocorHora').value = now;
+        // Aceita tanto {status:'success', items:[...]} como {items:[...]} como array direto
+        const items =
+            (data.status === 'success' && Array.isArray(data.items) && data.items.length > 0) ? data.items :
+            (Array.isArray(data.items) && data.items.length > 0) ? data.items :
+            (Array.isArray(data) && data.length > 0) ? data :
+            null;
+
+        if (items) {
+            if (tipo === 'FUNCIONARIO') { preencherDatalist(items); }
+            else { preencherSelect(selectId, items); }
+            console.log(`✅ ${tipo} carregado (${items.length} itens)`);
+            return true;
         }
 
-        // ========== CARREGAR CONFIGURAÇÕES DINÂMICAS ==========
-        async function carregarConfiguracoesDinamicas() {
-            await Promise.all([
-                carregarEquipamentos(),
-                carregarAreas(),
-                carregarTurnos(),
-                carregarFuncionarios()
-            ]);
-            console.log('✅ Todas as configurações HACCP carregadas');
-        }
+        // Resposta veio mas sem itens — usa fallback
+        console.warn(`⚠️ ${tipo}: resposta sem itens, a usar fallback`);
+        throw new Error('Sem itens na resposta');
 
-        async function carregarEquipamentos() {
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'getConfigHACCP',
-                        tipo: 'EQUIPAMENTO'
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success' && result.items && result.items.length > 0) {
-                    const select = document.getElementById('tempEquipamento');
-                    select.innerHTML = '<option value="">Selecione...</option>';
-                    
-                    result.items.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item;
-                        option.textContent = item;
-                        select.appendChild(option);
-                    });
-                    
-                    console.log('✅ Equipamentos carregados:', result.items.length);
-                }
-            } catch (error) {
-                console.error('❌ Erro ao carregar equipamentos:', error);
-            }
-        }
+    } catch(e) {
+        console.warn(`❌ ${tipo} falhou (${e.message}), a usar valores predefinidos`);
+        const fallback = FALLBACKS[tipo] || [];
+        if (tipo === 'FUNCIONARIO') { preencherDatalist(fallback); }
+        else if (selectId) { preencherSelect(selectId, fallback); }
+        return false;
+    }
+}
 
-        async function carregarAreas() {
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'getConfigHACCP',
-                        tipo: 'AREA_LIMPEZA'
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success' && result.items && result.items.length > 0) {
-                    const select = document.getElementById('limpArea');
-                    select.innerHTML = '<option value="">Selecione...</option>';
-                    
-                    result.items.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item;
-                        option.textContent = item;
-                        select.appendChild(option);
-                    });
-                    
-                    console.log('✅ Áreas carregadas:', result.items.length);
-                }
-            } catch (error) {
-                console.error('❌ Erro ao carregar áreas:', error);
-            }
-        }
+async function carregarConfiguracoesDinamicas() {
+    const results = await Promise.allSettled([
+        carregarConfig('EQUIPAMENTO', 'tempEquipamento'),
+        carregarConfig('AREA_LIMPEZA', 'limpArea'),
+        carregarConfig('TURNO', 'tempTurno'),
+        carregarConfig('FUNCIONARIO', null),
+    ]);
 
-        async function carregarTurnos() {
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'getConfigHACCP',
-                        tipo: 'TURNO'
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success' && result.items && result.items.length > 0) {
-                    // Aplicar em todos os selects de turno
-                    const selectIds = ['tempTurno'];
-                    
-                    selectIds.forEach(id => {
-                        const select = document.getElementById(id);
-                        if (select) {
-                            select.innerHTML = '<option value="">Selecione...</option>';
-                            
-                            result.items.forEach(item => {
-                                const option = document.createElement('option');
-                                option.value = item;
-                                option.textContent = item;
-                                select.appendChild(option);
-                            });
-                        }
-                    });
-                    
-                    console.log('✅ Turnos carregados:', result.items.length);
-                }
-            } catch (error) {
-                console.error('❌ Erro ao carregar turnos:', error);
-            }
-        }
+    const falhou = results.filter(r => r.value === false).length;
+    if (falhou > 0) {
+        const banner = document.getElementById('debug-banner');
+        banner.style.display = 'block';
+        banner.innerHTML = `<strong>ℹ️ Aviso:</strong> ${falhou} configuração(ões) HACCP não encontrada(s) na sheet. 
+            A usar valores predefinidos. Para personalizar, adiciona uma aba <strong>ConfigHACCP</strong> 
+            na tua Google Sheet com colunas <em>tipo</em> e <em>valor</em>.`;
+    }
+}
 
-        async function carregarFuncionarios() {
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'getConfigHACCP',
-                        tipo: 'FUNCIONARIO'
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success' && result.items && result.items.length > 0) {
-                    // Aplicar em todos os inputs de funcionário - converter para datalist
-                    const inputIds = ['tempFuncionario', 'limpFuncionario', 'ocorFuncionario'];
-                    
-                    // Criar datalist
-                    let datalistHTML = '<datalist id="funcionariosList">';
-                    result.items.forEach(item => {
-                        datalistHTML += `<option value="${item}">`;
-                    });
-                    datalistHTML += '</datalist>';
-                    
-                    // Adicionar datalist ao body se não existir
-                    if (!document.getElementById('funcionariosList')) {
-                        document.body.insertAdjacentHTML('beforeend', datalistHTML);
-                    }
-                    
-                    // Associar datalist aos inputs
-                    inputIds.forEach(id => {
-                        const input = document.getElementById(id);
-                        if (input) {
-                            input.setAttribute('list', 'funcionariosList');
-                            input.setAttribute('autocomplete', 'off');
-                        }
-                    });
-                    
-                    console.log('✅ Funcionários carregados:', result.items.length);
-                }
-            } catch (error) {
-                console.error('❌ Erro ao carregar funcionários:', error);
-            }
-        }
+// ── Init ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    const now   = new Date().toTimeString().slice(0,5);
+    ['tempData','limpData','ocorData'].forEach(id => document.getElementById(id).value = today);
+    ['tempHora','limpHora','ocorHora'].forEach(id => document.getElementById(id).value = now);
+    carregarConfiguracoesDinamicas();
+});
 
-        function switchTab(tab) {
-            // Hide all tabs
-            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
-            
-            // Remove active from all buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
-            // Show selected tab
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            event.target.classList.add('active');
-            
-            currentTab = tab;
-            
-            // Load registos if that tab is selected
-            if (tab === 'registos') {
-                carregarRegistos();
-            }
-        }
+// ── Tabs ─────────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+    document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    if (btn) btn.classList.add('active');
+    currentTab = tab;
+    if (tab === 'registos') carregarRegistos();
+}
 
-        function showAlert(message, type = 'success') {
-            const container = document.getElementById('alertContainer');
-            container.innerHTML = `
-                <div class="alert alert-${type}">
-                    ${message}
-                </div>
-            `;
-            
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 5000);
-        }
+function showAlert(msg, type = 'success') {
+    const c = document.getElementById('alertContainer');
+    c.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+    setTimeout(() => c.innerHTML = '', 5000);
+}
 
-        async function registarTemperatura(event) {
-            event.preventDefault();
-            
-            const dados = {
-                tipo: 'temperaturas',
-                data: document.getElementById('tempData').value,
-                hora: document.getElementById('tempHora').value,
-                timestamp: new Date().toISOString(),
-                equipamento: document.getElementById('tempEquipamento').value,
-                temperatura: document.getElementById('tempTemperatura').value,
-                turno: document.getElementById('tempTurno').value,
-                funcionario: document.getElementById('tempFuncionario').value,
-                observacoes: document.getElementById('tempObservacoes').value
-            };
-            
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'registarHACCP',
-                        dados: dados
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showAlert('✅ Temperatura registada com sucesso!', 'success');
-                    document.getElementById('formTemperaturas').reset();
-                    setDefaultDates();
-                } else {
-                    showAlert('❌ Erro: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('❌ Erro ao registar temperatura', 'danger');
-            }
-        }
+// ── POST helper ──────────────────────────────────────────────────
+async function postScript(payload) {
+    const r = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
+    return await r.json();
+}
 
-        async function registarLimpeza(event) {
-            event.preventDefault();
-            
-            const dados = {
-                tipo: 'limpeza',
-                data: document.getElementById('limpData').value,
-                hora: document.getElementById('limpHora').value,
-                timestamp: new Date().toISOString(),
-                area: document.getElementById('limpArea').value,
-                tipo: document.getElementById('limpTipo').value,
-                produtos: document.getElementById('limpProdutos').value,
-                funcionario: document.getElementById('limpFuncionario').value,
-                observacoes: document.getElementById('limpObservacoes').value
-            };
-            
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'registarHACCP',
-                        dados: dados
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showAlert('✅ Limpeza registada com sucesso!', 'success');
-                    document.getElementById('formLimpeza').reset();
-                    setDefaultDates();
-                } else {
-                    showAlert('❌ Erro: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('❌ Erro ao registar limpeza', 'danger');
-            }
+// ── Registar Temperatura ─────────────────────────────────────────
+async function registarTemperatura(event) {
+    event.preventDefault();
+    const dados = {
+        tipo:         'temperaturas',
+        data:          document.getElementById('tempData').value,
+        hora:          document.getElementById('tempHora').value,
+        timestamp:     new Date().toISOString(),
+        equipamento:   document.getElementById('tempEquipamento').value,
+        temperatura:   document.getElementById('tempTemperatura').value,
+        turno:         document.getElementById('tempTurno').value,
+        funcionario:   document.getElementById('tempFuncionario').value,
+        observacoes:   document.getElementById('tempObservacoes').value,
+    };
+    try {
+        const result = await postScript({ action: 'registarHACCP', dados });
+        if (result.status === 'success' || result.success) {
+            showAlert('✅ Temperatura registada com sucesso!', 'success');
+            document.getElementById('formTemperaturas').reset();
+            document.getElementById('tempData').value = new Date().toISOString().split('T')[0];
+            document.getElementById('tempHora').value = new Date().toTimeString().slice(0,5);
+        } else {
+            showAlert('❌ Erro: ' + (result.message || JSON.stringify(result)), 'danger');
         }
+    } catch(e) { showAlert('❌ Erro ao registar: ' + e.message, 'danger'); }
+}
 
-        async function registarOcorrencia(event) {
-            event.preventDefault();
-            
-            const dados = {
-                tipo: 'ocorrencia',
-                data: document.getElementById('ocorData').value,
-                hora: document.getElementById('ocorHora').value,
-                timestamp: new Date().toISOString(),
-                tipo: document.getElementById('ocorTipo').value,
-                funcionario: document.getElementById('ocorFuncionario').value,
-                descricao: document.getElementById('ocorDescricao').value,
-                acao: document.getElementById('ocorAcao').value,
-                observacoes: document.getElementById('ocorObservacoes').value
-            };
-            
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'registarHACCP',
-                        dados: dados
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    showAlert('✅ Ocorrência registada com sucesso!', 'success');
-                    document.getElementById('formOcorrencia').reset();
-                    setDefaultDates();
-                } else {
-                    showAlert('❌ Erro: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('❌ Erro ao registar ocorrência', 'danger');
-            }
+// ── Registar Limpeza ─────────────────────────────────────────────
+async function registarLimpeza(event) {
+    event.preventDefault();
+    const dados = {
+        tipo:        'limpeza',
+        data:         document.getElementById('limpData').value,
+        hora:         document.getElementById('limpHora').value,
+        timestamp:    new Date().toISOString(),
+        area:         document.getElementById('limpArea').value,
+        tipoLimpeza:  document.getElementById('limpTipo').value,
+        produtos:     document.getElementById('limpProdutos').value,
+        funcionario:  document.getElementById('limpFuncionario').value,
+        observacoes:  document.getElementById('limpObservacoes').value,
+    };
+    try {
+        const result = await postScript({ action: 'registarHACCP', dados });
+        if (result.status === 'success' || result.success) {
+            showAlert('✅ Limpeza registada com sucesso!', 'success');
+            document.getElementById('formLimpeza').reset();
+            document.getElementById('limpData').value = new Date().toISOString().split('T')[0];
+            document.getElementById('limpHora').value = new Date().toTimeString().slice(0,5);
+        } else {
+            showAlert('❌ Erro: ' + (result.message || JSON.stringify(result)), 'danger');
         }
+    } catch(e) { showAlert('❌ Erro ao registar: ' + e.message, 'danger'); }
+}
 
-        async function carregarRegistos() {
-            const container = document.getElementById('registosList');
-            container.innerHTML = '<div class="loading">Carregando registos...</div>';
-            
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getDashboardHACCP' })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success' && result.registos) {
-                    if (result.registos.length === 0) {
-                        container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Nenhum registo encontrado</p>';
-                        return;
-                    }
-                    
-                    let html = '';
-                    result.registos.forEach(reg => {
-                        html += `
-                            <div class="registo-item">
-                                <div class="registo-header">
-                                    <span class="registo-tipo">${getTipoIcon(reg.tipo)} ${reg.tipo}</span>
-                                    <span class="registo-data">${reg.data} ${reg.hora}</span>
-                                </div>
-                                <div style="font-size: 0.9rem; color: #555;">
-                                    <strong>Funcionário:</strong> ${reg.funcionario}<br>
-                                    ${getDetalhes(reg)}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Erro ao carregar registos</p>';
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Erro ao carregar registos</p>';
-            }
+// ── Registar Ocorrência ──────────────────────────────────────────
+async function registarOcorrencia(event) {
+    event.preventDefault();
+    const dados = {
+        tipo:         'ocorrencia',
+        data:          document.getElementById('ocorData').value,
+        hora:          document.getElementById('ocorHora').value,
+        timestamp:     new Date().toISOString(),
+        tipoOcorrencia:document.getElementById('ocorTipo').value,
+        funcionario:   document.getElementById('ocorFuncionario').value,
+        descricao:     document.getElementById('ocorDescricao').value,
+        acao:          document.getElementById('ocorAcao').value,
+        observacoes:   document.getElementById('ocorObservacoes').value,
+    };
+    try {
+        const result = await postScript({ action: 'registarHACCP', dados });
+        if (result.status === 'success' || result.success) {
+            showAlert('✅ Ocorrência registada com sucesso!', 'success');
+            document.getElementById('formOcorrencia').reset();
+            document.getElementById('ocorData').value = new Date().toISOString().split('T')[0];
+            document.getElementById('ocorHora').value = new Date().toTimeString().slice(0,5);
+        } else {
+            showAlert('❌ Erro: ' + (result.message || JSON.stringify(result)), 'danger');
         }
+    } catch(e) { showAlert('❌ Erro ao registar: ' + e.message, 'danger'); }
+}
 
-        function getTipoIcon(tipo) {
-            const icons = {
-                'temperaturas': '🌡️',
-                'limpeza': '🧼',
-                'ocorrencia': '⚠️',
-                'checklist': '✅',
-                'oleo': '🍟',
-                'rececao': '📦'
-            };
-            return icons[tipo] || '📋';
-        }
-
-        function getDetalhes(reg) {
-            if (reg.tipo === 'temperaturas') {
-                return `<strong>Equipamento:</strong> ${reg.equipamento || 'N/A'} | <strong>Temperatura:</strong> ${reg.temperatura}°C`;
-            } else if (reg.tipo === 'limpeza') {
-                return `<strong>Área:</strong> ${reg.area || 'N/A'}`;
-            } else if (reg.tipo === 'ocorrencia') {
-                return `<strong>Descrição:</strong> ${reg.descricao || 'N/A'}`;
-            }
-            return reg.observacoes || '';
-        }
-
-        function getDetalhesCompletos(reg) {
-            let html = `<div style="display: grid; gap: 0.5rem;">`;
-            html += `<div><strong>👤 Funcionário:</strong> ${reg.funcionario || 'N/A'}</div>`;
-            
-            if (reg.tipo === 'temperaturas') {
-                html += `<div><strong>🌡️ Equipamento:</strong> ${reg.equipamento || 'N/A'}</div>`;
-                html += `<div><strong>📊 Temperatura:</strong> ${reg.temperatura || 'N/A'}°C</div>`;
-                if (reg.observacoes) {
-                    html += `<div><strong>📝 Observações:</strong> ${reg.observacoes}</div>`;
-                }
-            } else if (reg.tipo === 'limpeza') {
-                html += `<div><strong>📍 Área:</strong> ${reg.area || 'N/A'}</div>`;
-                html += `<div><strong>🧼 Tipo:</strong> ${reg.tipo || 'N/A'}</div>`;
-                if (reg.observacoes) {
-                    html += `<div><strong>📝 Observações:</strong> ${reg.observacoes}</div>`;
-                }
-            } else if (reg.tipo === 'ocorrencia') {
-                html += `<div><strong>⚠️ Descrição:</strong> ${reg.descricao || 'N/A'}</div>`;
-                if (reg.observacoes) {
-                    html += `<div><strong>📝 Observações:</strong> ${reg.observacoes}</div>`;
-                }
-            }
-            
-            html += `</div>`;
-            return html;
-        }
-
-        async function carregarRegistos() {
-            const container = document.getElementById('registosList');
-            container.innerHTML = '<div class="loading">Carregando registos...</div>';
-            
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getDashboardHACCP' })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success' && result.registos) {
-                    // Guardar todos os registos globalmente
-                    window.todosRegistos = result.registos;
-                    
-                    // Carregar funcionários no filtro
-                    carregarFuncionariosFiltro(result.registos);
-                    
-                    // Aplicar filtros (se houver)
-                    aplicarFiltros();
-                    
-                } else {
-                    container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Erro ao carregar registos</p>';
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                container.innerHTML = '<p style="text-align: center; color: #e74c3c;">Erro ao carregar registos</p>';
-            }
-        }
-
-        function carregarFuncionariosFiltro(registos) {
-            const select = document.getElementById('filtroFuncionario');
-            const funcionarios = [...new Set(registos.map(r => r.funcionario).filter(Boolean))].sort();
-            
-            select.innerHTML = '<option value="">Todos</option>';
-            funcionarios.forEach(func => {
-                const option = document.createElement('option');
-                option.value = func;
-                option.textContent = func;
-                select.appendChild(option);
-            });
-        }
-
-        function aplicarFiltros() {
-            if (!window.todosRegistos) {
-                carregarRegistos();
-                return;
-            }
-            
-            const container = document.getElementById('registosList');
-            const statsContainer = document.getElementById('statsContainer');
-            
-            // Obter valores dos filtros
-            const filtroTipo = document.getElementById('filtroTipo').value;
-            const filtroDataInicio = document.getElementById('filtroDataInicio').value;
-            const filtroDataFim = document.getElementById('filtroDataFim').value;
-            const filtroFunc = document.getElementById('filtroFuncionario').value;
-            
-            // Filtrar registos
-            let registosFiltrados = window.todosRegistos.filter(reg => {
-                // Filtro por tipo
-                if (filtroTipo && reg.tipo !== filtroTipo) return false;
-                
-                // Filtro por data início
-                if (filtroDataInicio && reg.data < filtroDataInicio) return false;
-                
-                // Filtro por data fim
-                if (filtroDataFim && reg.data > filtroDataFim) return false;
-                
-                // Filtro por funcionário
-                if (filtroFunc && reg.funcionario !== filtroFunc) return false;
-                
-                return true;
-            });
-            
-            // Mostrar estatísticas
-            mostrarEstatisticas(registosFiltrados);
-            
-            // Mostrar registos
-            if (registosFiltrados.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Nenhum registo encontrado com os filtros aplicados</p>';
-                return;
-            }
-            
-            let html = '';
-            registosFiltrados.forEach(reg => {
-                html += `
-                    <div class="registo-item">
-                        <div class="registo-header">
-                            <span class="registo-tipo">${getTipoIcon(reg.tipo)} ${formatarTipoNome(reg.tipo)}</span>
-                            <span class="registo-data">${formatarData(reg.data)} às ${reg.hora}</span>
-                        </div>
-                        <div style="font-size: 0.9rem; color: #555; margin-top: 0.5rem;">
-                            ${getDetalhesCompletos(reg)}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function mostrarEstatisticas(registos) {
-            const container = document.getElementById('statsContainer');
-            
-            if (registos.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-            
-            // Contar por tipo
-            const porTipo = {};
-            registos.forEach(reg => {
-                porTipo[reg.tipo] = (porTipo[reg.tipo] || 0) + 1;
-            });
-            
-            let html = `
-                <div style="background: var(--light); padding: 1rem; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">${registos.length}</div>
-                    <div style="font-size: 0.9rem; color: #555;">Total de Registos</div>
-                </div>
-            `;
-            
-            // Stats por tipo
-            Object.keys(porTipo).forEach(tipo => {
-                html += `
-                    <div style="background: var(--light); padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--accent);">${porTipo[tipo]}</div>
-                        <div style="font-size: 0.9rem; color: #555;">${getTipoIcon(tipo)} ${formatarTipoNome(tipo)}</div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function limparFiltros() {
-            document.getElementById('filtroTipo').value = '';
-            document.getElementById('filtroDataInicio').value = '';
-            document.getElementById('filtroDataFim').value = '';
-            document.getElementById('filtroFuncionario').value = '';
+// ── Carregar Registos ────────────────────────────────────────────
+async function carregarRegistos() {
+    document.getElementById('registosList').innerHTML = '<div class="loading">⏳ Carregando registos...</div>';
+    try {
+        const result = await postScript({ action: 'getDashboardHACCP' });
+        if ((result.status === 'success' || result.success) && result.registos) {
+            window.todosRegistos = result.registos;
+            carregarFuncionariosFiltro(result.registos);
             aplicarFiltros();
+        } else {
+            document.getElementById('registosList').innerHTML =
+                `<p style="text-align:center;color:#e74c3c">
+                    Erro ao carregar registos: ${result.message || JSON.stringify(result)}
+                </p>`;
         }
+    } catch(e) {
+        document.getElementById('registosList').innerHTML =
+            `<p style="text-align:center;color:#e74c3c">Erro: ${e.message}</p>`;
+    }
+}
 
-        function formatarTipoNome(tipo) {
-            const nomes = {
-                'temperaturas': 'Temperatura',
-                'limpeza': 'Limpeza',
-                'ocorrencia': 'Ocorrência',
-                'checklist': 'Checklist',
-                'oleo': 'Óleo',
-                'rececao': 'Receção'
-            };
-            return nomes[tipo] || tipo;
-        }
+function carregarFuncionariosFiltro(registos) {
+    const sel = document.getElementById('filtroFuncionario');
+    const funcs = [...new Set(registos.map(r => r.funcionario).filter(Boolean))].sort();
+    sel.innerHTML = '<option value="">Todos</option>';
+    funcs.forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; sel.appendChild(o); });
+}
 
-        function formatarData(data) {
-            if (!data) return 'N/A';
-            const partes = data.split('-');
-            if (partes.length === 3) {
-                return `${partes[2]}/${partes[1]}/${partes[0]}`;
-            }
-            return data;
-        }
+function aplicarFiltros() {
+    if (!window.todosRegistos || !window.todosRegistos.length) { carregarRegistos(); return; }
+    const tipo   = document.getElementById('filtroTipo').value;
+    const dIni   = document.getElementById('filtroDataInicio').value;
+    const dFim   = document.getElementById('filtroDataFim').value;
+    const func   = document.getElementById('filtroFuncionario').value;
+    const filtrados = window.todosRegistos.filter(r =>
+        (!tipo || r.tipo === tipo) &&
+        (!dIni || r.data >= dIni) &&
+        (!dFim || r.data <= dFim) &&
+        (!func || r.funcionario === func)
+    );
+    mostrarEstatisticas(filtrados);
+    const container = document.getElementById('registosList');
+    if (!filtrados.length) {
+        container.innerHTML = '<p style="text-align:center;color:#7f8c8d">Nenhum registo encontrado com os filtros aplicados</p>';
+        return;
+    }
+    container.innerHTML = filtrados.map(reg => `
+        <div class="registo-item">
+            <div class="registo-header">
+                <span class="registo-tipo">${getTipoIcon(reg.tipo)} ${formatarTipoNome(reg.tipo)}</span>
+                <span class="registo-data">${formatarData(reg.data)} às ${reg.hora || ''}</span>
+            </div>
+            <div style="font-size:0.9rem;color:#555;margin-top:0.5rem">${getDetalhesCompletos(reg)}</div>
+        </div>`).join('');
+}
 
-        async function exportarPDF() {
-            showAlert('⏳ A gerar PDF...', 'success');
-            
-            try {
-                const response = await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'gerarPDFHACCP',
-                        filtros: {}
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    window.open(result.pdfUrl, '_blank');
-                    showAlert('✅ PDF gerado! Abrindo em nova janela...', 'success');
-                } else {
-                    showAlert('❌ Erro ao gerar PDF: ' + result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('❌ Erro ao gerar PDF', 'danger');
-            }
+function limparFiltros() {
+    ['filtroTipo','filtroDataInicio','filtroDataFim','filtroFuncionario'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    aplicarFiltros();
+}
+
+function mostrarEstatisticas(registos) {
+    const c = document.getElementById('statsContainer');
+    if (!registos.length) { c.innerHTML = ''; return; }
+    const porTipo = registos.reduce((acc, r) => { acc[r.tipo] = (acc[r.tipo]||0)+1; return acc; }, {});
+    c.innerHTML = `
+        <div style="background:var(--light);padding:1rem;border-radius:8px;text-align:center">
+            <div style="font-size:2rem;font-weight:bold;color:var(--accent)">${registos.length}</div>
+            <div style="font-size:0.9rem;color:#555">Total de Registos</div>
+        </div>
+        ${Object.entries(porTipo).map(([t,n]) => `
+        <div style="background:var(--light);padding:1rem;border-radius:8px;text-align:center">
+            <div style="font-size:2rem;font-weight:bold;color:var(--accent)">${n}</div>
+            <div style="font-size:0.9rem;color:#555">${getTipoIcon(t)} ${formatarTipoNome(t)}</div>
+        </div>`).join('')}`;
+}
+
+function getTipoIcon(tipo) {
+    return {temperaturas:'🌡️',limpeza:'🧼',ocorrencia:'⚠️',checklist:'✅',oleo:'🍟',rececao:'📦'}[tipo] || '📋';
+}
+
+function formatarTipoNome(tipo) {
+    return {temperaturas:'Temperatura',limpeza:'Limpeza',ocorrencia:'Ocorrência',checklist:'Checklist',oleo:'Óleo',rececao:'Receção'}[tipo] || tipo;
+}
+
+function formatarData(data) {
+    if (!data) return 'N/A';
+    const p = data.split('-');
+    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : data;
+}
+
+function getDetalhesCompletos(reg) {
+    let html = `<div style="display:grid;gap:0.4rem">`;
+    html += `<div><strong>👤 Funcionário:</strong> ${reg.funcionario || 'N/A'}</div>`;
+    if (reg.tipo === 'temperaturas') {
+        html += `<div><strong>🌡️ Equipamento:</strong> ${reg.equipamento || 'N/A'}</div>`;
+        html += `<div><strong>📊 Temperatura:</strong> ${reg.temperatura || 'N/A'}°C</div>`;
+        if (reg.turno) html += `<div><strong>⏰ Turno:</strong> ${reg.turno}</div>`;
+    } else if (reg.tipo === 'limpeza') {
+        html += `<div><strong>📍 Área:</strong> ${reg.area || 'N/A'}</div>`;
+        if (reg.tipoLimpeza || reg.tipo) html += `<div><strong>🧼 Tipo:</strong> ${reg.tipoLimpeza || ''}</div>`;
+    } else if (reg.tipo === 'ocorrencia') {
+        html += `<div><strong>⚠️ Descrição:</strong> ${reg.descricao || 'N/A'}</div>`;
+        if (reg.acao) html += `<div><strong>✅ Ação:</strong> ${reg.acao}</div>`;
+    }
+    if (reg.observacoes) html += `<div><strong>📝 Obs:</strong> ${reg.observacoes}</div>`;
+    html += '</div>';
+    return html;
+}
+
+async function exportarPDF() {
+    showAlert('⏳ A gerar PDF...', 'success');
+    try {
+        const result = await postScript({ action: 'gerarPDFHACCP', filtros: {} });
+        if (result.status === 'success' || result.success) {
+            window.open(result.pdfUrl, '_blank');
+            showAlert('✅ PDF gerado!', 'success');
+        } else {
+            showAlert('❌ Erro ao gerar PDF: ' + (result.message || ''), 'danger');
         }
-    </script>
+    } catch(e) { showAlert('❌ Erro: ' + e.message, 'danger'); }
+}
+</script>
 </body>
 </html>
