@@ -376,9 +376,14 @@
                 fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
             ]);
             
-            configsGlobal = configs;
-            diasFechados = fechados;
-            horarios = hors;
+            configsGlobal = configs || {};
+            diasFechados = Array.isArray(fechados) ? fechados : [];
+            horarios = hors || {};
+            
+            console.log('✅ Configurações carregadas:');
+            console.log('Dias fechados:', diasFechados);
+            console.log('Horários:', horarios);
+            console.log('Configs:', configsGlobal);
             
             campoData.min = new Date().toISOString().split('T')[0];
             
@@ -467,27 +472,55 @@
     }
 
     function gerarHoras(h) {
-        selectHorario.innerHTML = '';
-        [h.almoco, h.jantar].forEach(intervalo => {
-            if (!intervalo) return;
-            
-            const parts = intervalo.replace(/–|—/g, '-').split('-');
-            let [hAt, mAt] = parts[0].trim().split(':').map(Number);
-            const [hFim, mFim] = parts[1].trim().split(':').map(Number);
-            
-            while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
-                const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
+        console.log('gerarHoras chamado com:', h);
+        selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
+        
+        if (!h) {
+            console.error('Horários não definidos');
+            return;
+        }
+        
+        // Verificar se tem a estrutura com .slots (nova estrutura)
+        if (h.almoco && h.almoco.slots) {
+            // Nova estrutura: usar os slots diretamente
+            h.almoco.slots.forEach(slot => {
                 const opt = document.createElement('option');
-                opt.value = opt.text = tempo;
+                opt.value = opt.text = slot;
                 selectHorario.appendChild(opt);
-                mAt += 15;
-                if (mAt >= 60) {
-                    mAt = 0;
-                    hAt++;
-                }
+            });
+            
+            if (h.jantar && h.jantar.slots) {
+                h.jantar.slots.forEach(slot => {
+                    const opt = document.createElement('option');
+                    opt.value = opt.text = slot;
+                    selectHorario.appendChild(opt);
+                });
             }
-        });
+        } else {
+            // Estrutura antiga (fallback)
+            [h.almoco, h.jantar].forEach(intervalo => {
+                if (!intervalo || typeof intervalo !== 'string') return;
+                
+                const parts = intervalo.replace(/–|—/g, '-').split('-');
+                let [hAt, mAt] = parts[0].trim().split(':').map(Number);
+                const [hFim, mFim] = parts[1].trim().split(':').map(Number);
+                
+                while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
+                    const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
+                    const opt = document.createElement('option');
+                    opt.value = opt.text = tempo;
+                    selectHorario.appendChild(opt);
+                    mAt += 15;
+                    if (mAt >= 60) {
+                        mAt = 0;
+                        hAt++;
+                    }
+                }
+            });
+        }
+        
         selectHorario.value = '';
+        console.log('✅ Horários gerados:', selectHorario.options.length - 1, 'opções');
     }
 
     async function verificarDisponibilidadeHorario() {
