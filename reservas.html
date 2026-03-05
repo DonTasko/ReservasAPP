@@ -4,279 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservas | Don Tasko</title>
+    <script src="config.js"></script>
     <style>
         :root { 
-            --primary: #2c3e50; 
-            --accent: #27ae60; 
-            --whatsapp: #25D366; 
-            --text: #333;
-            --error: #e74c3c;
-            --warning: #f39c12;
-            --success: #2ecc71;
+            --primary: #2c3e50; --accent: #27ae60; --whatsapp: #25D366; 
+            --text: #333; --error: #e74c3c; --warning: #f39c12; --success: #2ecc71;
         }
-        
         * { box-sizing: border-box; }
-        
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #f9f9f9; 
-            color: var(--text); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px; 
-            margin: 0;
+            font-family: 'Segoe UI', sans-serif; background: #f9f9f9; color: var(--text); 
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px; margin: 0;
         }
-        
         .booking-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            width: 100%; 
-            max-width: 450px; 
+            background: white; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; 
         }
-        
-        .logo { 
-            text-align: center; 
-            margin-bottom: 20px; 
-        }
-        
-        .logo img { 
-            max-width: 150px; 
-            height: auto; 
-            margin-bottom: 10px; 
-            border-radius: 10px; 
-        }
-        
-        .logo h1 { 
-            color: var(--primary); 
-            margin: 0; 
-            font-size: 24px; 
-        }
-        
-        .logo p {
-            margin: 5px 0 0 0;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        label { 
-            display: block; 
-            margin-top: 15px; 
-            font-weight: bold; 
-            font-size: 14px;
-        }
-        
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo img { max-width: 150px; height: auto; margin-bottom: 10px; border-radius: 10px; }
+        .logo h1 { color: var(--primary); margin: 0; font-size: 24px; }
+        .logo p { margin: 5px 0 0 0; color: #666; font-size: 14px; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
         input, select, textarea { 
-            width: 100%; 
-            padding: 12px; 
-            margin-top: 5px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            font-size: 16px;
-            font-family: inherit;
+            width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; 
+            border-radius: 8px; font-size: 16px; font-family: inherit;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        
         input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
+            outline: none; border-color: var(--accent);
             box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
         }
-        
-        input:invalid:not(:placeholder-shown),
-        select:invalid:not([value=""]),
-        textarea:invalid:not(:placeholder-shown) {
-            border-color: var(--error);
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .form-row > div {
-            flex: 1;
-        }
-        
-        .form-row label {
-            margin-top: 0;
-        }
-        
+        .form-row { display: flex; gap: 10px; }
+        .form-row > div { flex: 1; }
+        .form-row label { margin-top: 0; }
         .btn-submit { 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            width: 100%; 
-            padding: 15px; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            font-size: 18px; 
-            margin-top: 25px; 
-            cursor: pointer; 
-            transition: all 0.3s ease;
+            background: var(--accent); color: white; border: none; width: 100%; 
+            padding: 15px; border-radius: 8px; font-weight: bold; font-size: 18px; 
+            margin-top: 25px; cursor: pointer; transition: all 0.3s ease;
         }
-        
         .btn-submit:hover:not(:disabled) { 
-            background: #229954;
-            transform: translateY(-2px);
+            background: #229954; transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
         }
-        
-        .btn-submit:disabled { 
-            background: #95a5a6; 
-            cursor: not-allowed; 
-            opacity: 0.7;
-            transform: none;
-        }
-        
-        .btn-whatsapp { 
-            background: var(--whatsapp);
-        }
-        
-        .btn-whatsapp:hover:not(:disabled) { 
-            background: #1ead12;
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
-        }
-        
+        .btn-submit:disabled { background: #95a5a6; cursor: not-allowed; opacity: 0.7; transform: none; }
+        .btn-whatsapp { background: var(--whatsapp); }
+        .btn-whatsapp:hover:not(:disabled) { background: #1ead12; box-shadow: 0 5px 15px rgba(37,211,102,0.3); }
         #msg-sucesso { 
-            display: none; 
-            background: #e8f5e9; 
-            border-left: 5px solid var(--success);
-            color: #2e7d32; 
-            padding: 15px; 
-            border-radius: 8px; 
-            text-align: center; 
-            margin-bottom: 20px;
-            animation: slideIn 0.3s ease;
+            display: none; background: #e8f5e9; border-left: 5px solid var(--success);
+            color: #2e7d32; padding: 15px; border-radius: 8px; text-align: center; 
+            margin-bottom: 20px; animation: slideIn 0.3s ease;
         }
-        
         #msg-erro { 
-            display: none; 
-            background: #ffebee; 
-            border-left: 5px solid var(--error);
-            color: #c62828; 
-            padding: 15px; 
-            border-radius: 8px; 
-            text-align: center; 
-            margin-bottom: 20px;
-            animation: slideIn 0.3s ease;
+            display: none; background: #ffebee; border-left: 5px solid var(--error);
+            color: #c62828; padding: 15px; border-radius: 8px; text-align: center; 
+            margin-bottom: 20px; animation: slideIn 0.3s ease;
         }
-        
         .aviso-disponibilidade {
-            display: none;
-            background: #fff3cd;
-            border-left: 5px solid var(--warning);
-            color: #856404;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 8px;
-            font-size: 13px;
-            animation: slideIn 0.3s ease;
+            display: none; background: #fff3cd; border-left: 5px solid var(--warning);
+            color: #856404; padding: 12px; border-radius: 6px; margin-top: 8px;
+            font-size: 13px; animation: slideIn 0.3s ease;
         }
-        
-        .aviso-disponibilidade.indisponivel {
-            background: #ffebee;
-            border-left-color: var(--error);
-            color: #c62828;
-        }
-        
+        .aviso-disponibilidade.indisponivel { background: #ffebee; border-left-color: var(--error); color: #c62828; }
         .aviso-fechado {
-            display: none;
-            background: #ffebee;
-            border-left: 5px solid var(--error);
-            color: #c62828;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 8px;
-            font-size: 13px;
-            animation: slideIn 0.3s ease;
+            display: none; background: #ffebee; border-left: 5px solid var(--error);
+            color: #c62828; padding: 12px; border-radius: 6px; margin-top: 8px;
+            font-size: 13px; animation: slideIn 0.3s ease;
         }
-        
-        /* RGPD Consent Box */
-        .consent-box {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f0f8ff;
-            border-left: 4px solid var(--accent);
-            border-radius: 8px;
-        }
-        
-        .checkbox-wrapper {
-            display: flex;
-            align-items: start;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-        
-        .checkbox-wrapper:last-of-type {
-            margin-bottom: 0;
-        }
-        
-        .checkbox-wrapper input[type="checkbox"] {
-            width: auto;
-            margin-top: 3px;
-            cursor: pointer;
-            accent-color: var(--accent);
-        }
-        
-        .checkbox-wrapper label {
-            margin: 0;
-            font-weight: normal;
-            font-size: 13px;
-            line-height: 1.5;
-            cursor: pointer;
-        }
-        
-        .checkbox-wrapper label a {
-            color: var(--accent);
-            text-decoration: underline;
-        }
-        
-        .consent-error {
-            display: none;
-            color: var(--error);
-            font-size: 12px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .carregando {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
+        .consent-box { margin: 20px 0; padding: 15px; background: #f0f8ff; border-left: 4px solid var(--accent); border-radius: 8px; }
+        .checkbox-wrapper { display: flex; align-items: start; gap: 10px; margin-bottom: 12px; }
+        .checkbox-wrapper:last-of-type { margin-bottom: 0; }
+        .checkbox-wrapper input[type="checkbox"] { width: auto; margin-top: 3px; cursor: pointer; accent-color: var(--accent); }
+        .checkbox-wrapper label { margin: 0; font-weight: normal; font-size: 13px; line-height: 1.5; cursor: pointer; }
+        .checkbox-wrapper label a { color: var(--accent); text-decoration: underline; }
+        .consent-error { display: none; color: var(--error); font-size: 12px; margin-top: 10px; font-weight: bold; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .carregando { opacity: 0.6; pointer-events: none; }
         @media (max-width: 600px) {
-            .booking-card { 
-                padding: 20px;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .form-row > div:not(:first-child) label {
-                margin-top: 15px;
-            }
-            
-            .btn-submit {
-                font-size: 16px;
-                padding: 12px;
-            }
+            .booking-card { padding: 20px; }
+            .form-row { flex-direction: column; gap: 0; }
+            .form-row > div:not(:first-child) label { margin-top: 15px; }
+            .btn-submit { font-size: 16px; padding: 12px; }
         }
     </style>
 </head>
@@ -284,24 +91,24 @@
 
 <div class="booking-card">
     <div class="logo">
-        <img src="logo.png" alt="Don Tasko">
+        <img src="logo.png" alt="Don Tasko" onerror="this.style.display='none'">
         <h1>Don Tasko</h1>
         <p>Reserva de Mesa</p>
     </div>
-    
+
     <div id="msg-sucesso">✅ Reserva enviada! Verifica o teu e-mail para confirmação.</div>
     <div id="msg-erro"></div>
-    
+
     <form id="formReserva">
         <label>Nome Completo</label>
         <input type="text" name="nome" placeholder="O teu nome completo" required minlength="2">
-        
+
         <label>Telemóvel</label>
         <input type="tel" name="telemovel" placeholder="Ex: 912345678" required pattern="[0-9\s\-\+]{9,}">
-        
+
         <label>E-mail</label>
         <input type="email" name="email" placeholder="O teu e-mail" required>
-        
+
         <div class="form-row">
             <div>
                 <label>Data</label>
@@ -313,352 +120,294 @@
                 <input type="number" name="pax" id="numPax" value="2" min="1" max="20" required>
             </div>
         </div>
-        
+
         <label>Horário</label>
         <select name="horario" id="selectHorario" required>
-            <option value="">Seleciona uma data primeiro</option>
+            <option value="">A carregar horários...</option>
         </select>
         <div id="avisoDisponibilidade" class="aviso-disponibilidade"></div>
-        
+
         <label>Observações</label>
         <textarea name="obs" rows="2" placeholder="Alergias, preferências, etc. (opcional)"></textarea>
-        
-        <!-- Consentimento RGPD -->
+
         <div class="consent-box">
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="consentData" name="consentData" required>
                 <label for="consentData">
-                    Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. <span style="color: var(--error);">*</span>
+                    Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> 
+                    e autorizo o tratamento dos meus dados pessoais para processamento da reserva. 
+                    <span style="color:var(--error)">*</span>
                 </label>
             </div>
-            
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="consentMarketing" name="consentMarketing">
                 <label for="consentMarketing">
                     Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional)
                 </label>
             </div>
-            
             <div id="consentError" class="consent-error">
                 ⚠️ Por favor, aceite a Política de Privacidade para continuar.
             </div>
         </div>
-        
+
         <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
     </form>
 </div>
 
 <script>
-    // ✅ CORRIGIDO: Removido espaço no final da URL
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxZ5FlV-uBPT87O52N8ktN9bx6WyQGyi9BKkpBpy1Lfgttz7R7W0C1vHixSv2CqeKqO/exec";
-    const campoData = document.getElementById('dataReserva');
-    const selectHorario = document.getElementById('selectHorario');
-    const campoPax = document.getElementById('numPax');
-    const btnEnviar = document.getElementById('btnEnviar');
-    const avisoDisp = document.getElementById('avisoDisponibilidade');
-    const avisoFechado = document.getElementById('avisoFechado');
-    const msgErro = document.getElementById('msg-erro');
-    const consentData = document.getElementById('consentData');
-    const consentError = document.getElementById('consentError');
-    
-    let configsGlobal = {};
-    let diasFechados = [];
-    let horarios = {};
+// URL_SCRIPT vem do config.js
 
-    async function carregarDados() {
-        try {
-            const [fechados, hors, configs] = await Promise.all([
-                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getDiasFechados'})}).then(r => r.json()),
-                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getHorarios'})}).then(r => r.json()),
-                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
-            ]);
-            
-            // ✅ CORRIGIDO: Garantir que configsGlobal é sempre um objeto válido
-            configsGlobal = configs || {};
-            if (typeof configsGlobal !== 'object' || Array.isArray(configsGlobal)) {
-                configsGlobal = {};
-            }
-            
-            // ✅ CORRIGIDO: Garantir que diasFechados é sempre um array
-            diasFechados = Array.isArray(fechados) ? fechados : [];
-            
-            // ✅ CORRIGIDO: Garantir que horarios é sempre um objeto válido
-            horarios = (hors && typeof hors === 'object' && !Array.isArray(hors)) ? hors : {};
-            
-            console.log("Configs:", configsGlobal);
-            console.log("Dias fechados:", diasFechados);
-            console.log("Horarios:", horarios);
-            
-            campoData.min = new Date().toISOString().split('T')[0];
-            
-            campoData.addEventListener('change', verificarDataEGerarHoras);
-            campoPax.addEventListener('input', verificarGrupoEDisponibilidade);
-            selectHorario.addEventListener('change', verificarDisponibilidadeHorario);
-            consentData.addEventListener('change', function() {
-                if (this.checked) {
-                    consentError.style.display = 'none';
-                }
-            });
-            
-            // Carregar horários iniciais (mas só se houver data selecionada)
-            if (campoData.value) {
-                verificarDataEGerarHoras();
-            } else {
-                selectHorario.innerHTML = '<option value="">Seleciona uma data primeiro</option>';
-                selectHorario.disabled = true;
-            }
-            
-        } catch(e) { 
-            console.error("Erro ao carregar dados:", e);
-            mostrarErro("Erro ao carregar configurações. Tenta novamente mais tarde.");
-            // ✅ Garantir valores default mesmo em caso de erro
-            diasFechados = [];
-            horarios = {};
-            configsGlobal = {};
-        }
-    }
+const campoData    = document.getElementById('dataReserva');
+const selectHorario= document.getElementById('selectHorario');
+const campoPax     = document.getElementById('numPax');
+const btnEnviar    = document.getElementById('btnEnviar');
+const avisoDisp    = document.getElementById('avisoDisponibilidade');
+const avisoFechado = document.getElementById('avisoFechado');
+const msgErro      = document.getElementById('msg-erro');
+const consentData  = document.getElementById('consentData');
+const consentError = document.getElementById('consentError');
 
-    function verificarDataEGerarHoras() {
-        const dataValue = campoData.value;
-        avisoFechado.style.display = 'none';
-        
-        if (!dataValue) {
-            selectHorario.innerHTML = '<option value="">Seleciona uma data primeiro</option>';
-            selectHorario.disabled = true;
-            avisoDisp.style.display = 'none';
-            return;
-        }
+let configsGlobal = {};
+let diasFechados  = [];   // sempre array
+let horarios      = {};   // sempre {almoco:'HH:MM-HH:MM', jantar:'HH:MM-HH:MM'}
 
-        const data = new Date(dataValue + 'T00:00:00');
-        const diaSemana = data.toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
-        
-        // ✅ CORRIGIDO: Verificação segura com Array.isArray()
-        const estaFechado = Array.isArray(diasFechados) && (
-            diasFechados.includes(diaSemana) || 
-            diasFechados.includes(dataValue) ||
-            diasFechados.includes(dataValue.replace(/-/g, '/')) // formato alternativo
-        );
-        
-        if (estaFechado) {
-            avisoFechado.style.display = 'block';
-            selectHorario.innerHTML = '<option value="">Encerrado</option>';
-            selectHorario.disabled = true;
-            avisoDisp.style.display = 'none';
-            return;
-        }
-        
-        selectHorario.disabled = false;
-        gerarHoras(horarios);
-        verificarDisponibilidadeHorario();
-    }
+// ── Helper: normaliza resposta do script para array ─────────────
+function toArray(resp) {
+    if (Array.isArray(resp)) return resp;
+    if (resp && Array.isArray(resp.dias))     return resp.dias;
+    if (resp && Array.isArray(resp.fechados)) return resp.fechados;
+    if (resp && Array.isArray(resp.data))     return resp.data;
+    return [];
+}
 
-    function verificarGrupoEDisponibilidade() {
-        verificarGrupo();
-        verificarDisponibilidadeHorario();
-    }
+// ── Helper: normaliza resposta de horários ──────────────────────
+function toHorarios(resp) {
+    if (resp && resp.almoco) return resp;                        // formato correto
+    if (resp && resp.horarios && resp.horarios.almoco) return resp.horarios;
+    if (resp && resp.data && resp.data.almoco) return resp.data;
+    return { almoco: '12:00-15:00', jantar: '19:00-22:00' };   // fallback
+}
 
-    function verificarGrupo() {
-        // ✅ CORRIGIDO: Verificar se configsGlobal está carregado
-        if (!configsGlobal || Object.keys(configsGlobal).length === 0) {
-            return;
-        }
-        
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
-        const pax = parseInt(campoPax.value) || 2;
-        
-        // ✅ CORRIGIDO: Remover onclick primeiro sempre
-        btnEnviar.onclick = null;
-        
-        if (pax > max) {
-            btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
-            btnEnviar.classList.add('btn-whatsapp');
-            btnEnviar.type = 'button';
-            btnEnviar.onclick = abrirWhatsApp;
-        } else {
-            btnEnviar.innerText = "Confirmar Reserva";
-            btnEnviar.classList.remove('btn-whatsapp');
-            btnEnviar.type = 'submit';
-        }
-    }
+// ── Carregar dados iniciais ─────────────────────────────────────
+async function carregarDados() {
+    try {
+        const [resFechados, resHorarios, resConfigs] = await Promise.all([
+            fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify({ action:'getDiasFechados' }) }).then(r => r.json()),
+            fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify({ action:'getHorarios'    }) }).then(r => r.json()),
+            fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify({ action:'getConfigs'     }) }).then(r => r.json())
+        ]);
 
-    function abrirWhatsApp(e) {
-        if(e) e.preventDefault();
-        
-        const pax = parseInt(campoPax.value) || 2;
-        const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
-        const hora = selectHorario.value || '';
-        
-        const tel = configsGlobal.WHATSAPP_URL ? 
-            configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
-        
-        if (!tel) {
-            mostrarErro("WhatsApp não configurado. Contacte o restaurante.");
-            return;
-        }
-        
-        const mensagem = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
-        // ✅ CORRIGIDO: Removido espaço depois de "wa.me/"
-        window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(mensagem), '_blank');
-    }
+        // Normaliza — defensivo contra qualquer formato de resposta
+        diasFechados  = toArray(resFechados);
+        horarios      = toHorarios(resHorarios);
+        configsGlobal = (resConfigs && typeof resConfigs === 'object' && !Array.isArray(resConfigs))
+                        ? resConfigs : {};
 
-    function gerarHoras(h) {
-        // ✅ CORRIGIDO: Verificação de horários válidos
-        if (!h || (!h.almoco && !h.jantar)) {
-            selectHorario.innerHTML = '<option value="">Sem horários disponíveis</option>';
-            return;
-        }
-        
-        selectHorario.innerHTML = '';
-        [h.almoco, h.jantar].forEach(intervalo => {
-            if (!intervalo) return;
-            
-            const parts = intervalo.replace(/–|—/g, '-').split('-');
-            if (parts.length !== 2) return;
-            
-            let [hAt, mAt] = parts[0].trim().split(':').map(Number);
-            const [hFim, mFim] = parts[1].trim().split(':').map(Number);
-            
-            if (isNaN(hAt) || isNaN(mAt) || isNaN(hFim) || isNaN(mFim)) return;
-            
-            while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
-                const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
-                const opt = document.createElement('option');
-                opt.value = opt.text = tempo;
-                selectHorario.appendChild(opt);
-                mAt += 15;
-                if (mAt >= 60) {
-                    mAt = 0;
-                    hAt++;
-                }
-            }
+        console.log('✅ diasFechados:', diasFechados);
+        console.log('✅ horarios:', horarios);
+        console.log('✅ configs:', configsGlobal);
+
+        campoData.min = new Date().toISOString().split('T')[0];
+
+        campoData.addEventListener('change', verificarDataEGerarHoras);
+        campoPax.addEventListener('input', verificarGrupoEDisponibilidade);
+        selectHorario.addEventListener('change', verificarDisponibilidadeHorario);
+        consentData.addEventListener('change', function() {
+            if (this.checked) consentError.style.display = 'none';
         });
-        
-        if (selectHorario.options.length === 0) {
-            selectHorario.innerHTML = '<option value="">Sem horários</option>';
-        } else {
-            selectHorario.value = '';
-        }
+
+        verificarDataEGerarHoras();
+
+    } catch(e) {
+        console.error('❌ Erro ao carregar dados:', e);
+        // Mesmo com erro, gera horas com fallback para não bloquear o formulário
+        horarios = { almoco: '12:00-15:00', jantar: '19:00-22:00' };
+        gerarHoras(horarios);
+        mostrarErro('Erro ao carregar configurações. Os horários podem estar incompletos.');
+    }
+}
+
+function verificarDataEGerarHoras() {
+    const dataValue = campoData.value;
+    avisoFechado.style.display = 'none';
+
+    if (!dataValue) {
+        selectHorario.innerHTML = '<option value="">Seleciona uma data</option>';
+        avisoDisp.style.display = 'none';
+        return;
     }
 
-    async function verificarDisponibilidadeHorario() {
-        if (!campoData.value || !selectHorario.value) {
-            avisoDisp.style.display = 'none';
-            btnEnviar.disabled = false;
-            return;
-        }
+    const data       = new Date(dataValue + 'T00:00:00');
+    const diaSemana  = data.toLocaleDateString('pt-PT', { weekday:'long' }).toLowerCase();
 
-        try {
-            const response = await fetch(URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'verificarDisponiblidade',
-                    data: campoData.value,
-                    pax: parseInt(campoPax.value) || 2,
-                    horario: selectHorario.value
-                })
-            });
-            
-            const resultado = await response.json();
-            
-            if (!resultado.disponivel) {
-                avisoDisp.textContent = "⚠️ Sem disponibilidade para esta refeição. Escolhe outro horário.";
-                avisoDisp.classList.add('indisponivel');
-                selectHorario.style.borderColor = '#e74c3c';
-                btnEnviar.disabled = true;
-                avisoDisp.style.display = 'block';
-            } else {
-                avisoDisp.classList.remove('indisponivel');
-                selectHorario.style.borderColor = '';
-                avisoDisp.style.display = 'none';
-                
-                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
-                const pax = parseInt(campoPax.value) || 2;
-                
-                if (pax <= max) {
-                    btnEnviar.disabled = false;
-                }
-            }
-        } catch (error) {
-            console.error("Erro ao verificar disponibilidade:", error);
-            avisoDisp.style.display = 'none';
-            btnEnviar.disabled = false;
-        }
+    // diasFechados é garantidamente um array aqui
+    if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
+        avisoFechado.style.display = 'block';
+        selectHorario.innerHTML    = '<option value="">Encerrado</option>';
+        selectHorario.disabled     = true;
+        avisoDisp.style.display    = 'none';
+        return;
     }
 
-    function mostrarErro(mensagem) {
-        msgErro.textContent = "❌ " + mensagem;
-        msgErro.style.display = 'block';
-        setTimeout(() => {
-            msgErro.style.display = 'none';
-        }, 6000);
-    }
+    selectHorario.disabled = false;
+    gerarHoras(horarios);
+    verificarDisponibilidadeHorario();
+}
 
-    document.getElementById('formReserva').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        // Validar consentimento RGPD
-        if (!consentData.checked) {
-            consentError.style.display = 'block';
-            consentData.focus();
-            window.scrollTo({
-                top: consentData.offsetTop - 100,
-                behavior: 'smooth'
-            });
-            return;
-        }
-        
-        // Validação final
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
-        if (parseInt(campoPax.value) > max) {
-            mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
-            return;
-        }
-        
-        if (!campoData.value || !selectHorario.value) {
-            mostrarErro("Por favor, preenche todos os campos obrigatórios.");
-            return;
-        }
-        
-        btnEnviar.disabled = true;
-        btnEnviar.innerText = "A processar...";
-        document.getElementById('formReserva').classList.add('carregando');
-        
-        try {
-            const dados = Object.fromEntries(new FormData(e.target));
-            dados.action = "reservaSite";
-            
-            const response = await fetch(URL_SCRIPT, {
-                method:'POST', 
-                body:JSON.stringify(dados)
-            });
-            
-            const res = await response.json();
-            
-            if (res.status === 'success') {
-                document.getElementById('formReserva').style.display = 'none';
-                document.getElementById('msg-sucesso').style.display = 'block';
-            } else {
-                mostrarErro(res.message || "Erro ao processar reserva. Tenta novamente.");
-                btnEnviar.disabled = false;
-                btnEnviar.innerText = "Confirmar Reserva";
-                document.getElementById('formReserva').classList.remove('carregando');
-            }
-        } catch (error) {
-            console.error("Erro:", error);
-            mostrarErro("Erro ao processar reserva. Verifica a conexão e tenta novamente.");
-            btnEnviar.disabled = false;
-            btnEnviar.innerText = "Confirmar Reserva";
-            document.getElementById('formReserva').classList.remove('carregando');
+function verificarGrupoEDisponibilidade() {
+    verificarGrupo();
+    verificarDisponibilidadeHorario();
+}
+
+function verificarGrupo() {
+    const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+    const pax = parseInt(campoPax.value);
+
+    if (pax > max) {
+        btnEnviar.innerText = `Reservar via WhatsApp (Grupo > ${max})`;
+        btnEnviar.classList.add('btn-whatsapp');
+        btnEnviar.type    = 'button';
+        btnEnviar.onclick = abrirWhatsApp;
+    } else {
+        btnEnviar.innerText = 'Confirmar Reserva';
+        btnEnviar.classList.remove('btn-whatsapp');
+        btnEnviar.type    = 'submit';
+        btnEnviar.onclick = null;
+    }
+}
+
+function abrirWhatsApp(e) {
+    e.preventDefault();
+    const pax  = parseInt(campoPax.value);
+    const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
+    const hora = selectHorario.value || '';
+    const tel  = (configsGlobal.WHATSAPP_URL || '').toString().replace(/\D/g, '');
+    if (!tel) { mostrarErro('WhatsApp não configurado.'); return; }
+    const msg = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
+    window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function gerarHoras(h) {
+    selectHorario.innerHTML = '';
+    [h.almoco, h.jantar].forEach(intervalo => {
+        if (!intervalo) return;
+        const parts = intervalo.replace(/–|—/g, '-').split('-');
+        if (parts.length < 2) return;
+        let [hAt, mAt] = parts[0].trim().split(':').map(Number);
+        const [hFim, mFim] = parts[1].trim().split(':').map(Number);
+        while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
+            const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
+            const opt   = document.createElement('option');
+            opt.value = opt.text = tempo;
+            selectHorario.appendChild(opt);
+            mAt += 15;
+            if (mAt >= 60) { mAt = 0; hAt++; }
         }
     });
-    
-    carregarDados();
+    // Adiciona opção vazia no início
+    const empty = document.createElement('option');
+    empty.value = ''; empty.text = 'Escolhe um horário';
+    selectHorario.insertBefore(empty, selectHorario.firstChild);
+    selectHorario.value = '';
+}
+
+async function verificarDisponibilidadeHorario() {
+    if (!campoData.value || !selectHorario.value) {
+        avisoDisp.style.display = 'none';
+        return;
+    }
+    try {
+        const response = await fetch(URL_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify({
+                action:  'verificarDisponiblidade',
+                data:    campoData.value,
+                pax:     parseInt(campoPax.value),
+                horario: selectHorario.value
+            })
+        });
+        const resultado = await response.json();
+        if (!resultado.disponivel) {
+            avisoDisp.textContent = '⚠️ Sem disponibilidade para este horário. Escolhe outro.';
+            avisoDisp.classList.add('indisponivel');
+            selectHorario.style.borderColor = '#e74c3c';
+            btnEnviar.disabled = true;
+        } else {
+            avisoDisp.classList.remove('indisponivel');
+            selectHorario.style.borderColor = '';
+            const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+            if (parseInt(campoPax.value) <= max) btnEnviar.disabled = false;
+        }
+        avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
+    } catch(error) {
+        console.error('Erro ao verificar disponibilidade:', error);
+        avisoDisp.style.display = 'none';
+    }
+}
+
+function mostrarErro(mensagem) {
+    msgErro.textContent    = '❌ ' + mensagem;
+    msgErro.style.display  = 'block';
+    setTimeout(() => { msgErro.style.display = 'none'; }, 6000);
+}
+
+document.getElementById('formReserva').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!consentData.checked) {
+        consentError.style.display = 'block';
+        consentData.focus();
+        window.scrollTo({ top: consentData.offsetTop - 100, behavior: 'smooth' });
+        return;
+    }
+
+    const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+    if (parseInt(campoPax.value) > max) {
+        mostrarErro('Grupo muito grande. Utiliza o WhatsApp.');
+        return;
+    }
+
+    if (!campoData.value || !selectHorario.value) {
+        mostrarErro('Por favor, preenche todos os campos obrigatórios.');
+        return;
+    }
+
+    btnEnviar.disabled = true;
+    btnEnviar.innerText = 'A processar...';
+    document.getElementById('formReserva').classList.add('carregando');
+
+    try {
+        const dados    = Object.fromEntries(new FormData(e.target));
+        dados.action   = 'reservaSite';
+        // Remove campos de consentimento — o script não os conhece
+        delete dados.consentData;
+        delete dados.consentMarketing;
+
+        const response = await fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify(dados) });
+        const res      = await response.json();
+
+        if (res.status === 'success') {
+            document.getElementById('formReserva').style.display = 'none';
+            document.getElementById('msg-sucesso').style.display = 'block';
+        } else {
+            mostrarErro(res.message || 'Erro ao processar reserva. Tenta novamente.');
+            btnEnviar.disabled = false;
+            btnEnviar.innerText = 'Confirmar Reserva';
+            document.getElementById('formReserva').classList.remove('carregando');
+        }
+    } catch(error) {
+        console.error('Erro:', error);
+        mostrarErro('Erro ao processar reserva. Verifica a conexão e tenta novamente.');
+        btnEnviar.disabled = false;
+        btnEnviar.innerText = 'Confirmar Reserva';
+        document.getElementById('formReserva').classList.remove('carregando');
+    }
+});
+
+carregarDados();
 </script>
 
-<!-- Cookie Banner Script -->
-<script src="cookie-banner.js"></script>
+<!-- Cookie Banner -->
+<script src="cookie-banner.js" onerror="console.warn('cookie-banner.js não encontrado')"></script>
 </body>
 </html>
-
-
-
