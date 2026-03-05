@@ -322,26 +322,31 @@ async function verificarDisponibilidadeHorario() {
             body: JSON.stringify({
                 action:  'verificarDisponiblidade',
                 data:    campoData.value,
-                pax:     parseInt(campoPax.value),
+                pax:     parseInt(campoPax.value) || 2,
                 horario: selectHorario.value
             })
         });
         const resultado = await response.json();
-        if (!resultado.disponivel) {
-            avisoDisp.textContent = '⚠️ Sem disponibilidade para este horário. Escolhe outro.';
+        console.log('Disponibilidade:', resultado);
+
+        // Só mostra aviso visual — NUNCA bloqueia o botão
+        // A validação real acontece no submit pelo script
+        if (resultado.disponivel === false) {
+            avisoDisp.textContent = '⚠️ Atenção: este horário pode estar lotado. Podes tentar submeter ou escolher outro.';
             avisoDisp.classList.add('indisponivel');
-            selectHorario.style.borderColor = '#e74c3c';
-            btnEnviar.disabled = true;
+            selectHorario.style.borderColor = '#f39c12';
+            avisoDisp.style.display = 'block';
+            // ← Removido: btnEnviar.disabled = true
         } else {
             avisoDisp.classList.remove('indisponivel');
             selectHorario.style.borderColor = '';
-            const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
-            if (parseInt(campoPax.value) <= max) btnEnviar.disabled = false;
+            avisoDisp.style.display = 'none';
         }
-        avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
+        btnEnviar.disabled = false; // sempre ativo
     } catch(error) {
         console.error('Erro ao verificar disponibilidade:', error);
         avisoDisp.style.display = 'none';
+        btnEnviar.disabled = false;
     }
 }
 
