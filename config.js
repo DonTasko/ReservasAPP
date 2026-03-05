@@ -5,7 +5,7 @@
 
 // ── URL DO APPS SCRIPT DO RESTAURANTE (reservas, HACCP, ocupação) ──
 // Usado por admin.html, admin-completo.html, HACCP.html
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxZ5FlV-uBPT87O52N8ktN9bx6WyQGyi9BKkpBpy1Lfgttz7R7W0C1vHixSv2CqeKqO/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyVwBSU_SR8G0a214B3PFv4I5VA63cwS3b_RbVmOmVzstpUxxIrNRqZIpJ_S135SLmU/exec";
 
 // ── CONFIGURAÇÃO DA APP DE FATURAS ────────────────────────────────
 // Usado por Faturas.html
@@ -14,7 +14,7 @@ const APP_CONFIG = {
   // URL do Apps Script das FATURAS
   // Se as faturas estiverem numa sheet separada, muda este URL
   // Se estiverem na mesma sheet do restaurante, deixa igual ao URL_SCRIPT
-  SHEETS_URL: "https://script.google.com/macros/s/AKfycbxZ5FlV-uBPT87O52N8ktN9bx6WyQGyi9BKkpBpy1Lfgttz7R7W0C1vHixSv2CqeKqO/exec",
+  SHEETS_URL: "https://script.google.com/macros/s/AKfycbyVwBSU_SR8G0a214B3PFv4I5VA63cwS3b_RbVmOmVzstpUxxIrNRqZIpJ_S135SLmU/exec",
 
   // Negócio
   BUSINESS_NAME: "Maria Helena Afonso, Lda",
