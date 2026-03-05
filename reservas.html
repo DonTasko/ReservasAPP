@@ -316,7 +316,7 @@
         
         <label>Horário</label>
         <select name="horario" id="selectHorario" required>
-            <option value="">A carregar...</option>
+            <option value="">Seleciona uma data primeiro</option>
         </select>
         <div id="avisoDisponibilidade" class="aviso-disponibilidade"></div>
         
@@ -349,6 +349,7 @@
 </div>
 
 <script>
+    // ✅ CORRIGIDO: Removido espaço no final da URL
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxqbmJD9VhOxAdKs6_utnNpzuk4KtI4z-OUYB0oWC0gwUe6N4TqyCPR1cClIgTMlqq5/exec";
     const campoData = document.getElementById('dataReserva');
     const selectHorario = document.getElementById('selectHorario');
@@ -372,9 +373,21 @@
                 fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
             ]);
             
-            configsGlobal = configs;
-            diasFechados = fechados;
-            horarios = hors;
+            // ✅ CORRIGIDO: Garantir que configsGlobal é sempre um objeto válido
+            configsGlobal = configs || {};
+            if (typeof configsGlobal !== 'object' || Array.isArray(configsGlobal)) {
+                configsGlobal = {};
+            }
+            
+            // ✅ CORRIGIDO: Garantir que diasFechados é sempre um array
+            diasFechados = Array.isArray(fechados) ? fechados : [];
+            
+            // ✅ CORRIGIDO: Garantir que horarios é sempre um objeto válido
+            horarios = (hors && typeof hors === 'object' && !Array.isArray(hors)) ? hors : {};
+            
+            console.log("Configs:", configsGlobal);
+            console.log("Dias fechados:", diasFechados);
+            console.log("Horarios:", horarios);
             
             campoData.min = new Date().toISOString().split('T')[0];
             
@@ -387,11 +400,21 @@
                 }
             });
             
-            // Carregar horários iniciais
-            verificarDataEGerarHoras();
+            // Carregar horários iniciais (mas só se houver data selecionada)
+            if (campoData.value) {
+                verificarDataEGerarHoras();
+            } else {
+                selectHorario.innerHTML = '<option value="">Seleciona uma data primeiro</option>';
+                selectHorario.disabled = true;
+            }
+            
         } catch(e) { 
             console.error("Erro ao carregar dados:", e);
             mostrarErro("Erro ao carregar configurações. Tenta novamente mais tarde.");
+            // ✅ Garantir valores default mesmo em caso de erro
+            diasFechados = [];
+            horarios = {};
+            configsGlobal = {};
         }
     }
 
@@ -400,7 +423,8 @@
         avisoFechado.style.display = 'none';
         
         if (!dataValue) {
-            selectHorario.innerHTML = '<option value="">Seleciona uma data</option>';
+            selectHorario.innerHTML = '<option value="">Seleciona uma data primeiro</option>';
+            selectHorario.disabled = true;
             avisoDisp.style.display = 'none';
             return;
         }
@@ -408,8 +432,14 @@
         const data = new Date(dataValue + 'T00:00:00');
         const diaSemana = data.toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
         
-        // Verificar se está fechado
-        if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
+        // ✅ CORRIGIDO: Verificação segura com Array.isArray()
+        const estaFechado = Array.isArray(diasFechados) && (
+            diasFechados.includes(diaSemana) || 
+            diasFechados.includes(dataValue) ||
+            diasFechados.includes(dataValue.replace(/-/g, '/')) // formato alternativo
+        );
+        
+        if (estaFechado) {
             avisoFechado.style.display = 'block';
             selectHorario.innerHTML = '<option value="">Encerrado</option>';
             selectHorario.disabled = true;
@@ -428,8 +458,16 @@
     }
 
     function verificarGrupo() {
+        // ✅ CORRIGIDO: Verificar se configsGlobal está carregado
+        if (!configsGlobal || Object.keys(configsGlobal).length === 0) {
+            return;
+        }
+        
         const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
-        const pax = parseInt(campoPax.value);
+        const pax = parseInt(campoPax.value) || 2;
+        
+        // ✅ CORRIGIDO: Remover onclick primeiro sempre
+        btnEnviar.onclick = null;
         
         if (pax > max) {
             btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
@@ -440,13 +478,13 @@
             btnEnviar.innerText = "Confirmar Reserva";
             btnEnviar.classList.remove('btn-whatsapp');
             btnEnviar.type = 'submit';
-            btnEnviar.onclick = null;
         }
     }
 
     function abrirWhatsApp(e) {
-        e.preventDefault();
-        const pax = parseInt(campoPax.value);
+        if(e) e.preventDefault();
+        
+        const pax = parseInt(campoPax.value) || 2;
         const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
         const hora = selectHorario.value || '';
         
@@ -454,22 +492,33 @@
             configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
         
         if (!tel) {
-            mostrarErro("WhatsApp não configurado.");
+            mostrarErro("WhatsApp não configurado. Contacte o restaurante.");
             return;
         }
         
         const mensagem = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
+        // ✅ CORRIGIDO: Removido espaço depois de "wa.me/"
         window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(mensagem), '_blank');
     }
 
     function gerarHoras(h) {
+        // ✅ CORRIGIDO: Verificação de horários válidos
+        if (!h || (!h.almoco && !h.jantar)) {
+            selectHorario.innerHTML = '<option value="">Sem horários disponíveis</option>';
+            return;
+        }
+        
         selectHorario.innerHTML = '';
         [h.almoco, h.jantar].forEach(intervalo => {
             if (!intervalo) return;
             
             const parts = intervalo.replace(/–|—/g, '-').split('-');
+            if (parts.length !== 2) return;
+            
             let [hAt, mAt] = parts[0].trim().split(':').map(Number);
             const [hFim, mFim] = parts[1].trim().split(':').map(Number);
+            
+            if (isNaN(hAt) || isNaN(mAt) || isNaN(hFim) || isNaN(mFim)) return;
             
             while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
                 const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
@@ -483,12 +532,18 @@
                 }
             }
         });
-        selectHorario.value = '';
+        
+        if (selectHorario.options.length === 0) {
+            selectHorario.innerHTML = '<option value="">Sem horários</option>';
+        } else {
+            selectHorario.value = '';
+        }
     }
 
     async function verificarDisponibilidadeHorario() {
         if (!campoData.value || !selectHorario.value) {
             avisoDisp.style.display = 'none';
+            btnEnviar.disabled = false;
             return;
         }
 
@@ -498,7 +553,7 @@
                 body: JSON.stringify({
                     action: 'verificarDisponiblidade',
                     data: campoData.value,
-                    pax: parseInt(campoPax.value),
+                    pax: parseInt(campoPax.value) || 2,
                     horario: selectHorario.value
                 })
             });
@@ -506,23 +561,27 @@
             const resultado = await response.json();
             
             if (!resultado.disponivel) {
-                avisoDisp.textContent = "⚠️ Sem disponibilidade para esta refeição. Escolhe outra refeição.";
+                avisoDisp.textContent = "⚠️ Sem disponibilidade para esta refeição. Escolhe outro horário.";
                 avisoDisp.classList.add('indisponivel');
                 selectHorario.style.borderColor = '#e74c3c';
                 btnEnviar.disabled = true;
+                avisoDisp.style.display = 'block';
             } else {
                 avisoDisp.classList.remove('indisponivel');
                 selectHorario.style.borderColor = '';
+                avisoDisp.style.display = 'none';
                 
-                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
-                if (parseInt(campoPax.value) <= max) {
+                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+                const pax = parseInt(campoPax.value) || 2;
+                
+                if (pax <= max) {
                     btnEnviar.disabled = false;
                 }
             }
-            avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
         } catch (error) {
             console.error("Erro ao verificar disponibilidade:", error);
             avisoDisp.style.display = 'none';
+            btnEnviar.disabled = false;
         }
     }
 
@@ -549,7 +608,7 @@
         }
         
         // Validação final
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
         if (parseInt(campoPax.value) > max) {
             mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
             return;
@@ -600,6 +659,3 @@
 <script src="cookie-banner.js"></script>
 </body>
 </html>
-
-
-
