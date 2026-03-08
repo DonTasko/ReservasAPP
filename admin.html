@@ -61,8 +61,6 @@
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
         
-        .login-box button:active { transform: translateY(0); }
-        
         .erro { 
             color: #e74c3c; margin-top: 15px; font-size: 14px; 
             text-align: center; display: none; font-weight: 500;
@@ -115,68 +113,12 @@
         .card { 
             background: white; border-radius: 16px; padding: 30px; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
         
         .card h2 { 
             margin: 0 0 25px 0; font-size: 20px; color: #2c3e50; 
             border-bottom: 3px solid #f0f2f5; padding-bottom: 15px; 
             font-weight: 700; display: flex; align-items: center; gap: 10px;
-        }
-        
-        /* AVISO DE OCUPAÇÃO */
-        .aviso-ocupacao { 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-left: 5px solid #27ae60; padding: 18px 20px; 
-            border-radius: 12px; font-size: 15px; 
-            font-weight: 600; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 2px 10px rgba(39, 174, 96, 0.1);
-        }
-        
-        .aviso-ocupacao.warning { 
-            background: linear-gradient(135deg, #fff3cd 0%, #ffe9a6 100%);
-            border-left-color: #ffc107; color: #856404;
-            box-shadow: 0 2px 10px rgba(255, 193, 7, 0.1);
-        }
-        
-        .aviso-ocupacao.critico { 
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-left-color: #e74c3c; color: #721c24;
-            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.1);
-        }
-        
-        .aviso-icon {
-            font-size: 24px;
-        }
-
-        /* Botão Chegou */
-        .btn-chegou {
-            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .btn-chegou:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
-        }
-
-        .acoes-reserva {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
         }
         
         /* FORMULÁRIO MANUAL */
@@ -213,142 +155,150 @@
             background: #95a5a6; 
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
 
-        /* LISTA 15 DIAS */
-        .scroll-resumo { 
-            max-height: 500px; overflow-y: auto; 
-            padding-right: 10px; margin-top: 10px;
-        }
-        
-        .scroll-resumo::-webkit-scrollbar { width: 8px; }
-        .scroll-resumo::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .scroll-resumo::-webkit-scrollbar-thumb { background: #bbb; border-radius: 10px; }
-        .scroll-resumo::-webkit-scrollbar-thumb:hover { background: #999; }
-        
-        .dia-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 18px; border-radius: 10px; margin-bottom: 10px;
-            transition: all 0.2s; cursor: default;
-        }
-        
-        .dia-item:hover { 
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .status-ok { 
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-left: 5px solid #2ecc71; 
-        }
-        
-        .status-warning { 
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe9a6 100%);
-            border-left: 5px solid #f39c12; 
-        }
-        
-        .status-full { 
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border-left: 5px solid #e74c3c; 
+        /* GANTT CHART */
+        .gantt-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
         }
 
-        .dia-data { 
-            font-weight: 700; color: #2c3e50; font-size: 14px;
-            display: flex; flex-direction: column; gap: 2px;
-        }
-        
-        .dia-data-principal { font-size: 15px; }
-        .dia-semana { font-size: 12px; color: #666; font-weight: 500; }
-        
-        .pax-badge { 
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white; padding: 6px 14px; border-radius: 20px; 
-            font-weight: 700; font-size: 13px; 
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
-        }
-        
-        /* TABELA */
-        .table-container { 
-            overflow-x: auto; 
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        table { width: 100%; border-collapse: collapse; }
-        
-        th { 
-            text-align: left; padding: 16px 14px; 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-bottom: 2px solid #dee2e6; font-size: 13px; 
-            font-weight: 700; color: #495057; text-transform: uppercase;
-            letter-spacing: 0.5px; position: sticky; top: 0;
-        }
-        
-        td { 
-            padding: 16px 14px; border-bottom: 1px solid #f0f2f5; 
-            font-size: 14px; 
-        }
-        
-        tr:hover td { background: #f8f9fa; }
-        tr:last-child td { border-bottom: none; }
-        
-        .cliente-info {
+        .gantt-header {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        
-        .cliente-nome { font-weight: 600; color: #2c3e50; }
-        .cliente-contato { font-size: 12px; color: #666; }
-        
-        .hora-badge {
-            font-weight: 700;
-            color: #667eea;
-            font-size: 15px;
-        }
-        
-        .obs-text { 
-            font-size: 12px; color: #606770; 
-            font-style: italic; max-width: 200px;
-        }
-        
-        .btn-cancel { 
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white; border: none; padding: 8px 16px; 
-            border-radius: 8px; cursor: pointer; font-size: 12px; 
-            font-weight: 600; transition: all 0.3s;
-        }
-        
-        .btn-cancel:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        /* ESTADOS VAZIOS E LOADING */
-        .loading, .empty-state { 
-            text-align: center; padding: 60px 20px; 
-            color: #95a5a6; font-size: 15px;
+        .gantt-date-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        
-        .loading::before {
-            content: "⏳";
-            font-size: 40px;
-            display: block;
-            margin-bottom: 15px;
-            animation: pulse 1.5s infinite;
+
+        .gantt-date-selector input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
         }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+        .gantt-legend {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
         }
-        
-        .empty-state::before {
-            content: "📭";
-            font-size: 60px;
-            display: block;
-            margin-bottom: 15px;
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .gantt-timeline {
+            position: relative;
+            margin-top: 30px;
+        }
+
+        .gantt-hours {
+            display: flex;
+            position: relative;
+            height: 40px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .gantt-hour {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            border-right: 1px solid #f0f0f0;
+            padding-top: 10px;
+        }
+
+        .gantt-grid {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+        }
+
+        .gantt-grid-line {
+            flex: 1;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .gantt-rows {
+            position: relative;
+            min-height: 200px;
+        }
+
+        .gantt-row {
+            height: 50px;
+            position: relative;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 40px;
+            top: 5px;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .gantt-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+
+        .gantt-bar.almoco {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .gantt-bar.jantar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gantt-bar-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gantt-bar-info {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .gantt-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+            font-size: 16px;
         }
 
         /* FILTROS */
@@ -381,6 +331,85 @@
             border-color: transparent;
         }
 
+        .btn-chegou {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-chegou:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        /* TABELA */
+        .table-container { 
+            overflow-x: auto; 
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        
+        th { 
+            text-align: left; padding: 16px 14px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid #dee2e6; font-size: 13px; 
+            font-weight: 700; color: #495057; text-transform: uppercase;
+        }
+        
+        td { 
+            padding: 16px 14px; border-bottom: 1px solid #f0f2f5; 
+            font-size: 14px; 
+        }
+        
+        tr:hover td { background: #f8f9fa; }
+        
+        .cliente-nome { font-weight: 600; color: #2c3e50; }
+        .cliente-contato { font-size: 12px; color: #666; display: block; margin-top: 4px; }
+        
+        .hora-badge {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 15px;
+        }
+        
+        .pax-badge { 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white; padding: 6px 14px; border-radius: 20px; 
+            font-weight: 700; font-size: 13px; 
+            display: inline-block;
+        }
+
+        .btn-cancel { 
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white; border: none; padding: 8px 16px; 
+            border-radius: 8px; cursor: pointer; font-size: 12px; 
+            font-weight: 600; transition: all 0.3s;
+        }
+        
+        .btn-cancel:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .acoes-reserva {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .loading, .empty-state { 
+            text-align: center; padding: 60px 20px; 
+            color: #95a5a6; font-size: 15px;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 1200px) {
             .container { grid-template-columns: 1fr; }
@@ -391,24 +420,12 @@
             .header { padding: 20px; }
             .header h1 { font-size: 20px; }
             .card { padding: 20px; }
-            .btn-refresh, .btn-logout { padding: 10px 16px; font-size: 13px; }
-            th, td { padding: 12px 8px; font-size: 12px; }
-        }
-
-        /* ANIMAÇÕES SUAVES */
-        .fade-in {
-            animation: fadeIn 0.4s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
+<!-- LOGIN -->
 <div id="login-screen">
     <div class="login-box">
         <h2>🔒 Acesso Admin</h2>
@@ -423,14 +440,13 @@
     </div>
 </div>
 
-<!-- DASHBOARD PRINCIPAL -->
+<!-- DASHBOARD -->
 <div id="dashboard-content">
     
-    <!-- CABEÇALHO -->
-    <div class="header fade-in">
+    <div class="header">
         <h1>
             <span>📊</span>
-            <span>Painel Administrativo Don Tasko</span>
+            <span>Dashboard Admin Don Tasko</span>
         </h1>
         <div class="header-actions">
             <button class="btn-refresh" onclick="carregarDados()">
@@ -449,8 +465,8 @@
         <!-- COLUNA ESQUERDA -->
         <div>
             
-            <!-- FORMULÁRIO DE RESERVA MANUAL -->
-            <div class="card fade-in">
+            <!-- FORMULÁRIO -->
+            <div class="card">
                 <h2>
                     <span>➕</span>
                     <span>Criar Reserva Manual</span>
@@ -493,7 +509,6 @@
                             max="20" 
                             required 
                             class="pax-input" 
-                            title="Número de pessoas"
                         >
                     </div>
                     
@@ -521,61 +536,75 @@
                     </button>
                 </form>
             </div>
-
-            <!-- RESUMO 15 DIAS -->
-            <div class="card fade-in">
-                <h2>
-                    <span>📅</span>
-                    <span>Ocupação (Próximos 15 Dias)</span>
-                </h2>
-                <div id="resumo15" class="scroll-resumo">
-                    <div class="loading">Carregando dados...</div>
-                </div>
-            </div>
             
         </div>
 
-        <!-- COLUNA DIREITA - TABELA DE HOJE -->
-        <div class="card fade-in">
+        <!-- COLUNA DIREITA -->
+        <div>
             
-            <!-- AVISO DE OCUPAÇÃO -->
-            <div id="avisoOcupacao"></div>
-            
-            <h2>
-                <span>🍽️</span>
-                <span>Reservas para Hoje</span>
-            </h2>
-            
-            <!-- FILTROS -->
-            <div class="filtros">
-                <button class="filtro-btn ativo" onclick="filtrarTurno('todos')">
-                    Todos
-                </button>
-                <button class="filtro-btn" onclick="filtrarTurno('almoco')">
-                    🌞 Almoço
-                </button>
-                <button class="filtro-btn" onclick="filtrarTurno('jantar')">
-                    🌙 Jantar
-                </button>
+            <!-- GANTT CHART -->
+            <div class="card">
+                <h2>
+                    <span>📅</span>
+                    <span>Gráfico de Reservas</span>
+                </h2>
+
+                <div class="gantt-header">
+                    <div class="gantt-date-selector">
+                        <label style="font-weight: 600;">Ver dia:</label>
+                        <input type="date" id="ganttDate" onchange="carregarGantt()">
+                    </div>
+                    <div class="gantt-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #f39c12, #e67e22);"></div>
+                            <span>🌞 Almoço</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                            <span>🌙 Jantar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ganttChart"></div>
             </div>
-            
-            <div class="table-container">
-                <table id="tabelaHoje">
-                    <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Cliente</th>
-                            <th>Pax</th>
-                            <th>Notas</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="5" class="loading">Carregando reservas...</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <!-- FILTROS -->
+            <div class="card" style="margin-top: 25px;">
+                <h2>
+                    <span>🍽️</span>
+                    <span>Reservas do Dia</span>
+                </h2>
+                
+                <div class="filtros">
+                    <button class="filtro-btn ativo" onclick="filtrarTurno('todos')">
+                        Todos
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarTurno('almoco')">
+                        🌞 Almoço
+                    </button>
+                    <button class="filtro-btn" onclick="filtrarTurno('jantar')">
+                        🌙 Jantar
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="tabelaHoje">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Cliente</th>
+                                <th>Pax</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="loading">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             
         </div>
@@ -584,9 +613,7 @@
 </div>
 
 <script>
-    // ========== CONFIGURAÇÕES ==========
     const CONFIG = {
-        // ⚠️ IMPORTANTE: Substitui pelo teu URL do Google Apps Script
         URL_SCRIPT: "https://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exec",
         PASS_CORRETA: "Tasko123",
         LOTACAO_MAX: 30,
@@ -596,63 +623,38 @@
     let reservasHoje = [];
     let turnoFiltro = 'todos';
 
-    // ========== FUNÇÕES AUXILIARES ==========
     function debugLog(message, data = null) {
         if (!CONFIG.DEBUG_MODE) return;
-        const timestamp = new Date().toLocaleTimeString('pt-PT');
-        console.log(`[${timestamp}] ${message}`, data || '');
-    }
-
-    function formatarData(dataISO) {
-        const [ano, mes, dia] = dataISO.split('-');
-        const data = new Date(ano, mes - 1, dia);
-        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        
-        return {
-            principal: `${dia} ${meses[data.getMonth()]}`,
-            semana: diasSemana[data.getDay()]
-        };
+        console.log(`[${new Date().toLocaleTimeString('pt-PT')}] ${message}`, data || '');
     }
 
     function mostrarErro(mensagem) {
         alert('❌ ' + mensagem);
-        debugLog('ERRO: ' + mensagem);
     }
 
     function mostrarSucesso(mensagem) {
         alert('✅ ' + mensagem);
-        debugLog('SUCESSO: ' + mensagem);
     }
 
-    // ========== LOGIN ==========
+    // LOGIN
     function verificarPass() {
         const senha = document.getElementById('passInput').value;
         
         if (senha === CONFIG.PASS_CORRETA) {
-            debugLog('Login bem-sucedido');
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard-content').style.display = 'block';
             
             const hoje = new Date().toISOString().split('T')[0];
             document.getElementById('dataManual').value = hoje;
             document.getElementById('dataManual').min = hoje;
+            document.getElementById('ganttDate').value = hoje;
             
             carregarDados();
-            carregarConfigs();
+            carregarGantt();
         } else {
-            debugLog('Tentativa de login falhou');
             const erroEl = document.getElementById('erro');
             erroEl.style.display = 'block';
-            
-            document.querySelector('.login-box').style.animation = 'none';
-            setTimeout(() => {
-                document.querySelector('.login-box').style.animation = 'slideIn 0.4s ease';
-            }, 10);
-            
-            setTimeout(() => {
-                erroEl.style.display = 'none';
-            }, 3000);
+            setTimeout(() => erroEl.style.display = 'none', 3000);
         }
     }
 
@@ -668,243 +670,123 @@
         if (e.key === 'Enter') verificarPass(); 
     });
 
-    // ========== CARREGAR CONFIGURAÇÕES ==========
-    async function carregarConfigs() {
-        debugLog('Carregando configurações...');
-        
-        try {
-            const response = await fetch(CONFIG.URL_SCRIPT, { 
-                method: 'POST',
-                body: JSON.stringify({ action: 'getConfigs' })
-            });
-            
-            const configs = await response.json();
-            debugLog('Configs recebidas:', configs);
-            
-            if (configs.LOTACAO_MAXIMA) {
-                CONFIG.LOTACAO_MAX = parseInt(configs.LOTACAO_MAXIMA);
-            }
-        } catch (error) {
-            debugLog('Erro ao carregar configs:', error);
-        }
-    }
-
-    // ========== CARREGAR DADOS (COMPATÍVEL COM AMBOS FORMATOS) ==========
+    // CARREGAR DADOS
     async function carregarDados() {
-        debugLog('Iniciando carregamento de dados...');
+        const dataGantt = document.getElementById('ganttDate').value;
         
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                body: JSON.stringify({ action: 'getDashboard' })
+                body: JSON.stringify({ 
+                    action: 'getDashboard',
+                    data: dataGantt
+                })
             });
-            
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
             
             const data = await response.json();
             debugLog('Dados recebidos:', data);
             
             reservasHoje = data.listaHoje || [];
-            
-            // ✨ COMPATIBILIDADE: Detectar formato
-            let resumoAlmoco = {};
-            let resumoJantar = {};
-            
-            if (data.resumoAlmoco && data.resumoJantar) {
-                // Formato NOVO
-                resumoAlmoco = data.resumoAlmoco;
-                resumoJantar = data.resumoJantar;
-                debugLog('Formato NOVO detectado');
-            } else if (data.resumo) {
-                // Formato ANTIGO - Dividir por turnos baseado nas reservas
-                debugLog('Formato ANTIGO detectado, convertendo...');
-                
-                // Processar reservas para separar por turno
-                const hoje = new Date().toISOString().split('T')[0];
-                const reservasAgrupadas = {};
-                
-                reservasHoje.forEach(r => {
-                    const data = hoje; // Assumir que são de hoje
-                    const turno = r.hora < '16:00' ? 'almoco' : 'jantar';
-                    
-                    if (!reservasAgrupadas[data]) {
-                        reservasAgrupadas[data] = { almoco: 0, jantar: 0 };
-                    }
-                    reservasAgrupadas[data][turno] += r.pax;
-                });
-                
-                // Para datas no resumo antigo, dividir meio a meio
-                Object.keys(data.resumo).forEach(dataKey => {
-                    const total = data.resumo[dataKey];
-                    if (!reservasAgrupadas[dataKey]) {
-                        resumoAlmoco[dataKey] = Math.floor(total / 2);
-                        resumoJantar[dataKey] = Math.ceil(total / 2);
-                    }
-                });
-                
-                // Adicionar dados processados das reservas
-                Object.keys(reservasAgrupadas).forEach(dataKey => {
-                    resumoAlmoco[dataKey] = reservasAgrupadas[dataKey].almoco;
-                    resumoJantar[dataKey] = reservasAgrupadas[dataKey].jantar;
-                });
-            }
-            
-            renderizarAvisoOcupacao(resumoAlmoco, resumoJantar);
-            renderizarResumo15Dias(resumoAlmoco, resumoJantar);
             renderizarTabelaHoje();
-            
-            debugLog('Dados carregados com sucesso!');
             
         } catch (error) {
             debugLog('ERRO ao carregar dados:', error);
-            console.error('Erro detalhado:', error);
-            
-            document.getElementById('avisoOcupacao').innerHTML = `
-                <div class="aviso-ocupacao critico">
-                    <span class="aviso-icon">⚠️</span>
-                    <div>
-                        <strong>Erro ao carregar dados do servidor.</strong><br>
-                        <small>Verifica a conexão ou tenta novamente.</small>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('resumo15').innerHTML = `
-                <div class="empty-state">
-                    Não foi possível carregar os dados.<br>
-                    <button onclick="carregarDados()" class="btn-add" style="margin-top:15px; width:auto; padding:10px 20px;">
-                        Tentar Novamente
-                    </button>
-                </div>
-            `;
         }
     }
 
-    // ========== RENDERIZAR AVISO DE OCUPAÇÃO ==========
-    function renderizarAvisoOcupacao(resumoAlmoco, resumoJantar) {
-        const hoje = new Date().toISOString().split('T')[0];
-        const almocoHoje = resumoAlmoco[hoje] || 0;
-        const jantarHoje = resumoJantar[hoje] || 0;
-        
-        let avisoHTML = '<div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap:wrap;">';
-        
-        // Almoço
-        const percAlmoco = (almocoHoje / CONFIG.LOTACAO_MAX) * 100;
-        let classeAlmoco = '';
-        let emojiAlmoco = '✅';
-        
-        if (percAlmoco >= 100) {
-            classeAlmoco = 'critico';
-            emojiAlmoco = '🔴';
-        } else if (percAlmoco >= 80) {
-            classeAlmoco = 'critico';
-            emojiAlmoco = '⚠️';
-        } else if (percAlmoco >= 60) {
-            classeAlmoco = 'warning';
-            emojiAlmoco = '⚡';
+    // GANTT CHART
+    async function carregarGantt() {
+        const data = document.getElementById('ganttDate').value;
+        if (!data) return;
+
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, { 
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: 'getDashboard',
+                    data: data
+                })
+            });
+            
+            const result = await response.json();
+            const reservas = result.listaHoje || [];
+            
+            renderizarGantt(reservas);
+            reservasHoje = reservas;
+            renderizarTabelaHoje();
+            
+        } catch (error) {
+            debugLog('Erro ao carregar Gantt:', error);
         }
-        
-        avisoHTML += `
-            <div class="aviso-ocupacao ${classeAlmoco}" style="flex:1; min-width:280px;">
-                <span class="aviso-icon">${emojiAlmoco}</span>
-                <div>
-                    <strong>🌞 Almoço:</strong> ${almocoHoje} pax • ${CONFIG.LOTACAO_MAX - almocoHoje} vagas
-                </div>
-            </div>
-        `;
-        
-        // Jantar
-        const percJantar = (jantarHoje / CONFIG.LOTACAO_MAX) * 100;
-        let classeJantar = '';
-        let emojiJantar = '✅';
-        
-        if (percJantar >= 100) {
-            classeJantar = 'critico';
-            emojiJantar = '🔴';
-        } else if (percJantar >= 80) {
-            classeJantar = 'critico';
-            emojiJantar = '⚠️';
-        } else if (percJantar >= 60) {
-            classeJantar = 'warning';
-            emojiJantar = '⚡';
-        }
-        
-        avisoHTML += `
-            <div class="aviso-ocupacao ${classeJantar}" style="flex:1; min-width:280px;">
-                <span class="aviso-icon">${emojiJantar}</span>
-                <div>
-                    <strong>🌙 Jantar:</strong> ${jantarHoje} pax • ${CONFIG.LOTACAO_MAX - jantarHoje} vagas
-                </div>
-            </div>
-        `;
-        
-        avisoHTML += '</div>';
-        
-        document.getElementById('avisoOcupacao').innerHTML = avisoHTML;
     }
 
-    // ========== RENDERIZAR RESUMO 15 DIAS ==========
-    function renderizarResumo15Dias(resumoAlmoco, resumoJantar) {
-        const resumoDiv = document.getElementById('resumo15');
+    function renderizarGantt(reservas) {
+        const container = document.getElementById('ganttChart');
         
-        const todasDatas = new Set([
-            ...Object.keys(resumoAlmoco),
-            ...Object.keys(resumoJantar)
-        ]);
-        
-        if (todasDatas.size === 0) {
-            resumoDiv.innerHTML = '<div class="empty-state">Nenhuma reserva encontrada.</div>';
+        if (!reservas || reservas.length === 0) {
+            container.innerHTML = '<div class="gantt-empty">📭 Sem reservas para este dia</div>';
             return;
         }
+
+        // Horas 12:00 - 22:00
+        const horaInicio = 12;
+        const horaFim = 22;
+        const totalHoras = horaFim - horaInicio;
+
+        let html = '<div class="gantt-timeline">';
         
-        const hoje = new Date().toISOString().split('T')[0];
+        // Header com horas
+        html += '<div class="gantt-hours">';
+        for (let h = horaInicio; h <= horaFim; h++) {
+            html += `<div class="gantt-hour">${h}:00</div>`;
+        }
+        html += '</div>';
+
+        // Grid vertical
+        html += '<div class="gantt-grid">';
+        for (let h = horaInicio; h <= horaFim; h++) {
+            html += '<div class="gantt-grid-line"></div>';
+        }
+        html += '</div>';
+
+        // Barras de reservas
+        html += '<div class="gantt-rows">';
         
-        resumoDiv.innerHTML = Array.from(todasDatas)
-            .sort()
-            .slice(0, 15)
-            .map(dataISO => {
-                const almoco = resumoAlmoco[dataISO] || 0;
-                const jantar = resumoJantar[dataISO] || 0;
-                
-                const isHoje = dataISO === hoje;
-                const dataFormatada = formatarData(dataISO);
-                
-                const percAlmoco = (almoco / CONFIG.LOTACAO_MAX) * 100;
-                const percJantar = (jantar / CONFIG.LOTACAO_MAX) * 100;
-                
-                let classeAlmoco = "status-ok";
-                if (percAlmoco >= 100) classeAlmoco = "status-full";
-                else if (percAlmoco >= 75) classeAlmoco = "status-warning";
-                
-                let classeJantar = "status-ok";
-                if (percJantar >= 100) classeJantar = "status-full";
-                else if (percJantar >= 75) classeJantar = "status-warning";
-                
-                return `
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: 700; margin-bottom: 8px; color: #2c3e50; font-size: 14px;">
-                            <span class="dia-data-principal">${dataFormatada.principal}</span>
-                            ${isHoje ? ' <strong style="color:#667eea;">(HOJE)</strong>' : ''}
-                            <span class="dia-semana"> - ${dataFormatada.semana}</span>
+        reservas.forEach((res, index) => {
+            const [hora, minuto] = res.hora.split(':').map(Number);
+            const horaDecimal = hora + minuto / 60;
+            
+            // Posição (% da esquerda)
+            const left = ((horaDecimal - horaInicio) / totalHoras) * 100;
+            
+            // Largura (assumir 1.5h por reserva)
+            const duracao = 1.5;
+            const width = (duracao / totalHoras) * 100;
+            
+            const turno = hora < 16 ? 'almoco' : 'jantar';
+            const top = index * 50;
+            
+            html += `
+                <div class="gantt-row">
+                    <div class="gantt-bar ${turno}" style="left: ${left}%; width: ${width}%; top: ${top}px;" 
+                         title="${res.nome} - ${res.pax} pax">
+                        <div class="gantt-bar-content">
+                            <span>${res.hora}</span>
+                            <strong>${res.nome}</strong>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <div class="dia-item ${classeAlmoco}" style="flex: 1; padding: 10px 12px;">
-                                <span style="font-size: 11px; color: #666;">🌞 Almoço</span>
-                                <span class="pax-badge" style="font-size: 12px;">${almoco}</span>
-                            </div>
-                            <div class="dia-item ${classeJantar}" style="flex: 1; padding: 10px 12px;">
-                                <span style="font-size: 11px; color: #666;">🌙 Jantar</span>
-                                <span class="pax-badge" style="font-size: 12px;">${jantar}</span>
-                            </div>
-                        </div>
+                        <span class="gantt-bar-info">${res.pax} pax</span>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        html += '</div>';
+        
+        container.innerHTML = html;
     }
 
-    // ========== RENDERIZAR TABELA DE HOJE ==========
+    // TABELA
     function renderizarTabelaHoje() {
         const tbody = document.querySelector('#tabelaHoje tbody');
         
@@ -918,8 +800,8 @@
         if (listaFiltrada.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="empty-state">
-                        ${turnoFiltro === 'todos' ? '📭 Sem reservas para hoje' : 'Sem reservas neste turno'}
+                    <td colspan="4" class="empty-state">
+                        ${turnoFiltro === 'todos' ? '📭 Sem reservas' : 'Sem reservas neste turno'}
                     </td>
                 </tr>
             `;
@@ -932,21 +814,18 @@
                 <tr>
                     <td><span class="hora-badge">${reserva.hora}</span></td>
                     <td>
-                        <div class="cliente-info">
-                            <span class="cliente-nome">${reserva.nome}</span>
-                            ${reserva.tel ? `<span class="cliente-contato">📞 ${reserva.tel}</span>` : ''}
-                        </div>
+                        <span class="cliente-nome">${reserva.nome}</span>
+                        ${reserva.tel ? `<span class="cliente-contato">📞 ${reserva.tel}</span>` : ''}
                     </td>
                     <td><span class="pax-badge">${reserva.pax}</span></td>
-                    <td class="obs-text">${reserva.obs || '—'}</td>
                     <td>
                         <div class="acoes-reserva">
                             ${reserva.status === 'Confirmada' ? `
-                                <button class="btn-chegou" onclick="marcarChegada('${reserva.id}')" title="Marcar como chegou">
+                                <button class="btn-chegou" onclick="marcarChegada('${reserva.id}')">
                                     ✅
                                 </button>
                             ` : reserva.status === 'Chegou' ? `
-                                <span style="color:#27ae60; font-weight:700; font-size:11px; padding:6px;">✓ Chegou</span>
+                                <span style="color:#27ae60; font-weight:700; font-size:11px;">✓ Chegou</span>
                             ` : ''}
                             <button class="btn-cancel" onclick="cancelarReserva('${escaparTexto(reserva.nome)}', '${reserva.hora}')">
                                 🗑️
@@ -961,7 +840,6 @@
         return texto.replace(/'/g, "\\'").replace(/"/g, '\\"');
     }
 
-    // ========== FILTRAR POR TURNO ==========
     function filtrarTurno(turno) {
         turnoFiltro = turno;
         
@@ -973,13 +851,8 @@
         renderizarTabelaHoje();
     }
 
-    // ========== MARCAR CHEGADA ==========
     async function marcarChegada(id) {
-        if (!confirm('Confirma que o cliente chegou ao restaurante?')) {
-            return;
-        }
-        
-        debugLog(`Marcando chegada: ${id}`);
+        if (!confirm('Confirma que o cliente chegou?')) return;
         
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
@@ -991,27 +864,21 @@
             });
             
             const resultado = await response.json();
-            debugLog('Resposta da chegada:', resultado);
             
             if (resultado.status === 'success') {
                 mostrarSucesso(resultado.message);
                 carregarDados();
+                carregarGantt();
             } else {
                 mostrarErro(resultado.message || 'Erro ao marcar chegada');
             }
         } catch (error) {
-            debugLog('Erro ao marcar chegada:', error);
-            mostrarErro('Não foi possível marcar a chegada. Tenta novamente.');
+            mostrarErro('Erro ao marcar chegada');
         }
     }
 
-    // ========== CANCELAR RESERVA ==========
     async function cancelarReserva(nome, hora) {
-        if (!confirm(`Confirma o cancelamento da reserva?\n\n👤 Cliente: ${nome}\n🕐 Horário: ${hora}`)) {
-            return;
-        }
-        
-        debugLog(`Cancelando reserva: ${nome} às ${hora}`);
+        if (!confirm(`Cancelar reserva?\n\n👤 ${nome}\n🕐 ${hora}`)) return;
         
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
@@ -1024,37 +891,31 @@
             });
             
             const resultado = await response.json();
-            debugLog('Resposta do cancelamento:', resultado);
             
             if (resultado.status === 'success') {
                 mostrarSucesso(resultado.message);
                 carregarDados();
+                carregarGantt();
             } else {
-                mostrarErro(resultado.message || 'Erro desconhecido ao cancelar');
+                mostrarErro(resultado.message || 'Erro ao cancelar');
             }
         } catch (error) {
-            debugLog('Erro ao cancelar:', error);
-            mostrarErro('Não foi possível processar o cancelamento. Tenta novamente.');
+            mostrarErro('Erro ao cancelar');
         }
     }
 
-    // ========== SUBMETER RESERVA MANUAL ==========
+    // FORMULÁRIO
     document.getElementById('formManual').onsubmit = async function(e) {
         e.preventDefault();
         
         const btn = document.getElementById('btnManual');
-        const textoOriginal = btn.innerText;
         btn.disabled = true;
         btn.innerText = "⏳ Gravando...";
-        
-        debugLog('Submetendo reserva manual...');
 
         try {
             const formData = new FormData(this);
             const dados = Object.fromEntries(formData.entries());
             dados.action = "reservaManual";
-            
-            debugLog('Dados do formulário:', dados);
 
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
@@ -1062,29 +923,26 @@
             });
             
             const resultado = await response.json();
-            debugLog('Resposta da reserva:', resultado);
             
             if (resultado.status === 'success') {
-                mostrarSucesso('Reserva criada com sucesso! ID: ' + resultado.id);
+                mostrarSucesso('Reserva criada! ID: ' + resultado.id);
                 this.reset();
                 
                 const hoje = new Date().toISOString().split('T')[0];
                 document.getElementById('dataManual').value = hoje;
                 
                 await carregarDados();
+                await carregarGantt();
             } else {
                 mostrarErro(resultado.message || 'Erro ao criar reserva');
             }
         } catch (error) {
-            debugLog('Erro ao gravar reserva:', error);
-            mostrarErro('Não foi possível gravar a reserva. Verifica os dados e tenta novamente.');
+            mostrarErro('Erro ao gravar reserva');
         } finally {
             btn.disabled = false;
-            btn.innerText = textoOriginal;
+            btn.innerText = "💾 Gravar Reserva";
         }
     };
-
-    debugLog('Dashboard admin carregado e pronto');
 </script>
 
 </body>
