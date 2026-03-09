@@ -122,12 +122,12 @@
         <p>Reserva de Mesa</p>
     </div>
 
-    <div id="msg-sucesso">✅ Reserva enviada! Verifica o teu e-mail para confirmação.</div>
+    <div id="msg-sucesso">✅ Reserva enviada! Verifica o teu e-mail para confirmação (caso não vejas o email, confirma na pasta SPAM).</div>
     <div id="msg-erro"></div>
 
     <form id="formReserva">
         <label>Nome Completo</label>
-        <input type="text" name="nome" placeholder="O teu nome completo" required minlength="2">
+        <input type="text" name="nome" placeholder="O teu nome " required minlength="2">
 
         <label>Telemóvel</label>
         <input type="tel" name="telemovel" placeholder="Ex: 912345678" required minlength="9">
@@ -250,7 +250,7 @@ async function carregarDados() {
 
     } catch(e) {
         console.error('❌ Erro ao carregar dados:', e);
-        horarios = { almoco: '12:00-15:00', jantar: '19:00-22:00' };
+        horarios = { almoco: '12:00-14:30', jantar: '19:30-22:00' };
         gerarHoras(horarios);
         mostrarErro('Erro ao carregar configurações. Os horários podem estar incompletos.');
     }
@@ -442,3 +442,4 @@ carregarDados();
 <script src="cookie-banner.js" onerror="console.warn('cookie-banner.js não encontrado')"></script>
 </body>
 </html>
+
