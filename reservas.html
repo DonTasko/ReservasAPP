@@ -59,6 +59,32 @@
             color: #c62828; padding: 15px; border-radius: 8px; text-align: center; 
             margin-bottom: 20px; animation: slideIn 0.3s ease;
         }
+        
+        /* AVISO DE LOTAÇÃO ESGOTADA (igual ao admin) */
+        .aviso-lotacao-esgotada {
+            display: none;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 5px solid var(--error);
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 15px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.2);
+        }
+        
+        .aviso-lotacao-esgotada.visivel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .aviso-lotacao-esgotada .icon {
+            font-size: 24px;
+        }
+        
         .aviso-disponibilidade {
             display: none; background: #fff3cd; border-left: 5px solid var(--warning);
             color: #856404; padding: 12px; border-radius: 6px; margin-top: 8px;
@@ -104,7 +130,7 @@
         <input type="text" name="nome" placeholder="O teu nome completo" required minlength="2">
 
         <label>Telemóvel</label>
-        <input type="tel" name="telemovel" placeholder="Ex: 912345678" required pattern="[0-9\s\-\+]{9,}">
+        <input type="tel" name="telemovel" placeholder="Ex: 912345678" required minlength="9">
 
         <label>E-mail</label>
         <input type="email" name="email" placeholder="O teu e-mail" required>
@@ -125,7 +151,12 @@
         <select name="horario" id="selectHorario" required>
             <option value="">A carregar horários...</option>
         </select>
-        <div id="avisoDisponibilidade" class="aviso-disponibilidade"></div>
+        
+        <!-- AVISO DE LOTAÇÃO ESGOTADA -->
+        <div class="aviso-lotacao-esgotada" id="avisoLotacaoEsgotada">
+            <span class="icon">🔴</span>
+            <span>Lotação esgotada para esta refeição</span>
+        </div>
 
         <label>Observações</label>
         <textarea name="obs" rows="2" placeholder="Alergias, preferências, etc. (opcional)"></textarea>
@@ -161,15 +192,15 @@ const campoData    = document.getElementById('dataReserva');
 const selectHorario= document.getElementById('selectHorario');
 const campoPax     = document.getElementById('numPax');
 const btnEnviar    = document.getElementById('btnEnviar');
-const avisoDisp    = document.getElementById('avisoDisponibilidade');
+const avisoLotacaoEsgotada = document.getElementById('avisoLotacaoEsgotada');
 const avisoFechado = document.getElementById('avisoFechado');
 const msgErro      = document.getElementById('msg-erro');
 const consentData  = document.getElementById('consentData');
 const consentError = document.getElementById('consentError');
 
 let configsGlobal = {};
-let diasFechados  = [];   // sempre array
-let horarios      = {};   // sempre {almoco:'HH:MM-HH:MM', jantar:'HH:MM-HH:MM'}
+let diasFechados  = [];
+let horarios      = {};
 
 // ── Helper: normaliza resposta do script para array ─────────────
 function toArray(resp) {
@@ -182,10 +213,10 @@ function toArray(resp) {
 
 // ── Helper: normaliza resposta de horários ──────────────────────
 function toHorarios(resp) {
-    if (resp && resp.almoco) return resp;                        // formato correto
+    if (resp && resp.almoco) return resp;
     if (resp && resp.horarios && resp.horarios.almoco) return resp.horarios;
     if (resp && resp.data && resp.data.almoco) return resp.data;
-    return { almoco: '12:00-15:00', jantar: '19:00-22:00' };   // fallback
+    return { almoco: '12:00-15:00', jantar: '19:00-22:00' };
 }
 
 // ── Carregar dados iniciais ─────────────────────────────────────
@@ -197,7 +228,6 @@ async function carregarDados() {
             fetch(URL_SCRIPT, { method:'POST', body: JSON.stringify({ action:'getConfigs'     }) }).then(r => r.json())
         ]);
 
-        // Normaliza — defensivo contra qualquer formato de resposta
         diasFechados  = toArray(resFechados);
         horarios      = toHorarios(resHorarios);
         configsGlobal = (resConfigs && typeof resConfigs === 'object' && !Array.isArray(resConfigs))
@@ -220,7 +250,6 @@ async function carregarDados() {
 
     } catch(e) {
         console.error('❌ Erro ao carregar dados:', e);
-        // Mesmo com erro, gera horas com fallback para não bloquear o formulário
         horarios = { almoco: '12:00-15:00', jantar: '19:00-22:00' };
         gerarHoras(horarios);
         mostrarErro('Erro ao carregar configurações. Os horários podem estar incompletos.');
@@ -230,22 +259,20 @@ async function carregarDados() {
 function verificarDataEGerarHoras() {
     const dataValue = campoData.value;
     avisoFechado.style.display = 'none';
+    avisoLotacaoEsgotada.classList.remove('visivel');
 
     if (!dataValue) {
         selectHorario.innerHTML = '<option value="">Seleciona uma data</option>';
-        avisoDisp.style.display = 'none';
         return;
     }
 
     const data       = new Date(dataValue + 'T00:00:00');
     const diaSemana  = data.toLocaleDateString('pt-PT', { weekday:'long' }).toLowerCase();
 
-    // diasFechados é garantidamente um array aqui
     if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
         avisoFechado.style.display = 'block';
         selectHorario.innerHTML    = '<option value="">Encerrado</option>';
         selectHorario.disabled     = true;
-        avisoDisp.style.display    = 'none';
         return;
     }
 
@@ -304,18 +331,22 @@ function gerarHoras(h) {
             if (mAt >= 60) { mAt = 0; hAt++; }
         }
     });
-    // Adiciona opção vazia no início
     const empty = document.createElement('option');
     empty.value = ''; empty.text = 'Escolhe um horário';
     selectHorario.insertBefore(empty, selectHorario.firstChild);
     selectHorario.value = '';
 }
 
+// ✨ VERIFICAR DISPONIBILIDADE E MOSTRAR AVISO
 async function verificarDisponibilidadeHorario() {
+    // Reset do aviso
+    avisoLotacaoEsgotada.classList.remove('visivel');
+    btnEnviar.disabled = false;
+
     if (!campoData.value || !selectHorario.value) {
-        avisoDisp.style.display = 'none';
         return;
     }
+
     try {
         const response = await fetch(URL_SCRIPT, {
             method: 'POST',
@@ -329,23 +360,19 @@ async function verificarDisponibilidadeHorario() {
         const resultado = await response.json();
         console.log('Disponibilidade:', resultado);
 
-        // Só mostra aviso visual — NUNCA bloqueia o botão
-        // A validação real acontece no submit pelo script
         if (resultado.disponivel === false) {
-            avisoDisp.textContent = '⚠️ Atenção: este horário pode estar lotado. Podes tentar submeter ou escolher outro.';
-            avisoDisp.classList.add('indisponivel');
-            selectHorario.style.borderColor = '#f39c12';
-            avisoDisp.style.display = 'block';
-            // ← Removido: btnEnviar.disabled = true
+            // ✨ MOSTRAR AVISO DE LOTAÇÃO ESGOTADA
+            avisoLotacaoEsgotada.classList.add('visivel');
+            btnEnviar.disabled = true;
+            selectHorario.style.borderColor = '#e74c3c';
         } else {
-            avisoDisp.classList.remove('indisponivel');
+            avisoLotacaoEsgotada.classList.remove('visivel');
+            btnEnviar.disabled = false;
             selectHorario.style.borderColor = '';
-            avisoDisp.style.display = 'none';
         }
-        btnEnviar.disabled = false; // sempre ativo
     } catch(error) {
         console.error('Erro ao verificar disponibilidade:', error);
-        avisoDisp.style.display = 'none';
+        avisoLotacaoEsgotada.classList.remove('visivel');
         btnEnviar.disabled = false;
     }
 }
@@ -384,7 +411,6 @@ document.getElementById('formReserva').addEventListener('submit', async (e) => {
     try {
         const dados    = Object.fromEntries(new FormData(e.target));
         dados.action   = 'reservaSite';
-        // Remove campos de consentimento — o script não os conhece
         delete dados.consentData;
         delete dados.consentMarketing;
 
