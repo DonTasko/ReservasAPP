@@ -161,8 +161,8 @@
         .gantt-container {
             background: white;
             border-radius: 10px;
-            padding: 10px;
-            margin-top: 10px;
+            padding: 20px;
+            margin-top: 20px;
         }
 
         .gantt-header {
@@ -207,13 +207,13 @@
 
         .gantt-timeline {
             position: relative;
-            margin-top: 10px;
+            margin-top: 30px;
         }
 
         .gantt-hours {
             display: flex;
             position: relative;
-            height: 10px;
+            height: 40px;
             border-bottom: 2px solid #e0e0e0;
             margin-bottom: 10px;
         }
@@ -230,7 +230,7 @@
 
         .gantt-grid {
             position: absolute;
-            top: 10px;
+            top: 40px;
             left: 0;
             right: 0;
             bottom: 0;
@@ -244,7 +244,7 @@
 
         .gantt-rows {
             position: relative;
-            min-height: 100px;
+            min-height: 200px;
         }
 
         .gantt-row {
@@ -410,6 +410,40 @@
             color: #95a5a6; font-size: 15px;
         }
 
+        /* AVISO DE LOTAÇÃO */
+        .aviso-lotacao {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 5px solid #e74c3c;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.2);
+        }
+
+        .aviso-lotacao.visivel {
+            display: flex;
+        }
+
+        .aviso-lotacao .icon {
+            font-size: 24px;
+        }
+
+        .aviso-lotacao .texto {
+            flex: 1;
+            color: #721c24;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* RESPONSIVE */
         @media (max-width: 1200px) {
             .container { grid-template-columns: 1fr; }
@@ -471,6 +505,13 @@
                     <span>➕</span>
                     <span>Criar Reserva Manual</span>
                 </h2>
+                
+                <!-- AVISO DE LOTAÇÃO -->
+                <div class="aviso-lotacao" id="avisoLotacao">
+                    <span class="icon">🔴</span>
+                    <span class="texto">Lotação esgotada para esta refeição</span>
+                </div>
+                
                 <form id="formManual" class="form-manual">
                     <input 
                         type="text" 
@@ -634,6 +675,46 @@
 
     function mostrarSucesso(mensagem) {
         alert('✅ ' + mensagem);
+    }
+
+    // VERIFICAR DISPONIBILIDADE
+    async function verificarDisponibilidade() {
+        const data = document.getElementById('dataManual').value;
+        const horario = document.getElementById('horarioManual').value;
+        const pax = parseInt(document.getElementById('dataManual').parentElement.querySelector('input[name="pax"]').value) || 0;
+
+        const avisoLotacao = document.getElementById('avisoLotacao');
+        const btnSubmit = document.getElementById('btnManual');
+
+        // Reset
+        avisoLotacao.classList.remove('visivel');
+        btnSubmit.disabled = false;
+
+        if (!data || !horario || pax === 0) {
+            return;
+        }
+
+        try {
+            const response = await fetch(CONFIG.URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'verificarDisponiblidade',
+                    data: data,
+                    horario: horario,
+                    pax: pax
+                })
+            });
+
+            const result = await response.json();
+            debugLog('Disponibilidade:', result);
+
+            if (!result.disponivel) {
+                avisoLotacao.classList.add('visivel');
+                btnSubmit.disabled = true;
+            }
+        } catch (error) {
+            debugLog('Erro ao verificar disponibilidade:', error);
+        }
     }
 
     // LOGIN
@@ -931,6 +1012,9 @@
                 const hoje = new Date().toISOString().split('T')[0];
                 document.getElementById('dataManual').value = hoje;
                 
+                // Esconder aviso
+                document.getElementById('avisoLotacao').classList.remove('visivel');
+                
                 await carregarDados();
                 await carregarGantt();
             } else {
@@ -943,9 +1027,18 @@
             btn.innerText = "💾 Gravar Reserva";
         }
     };
+
+    // Event listeners para verificar disponibilidade
+    document.addEventListener('DOMContentLoaded', function() {
+        const dataInput = document.getElementById('dataManual');
+        const horarioSelect = document.getElementById('horarioManual');
+        const paxInput = document.querySelector('input[name="pax"]');
+
+        if (dataInput) dataInput.addEventListener('change', verificarDisponibilidade);
+        if (horarioSelect) horarioSelect.addEventListener('change', verificarDisponibilidade);
+        if (paxInput) paxInput.addEventListener('change', verificarDisponibilidade);
+    });
 </script>
 
 </body>
 </html>
-
-
