@@ -182,12 +182,42 @@ header {
   padding: 1.5rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid transparent;
+  position: relative;
 }
 
 .item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(212, 165, 116, 0.2);
   border-color: var(--accent);
+}
+
+/* Item com imagem */
+.item-content {
+  display: flex;
+  gap: 1rem;
+  align-items: start;
+}
+
+/* Thumbnail da imagem */
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+}
+
+.item-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .item-top {
@@ -217,6 +247,97 @@ header {
   line-height: 1.6;
 }
 
+/* Badge de Rotura */
+.badge-rotura {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.item.esgotado {
+  opacity: 0.6;
+  border-color: #e74c3c;
+}
+
+.item.esgotado .item-name {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.item.esgotado .price {
+  color: #999;
+}
+
+/* Modal de Imagem Ampliada */
+.image-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+}
+
+.image-modal.active {
+  display: flex;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+  cursor: default;
+}
+
+.image-modal .close-btn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.image-modal .close-btn:hover {
+  background: var(--accent);
+  transform: rotate(90deg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .header-content {
@@ -236,6 +357,23 @@ header {
   .item-top {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .item-content {
+    flex-direction: column;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .image-modal .close-btn {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
   }
 }
 </style>
@@ -264,11 +402,17 @@ header {
   <div id="menu" class="loading">Carregando menu...</div>
 </div>
 
+<!-- Modal de Imagem -->
+<div class="image-modal" id="imageModal" onclick="closeImageModal()">
+  <span class="close-btn" onclick="closeImageModal()">×</span>
+  <img id="modalImage" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
 <script>
 // CONFIGURAÇÃO - SUBSTITUA ESTES VALORES
-const SHEET_ID = '1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA'; // ID da sua Google Sheet
-const API_KEY = 'AIzaSyBNw0g2aBy2vyKfCCvApwrkbiLyeR7vqbI'; // Sua API Key do Google
-const SHEET_NAME = 'Cardapio'; // Nome da aba da planilha
+const SHEET_ID = '1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA';
+const API_KEY = 'AIzaSyBNw0g2aBy2vyKfCCvApwrkbiLyeR7vqbI';
+const SHEET_NAME = 'Cardapio';
 
 let LANG = 'PT';
 let MENU_DATA = null;
@@ -276,13 +420,11 @@ let MENU_DATA = null;
 function setLang(lang) {
   LANG = lang;
   
-  // Atualizar botões ativos
   document.querySelectorAll('.lang-buttons button').forEach(btn => {
     btn.classList.remove('active');
   });
   document.getElementById(`btn-${lang}`).classList.add('active');
   
-  // Re-renderizar menu
   if (MENU_DATA) {
     renderMenu(MENU_DATA);
   }
@@ -298,14 +440,11 @@ async function loadMenu() {
       throw new Error('Nenhum dado encontrado na planilha');
     }
     
-    // Processar dados da planilha
     const headers = data.values[0];
     const rows = data.values.slice(1);
     
-    // Debug: mostrar cabeçalhos no console
     console.log('Cabeçalhos encontrados:', headers);
     
-    // Organizar por categoria
     const menu = {};
     
     rows.forEach(row => {
@@ -314,17 +453,14 @@ async function loadMenu() {
         item[header] = row[index] || '';
       });
       
-      // Debug: mostrar item no console
       console.log('Item processado:', item);
       
-      // Pular linhas vazias
       if (!item.Categoria || !item.Nome) return;
       
       if (!menu[item.Categoria]) {
         menu[item.Categoria] = [];
       }
       
-      // Converter preço para número
       item.Preço = parseFloat(item.Preço.toString().replace(',', '.')) || 0;
       
       menu[item.Categoria].push(item);
@@ -362,7 +498,6 @@ function renderMenu(menu) {
     const items = document.createElement('div');
     items.className = 'items';
     
-    // Toggle categoria
     h2.onclick = () => {
       items.classList.toggle('hidden');
       h2.classList.toggle('collapsed');
@@ -372,8 +507,13 @@ function renderMenu(menu) {
       // Pular itens inativos
       if (item.Ativo && item.Ativo.toLowerCase() === 'não') return;
       
+      // Verificar rotura (coluna I = Rotura)
+      const emRotura = item.Rotura && (item.Rotura.toUpperCase() === 'X' || item.Rotura.toUpperCase() === 'TRUE');
+      
+      // URL da imagem (coluna J = Imagem)
+      const imagemUrl = item.Imagem || '';
+      
       // Selecionar descrição baseada no idioma
-      // Tentar várias variações de nomes de colunas
       let desc = '';
       
       if (LANG === 'PT') {
@@ -384,17 +524,37 @@ function renderMenu(menu) {
         desc = item.Descrição_FR || item['Descrição FR'] || item.FR || item.fr || item.French || item.Francês || item.Frances || item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || '';
       }
       
-      console.log(`Item: ${item.Nome}, Idioma: ${LANG}, Descrição: ${desc}`);
+      console.log(`Item: ${item.Nome}, Idioma: ${LANG}, Descrição: ${desc}, Rotura: ${emRotura}, Imagem: ${imagemUrl}`);
       
       const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `
+      div.className = 'item' + (emRotura ? ' esgotado' : '');
+      
+      let itemHTML = '';
+      
+      // Badge de rotura
+      if (emRotura) {
+        itemHTML += '<div class="badge-rotura">🔴 Esgotado</div>';
+      }
+      
+      itemHTML += '<div class="item-content">';
+      
+      // Imagem (se existir)
+      if (imagemUrl && imagemUrl.trim() !== '') {
+        itemHTML += `<img src="${imagemUrl}" alt="${item.Nome}" class="item-image" onclick="openImageModal('${imagemUrl}', '${item.Nome.replace(/'/g, "\\'")}')">`;
+      }
+      
+      itemHTML += '<div class="item-info">';
+      itemHTML += `
         <div class="item-top">
           <div class="item-name">${item.Nome}</div>
           <div class="price">${item.Preço.toFixed(2)} €</div>
         </div>
         ${desc ? `<div class="desc">${desc}</div>` : '<div class="desc" style="color: #ff6b6b; font-style: italic;">Tradução não disponível</div>'}
       `;
+      itemHTML += '</div>'; // item-info
+      itemHTML += '</div>'; // item-content
+      
+      div.innerHTML = itemHTML;
       items.appendChild(div);
     });
     
@@ -402,6 +562,30 @@ function renderMenu(menu) {
     container.appendChild(section);
   });
 }
+
+// Funções para modal de imagem
+function openImageModal(imageUrl, itemName) {
+  event.stopPropagation();
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  modal.classList.add('active');
+  modalImg.src = imageUrl;
+  modalImg.alt = itemName;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+  const modal = document.getElementById('imageModal');
+  modal.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+// Fechar modal com tecla ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeImageModal();
+  }
+});
 
 // Carregar menu quando a página carregar
 loadMenu();
