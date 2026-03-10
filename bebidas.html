@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Carta de Bebidas - Don Tasko</title>
+<title>Bebidas | Don Tasko</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -38,7 +38,7 @@ header {
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
   display: flex;
@@ -52,7 +52,6 @@ header {
   font-weight: 600;
   color: var(--light);
   letter-spacing: 2px;
-  text-decoration: none;
 }
 
 .nav-links {
@@ -76,7 +75,7 @@ header {
 
 /* Main Content */
 .wrapper {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -140,11 +139,10 @@ header {
   transform: rotate(-90deg);
 }
 
-/* Items Grid */
+/* Items */
 .items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .items.hidden {
@@ -154,39 +152,48 @@ header {
 .item {
   background: var(--card);
   border-radius: 12px;
-  padding: 0;
+  padding: 1.5rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid transparent;
-  overflow: hidden;
+  position: relative;
 }
 
 .item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 25px rgba(212, 165, 116, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 165, 116, 0.2);
   border-color: var(--accent);
 }
 
-.item-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  background: var(--secondary);
-  display: block;
-}
-
-.item-image.placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: var(--accent);
-}
-
+/* Item com imagem */
 .item-content {
-  padding: 1.2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: start;
 }
 
-.item-header {
+/* Thumbnail da imagem */
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+}
+
+.item-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-top {
   display: flex;
   justify-content: space-between;
   align-items: start;
@@ -198,7 +205,6 @@ header {
   font-weight: 500;
   font-size: 1.1rem;
   letter-spacing: 0.5px;
-  line-height: 1.3;
 }
 
 .price {
@@ -208,53 +214,101 @@ header {
   font-size: 1.1rem;
 }
 
-.observations {
-  font-size: 0.9rem;
+.desc {
+  font-size: 0.95rem;
   color: #bdbdbd;
-  line-height: 1.5;
-  font-style: italic;
+  line-height: 1.6;
 }
 
-/* Sold Out Badge */
-.item-image-container {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-}
-
-.sold-out-badge {
+/* Badge de Rotura */
+.badge-rotura {
   position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.item.esgotado {
+  opacity: 0.6;
+  border-color: #e74c3c;
+}
+
+.item.esgotado .item-name {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.item.esgotado .price {
+  color: #999;
+}
+
+/* Modal de Imagem Ampliada */
+.image-modal {
+  display: none;
+  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+}
+
+.image-modal.active {
+  display: flex;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+  cursor: default;
+}
+
+.image-modal .close-btn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  transition: all 0.3s ease;
 }
 
-.sold-out-text {
-  background: var(--error);
-  color: white;
-  padding: 0.8rem 2rem;
-  font-weight: 700;
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  transform: rotate(-15deg);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  border: 3px solid white;
+.image-modal .close-btn:hover {
+  background: var(--accent);
+  transform: rotate(90deg);
 }
 
-.item.sold-out {
-  opacity: 0.7;
-}
-
-.item.sold-out .item-image {
-  filter: grayscale(100%);
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Mobile */
@@ -273,8 +327,26 @@ header {
     font-size: 2rem;
   }
 
-  .items {
-    grid-template-columns: 1fr;
+  .item-top {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .item-content {
+    flex-direction: column;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .image-modal .close-btn {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
   }
 }
 </style>
@@ -282,20 +354,26 @@ header {
 <body>
 <header>
   <div class="header-content">
-    <a href="don-tasko.html" class="logo">Don Tasko</a>
+    <div class="logo">Don Tasko</div>
     <div class="nav-links">
-      <a href="don-tasko.html">Início</a>
-      <a href="menu.html">Menu</a>
+      <a href="index.html">Início</a>
+      <a href="cardapio.html">Cardápio</a>
       <a href="reservas.html">Reservas</a>
     </div>
   </div>
 </header>
 
 <div class="wrapper">
-  <h1 class="page-title">Carta de Bebidas</h1>
+  <h1 class="page-title">Carta de Vinhos</h1>
   <p class="page-subtitle">Seleção Premium</p>
   
-  <div id="drinks-menu" class="loading">Carregando bebidas...</div>
+  <div id="menu" class="loading">Carregando bebidas...</div>
+</div>
+
+<!-- Modal de Imagem -->
+<div class="image-modal" id="imageModal" onclick="closeImageModal()">
+  <span class="close-btn" onclick="closeImageModal()">×</span>
+  <img id="modalImage" src="" alt="" onclick="event.stopPropagation()">
 </div>
 
 <script>
@@ -304,9 +382,9 @@ const SHEET_ID = '1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA';
 const API_KEY = 'AIzaSyBNw0g2aBy2vyKfCCvApwrkbiLyeR7vqbI';
 const SHEET_NAME = 'Bebidas';
 
-let DRINKS_DATA = null;
+let MENU_DATA = null;
 
-async function loadDrinks() {
+async function loadMenu() {
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
     const response = await fetch(url);
@@ -316,12 +394,12 @@ async function loadDrinks() {
       throw new Error('Nenhum dado encontrado na planilha');
     }
     
-    // Processar dados da planilha
     const headers = data.values[0];
     const rows = data.values.slice(1);
     
-    // Organizar por categoria
-    const drinks = {};
+    console.log('Cabeçalhos encontrados:', headers);
+    
+    const menu = {};
     
     rows.forEach(row => {
       const item = {};
@@ -329,27 +407,30 @@ async function loadDrinks() {
         item[header] = row[index] || '';
       });
       
+      console.log('Item processado:', item);
+      
       // Pular linhas vazias
       if (!item.Categoria || !item.Nome) return;
       
-      if (!drinks[item.Categoria]) {
-        drinks[item.Categoria] = [];
+      if (!menu[item.Categoria]) {
+        menu[item.Categoria] = [];
       }
       
       // Converter preço para número
-      item.Preço = parseFloat(item.Preço) || 0;
+      item.Preço = parseFloat(item.Preço.toString().replace(',', '.')) || 0;
       
-      drinks[item.Categoria].push(item);
+      menu[item.Categoria].push(item);
     });
     
-    DRINKS_DATA = drinks;
-    renderDrinks(drinks);
+    MENU_DATA = menu;
+    console.log('Menu completo:', menu);
+    renderMenu(menu);
     
   } catch (error) {
-    console.error('Erro ao carregar bebidas:', error);
-    document.getElementById('drinks-menu').innerHTML = `
+    console.error('Erro ao carregar menu:', error);
+    document.getElementById('menu').innerHTML = `
       <div style="text-align: center; color: #ff6b6b; padding: 3rem;">
-        <h3>Erro ao carregar a carta de bebidas</h3>
+        <h3>Erro ao carregar as bebidas</h3>
         <p>Por favor, verifique a configuração do Google Sheets.</p>
         <p style="font-size: 0.9rem; margin-top: 1rem;">Erro: ${error.message}</p>
       </div>
@@ -357,12 +438,12 @@ async function loadDrinks() {
   }
 }
 
-function renderDrinks(drinks) {
-  const container = document.getElementById('drinks-menu');
+function renderMenu(menu) {
+  const container = document.getElementById('menu');
   container.innerHTML = '';
   container.className = '';
   
-  Object.keys(drinks).forEach(categoria => {
+  Object.keys(menu).forEach(categoria => {
     const section = document.createElement('div');
     section.className = 'category';
     
@@ -379,45 +460,47 @@ function renderDrinks(drinks) {
       h2.classList.toggle('collapsed');
     };
     
-    drinks[categoria].forEach(drink => {
-      const isSoldOut = drink.Rotura && drink.Rotura.trim().toUpperCase() === 'X';
+    menu[categoria].forEach(item => {
+      // Verificar rotura (coluna I = Rotura)
+      const emRotura = item.Rotura && (item.Rotura.toUpperCase() === 'X' || item.Rotura.toUpperCase() === 'TRUE');
+      
+      // URL da imagem (coluna F = Link_Imagem)
+      const imagemUrl = item.Link_Imagem || item.Imagem || '';
+      
+      // Observações (coluna E)
+      const observacoes = item.Observações || item.Observacoes || '';
+      
+      console.log(`Item: ${item.Nome}, Rotura: ${emRotura}, Imagem: ${imagemUrl}`);
       
       const div = document.createElement('div');
-      div.className = isSoldOut ? 'item sold-out' : 'item';
+      div.className = 'item' + (emRotura ? ' esgotado' : '');
       
-      // Imagem com badge de esgotado
-      let imageHTML = '';
-      const soldOutBadge = isSoldOut ? '<div class="sold-out-badge"><div class="sold-out-text">Esgotado!</div></div>' : '';
+      let itemHTML = '';
       
-      if (drink.Link_Imagem && drink.Link_Imagem.trim()) {
-        imageHTML = `
-          <div class="item-image-container">
-            <img src="${drink.Link_Imagem}" alt="${drink.Nome}" class="item-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="item-image placeholder" style="display:none;">🍷</div>
-            ${soldOutBadge}
-          </div>`;
-      } else {
-        imageHTML = `
-          <div class="item-image-container">
-            <div class="item-image placeholder">🍷</div>
-            ${soldOutBadge}
-          </div>`;
+      // Badge de rotura
+      if (emRotura) {
+        itemHTML += '<div class="badge-rotura">🔴 Esgotado</div>';
       }
       
-      // Observações
-      const obsHTML = drink.Observações ? `<div class="observations">${drink.Observações}</div>` : '';
+      itemHTML += '<div class="item-content">';
       
-      div.innerHTML = `
-        ${imageHTML}
-        <div class="item-content">
-          <div class="item-header">
-            <div class="item-name">${drink.Nome}</div>
-            <div class="price">${drink.Preço.toFixed(2)} €</div>
-          </div>
-          ${obsHTML}
+      // Imagem (se existir)
+      if (imagemUrl && imagemUrl.trim() !== '') {
+        itemHTML += `<img src="${imagemUrl}" alt="${item.Nome}" class="item-image" onclick="openImageModal('${imagemUrl}', '${item.Nome.replace(/'/g, "\\'")}')">`;
+      }
+      
+      itemHTML += '<div class="item-info">';
+      itemHTML += `
+        <div class="item-top">
+          <div class="item-name">${item.Nome}</div>
+          <div class="price">${item.Preço.toFixed(2)} €</div>
         </div>
+        ${observacoes ? `<div class="desc">${observacoes}</div>` : ''}
       `;
+      itemHTML += '</div>'; // item-info
+      itemHTML += '</div>'; // item-content
       
+      div.innerHTML = itemHTML;
       items.appendChild(div);
     });
     
@@ -426,8 +509,32 @@ function renderDrinks(drinks) {
   });
 }
 
-// Carregar bebidas quando a página carregar
-loadDrinks();
+// Funções para modal de imagem
+function openImageModal(imageUrl, itemName) {
+  event.stopPropagation();
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  modal.classList.add('active');
+  modalImg.src = imageUrl;
+  modalImg.alt = itemName;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+  const modal = document.getElementById('imageModal');
+  modal.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+// Fechar modal com tecla ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeImageModal();
+  }
+});
+
+// Carregar menu quando a página carregar
+loadMenu();
 </script>
 
 <!-- Cookie Banner Script -->
