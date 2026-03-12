@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Despesas</title>
+<meta name="description" content="Gestão de despesas e faturas">
+<meta name="theme-color" content="#0C0D10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Despesas">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -15,7 +23,7 @@
   --red:#F87171;--red-dim:#F8717112;
   --blue:#60A5FA;--blue-dim:#60A5FA12;
   --purple:#C084FC;--purple-dim:#C084FC12;
-  --mono:monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--t);font-family:var(--sans);display:flex;flex-direction:column;max-width:480px;margin:0 auto}
@@ -38,12 +46,12 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
 @keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .stat{background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:14px;position:relative;overflow:hidden}
-.stat::after{content:'';position:absolute;top:-12px;right:-12px;width:56px;height:56px;border-radius:50%;opacity:.07}
+.stat::after{content:"";position:absolute;top:-12px;right:-12px;width:56px;height:56px;border-radius:50%;opacity:.07}
 .stat.g::after{background:var(--acc)}.stat.y::after{background:var(--warn)}.stat.b::after{background:var(--blue)}.stat.p::after{background:var(--purple)}
 .stat-lbl{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.9px;text-transform:uppercase;margin-bottom:5px}
 .stat-val{font-size:20px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;line-height:1}
 .stat-sub{font-size:10px;color:var(--t3);margin-top:3px}
-.exp-item{background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:.15s;animation:fadein .2s ease}
+.exp-item{background:var(--s1);border:1px solid var(--b);border-radius:16px;padding:13px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:.15s}
 .exp-item:active{background:var(--s2);transform:scale(.98)}
 .exp-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
 .exp-mid{flex:1;min-width:0}
@@ -65,8 +73,8 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
 .fi{display:flex;flex-direction:column;gap:5px}
 .fi.full{grid-column:1/-1}
 .fi label{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.9px;text-transform:uppercase}
-.fi input,.fi select,.fi textarea{background:var(--s2);border:1.5px solid var(--b);border-radius:11px;padding:11px 13px;color:var(--t);font-size:13px;font-family:var(--sans);outline:none;transition:.15s;width:100%}
-.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px #4ADE8012}
+.fi input,.fi select{background:var(--s2);border:1.5px solid var(--b);border-radius:11px;padding:11px 13px;color:var(--t);font-size:13px;font-family:var(--sans);outline:none;transition:.15s;width:100%}
+.fi input:focus,.fi select:focus{border-color:var(--acc);box-shadow:0 0 0 3px #4ADE8012}
 .fi select option{background:var(--s2);color:var(--t)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;border:none;transition:.15s;letter-spacing:.2px}
 .btn:active{transform:scale(.96)}
@@ -104,7 +112,7 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
 .cam-status{font-size:11px;margin-top:6px;color:#fff;font-family:var(--mono);min-height:16px;text-align:center;padding:0 20px}
 .cam-bottom{position:absolute;bottom:calc(env(safe-area-inset-bottom)+20px);left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:14px}
 .cam-shutter{width:72px;height:72px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:.15s}
-.cam-shutter:active{transform:scale(.88);background:#ddd}
+.cam-shutter:active{transform:scale(.88)}
 .cam-manual-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:10px 22px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans)}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--b)}
 .setting-row:last-child{border-bottom:none}
@@ -114,15 +122,24 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
 .cat-row-ico{font-size:20px;flex-shrink:0}
 .cat-row-info{flex:1}
 .cat-row-info p{font-size:13px;font-weight:700}
-.cat-row-info span{font-size:10px;color:var(--t3);font-family:var(--mono)}
+.cat-row-info span{font-size:10px;color:var(--t3)}
 .cat-del-btn{background:none;border:none;color:var(--t3);font-size:15px;cursor:pointer;padding:4px 6px;border-radius:7px}
 .cat-del-btn:active{color:var(--red)}
+.sync-action{background:var(--s2);border:1px solid var(--b);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s;margin-bottom:9px}
+.sync-action:active{background:var(--s3);transform:scale(.98)}
+.sync-action-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.sync-action-info p{font-size:13px;font-weight:700}
+.sync-action-info span{font-size:11px;color:var(--t3);margin-top:2px;display:block}
+#qr-code-div{background:var(--s2);border-radius:14px;padding:16px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--b)}
+#qr-code-div canvas,#qr-code-div img{border-radius:8px}
 #toast{position:fixed;bottom:calc(env(safe-area-inset-bottom)+90px);left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--b2);border-radius:12px;padding:11px 18px;font-size:12px;font-weight:600;z-index:999;display:none;white-space:nowrap;box-shadow:0 8px 28px #0008;max-width:300px;text-align:center}
 .empty{text-align:center;padding:36px 20px;color:var(--t3)}
 .empty .ei{font-size:38px;margin-bottom:10px}
 .empty p{font-size:13px;line-height:1.6}
 .month-hdr{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.8px;text-transform:uppercase;padding:4px 2px 8px}
 .gap8{display:flex;flex-direction:column;gap:8px}
+.import-drop{border:2px dashed var(--b2);border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
+.import-drop:active{border-color:var(--acc);background:var(--acc-dim)}
 </style>
 </head>
 <body>
@@ -133,7 +150,7 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
     <h1>Despe<span>sas</span></h1>
   </div>
   <div class="hdr-right">
-    <div class="icon-btn" onclick="exportCSV()" title="Exportar CSV">⬇</div>
+    <div class="icon-btn" onclick="exportCSV()" title="CSV">⬇</div>
     <div class="icon-btn" onclick="openManual()" title="Nova fatura">＋</div>
   </div>
 </header>
@@ -163,12 +180,87 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
 
   <!-- SCAN -->
   <div class="page" id="p-scan">
-    <div class="card" style="text-align:center;padding:32px 20px">
-      <div style="font-size:52px;margin-bottom:12px">📷</div>
-      <p style="font-size:15px;font-weight:700;margin-bottom:6px">Digitalizar QR Code AT</p>
-      <p style="font-size:12px;color:var(--t3);margin-bottom:20px;line-height:1.6">Aponte para o QR Code — a fatura é fotografada automaticamente no momento da leitura.<br><b style="color:var(--warn)">⚠ Requer Google Chrome no Android</b></p>
-      <button class="btn btn-prim" style="width:100%;margin-bottom:10px" onclick="openCam()">📷 Abrir câmara</button>
+    <div class="card" style="text-align:center;padding:28px 20px">
+      <div style="font-size:48px;margin-bottom:10px">📷</div>
+      <p style="font-size:15px;font-weight:700;margin-bottom:5px">Digitalizar QR Code AT</p>
+      <p style="font-size:12px;color:var(--t3);margin-bottom:18px;line-height:1.6">A fatura é fotografada automaticamente.<br><b style="color:var(--warn)">⚠ Requer Google Chrome</b></p>
+      <button class="btn btn-prim" style="width:100%;margin-bottom:9px" onclick="openCam()">📷 Abrir câmara</button>
+      <button class="btn btn-ghost" style="width:100%;margin-bottom:9px" onclick="openImportFile()">📂 Importar ficheiro (PDF / Imagem / XML)</button>
       <button class="btn btn-ghost" style="width:100%" onclick="openManual()">✏️ Introduzir manualmente</button>
+    </div>
+    <div class="card" style="background:var(--blue-dim);border-color:#60A5FA22">
+      <p style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px">📂 FORMATOS SUPORTADOS</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.7">
+        <b>QR Code AT</b> — câmara em tempo real<br>
+        <b>PDF</b> — extrai dados + guarda como foto<br>
+        <b>Imagem (JPG/PNG)</b> — lê QR Code se existir<br>
+        <b>XML AT (SAFT)</b> — importa dados directamente
+      </p>
+    </div>
+  </div>
+
+  <!-- SINCRONIZAÇÃO -->
+  <div class="page" id="p-sincro">
+    <div id="sincro-summary"></div>
+
+    <div class="card">
+      <div class="card-title">Exportar / Enviar</div>
+      <div class="sync-action" onclick="shareSyncFile()">
+        <div class="sync-action-ico" style="background:var(--acc-dim)">📤</div>
+        <div class="sync-action-info">
+          <p>Partilhar ficheiro JSON</p>
+          <span>WhatsApp, email ou AirDrop</span>
+        </div>
+      </div>
+      <div class="sync-action" onclick="exportSyncFile()">
+        <div class="sync-action-ico" style="background:var(--blue-dim)">⬇</div>
+        <div class="sync-action-info">
+          <p>Descarregar ficheiro JSON</p>
+          <span>Guardar no dispositivo</span>
+        </div>
+      </div>
+      <div class="sync-action" onclick="generateSyncQR()">
+        <div class="sync-action-ico" style="background:var(--purple-dim)">⊡</div>
+        <div class="sync-action-info">
+          <p>Gerar QR Code de sincronização</p>
+          <span>Para poucos dados — aponta o outro aparelho</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="qr-warn" style="display:none;background:var(--warn-dim);border:1px solid #FACC1533;border-radius:12px;padding:12px 14px;font-size:12px;color:var(--warn)">
+      ⚠ <span id="qr-count"></span>
+    </div>
+    <div id="qr-wrap" style="display:none;text-align:center">
+      <div id="qr-code-div" style="display:inline-block"></div>
+      <p style="font-size:11px;color:var(--t3);margin-top:10px">Aponta o outro aparelho para este QR Code</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Importar / Receber</div>
+      <div class="sync-action" onclick="importSyncFile()">
+        <div class="sync-action-ico" style="background:var(--acc-dim)">📥</div>
+        <div class="sync-action-info">
+          <p>Importar ficheiro JSON</p>
+          <span>Merge inteligente sem duplicados</span>
+        </div>
+      </div>
+      <div class="sync-action" onclick="openSyncQRReader()">
+        <div class="sync-action-ico" style="background:var(--purple-dim)">📷</div>
+        <div class="sync-action-info">
+          <p>Ler QR Code de sincronização</p>
+          <span>Aponta para o QR do outro aparelho</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--blue-dim);border-color:#60A5FA22">
+      <p style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px">ℹ SOBRE A SINCRONIZAÇÃO</p>
+      <p style="font-size:12px;color:var(--t2);line-height:1.7">
+        O merge é inteligente — faturas com o mesmo ID ou nº não são duplicadas. 
+        Se existir conflito, mantém a versão com foto. As fotos são opcionais no ficheiro (ficheiro maior).
+        O QR Code é limitado a poucos dados — usa o ficheiro JSON para colecções grandes.
+      </p>
     </div>
   </div>
 
@@ -202,12 +294,13 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
     </div>
   </div>
 
-</div>
+</div><!-- /main -->
 
 <nav class="bot-nav">
   <button class="bn on" id="bn-dash" onclick="goPage('dash',this)"><span class="bn-ic">◎</span><span class="bn-lbl">Dashboard</span></button>
   <button class="bn" id="bn-faturas" onclick="goPage('faturas',this)"><span class="bn-ic">≡</span><span class="bn-lbl">Faturas</span></button>
   <button class="bn" id="bn-scan" onclick="goPage('scan',this)"><span class="bn-ic">⊡</span><span class="bn-lbl">Scanner</span></button>
+  <button class="bn" id="bn-sincro" onclick="goPage('sincro',this)"><span class="bn-ic">⇄</span><span class="bn-lbl">Sincro</span></button>
   <button class="bn" id="bn-config" onclick="goPage('config',this)"><span class="bn-ic">⚙</span><span class="bn-lbl">Config</span></button>
 </nav>
 
@@ -287,14 +380,10 @@ header{flex-shrink:0;padding:14px 18px 10px;display:flex;align-items:center;just
         <div class="fi"><label>Emoji</label><input id="cat-icon" type="text" placeholder="🍺" maxlength="2"></div>
         <div class="fi"><label>Cor</label>
           <select id="cat-color">
-            <option value="#4ADE80">🟢 Verde</option>
-            <option value="#60A5FA">🔵 Azul</option>
-            <option value="#FACC15">🟡 Amarelo</option>
-            <option value="#F87171">🔴 Vermelho</option>
-            <option value="#C084FC">🟣 Roxo</option>
-            <option value="#FB923C">🟠 Laranja</option>
-            <option value="#34D399">💚 Esmeralda</option>
-            <option value="#F472B6">🩷 Rosa</option>
+            <option value="#4ADE80">🟢 Verde</option><option value="#60A5FA">🔵 Azul</option>
+            <option value="#FACC15">🟡 Amarelo</option><option value="#F87171">🔴 Vermelho</option>
+            <option value="#C084FC">🟣 Roxo</option><option value="#FB923C">🟠 Laranja</option>
+            <option value="#34D399">💚 Esmeralda</option><option value="#F472B6">🩷 Rosa</option>
             <option value="#94A3B8">⚪ Cinzento</option>
           </select>
         </div>
@@ -10789,18 +10878,27 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 //# sourceMappingURL=jspdf.umd.min.js.map
 
 </script>
-<script>
-// ── STORAGE ──
-const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+<script>var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData=this.parsedData.concat(b)}this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){return"undefined"!=typeof CanvasRenderingContext2D}function n(){var a=!1,b=navigator.userAgent;return/android/i.test(b)&&(a=!0,aMat=b.toString().match(/android ([0-9]\.[0-9])/i),aMat&&aMat[1]&&(a=parseFloat(aMat[1]))),a}function r(a,b){for(var c=1,e=s(a),f=0,g=l.length;g>=f;f++){var h=0;switch(b){case d.L:h=l[f][0];break;case d.M:h=l[f][1];break;case d.Q:h=l[f][2];break;case d.H:h=l[f][3]}if(h>=e)break;c++}if(c>l.length)throw new Error("Too long data");return c}function s(a){var b=encodeURI(a).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return b.length+(b.length!=a?3:0)}a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);(0==c||a>d)&&(a=d,b=c)}return b},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=0==a%2);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=0==b%2)},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(1&d>>e);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(1&d>>e);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(1&a[g]>>>e));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.PAD0=236,b.PAD1=17,b.createData=function(a,c,d){for(var e=j.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var l=0,h=0;h<e.length;h++)l+=e[h].dataCount;if(g.getLengthInBits()>8*l)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*l+")");for(g.getLengthInBits()+4<=8*l&&g.put(0,4);0!=g.getLengthInBits()%8;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*l)break;if(g.put(b.PAD0,8),g.getLengthInBits()>=8*l)break;g.put(b.PAD1,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;m<g[j].length;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s};for(var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return 0==(b+c)%2;case e.PATTERN001:return 0==b%2;case e.PATTERN010:return 0==c%3;case e.PATTERN011:return 0==(b+c)%3;case e.PATTERN100:return 0==(Math.floor(b/2)+Math.floor(c/3))%2;case e.PATTERN101:return 0==b*c%2+b*c%3;case e.PATTERN110:return 0==(b*c%2+b*c%3)%2;case e.PATTERN111:return 0==(b*c%3+(b+c)%2)%2;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.gexp(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f+0],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},k.prototype={get:function(a){var b=Math.floor(a/8);return 1==(1&this.buffer[b]>>>7-a%8)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(1&a>>>b-c-1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var l=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]],o=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();Math.floor(b.width/d),Math.floor(b.height/d),this.clear();var h=g("svg",{viewBox:"0 0 "+String(d)+" "+String(d),width:"100%",height:"100%",fill:b.colorLight});h.setAttributeNS("http://www.w3.org/2000/xmlns/","xmlns:xlink","http://www.w3.org/1999/xlink"),c.appendChild(h),h.appendChild(g("rect",{fill:b.colorDark,width:"1",height:"1",id:"template"}));for(var i=0;d>i;i++)for(var j=0;d>j;j++)if(a.isDark(i,j)){var k=g("use",{x:String(i),y:String(j)});k.setAttributeNS("http://www.w3.org/1999/xlink","href","#template"),h.appendChild(k)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),p="svg"===document.documentElement.tagName.toLowerCase(),q=p?o:m()?function(){function a(){this._elImage.src=this._elCanvas.toDataURL("image/png"),this._elImage.style.display="block",this._elCanvas.style.display="none"}function d(a,b){var c=this;if(c._fFail=b,c._fSuccess=a,null===c._bSupportDataURI){var d=document.createElement("img"),e=function(){c._bSupportDataURI=!1,c._fFail&&_fFail.call(c)},f=function(){c._bSupportDataURI=!0,c._fSuccess&&c._fSuccess.call(c)};return d.onabort=e,d.onerror=e,d.onload=f,d.src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",void 0}c._bSupportDataURI===!0&&c._fSuccess?c._fSuccess.call(c):c._bSupportDataURI===!1&&c._fFail&&c._fFail.call(c)}if(this._android&&this._android<=2.1){var b=1/window.devicePixelRatio,c=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(a,d,e,f,g,h,i,j){if("nodeName"in a&&/img/i.test(a.nodeName))for(var l=arguments.length-1;l>=1;l--)arguments[l]=arguments[l]*b;else"undefined"==typeof j&&(arguments[1]*=b,arguments[2]*=b,arguments[3]*=b,arguments[4]*=b);c.apply(this,arguments)}}var e=function(a,b){this._bIsPainted=!1,this._android=n(),this._htOption=b,this._elCanvas=document.createElement("canvas"),this._elCanvas.width=b.width,this._elCanvas.height=b.height,a.appendChild(this._elCanvas),this._el=a,this._oContext=this._elCanvas.getContext("2d"),this._bIsPainted=!1,this._elImage=document.createElement("img"),this._elImage.style.display="none",this._el.appendChild(this._elImage),this._bSupportDataURI=null};return e.prototype.draw=function(a){var b=this._elImage,c=this._oContext,d=this._htOption,e=a.getModuleCount(),f=d.width/e,g=d.height/e,h=Math.round(f),i=Math.round(g);b.style.display="none",this.clear();for(var j=0;e>j;j++)for(var k=0;e>k;k++){var l=a.isDark(j,k),m=k*f,n=j*g;c.strokeStyle=l?d.colorDark:d.colorLight,c.lineWidth=1,c.fillStyle=l?d.colorDark:d.colorLight,c.fillRect(m,n,f,g),c.strokeRect(Math.floor(m)+.5,Math.floor(n)+.5,h,i),c.strokeRect(Math.ceil(m)-.5,Math.ceil(n)-.5,h,i)}this._bIsPainted=!0},e.prototype.makeImage=function(){this._bIsPainted&&d.call(this,a)},e.prototype.isPainted=function(){return this._bIsPainted},e.prototype.clear=function(){this._oContext.clearRect(0,0,this._elCanvas.width,this._elCanvas.height),this._bIsPainted=!1},e.prototype.round=function(a){return a?Math.floor(1e3*a)/1e3:a},e}():function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){for(var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d),g=['<table style="border:0;border-collapse:collapse;">'],h=0;d>h;h++){g.push("<tr>");for(var i=0;d>i;i++)g.push('<td style="border:0;border-collapse:collapse;padding:0;margin:0;width:'+e+"px;height:"+f+"px;background-color:"+(a.isDark(h,i)?b.colorDark:b.colorLight)+';"></td>');g.push("</tr>")}g.push("</table>"),c.innerHTML=g.join("");var j=c.childNodes[0],k=(b.width-j.offsetWidth)/2,l=(b.height-j.offsetHeight)/2;k>0&&l>0&&(j.style.margin=l+"px "+k+"px")},a.prototype.clear=function(){this._el.innerHTML=""},a}();QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];"string"==typeof a&&(a=document.getElementById(a)),this._android=n(),this._el=a,this._oQRCode=null,this._oDrawing=new q(this._el,this._htOption),this._htOption.text&&this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(r(a,this._htOption.correctLevel),this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode),this.makeImage()},QRCode.prototype.makeImage=function(){"function"==typeof this._oDrawing.makeImage&&(!this._android||this._android>=3)&&this._oDrawing.makeImage()},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();</script>
+<script>// ══════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════
+const LS={
+  get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
+};
 
-// ── STATE ──
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
 let invoices   = LS.get('dt_inv')||[];
 let categories = LS.get('dt_cats')||defaultCats();
 let config     = LS.get('dt_cfg')||{biz:'',nif:''};
+
 let editId=null, editCatId=null, invCat='', invStatus='pendente';
-let activeFilter='todas', camStream=null, camAF=null, camFacing='environment';
-let camMode='qr'; // 'qr' or 'photo'
-let pendingPhotoInvId=null; // invoice waiting for photo
+let activeFilter='todas';
+let camStream=null, camAF=null, camFacing='environment';
+let camMode='qr'; // 'qr' | 'photo'
+let pendingPhotoInvId=null;
 
 function defaultCats(){return[
   {id:'c1',name:'Mercadorias',icon:'🛒',color:'#4ADE80'},
@@ -10810,18 +10908,31 @@ function defaultCats(){return[
   {id:'c5',name:'Investimento',icon:'📈',color:'#F87171'},
 ];}
 
-function persist(){LS.set('dt_inv',invoices);LS.set('dt_cats',categories);LS.set('dt_cfg',config);}
+function persist(){
+  LS.set('dt_inv',invoices);
+  LS.set('dt_cats',categories);
+  LS.set('dt_cfg',config);
+}
 
-// ── UTILS ──
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
 const eur=v=>new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR'}).format(+v||0);
 const fdate=d=>{try{return new Date(d).toLocaleDateString('pt-PT',{day:'2-digit',month:'short',year:'numeric'})}catch{return d||''}};
 const uid=()=>'i'+Date.now()+Math.floor(Math.random()*9999);
 const catById=id=>categories.find(c=>c.id===id)||{name:'—',icon:'📄',color:'#888'};
-function toast(msg,dur=3000){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',dur);}
+
+function toast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',dur);
+}
 function openSheet(id){document.getElementById(id).classList.add('on')}
 function closeSheet(id){document.getElementById(id).classList.remove('on')}
 
-// ── NAV ──
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
 function goPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('p-'+id).classList.add('on');
@@ -10831,16 +10942,19 @@ function goPage(id,btn){
   if(id==='dash')renderDash();
   if(id==='faturas'){renderFilterChips();renderList();}
   if(id==='config')renderConfig();
+  if(id==='sincro')renderSincro();
 }
 
-// ── DASHBOARD ──
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
 function renderDash(){
   const tot=invoices.reduce((a,i)=>a+(+i.amount||0),0);
   const vat=invoices.reduce((a,i)=>a+(+i.vat||0),0);
   const pend=invoices.filter(i=>i.status==='pendente').length;
   const now=new Date();
   const mTot=invoices.filter(i=>{const d=new Date(i.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()}).reduce((a,i)=>a+(+i.amount||0),0);
-  const withPhoto=invoices.filter(i=>i.photo).length;
+
   document.getElementById('stat-grid').innerHTML=`
     <div class="stat g"><div class="stat-lbl">Total Geral</div><div class="stat-val">${eur(tot)}</div><div class="stat-sub">${invoices.length} faturas</div></div>
     <div class="stat y"><div class="stat-lbl">Este mês</div><div class="stat-val">${eur(mTot)}</div><div class="stat-sub">&nbsp;</div></div>
@@ -10848,13 +10962,28 @@ function renderDash(){
     <div class="stat p"><div class="stat-lbl">Pendentes</div><div class="stat-val">${pend}</div><div class="stat-sub">${pend?'⚠ por enviar':'✓ em dia'}</div></div>`;
 
   const dc=document.getElementById('dash-cats');
-  const ct=categories.map(c=>({...c,total:invoices.filter(i=>i.catId===c.id).reduce((a,i)=>a+(+i.amount||0),0),count:invoices.filter(i=>i.catId===c.id).length})).filter(c=>c.count>0).sort((a,b)=>b.total-a.total);
-  if(!ct.length){dc.innerHTML='<p style="font-size:12px;color:var(--t3);text-align:center;padding:10px 0">Sem dados ainda</p>';}
-  else{const mx=ct[0].total||1;dc.innerHTML=ct.map(c=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:12px;font-weight:700">${c.icon} ${c.name}</span><span style="font-size:11px;color:var(--t3);font-family:var(--mono)">${eur(c.total)}</span></div><div style="height:5px;background:var(--s3);border-radius:3px"><div style="height:5px;border-radius:3px;background:${c.color};width:${(c.total/mx*100).toFixed(1)}%;transition:.4s"></div></div></div>`).join('');}
+  const ct=categories.map(c=>({...c,
+    total:invoices.filter(i=>i.catId===c.id).reduce((a,i)=>a+(+i.amount||0),0),
+    count:invoices.filter(i=>i.catId===c.id).length
+  })).filter(c=>c.count>0).sort((a,b)=>b.total-a.total);
 
-  // PDF button if pending invoices exist
-  const pendInvs = invoices.filter(i=>i.status==='pendente');
-  const pdfRow = document.getElementById('dash-pdf-row');
+  if(!ct.length){dc.innerHTML='<p style="font-size:12px;color:var(--t3);text-align:center;padding:10px 0">Sem dados ainda</p>';}
+  else{
+    const mx=ct[0].total||1;
+    dc.innerHTML=ct.map(c=>`
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span style="font-size:12px;font-weight:700">${c.icon} ${c.name}</span>
+          <span style="font-size:11px;color:var(--t3);font-family:var(--mono)">${eur(c.total)}</span>
+        </div>
+        <div style="height:5px;background:var(--s3);border-radius:3px">
+          <div style="height:5px;border-radius:3px;background:${c.color};width:${(c.total/mx*100).toFixed(1)}%;transition:.4s"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  const pendInvs=invoices.filter(i=>i.status==='pendente');
+  const pdfRow=document.getElementById('dash-pdf-row');
   if(pendInvs.length){
     pdfRow.innerHTML=`
       <div class="card" style="background:var(--acc-dim);border-color:#4ADE8033">
@@ -10863,7 +10992,7 @@ function renderDash(){
             <p style="font-size:13px;font-weight:700;color:var(--acc)">${pendInvs.length} fatura${pendInvs.length>1?'s':''} pendente${pendInvs.length>1?'s':''}</p>
             <p style="font-size:11px;color:var(--t3);margin-top:2px">${pendInvs.filter(i=>i.photo).length} com foto · ${pendInvs.filter(i=>!i.photo).length} sem foto</p>
           </div>
-          <button class="btn btn-prim" style="flex:0;padding:10px 16px" onclick="generatePDF()">📄 Gerar PDF</button>
+          <button class="btn btn-prim" style="flex:0;padding:10px 16px" onclick="generatePDF()">📄 PDF</button>
         </div>
       </div>`;
   } else {
@@ -10871,16 +11000,25 @@ function renderDash(){
   }
 
   const rec=[...invoices].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
-  document.getElementById('recent-list').innerHTML=rec.length?rec.map(expHTML).join(''):`<div class="empty"><div class="ei">🧾</div><p>Nenhuma fatura ainda.<br>Use o Scanner para adicionar.</p></div>`;
+  document.getElementById('recent-list').innerHTML=rec.length
+    ?rec.map(expHTML).join('')
+    :`<div class="empty"><div class="ei">🧾</div><p>Nenhuma fatura ainda.<br>Use o Scanner para adicionar.</p></div>`;
 }
 
-// ── LIST ──
+// ══════════════════════════════════════════════
+// LISTA DE FATURAS
+// ══════════════════════════════════════════════
 function renderFilterChips(){
   const wrap=document.getElementById('filter-chips');
   const opts=['todas','pendente','enviada',...categories.map(c=>({id:c.id,label:c.icon+' '+c.name}))];
-  wrap.innerHTML=opts.map(o=>{const val=typeof o==='string'?o:o.id;const lbl=typeof o==='string'?o:o.label;return`<div class="chip ${activeFilter===val?'on':''}" onclick="setFilter('${val}')">${lbl}</div>`;}).join('');
+  wrap.innerHTML=opts.map(o=>{
+    const val=typeof o==='string'?o:o.id;
+    const lbl=typeof o==='string'?o:o.label;
+    return`<div class="chip ${activeFilter===val?'on':''}" onclick="setFilter('${val}')">${lbl}</div>`;
+  }).join('');
 }
 function setFilter(f){activeFilter=f;renderFilterChips();renderList();}
+
 function renderList(){
   const q=(document.getElementById('srch-inp')?.value||'').toLowerCase();
   let filtered=invoices.filter(i=>{
@@ -10891,28 +11029,52 @@ function renderList(){
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   const wrap=document.getElementById('inv-list');
-  if(!filtered.length){wrap.innerHTML=`<div class="empty"><div class="ei">${invoices.length?'🔍':'🧾'}</div><p>${invoices.length?'Nenhum resultado encontrado.':'Nenhuma fatura. Use o Scanner!'}</p></div>`;return;}
-
+  if(!filtered.length){
+    wrap.innerHTML=`<div class="empty"><div class="ei">${invoices.length?'🔍':'🧾'}</div><p>${invoices.length?'Sem resultados.':'Nenhuma fatura. Use o Scanner!'}</p></div>`;
+    return;
+  }
   const groups={};
-  filtered.forEach(i=>{const d=i.date?new Date(i.date):new Date();const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const lbl=d.toLocaleDateString('pt-PT',{month:'long',year:'numeric'});if(!groups[k])groups[k]={lbl,items:[]};groups[k].items.push(i);});
-  wrap.innerHTML=Object.keys(groups).sort((a,b)=>b.localeCompare(a)).map(k=>`<div class="month-hdr">${groups[k].lbl}</div><div class="gap8">${groups[k].items.map(expHTML).join('')}</div>`).join('');
+  filtered.forEach(i=>{
+    const d=i.date?new Date(i.date):new Date();
+    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const lbl=d.toLocaleDateString('pt-PT',{month:'long',year:'numeric'});
+    if(!groups[k])groups[k]={lbl,items:[]};
+    groups[k].items.push(i);
+  });
+  wrap.innerHTML=Object.keys(groups).sort((a,b)=>b.localeCompare(a)).map(k=>
+    `<div class="month-hdr">${groups[k].lbl}</div><div class="gap8">${groups[k].items.map(expHTML).join('')}</div>`
+  ).join('');
 }
 
 function expHTML(inv){
   const cat=catById(inv.catId);
   const photoTag=inv.photo?`<span style="font-size:9px;background:#60A5FA18;color:var(--blue);border-radius:4px;padding:1px 5px;margin-left:4px">📷</span>`:'';
-  return`<div class="exp-item" onclick="showDetail('${inv.id}')"><div class="exp-ico" style="background:${cat.color}18">${cat.icon}</div><div class="exp-mid"><div class="exp-name">${inv.supplier||'Sem nome'}${photoTag}</div><div class="exp-meta">${inv.num||'—'} · ${fdate(inv.date)}</div></div><div class="exp-right"><div class="exp-val">${eur(inv.amount)}</div><div class="pill ${inv.status==='enviada'?'pill-ok':'pill-pend'}">${inv.status==='enviada'?'✓ enviada':'⏳ pendente'}</div></div></div>`;
+  return`<div class="exp-item" onclick="showDetail('${inv.id}')">
+    <div class="exp-ico" style="background:${cat.color}18">${cat.icon}</div>
+    <div class="exp-mid">
+      <div class="exp-name">${inv.supplier||'Sem nome'}${photoTag}</div>
+      <div class="exp-meta">${inv.num||'—'} · ${fdate(inv.date)}</div>
+    </div>
+    <div class="exp-right">
+      <div class="exp-val">${eur(inv.amount)}</div>
+      <div class="pill ${inv.status==='enviada'?'pill-ok':'pill-pend'}">${inv.status==='enviada'?'✓ enviada':'⏳ pendente'}</div>
+    </div>
+  </div>`;
 }
 
-// ── DETAIL ──
+// ══════════════════════════════════════════════
+// DETALHE
+// ══════════════════════════════════════════════
 function showDetail(id){
   const inv=invoices.find(i=>i.id===id);if(!inv)return;
   const cat=catById(inv.catId);
   document.getElementById('d-num').textContent=inv.num||'Fatura';
 
-  const photoSection = inv.photo
-    ? `<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;border:1px solid var(--b)"><img src="${inv.photo}" style="width:100%;display:block;max-height:220px;object-fit:cover"></div>`
-    : `<div style="margin-bottom:14px;background:var(--s2);border:1px dashed var(--b2);border-radius:12px;padding:16px;text-align:center;cursor:pointer" onclick="openPhotoForInvoice('${id}')">
+  const photoSection=inv.photo
+    ?`<div style="margin-bottom:14px;border-radius:12px;overflow:hidden;border:1px solid var(--b)">
+        <img src="${inv.photo}" style="width:100%;display:block;max-height:220px;object-fit:cover">
+       </div>`
+    :`<div style="margin-bottom:14px;background:var(--s2);border:1px dashed var(--b2);border-radius:12px;padding:16px;text-align:center;cursor:pointer" onclick="openPhotoForInvoice('${id}')">
         <div style="font-size:28px;margin-bottom:6px">📷</div>
         <p style="font-size:12px;font-weight:700;color:var(--t2)">Adicionar foto da fatura</p>
         <p style="font-size:11px;color:var(--t3);margin-top:2px">Toque para fotografar</p>
@@ -10921,39 +11083,40 @@ function showDetail(id){
   document.getElementById('d-body').innerHTML=`
     ${photoSection}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px">
-      ${[['Fornecedor',inv.supplier||'—'],['NIF Forn.',inv.nif||'—'],['NIF Cliente',inv.nifClient||'—'],['Data',fdate(inv.date)],['Valor Total',eur(inv.amount)],['IVA',eur(inv.vat)],['ATCUD',inv.atcud||'—'],['Categoria',cat.icon+' '+cat.name]].map(([l,v])=>`<div style="background:var(--s2);border-radius:11px;padding:11px"><div style="font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px">${l}</div><div style="font-size:12px;font-weight:600">${v}</div></div>`).join('')}
+      ${[['Fornecedor',inv.supplier||'—'],['NIF Forn.',inv.nif||'—'],['NIF Cliente',inv.nifClient||'—'],['Data',fdate(inv.date)],['Valor Total',eur(inv.amount)],['IVA',eur(inv.vat)],['ATCUD',inv.atcud||'—'],['Categoria',cat.icon+' '+cat.name]]
+        .map(([l,v])=>`<div style="background:var(--s2);border-radius:11px;padding:11px">
+          <div style="font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px">${l}</div>
+          <div style="font-size:12px;font-weight:600">${v}</div>
+        </div>`).join('')}
     </div>
-    <div style="text-align:center"><span class="pill ${inv.status==='enviada'?'pill-ok':'pill-pend'}" style="font-size:11px;padding:5px 14px">${inv.status==='enviada'?'✓ Enviada':'⏳ Pendente'}</span></div>`;
+    <div style="text-align:center">
+      <span class="pill ${inv.status==='enviada'?'pill-ok':'pill-pend'}" style="font-size:11px;padding:5px 14px">${inv.status==='enviada'?'✓ Enviada':'⏳ Pendente'}</span>
+    </div>`;
 
   const footer=document.getElementById('d-footer');
   footer.innerHTML='';
-
   const del=document.createElement('button');del.className='btn btn-danger';del.textContent='🗑';del.style.flex='0';del.style.padding='11px 14px';
   del.onclick=()=>{if(!confirm('Eliminar esta fatura?'))return;invoices=invoices.filter(i=>i.id!==id);persist();closeSheet('m-detail');toast('🗑 Eliminada');renderDash();renderList();};
 
   const edit=document.createElement('button');edit.className='btn btn-ghost';edit.textContent='✏️ Editar';
   edit.onclick=()=>{closeSheet('m-detail');openInvoiceForm(inv);};
 
-  const photo=document.createElement('button');
-  if(inv.photo){
-    photo.className='btn btn-ghost';photo.textContent='📷 Refot.';photo.style.flex='0';
-    photo.onclick=()=>{closeSheet('m-detail');openPhotoForInvoice(id);};
-  } else {
-    photo.className='btn btn-ghost';photo.textContent='📷 Foto';photo.style.flex='0';
-    photo.onclick=()=>{closeSheet('m-detail');openPhotoForInvoice(id);};
-  }
+  const photo=document.createElement('button');photo.className='btn btn-ghost';photo.textContent=inv.photo?'📷 Refot.':'📷 Foto';photo.style.flex='0';
+  photo.onclick=()=>{closeSheet('m-detail');openPhotoForInvoice(id);};
+
+  footer.appendChild(del);footer.appendChild(photo);footer.appendChild(edit);
 
   if(inv.status==='pendente'){
-    const sb=document.createElement('button');sb.className='btn btn-prim';sb.textContent='📤 Enviada';
+    const sb=document.createElement('button');sb.className='btn btn-prim';sb.textContent='📤';sb.style.flex='0';sb.style.padding='11px 14px';
     sb.onclick=()=>{inv.status='enviada';inv.photo=null;persist();closeSheet('m-detail');toast('📤 Marcada como enviada!');renderDash();renderList();};
-    footer.appendChild(del);footer.appendChild(photo);footer.appendChild(edit);footer.appendChild(sb);
-  } else {
-    footer.appendChild(del);footer.appendChild(photo);footer.appendChild(edit);
+    footer.appendChild(sb);
   }
   openSheet('m-detail');
 }
 
-// ── INVOICE FORM ──
+// ══════════════════════════════════════════════
+// FORMULÁRIO FATURA
+// ══════════════════════════════════════════════
 function openInvoiceForm(data){
   editId=data?.id||null;
   invCat=data?.catId||(categories[0]?.id||'');
@@ -10970,10 +11133,32 @@ function openInvoiceForm(data){
     ['IVA (€)','f-vat','number',data?.vat||'',''],
     ['ATCUD','f-atcud','text',data?.atcud||'','full'],
   ];
-  document.getElementById('inv-form-fields').innerHTML=fields.map(([lbl,id,type,val,span])=>`<div class="fi ${span}"><label>${lbl}</label><input type="${type}" id="${id}" value="${val}" ${type==='number'?'step="0.01" min="0" inputmode="decimal"':''}></div>`).join('');
 
-  document.getElementById('inv-cat-chips').innerHTML=categories.map(c=>`<div class="chip ${invCat===c.id?'on':''}" id="cc-${c.id}" onclick="selCat('${c.id}',this)" style="${invCat===c.id?`border-color:${c.color};background:${c.color}18;color:${c.color}`:''}"> ${c.icon} ${c.name}</div>`).join('');
-  document.getElementById('inv-status-chips').innerHTML=['pendente','enviada'].map(s=>`<div class="chip ${invStatus===s?'on':''}" onclick="selStatus('${s}',this)">${s==='enviada'?'✓ Enviada':'⏳ Pendente'}</div>`).join('');
+  let photoPreview='';
+  if(data?.photo){
+    photoPreview=`<div class="fi full"><div style="border-radius:11px;overflow:hidden;border:1px solid var(--b);max-height:130px"><img src="${data.photo}" style="width:100%;object-fit:cover;display:block;max-height:130px"></div></div>`;
+  }
+
+  document.getElementById('inv-form-fields').innerHTML=
+    photoPreview+
+    fields.map(([lbl,id,type,val,span])=>`
+      <div class="fi ${span}">
+        <label>${lbl}</label>
+        <input type="${type}" id="${id}" value="${val}" ${type==='number'?'step="0.01" min="0" inputmode="decimal"':''}/>
+      </div>`).join('');
+
+  if(data?.photo) document.getElementById('inv-form-fields').dataset.photo=data.photo;
+
+  document.getElementById('inv-cat-chips').innerHTML=categories.map(c=>
+    `<div class="chip ${invCat===c.id?'on':''}" onclick="selCat('${c.id}',this)" style="${invCat===c.id?`border-color:${c.color};background:${c.color}18;color:${c.color}`:''}">
+      ${c.icon} ${c.name}
+    </div>`).join('');
+
+  document.getElementById('inv-status-chips').innerHTML=['pendente','enviada'].map(s=>
+    `<div class="chip ${invStatus===s?'on':''}" onclick="selStatus('${s}',this)">${s==='enviada'?'✓ Enviada':'⏳ Pendente'}</div>`
+  ).join('');
+
+  document.getElementById('save-invoice-btn').onclick=()=>saveInvoice(data?.photo||null);
   openSheet('m-invoice');
 }
 
@@ -10982,41 +11167,243 @@ function selCat(id,el){
   document.querySelectorAll('#inv-cat-chips .chip').forEach(ch=>{ch.classList.remove('on');ch.removeAttribute('style');});
   el.classList.add('on');el.style.borderColor=c.color;el.style.background=c.color+'18';el.style.color=c.color;
 }
-function selStatus(s,el){invStatus=s;document.querySelectorAll('#inv-status-chips .chip').forEach(ch=>ch.classList.remove('on'));el.classList.add('on');}
+function selStatus(s,el){
+  invStatus=s;
+  document.querySelectorAll('#inv-status-chips .chip').forEach(ch=>ch.classList.remove('on'));
+  el.classList.add('on');
+}
 
-function saveInvoice(){
+function saveInvoice(preloadedPhoto=null){
   const g=id=>document.getElementById(id)?.value?.trim()||'';
   const num=g('f-num');
   if(num&&!editId&&invoices.find(i=>i.num===num)){toast('⚠ Nº de fatura já existe!');return;}
-  const existing = editId ? invoices.find(i=>i.id===editId) : null;
+  const existing=editId?invoices.find(i=>i.id===editId):null;
+  const photo=preloadedPhoto||document.getElementById('inv-form-fields')?.dataset?.photo||existing?.photo||null;
   const inv={
     id:editId||uid(),num:num||'FT/'+Date.now().toString().slice(-8),
     supplier:g('f-sup'),nif:g('f-nif'),nifClient:g('f-nifc'),
     date:g('f-date'),amount:parseFloat(g('f-amount'))||0,vat:parseFloat(g('f-vat'))||0,
-    atcud:g('f-atcud'),catId:invCat,status:invStatus,
-    photo: existing?.photo||null, // preserve existing photo
+    atcud:g('f-atcud'),catId:invCat,status:invStatus,photo,
   };
   if(editId){const idx=invoices.findIndex(i=>i.id===editId);if(idx>=0)invoices[idx]=inv;}
   else invoices.unshift(inv);
   persist();closeSheet('m-invoice');
-  const isNew=!editId;
-  toast(editId?'✏️ Fatura actualizada!':'✅ Fatura guardada!');
-  const savedId=inv.id;
-  editId=null;renderDash();renderList();
-  // After saving new invoice, offer to take photo
-  if(isNew){
-    setTimeout(()=>{
-      openPhotoForInvoice(savedId);
-    },400);
+  const isNew=!editId;const savedId=inv.id;
+  editId=null;
+  toast(isNew?'✅ Fatura guardada!':'✏️ Fatura actualizada!');
+  renderDash();renderList();
+  if(isNew&&!photo){
+    setTimeout(()=>openPhotoForInvoice(savedId),400);
   }
 }
+
 function openManual(){openInvoiceForm(null);}
 
-// ── CAMERA: QR + FOTO ──
+// ══════════════════════════════════════════════
+// IMPORTAR FICHEIRO (PDF / Imagem / XML)
+// ══════════════════════════════════════════════
+function openImportFile(){
+  const inp=document.createElement('input');
+  inp.type='file';
+  inp.accept='.pdf,.xml,.jpg,.jpeg,.png,.webp,.heic,image/*,application/pdf,text/xml,application/xml';
+  inp.multiple=true;
+  inp.onchange=e=>handleImportFiles(Array.from(e.target.files));
+  inp.click();
+}
+
+async function handleImportFiles(files){
+  if(!files.length)return;
+  toast('⏳ A processar '+files.length+' ficheiro(s)...',6000);
+  let imported=0;
+  for(const file of files){
+    const ext=file.name.split('.').pop().toLowerCase();
+    if(ext==='xml'){
+      await importXML(file);imported++;
+    } else if(ext==='pdf'){
+      await importPDF(file);imported++;
+    } else if(['jpg','jpeg','png','webp','heic'].includes(ext)||file.type.startsWith('image/')){
+      await importImage(file);imported++;
+    }
+  }
+  toast(`✅ ${imported} ficheiro(s) processado(s)!`);
+  renderDash();renderList();
+}
+
+// ── XML (formato AT) ──
+async function importXML(file){
+  const text=await file.text();
+  try{
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(text,'text/xml');
+    const get=(tag,fallback='')=>{
+      const el=doc.querySelector(tag)||doc.querySelector('[name="'+tag+'"]');
+      return el?el.textContent.trim():fallback;
+    };
+    // Tenta vários formatos de XML AT
+    const nif   = get('NIF')||get('TaxRegistrationNumber')||get('CompanyID')||'';
+    const num   = get('InvoiceNo')||get('DocumentNumber')||get('InvoiceNumber')||'';
+    const total = parseFloat(get('GrossTotal')||get('TaxPayable')||get('NetTotal')||'0')||0;
+    const vat   = parseFloat(get('TaxPayable')||get('TaxAmount')||'0')||0;
+    const dateRaw=get('InvoiceDate')||get('SystemEntryDate')||'';
+    let date='';
+    if(dateRaw){
+      // Normaliza para YYYY-MM-DD
+      const m=dateRaw.match(/(\d{4})[-\/]?(\d{2})[-\/]?(\d{2})/);
+      if(m)date=`${m[1]}-${m[2]}-${m[3]}`;
+    }
+    const atcud=get('ATCUD')||'';
+    const supplier=get('CompanyName')||get('Name')||nif||'Importado XML';
+
+    if(invoices.find(i=>i.num===num&&num)){toast('ℹ '+num+' já existe, ignorada.');return;}
+
+    invoices.unshift({
+      id:uid(),num:num||'XML/'+uid().slice(-6),
+      supplier,nif,nifClient:config.nif||'',
+      date:date||new Date().toISOString().slice(0,10),
+      amount:total,vat,atcud,catId:categories[0]?.id||'',status:'pendente',photo:null
+    });
+    persist();
+  }catch(e){toast('⚠ Erro ao ler XML: '+e.message);}
+}
+
+// ── PDF ──
+async function importPDF(file){
+  return new Promise(resolve=>{
+    // Converte primeira página a imagem para guardar como foto
+    const reader=new FileReader();
+    reader.onload=async e=>{
+      const data=e.target.result;
+      // Tenta extrair texto do PDF via pdf.js (carregado dinamicamente)
+      let supplier='',num='',date='',amount=0,vat=0,atcud='',nif='';
+      let photoDataUrl=null;
+
+      // Render PDF page to canvas → imagem
+      try{
+        let pdfjsLib=window['pdfjs-dist/build/pdf'];
+        if(!pdfjsLib){
+          // Carrega pdf.js via CDN apenas quando necessário
+          await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+          pdfjsLib=window['pdfjs-dist/build/pdf'];
+          if(pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        if(pdfjsLib){
+          const pdf=await pdfjsLib.getDocument({data}).promise;
+          const page=await pdf.getPage(1);
+          const vp=page.getViewport({scale:1.5});
+          const canvas=document.createElement('canvas');
+          canvas.width=vp.width;canvas.height=vp.height;
+          await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+          photoDataUrl=canvas.toDataURL('image/jpeg',0.75);
+
+          // Extrai texto para tentar preencher campos
+          const textContent=await page.getTextContent();
+          const text=textContent.items.map(i=>i.str).join(' ');
+
+          // Padrão NIF português: 9 dígitos
+          const nifMatch=text.match(/\b[1-9]\d{8}\b/);
+          if(nifMatch)nif=nifMatch[0];
+          // Padrão data DD/MM/AAAA ou AAAA-MM-DD
+          const dtMatch=text.match(/(\d{2})\/(\d{2})\/(\d{4})/)||text.match(/(\d{4})-(\d{2})-(\d{2})/);
+          if(dtMatch){
+            if(dtMatch[0].includes('/'))date=`${dtMatch[3]}-${dtMatch[2]}-${dtMatch[1]}`;
+            else date=dtMatch[0];
+          }
+          // Padrão valor € 
+          const amtMatch=text.match(/(\d+[\.,]\d{2})\s*€/)||text.match(/Total[^\d]*(\d+[\.,]\d{2})/i);
+          if(amtMatch)amount=parseFloat(amtMatch[1].replace(',','.'))||0;
+          // ATCUD
+          const atcudMatch=text.match(/ATCUD[:\s]*([A-Z0-9\-]+)/i);
+          if(atcudMatch)atcud=atcudMatch[1];
+        }
+      }catch(err){console.warn('PDF.js erro:',err);}
+
+      const inv={
+        id:uid(),num:num||'PDF/'+uid().slice(-6),
+        supplier:supplier||file.name.replace(/\.pdf$/i,'')||'Importado PDF',
+        nif,nifClient:config.nif||'',
+        date:date||new Date().toISOString().slice(0,10),
+        amount,vat,atcud,catId:categories[0]?.id||'',status:'pendente',
+        photo:photoDataUrl,
+      };
+      invoices.unshift(inv);
+      persist();
+      // Abre formulário para o utilizador completar os dados
+      setTimeout(()=>openInvoiceForm(inv),300);
+      resolve();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// ── IMAGEM ──
+async function importImage(file){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const dataUrl=e.target.result;
+      // Tenta ler QR Code da imagem
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        canvas.width=img.width;canvas.height=img.height;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0);
+        const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);
+        const code=jsQR(imgData.data,imgData.width,imgData.height,{inversionAttempts:'attemptBoth'});
+
+        // Comprime a imagem para guardar
+        const maxW=1200;let w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        const c2=document.createElement('canvas');c2.width=w;c2.height=h;
+        c2.getContext('2d').drawImage(img,0,0,w,h);
+        const photo=c2.toDataURL('image/jpeg',0.75);
+
+        let invData={catId:categories[0]?.id||'',status:'pendente',photo,nifClient:config.nif||''};
+
+        if(code){
+          // QR Code encontrado na imagem!
+          vib();toast('📷 QR Code encontrado na imagem!');
+          const p=parseAT(code.data);
+          invData={...invData,
+            num:p.num||'',supplier:p.nif||'',nif:p.nif||'',
+            nifClient:p.nifClient||config.nif||'',
+            date:p.date||new Date().toISOString().slice(0,10),
+            amount:p.total||0,vat:p.vat||0,atcud:p.atcud||'',
+          };
+        } else {
+          invData.supplier=file.name.replace(/\.[^.]+$/,'')||'Importado imagem';
+          invData.date=new Date().toISOString().slice(0,10);
+        }
+
+        const inv={id:uid(),...invData,num:invData.num||'IMG/'+uid().slice(-6)};
+        invoices.unshift(inv);persist();
+        setTimeout(()=>openInvoiceForm(inv),300);
+        resolve();
+      };
+      img.src=dataUrl;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    if(document.querySelector(`script[src="${src}"]`)){res();return;}
+    const s=document.createElement('script');s.src=src;
+    s.onload=res;s.onerror=rej;
+    document.head.appendChild(s);
+  });
+}
+
+// ══════════════════════════════════════════════
+// CÂMARA QR + FOTO
+// ══════════════════════════════════════════════
 async function openCam(){
   camMode='qr';
   document.getElementById('cam-wrap').classList.add('on');
   document.getElementById('cam-shutter').style.display='none';
+  document.getElementById('cam-manual-lnk').style.display='';
+  document.querySelector('.cam-hint').textContent='Aponte para o QR Code da fatura AT';
   document.getElementById('cam-st').textContent='A iniciar câmara...';
   await startCam();
 }
@@ -11026,9 +11413,9 @@ function openPhotoForInvoice(invId){
   camMode='photo';
   document.getElementById('cam-wrap').classList.add('on');
   document.getElementById('cam-shutter').style.display='flex';
-  document.getElementById('cam-st').textContent='Aponte para a fatura e tire a foto';
-  // hint text
+  document.getElementById('cam-manual-lnk').style.display='none';
   document.querySelector('.cam-hint').textContent='Enquadre a fatura e pressione o botão';
+  document.getElementById('cam-st').textContent='';
   startCam();
 }
 
@@ -11043,13 +11430,13 @@ async function startCam(){
   let ok=false;
   for(const c of tries){
     try{camStream=await navigator.mediaDevices.getUserMedia(c);ok=true;break;}
-    catch(e){if(e.name==='NotAllowedError'){st.textContent='❌ Permissão negada. Autorize a câmara no Chrome.';return;}}
+    catch(e){if(e.name==='NotAllowedError'){st.textContent='❌ Permissão negada.';return;}}
   }
   if(!ok){st.textContent='❌ Câmara inacessível.';return;}
-  v.srcObject=camStream;await new Promise(r=>{v.onloadedmetadata=()=>r();});await v.play().catch(()=>{});
-
+  v.srcObject=camStream;
+  await new Promise(r=>{v.onloadedmetadata=()=>r();});
+  await v.play().catch(()=>{});
   if(camMode==='qr'){
-    document.querySelector('.cam-hint').textContent='Aponte para o QR Code da fatura AT';
     if(typeof BarcodeDetector!=='undefined'){st.innerHTML='✅ BarcodeDetector activo';qrNative();}
     else{st.textContent='📷 A procurar QR...';qrJsQR();}
   }
@@ -11059,11 +11446,8 @@ function capturePhoto(){
   const v=document.getElementById('cam-video');
   const c=document.getElementById('cam-canvas');
   c.width=v.videoWidth;c.height=v.videoHeight;
-  const ctx=c.getContext('2d');
-  ctx.drawImage(v,0,0,c.width,c.height);
-  // Compress to JPEG ~70% quality, max 1200px wide
-  const maxW=1200;
-  let w=c.width,h=c.height;
+  const ctx=c.getContext('2d');ctx.drawImage(v,0,0);
+  const maxW=1200;let w=c.width,h=c.height;
   if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
   const c2=document.createElement('canvas');c2.width=w;c2.height=h;
   c2.getContext('2d').drawImage(c,0,0,w,h);
@@ -11071,33 +11455,22 @@ function capturePhoto(){
   closeCam();
   if(pendingPhotoInvId){
     const inv=invoices.find(i=>i.id===pendingPhotoInvId);
-    if(inv){inv.photo=dataUrl;persist();toast('📷 Foto guardada!');renderDash();renderList();}
+    if(inv){inv.photo=dataUrl;persist();toast('📷 Foto guardada!');}
     pendingPhotoInvId=null;
+    renderDash();renderList();
   }
 }
 
-function qrNative(){
-  const v=document.getElementById('cam-video'),d=new BarcodeDetector({formats:['qr_code']});
-  async function tick(){if(!camStream)return;if(v.readyState===v.HAVE_ENOUGH_DATA){try{const c=await d.detect(v);if(c.length){vib();captureFrameAndHandleQR(c[0].rawValue);return;}}catch(_){}}camAF=setTimeout(tick,200);}tick();
-}
-function qrJsQR(){
-  const v=document.getElementById('cam-video'),c=document.getElementById('cam-canvas'),ctx=c.getContext('2d',{willReadFrequently:true});let last=0;
-  function tick(ts){if(!camStream)return;if(ts-last>280&&v.readyState===v.HAVE_ENOUGH_DATA){last=ts;c.width=v.videoWidth;c.height=v.videoHeight;ctx.drawImage(v,0,0,c.width,c.height);const img=ctx.getImageData(0,0,c.width,c.height);const code=jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});if(code){vib();captureFrameAndHandleQR(code.data);return;}}camAF=requestAnimationFrame(tick);}
-  camAF=requestAnimationFrame(tick);
-}
-
 function captureFrameAndHandleQR(raw){
-  // Capture still frame at moment of QR detection
   const v=document.getElementById('cam-video');
   const c=document.getElementById('cam-canvas');
   c.width=v.videoWidth;c.height=v.videoHeight;
-  const ctx=c.getContext('2d');
-  ctx.drawImage(v,0,0);
+  const ctx=c.getContext('2d');ctx.drawImage(v,0,0);
   const maxW=1200;let w=c.width,h=c.height;
   if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
   const c2=document.createElement('canvas');c2.width=w;c2.height=h;
   c2.getContext('2d').drawImage(c,0,0,w,h);
-  const photoDataUrl=c2.toDataURL('image/jpeg',0.72);
+  const photo=c2.toDataURL('image/jpeg',0.72);
   closeCam();
   const p=parseAT(raw);
   const buf={
@@ -11105,114 +11478,296 @@ function captureFrameAndHandleQR(raw){
     nifClient:p.nifClient||config.nif||'',
     date:p.date||new Date().toISOString().slice(0,10),
     amount:p.total||0,vat:p.vat||0,atcud:p.atcud||'',
-    catId:categories[0]?.id||'',status:'pendente',
-    photo:photoDataUrl
+    catId:categories[0]?.id||'',status:'pendente',photo
   };
   toast('📷 QR lido e foto capturada!');
-  openInvoiceFormWithPhoto(buf);
+  openInvoiceForm(buf);
 }
 
-function openInvoiceFormWithPhoto(data){
-  // Same as openInvoiceForm but stores photo for when saved
-  editId=null;
-  invCat=data.catId||(categories[0]?.id||'');
-  invStatus='pendente';
-  document.getElementById('m-inv-title').textContent='Nova Fatura (foto capturada ✓)';
-  const fields=[
-    ['Nº Fatura','f-num','text',data.num||'','full'],
-    ['Fornecedor','f-sup','text',data.supplier||'','full'],
-    ['NIF Fornecedor','f-nif','text',data.nif||'',''],
-    ['NIF Cliente','f-nifc','text',data.nifClient||config.nif||'',''],
-    ['Data','f-date','date',data.date||new Date().toISOString().slice(0,10),''],
-    ['Valor (€)','f-amount','number',data.amount||'',''],
-    ['IVA (€)','f-vat','number',data.vat||'',''],
-    ['ATCUD','f-atcud','text',data.atcud||'','full'],
-  ];
-  document.getElementById('inv-form-fields').innerHTML=
-    `<div class="fi full" style="margin-bottom:4px"><div style="border-radius:11px;overflow:hidden;border:1px solid var(--b);max-height:140px"><img src="${data.photo}" style="width:100%;object-fit:cover;display:block;max-height:140px"></div></div>`+
-    fields.map(([lbl,id,type,val,span])=>`<div class="fi ${span}"><label>${lbl}</label><input type="${type}" id="${id}" value="${val}" ${type==='number'?'step="0.01" min="0" inputmode="decimal"':''}></div>`).join('');
-
-  // store photo in hidden field
-  document.getElementById('inv-form-fields').dataset.photo=data.photo;
-
-  document.getElementById('inv-cat-chips').innerHTML=categories.map(c=>`<div class="chip ${invCat===c.id?'on':''}" id="cc-${c.id}" onclick="selCat('${c.id}',this)" style="${invCat===c.id?`border-color:${c.color};background:${c.color}18;color:${c.color}`:''}"> ${c.icon} ${c.name}</div>`).join('');
-  document.getElementById('inv-status-chips').innerHTML=['pendente','enviada'].map(s=>`<div class="chip ${invStatus===s?'on':''}" onclick="selStatus('${s}',this)">${s==='enviada'?'✓ Enviada':'⏳ Pendente'}</div>`).join('');
-  openSheet('m-invoice');
-  // override saveInvoice for this case
-  document.getElementById('save-invoice-btn').onclick=()=>saveInvoiceWithPhoto(data.photo);
+function qrNative(){
+  const v=document.getElementById('cam-video'),d=new BarcodeDetector({formats:['qr_code']});
+  async function tick(){
+    if(!camStream)return;
+    if(v.readyState===v.HAVE_ENOUGH_DATA){
+      try{const c=await d.detect(v);if(c.length){vib();captureFrameAndHandleQR(c[0].rawValue);return;}}
+      catch(_){}
+    }
+    camAF=setTimeout(tick,200);
+  }
+  tick();
 }
 
-function saveInvoiceWithPhoto(photo){
-  const g=id=>document.getElementById(id)?.value?.trim()||'';
-  const num=g('f-num');
-  if(num&&invoices.find(i=>i.num===num)){toast('⚠ Nº de fatura já existe!');return;}
-  const inv={
-    id:uid(),num:num||'FT/'+Date.now().toString().slice(-8),
-    supplier:g('f-sup'),nif:g('f-nif'),nifClient:g('f-nifc'),
-    date:g('f-date'),amount:parseFloat(g('f-amount'))||0,vat:parseFloat(g('f-vat'))||0,
-    atcud:g('f-atcud'),catId:invCat,status:invStatus,
-    photo:photo,
-  };
-  invoices.unshift(inv);persist();closeSheet('m-invoice');
-  toast('✅ Fatura guardada com foto!');
-  editId=null;renderDash();renderList();
-  // restore default save button
-  document.getElementById('save-invoice-btn').onclick=saveInvoice;
+function qrJsQR(){
+  const v=document.getElementById('cam-video'),c=document.getElementById('cam-canvas');
+  const ctx=c.getContext('2d',{willReadFrequently:true});let last=0;
+  function tick(ts){
+    if(!camStream)return;
+    if(ts-last>280&&v.readyState===v.HAVE_ENOUGH_DATA){
+      last=ts;c.width=v.videoWidth;c.height=v.videoHeight;
+      ctx.drawImage(v,0,0);
+      const img=ctx.getImageData(0,0,c.width,c.height);
+      const code=jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});
+      if(code){vib();captureFrameAndHandleQR(code.data);return;}
+    }
+    camAF=requestAnimationFrame(tick);
+  }
+  camAF=requestAnimationFrame(tick);
 }
 
 function vib(){try{navigator.vibrate&&navigator.vibrate(120);}catch(_){}}
-
 function parseAT(raw){
   const r={};
-  raw.split('*').forEach(pair=>{const i=pair.indexOf(':');if(i<0)return;const k=pair.slice(0,i).trim(),v=pair.slice(i+1).trim();
-    if(k==='A')r.nif=v;else if(k==='B')r.nifClient=v;else if(k==='F'&&v.length===8)r.date=v.slice(0,4)+'-'+v.slice(4,6)+'-'+v.slice(6,8);else if(k==='G')r.num=v;else if(k==='H')r.atcud=v;else if(k==='N')r.vat=parseFloat(v)||0;else if(k==='O')r.total=parseFloat(v)||0;
+  raw.split('*').forEach(pair=>{
+    const i=pair.indexOf(':');if(i<0)return;
+    const k=pair.slice(0,i).trim(),v=pair.slice(i+1).trim();
+    if(k==='A')r.nif=v;else if(k==='B')r.nifClient=v;
+    else if(k==='F'&&v.length===8)r.date=v.slice(0,4)+'-'+v.slice(4,6)+'-'+v.slice(6,8);
+    else if(k==='G')r.num=v;else if(k==='H')r.atcud=v;
+    else if(k==='N')r.vat=parseFloat(v)||0;else if(k==='O')r.total=parseFloat(v)||0;
   });return r;
 }
-function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}if(camAF){clearTimeout(camAF);cancelAnimationFrame(camAF);camAF=null;}const v=document.getElementById('cam-video');if(v)v.srcObject=null;}
-function closeCam(){stopCam();document.getElementById('cam-wrap').classList.remove('on');document.querySelector('.cam-hint').textContent='Aponte para o QR Code da fatura AT';}
+function stopCam(){
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  if(camAF){clearTimeout(camAF);cancelAnimationFrame(camAF);camAF=null;}
+  const v=document.getElementById('cam-video');if(v)v.srcObject=null;
+}
+function closeCam(){
+  stopCam();
+  document.getElementById('cam-wrap').classList.remove('on');
+  document.querySelector('.cam-hint').textContent='Aponte para o QR Code da fatura AT';
+}
 function switchCam(){camFacing=camFacing==='environment'?'user':'environment';startCam();}
 
-// ── PDF GENERATION ──
+// ══════════════════════════════════════════════
+// SINCRONIZAÇÃO
+// ══════════════════════════════════════════════
+function renderSincro(){
+  const pending=invoices.filter(i=>i.status==='pendente').length;
+  document.getElementById('sincro-summary').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px">
+      <div class="stat b" style="padding:12px"><div class="stat-lbl">Faturas</div><div class="stat-val" style="font-size:18px">${invoices.length}</div></div>
+      <div class="stat y" style="padding:12px"><div class="stat-lbl">Pendentes</div><div class="stat-val" style="font-size:18px">${pending}</div></div>
+      <div class="stat g" style="padding:12px"><div class="stat-lbl">Categorias</div><div class="stat-val" style="font-size:18px">${categories.length}</div></div>
+    </div>`;
+}
+
+// ── EXPORTAR ──
+function exportSyncFile(){
+  // Exporta sem fotos (muito pesadas) — opcional incluir
+  const includeFotos=confirm('Incluir fotos no ficheiro?\n\n⚠ Com fotos o ficheiro pode ser grande (recomendado só por Wi-Fi).\n\nOK = Com fotos   Cancelar = Sem fotos');
+  const data={
+    version:2,
+    exportedAt:new Date().toISOString(),
+    device:config.biz||'Dispositivo',
+    config,
+    categories,
+    invoices:invoices.map(inv=>({
+      ...inv,
+      photo:includeFotos?inv.photo:null
+    }))
+  };
+  const json=JSON.stringify(data);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='despesas_sync_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📤 Ficheiro exportado! Partilha por WhatsApp ou email.');
+}
+
+function shareSyncFile(){
+  const data={
+    version:2,exportedAt:new Date().toISOString(),
+    device:config.biz||'Dispositivo',
+    config,categories,
+    invoices:invoices.map(inv=>({...inv,photo:null})) // sem fotos para partilha rápida
+  };
+  const json=JSON.stringify(data);
+  const blob=new Blob([json],{type:'application/json'});
+  const file=new File([blob],'despesas_sync.json',{type:'application/json'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:'Sync Despesas',text:'Ficheiro de sincronização'})
+      .catch(()=>exportSyncFile());
+  } else {
+    exportSyncFile();
+  }
+}
+
+// ── QR SYNC (para ficheiros pequenos — apenas config + faturas sem foto) ──
+function generateSyncQR(){
+  const data={
+    version:2,exportedAt:new Date().toISOString(),
+    config,categories,
+    invoices:invoices.map(({photo,...rest})=>rest) // sem fotos
+  };
+  const json=JSON.stringify(data);
+
+  // QR tem limite de ~2KB — avisa se for grande demais
+  if(json.length>2800){
+    document.getElementById('qr-warn').style.display='block';
+    document.getElementById('qr-wrap').style.display='none';
+    document.getElementById('qr-count').textContent=invoices.length+' faturas · '+Math.round(json.length/1024)+'KB — demasiado para QR, usa o ficheiro JSON';
+    return;
+  }
+  document.getElementById('qr-warn').style.display='none';
+  document.getElementById('qr-wrap').style.display='block';
+  document.getElementById('qr-code-div').innerHTML='';
+  new QRCode(document.getElementById('qr-code-div'),{
+    text:json,width:220,height:220,
+    colorDark:'#ECEDF5',colorLight:'#13141A',
+    correctLevel:QRCode.CorrectLevel.M
+  });
+  toast('📱 Aponta o outro aparelho para este QR Code');
+}
+
+// ── IMPORTAR FICHEIRO JSON ──
+function importSyncFile(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='.json,application/json';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        applySyncData(data);
+      }catch(err){toast('❌ Ficheiro inválido: '+err.message);}
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
+// ── LER QR DE SYNC ──
+function openSyncQRReader(){
+  camMode='sync-qr';
+  document.getElementById('cam-wrap').classList.add('on');
+  document.getElementById('cam-shutter').style.display='none';
+  document.getElementById('cam-manual-lnk').style.display='none';
+  document.querySelector('.cam-hint').textContent='Aponte para o QR Code de sincronização';
+  document.getElementById('cam-st').textContent='A iniciar câmara...';
+
+  // Override QR handler for sync
+  window._syncQRMode=true;
+  startCam();
+}
+
+// Override qrNative/qrJsQR to handle sync QR
+const _origQrNative=qrNative;
+function qrNative(){
+  if(camMode==='sync-qr'){
+    const v=document.getElementById('cam-video'),d=new BarcodeDetector({formats:['qr_code']});
+    async function tick(){
+      if(!camStream)return;
+      if(v.readyState===v.HAVE_ENOUGH_DATA){
+        try{const c=await d.detect(v);if(c.length){vib();handleSyncQR(c[0].rawValue);return;}}
+        catch(_){}
+      }
+      camAF=setTimeout(tick,200);
+    }
+    tick();
+    return;
+  }
+  _origQrNative();
+}
+
+function handleSyncQR(raw){
+  closeCam();
+  try{
+    const data=JSON.parse(raw);
+    applySyncData(data);
+  }catch(e){toast('❌ QR inválido ou corrompido');}
+}
+
+// ── MERGE INTELIGENTE ──
+function applySyncData(data){
+  if(!data||!data.invoices){toast('❌ Dados inválidos');return;}
+
+  const beforeCount=invoices.length;
+  let added=0,updated=0,skipped=0;
+
+  // Merge faturas
+  data.invoices.forEach(incoming=>{
+    const existing=invoices.find(i=>i.id===incoming.id);
+    if(!existing){
+      invoices.push(incoming);added++;
+    } else {
+      // Mantém a mais recente — compara por data de exportação se disponível
+      // Regra: o incoming só substitui se tiver foto e o local não
+      if(!existing.photo&&incoming.photo){
+        Object.assign(existing,incoming);updated++;
+      } else {
+        skipped++;
+      }
+    }
+    // Verifica duplicado por nº fatura (mesmo se IDs diferentes)
+    if(incoming.num){
+      const dupByNum=invoices.filter(i=>i.num===incoming.num);
+      if(dupByNum.length>1){
+        // Mantém o mais completo (com foto ou com mais campos preenchidos)
+        dupByNum.sort((a,b)=>(b.photo?1:0)-(a.photo?1:0)+(b.amount?1:0)-(a.amount?1:0));
+        const keep=dupByNum[0];
+        dupByNum.slice(1).forEach(d=>{invoices=invoices.filter(i=>i.id!==d.id);});
+      }
+    }
+  });
+
+  // Merge categorias (adiciona novas, não substitui existentes)
+  if(data.categories){
+    data.categories.forEach(inc=>{
+      if(!categories.find(c=>c.id===inc.id)){
+        categories.push(inc);
+      }
+    });
+  }
+
+  // Merge config (só actualiza campos vazios)
+  if(data.config){
+    if(!config.biz&&data.config.biz)config.biz=data.config.biz;
+    if(!config.nif&&data.config.nif)config.nif=data.config.nif;
+  }
+
+  persist();
+  closeSheet('m-sincro-detail');
+  renderDash();renderList();renderSincro();
+  toast(`✅ Merge concluído: +${added} novas, ${updated} actualizadas, ${skipped} ignoradas`);
+}
+
+// ══════════════════════════════════════════════
+// PDF
+// ══════════════════════════════════════════════
 async function generatePDF(){
   const pending=invoices.filter(i=>i.status==='pendente');
   if(!pending.length){toast('Nenhuma fatura pendente!');return;}
-  toast('⏳ A gerar PDF...',8000);
-
+  toast('⏳ A gerar PDF...',10000);
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const pageW=210,pageH=297,margin=14;
+  const pageW=210,margin=14,pageH=297;
   const biz=config.biz||'Empresa';
   const today=new Date().toLocaleDateString('pt-PT');
 
-  // ── CAPA / ÍNDICE ──
-  doc.setFillColor(12,13,16);
-  doc.rect(0,0,pageW,pageH,'F');
-  doc.setFillColor(74,222,128);
-  doc.rect(0,0,pageW,8,'F');
-  doc.setTextColor(74,222,128);
-  doc.setFontSize(22);doc.setFont('helvetica','bold');
+  doc.setFillColor(12,13,16);doc.rect(0,0,pageW,pageH,'F');
+  doc.setFillColor(74,222,128);doc.rect(0,0,pageW,8,'F');
+  doc.setTextColor(74,222,128);doc.setFontSize(22);doc.setFont('helvetica','bold');
   doc.text('FATURAS PENDENTES',pageW/2,40,{align:'center'});
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(13);doc.setFont('helvetica','normal');
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','normal');
   doc.text(biz,pageW/2,52,{align:'center'});
-  doc.setTextColor(150,150,180);
-  doc.setFontSize(10);
+  doc.setTextColor(150,150,180);doc.setFontSize(10);
   doc.text('Gerado em '+today,pageW/2,60,{align:'center'});
 
-  // Tabela resumo
   const totAmt=pending.reduce((a,i)=>a+(+i.amount||0),0);
   const totVat=pending.reduce((a,i)=>a+(+i.vat||0),0);
   let y=80;
-  doc.setFillColor(28,29,36);
-  doc.roundedRect(margin,y,pageW-margin*2,10,2,2,'F');
+  doc.setFillColor(28,29,36);doc.roundedRect(margin,y,pageW-margin*2,10,2,2,'F');
   doc.setTextColor(74,222,128);doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Nº FATURA',margin+4,y+6.5);
   doc.text('FORNECEDOR',margin+36,y+6.5);
   doc.text('DATA',margin+100,y+6.5);
-  doc.text('VALOR',margin+128,y+6.5,{align:'right'});
+  doc.text('VALOR',margin+130,y+6.5,{align:'right'});
   doc.text('FOTO',margin+148,y+6.5);
   y+=10;
-
   pending.forEach((inv,idx)=>{
     doc.setFillColor(idx%2===0?19:24,idx%2===0?20:25,idx%2===0?26:32);
     doc.rect(margin,y,pageW-margin*2,9,'F');
@@ -11220,97 +11775,72 @@ async function generatePDF(){
     doc.text((inv.num||'—').slice(0,18),margin+4,y+5.8);
     doc.text((inv.supplier||'—').slice(0,28),margin+36,y+5.8);
     doc.text(fdate(inv.date),margin+100,y+5.8);
-    doc.text(eur(inv.amount),margin+130,y+5.8,{align:'right'});
+    doc.text(eur(inv.amount),margin+132,y+5.8,{align:'right'});
     doc.text(inv.photo?'✓':'—',margin+148,y+5.8);
     y+=9;
   });
-
   y+=6;
-  doc.setFillColor(28,29,36);
-  doc.roundedRect(margin,y,pageW-margin*2,14,2,2,'F');
+  doc.setFillColor(28,29,36);doc.roundedRect(margin,y,pageW-margin*2,14,2,2,'F');
   doc.setTextColor(74,222,128);doc.setFontSize(9);doc.setFont('helvetica','bold');
   doc.text('TOTAL: '+eur(totAmt)+'   IVA: '+eur(totVat),pageW-margin-4,y+9,{align:'right'});
 
-  // ── PÁGINAS DE FATURAS COM FOTO ──
   for(const inv of pending){
     doc.addPage();
-    // Header
     doc.setFillColor(12,13,16);doc.rect(0,0,pageW,pageH,'F');
     doc.setFillColor(74,222,128);doc.rect(0,0,pageW,6,'F');
     doc.setTextColor(74,222,128);doc.setFontSize(14);doc.setFont('helvetica','bold');
     doc.text(inv.supplier||'Fornecedor',margin,22);
     doc.setTextColor(150,150,180);doc.setFontSize(9);doc.setFont('helvetica','normal');
     doc.text(inv.num||'—',margin,29);doc.text(fdate(inv.date),pageW-margin,29,{align:'right'});
-
-    // Info grid
-    const fields=[
-      ['NIF Fornecedor',inv.nif||'—'],['NIF Cliente',inv.nifClient||'—'],
-      ['Valor Total',eur(inv.amount)],['IVA',eur(inv.vat)],
-      ['ATCUD',inv.atcud||'—'],['Categoria',catById(inv.catId).name],
-    ];
+    const fields=[['NIF Fornecedor',inv.nif||'—'],['NIF Cliente',inv.nifClient||'—'],['Valor Total',eur(inv.amount)],['IVA',eur(inv.vat)],['ATCUD',inv.atcud||'—'],['Categoria',catById(inv.catId).name]];
     let fy=37;
     fields.forEach(([l,v],i)=>{
-      const fx=i%2===0?margin:pageW/2+2;
       if(i%2===0){
         doc.setFillColor(24,25,32);
         doc.roundedRect(margin,fy,pageW/2-margin-2,12,2,2,'F');
         doc.roundedRect(pageW/2+2,fy,pageW/2-margin-2,12,2,2,'F');
       }
+      const fx=i%2===0?margin:pageW/2+2;
       doc.setTextColor(100,100,140);doc.setFontSize(7);doc.setFont('helvetica','bold');
       doc.text(l.toUpperCase(),fx+4,fy+5);
       doc.setTextColor(220,220,240);doc.setFontSize(9);doc.setFont('helvetica','normal');
-      doc.text(v.slice?v.slice(0,22):String(v),fx+4,fy+10);
+      doc.text(String(v).slice(0,22),fx+4,fy+10);
       if(i%2===1)fy+=14;
     });
     if(fields.length%2!==0)fy+=14;
     fy+=4;
-
-    // Photo
     if(inv.photo){
-      const imgW=pageW-margin*2;
-      const imgMaxH=pageH-fy-margin-10;
       try{
-        // Calculate aspect ratio from image
-        await new Promise(resolve=>{
+        await new Promise(res=>{
           const img=new Image();
           img.onload=()=>{
+            const imgW=pageW-margin*2;
             const ratio=img.naturalHeight/img.naturalWidth;
-            const imgH=Math.min(imgMaxH,imgW*ratio);
-            doc.setFillColor(24,25,32);
-            doc.roundedRect(margin,fy,imgW,imgH+4,3,3,'F');
+            const imgH=Math.min(pageH-fy-margin-10,imgW*ratio);
+            doc.setFillColor(24,25,32);doc.roundedRect(margin,fy,imgW,imgH+4,3,3,'F');
             doc.addImage(inv.photo,'JPEG',margin+1,fy+2,imgW-2,imgH-1);
-            resolve();
+            res();
           };
           img.src=inv.photo;
         });
-      }catch(e){
-        doc.setTextColor(150,0,0);doc.setFontSize(9);
-        doc.text('Erro ao incluir imagem',margin,fy+10);
-      }
+      }catch(e){doc.setTextColor(150,0,0);doc.text('Erro na imagem',margin,fy+10);}
     } else {
-      doc.setFillColor(24,25,32);
-      doc.roundedRect(margin,fy,pageW-margin*2,40,3,3,'F');
+      doc.setFillColor(24,25,32);doc.roundedRect(margin,fy,pageW-margin*2,40,3,3,'F');
       doc.setTextColor(80,80,100);doc.setFontSize(10);doc.setFont('helvetica','italic');
       doc.text('Sem foto para esta fatura',pageW/2,fy+22,{align:'center'});
     }
   }
-
-  // Download
-  const filename=`faturas_${biz.replace(/\s+/g,'_')}_${today.replace(/\//g,'-')}.pdf`;
-  doc.save(filename);
-
-  // Clear photos from pending invoices and mark as enviadas
+  doc.save(`faturas_${biz.replace(/\s+/g,'_')}_${today.replace(/\//g,'-')}.pdf`);
   setTimeout(()=>{
-    pending.forEach(inv=>{
-      inv.photo=null;
-      inv.status='enviada';
-    });
+    pending.forEach(inv=>{inv.photo=null;inv.status='enviada';});
     persist();renderDash();renderList();
     toast('✅ PDF gerado! Faturas marcadas como enviadas.');
   },500);
 }
 
-// ── CATEGORIAS ──
+// ══════════════════════════════════════════════
+// CONFIGURAÇÕES
+// ══════════════════════════════════════════════
 function renderConfig(){
   document.getElementById('cfg-biz').value=config.biz||'';
   document.getElementById('cfg-nif').value=config.nif||'';
@@ -11339,9 +11869,11 @@ function deleteCat(id){
   categories=categories.filter(c=>c.id!==id);persist();renderConfig();toast('🗑 Eliminada');
 }
 function saveCfg(){config.biz=document.getElementById('cfg-biz').value.trim();config.nif=document.getElementById('cfg-nif').value.trim();persist();toast('✅ Configurações guardadas!');}
-function clearAll(){if(!confirm('Apagar TODOS os dados? Esta acção não pode ser desfeita.'))return;invoices=[];categories=defaultCats();config={biz:'',nif:''};persist();renderConfig();renderDash();toast('🗑 Dados apagados.');}
+function clearAll(){if(!confirm('Apagar TODOS os dados?'))return;invoices=[];categories=defaultCats();config={biz:'',nif:''};persist();renderConfig();renderDash();toast('🗑 Dados apagados.');}
 
-// ── CSV ──
+// ══════════════════════════════════════════════
+// CSV
+// ══════════════════════════════════════════════
 function exportCSV(){
   if(!invoices.length){toast('⚠ Nenhuma fatura para exportar');return;}
   const hdr=['ID','Nº Fatura','Fornecedor','NIF','NIF Cliente','Data','Valor','IVA','ATCUD','Categoria','Estado','Foto'];
@@ -11350,11 +11882,16 @@ function exportCSV(){
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='despesas_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('📊 CSV exportado!');
 }
 
-// ── INIT ──
-// Restore default save button binding
-document.getElementById('save-invoice-btn').onclick=saveInvoice;
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.getElementById('save-invoice-btn').onclick=()=>saveInvoice(null);
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
 renderDash();
-
 </script>
 </body>
 </html>
