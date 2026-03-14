@@ -103,7 +103,119 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
-        
+
+        /* ── ATALHOS RÁPIDOS ── */
+        .shortcuts-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .shortcut-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(.4,0,.2,1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shortcut-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.25s;
+            border-radius: 14px;
+        }
+
+        .shortcut-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+        }
+
+        .shortcut-card:hover::before { opacity: 1; }
+        .shortcut-card:active { transform: translateY(-1px); }
+
+        /* Reservas — azul/violeta */
+        .shortcut-reservas { border-color: #e8ecff; }
+        .shortcut-reservas::before { background: linear-gradient(135deg,rgba(102,126,234,.05),rgba(118,75,162,.08)); }
+        .shortcut-reservas:hover { border-color: #667eea; box-shadow: 0 16px 40px rgba(102,126,234,.25); }
+        .shortcut-reservas .sc-icon { background: linear-gradient(135deg,#667eea,#764ba2); }
+        .shortcut-reservas .sc-arrow { color: #667eea; }
+
+        /* HACCP — verde */
+        .shortcut-haccp { border-color: #e3f9ee; }
+        .shortcut-haccp::before { background: linear-gradient(135deg,rgba(39,174,96,.05),rgba(34,153,84,.08)); }
+        .shortcut-haccp:hover { border-color: #27ae60; box-shadow: 0 16px 40px rgba(39,174,96,.25); }
+        .shortcut-haccp .sc-icon { background: linear-gradient(135deg,#27ae60,#229954); }
+        .shortcut-haccp .sc-arrow { color: #27ae60; }
+
+        /* Faturas — laranja */
+        .shortcut-faturas { border-color: #fff4de; }
+        .shortcut-faturas::before { background: linear-gradient(135deg,rgba(243,156,18,.05),rgba(230,126,34,.08)); }
+        .shortcut-faturas:hover { border-color: #f39c12; box-shadow: 0 16px 40px rgba(243,156,18,.25); }
+        .shortcut-faturas .sc-icon { background: linear-gradient(135deg,#f39c12,#e67e22); }
+        .shortcut-faturas .sc-arrow { color: #f39c12; }
+
+        .sc-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+        }
+
+        .sc-text { flex: 1; min-width: 0; }
+
+        .sc-label {
+            font-size: 18px;
+            font-weight: 800;
+            color: #2c3e50;
+            letter-spacing: -.4px;
+            display: block;
+        }
+
+        .sc-sub {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 4px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .sc-arrow {
+            font-size: 22px;
+            font-weight: 700;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .shortcut-card:hover .sc-arrow { transform: translateX(5px); }
+
+        @media (max-width: 768px) {
+            .shortcuts-bar {
+                grid-template-columns: 1fr;
+                gap: 11px;
+                margin-bottom: 18px;
+            }
+            .sc-label { font-size: 16px; }
+            .sc-icon { width: 46px; height: 46px; font-size: 22px; }
+        }
+        /* ── FIM ATALHOS ── */
+
         .container { 
             display: grid; 
             grid-template-columns: 420px 1fr; 
@@ -494,6 +606,39 @@
         </div>
     </div>
 
+    <!-- ══ ATALHOS RÁPIDOS ══ -->
+    <div class="shortcuts-bar">
+
+        <a href="admin-completo.html" class="shortcut-card shortcut-reservas">
+            <div class="sc-icon">📅</div>
+            <div class="sc-text">
+                <span class="sc-label">Reservas</span>
+                <span class="sc-sub">Gerir reservas e mesas</span>
+            </div>
+            <span class="sc-arrow">→</span>
+        </a>
+
+        <a href="HACCP.html" class="shortcut-card shortcut-haccp">
+            <div class="sc-icon">🛡️</div>
+            <div class="sc-text">
+                <span class="sc-label">HACCP</span>
+                <span class="sc-sub">Controlo de segurança alimentar</span>
+            </div>
+            <span class="sc-arrow">→</span>
+        </a>
+
+        <a href="Faturas.html" class="shortcut-card shortcut-faturas">
+            <div class="sc-icon">🧾</div>
+            <div class="sc-text">
+                <span class="sc-label">Faturas</span>
+                <span class="sc-sub">Despesas e contabilidade</span>
+            </div>
+            <span class="sc-arrow">→</span>
+        </a>
+
+    </div>
+    <!-- ══ FIM ATALHOS ══ -->
+
     <div class="container">
         
         <!-- COLUNA ESQUERDA -->
@@ -686,13 +831,10 @@
         const avisoLotacao = document.getElementById('avisoLotacao');
         const btnSubmit = document.getElementById('btnManual');
 
-        // Reset
         avisoLotacao.classList.remove('visivel');
         btnSubmit.disabled = false;
 
-        if (!data || !horario || pax === 0) {
-            return;
-        }
+        if (!data || !horario || pax === 0) return;
 
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, {
@@ -809,41 +951,32 @@
             return;
         }
 
-        // Horas 12:00 - 22:00
         const horaInicio = 12;
         const horaFim = 22;
         const totalHoras = horaFim - horaInicio;
 
         let html = '<div class="gantt-timeline">';
         
-        // Header com horas
         html += '<div class="gantt-hours">';
         for (let h = horaInicio; h <= horaFim; h++) {
             html += `<div class="gantt-hour">${h}:00</div>`;
         }
         html += '</div>';
 
-        // Grid vertical
         html += '<div class="gantt-grid">';
         for (let h = horaInicio; h <= horaFim; h++) {
             html += '<div class="gantt-grid-line"></div>';
         }
         html += '</div>';
 
-        // Barras de reservas
         html += '<div class="gantt-rows">';
         
         reservas.forEach((res, index) => {
             const [hora, minuto] = res.hora.split(':').map(Number);
             const horaDecimal = hora + minuto / 60;
-            
-            // Posição (% da esquerda)
             const left = ((horaDecimal - horaInicio) / totalHoras) * 100;
-            
-            // Largura (assumir 1.5h por reserva)
             const duracao = 1.5;
             const width = (duracao / totalHoras) * 100;
-            
             const turno = hora < 16 ? 'almoco' : 'jantar';
             const top = index * 50;
             
@@ -923,12 +1056,8 @@
 
     function filtrarTurno(turno) {
         turnoFiltro = turno;
-        
-        document.querySelectorAll('.filtro-btn').forEach(btn => {
-            btn.classList.remove('ativo');
-        });
+        document.querySelectorAll('.filtro-btn').forEach(btn => btn.classList.remove('ativo'));
         event.target.classList.add('ativo');
-        
         renderizarTabelaHoje();
     }
 
@@ -938,18 +1067,12 @@
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                body: JSON.stringify({
-                    action: 'marcarChegada',
-                    id: id
-                })
+                body: JSON.stringify({ action: 'marcarChegada', id: id })
             });
-            
             const resultado = await response.json();
-            
             if (resultado.status === 'success') {
                 mostrarSucesso(resultado.message);
-                carregarDados();
-                carregarGantt();
+                carregarDados(); carregarGantt();
             } else {
                 mostrarErro(resultado.message || 'Erro ao marcar chegada');
             }
@@ -964,19 +1087,12 @@
         try {
             const response = await fetch(CONFIG.URL_SCRIPT, { 
                 method: 'POST',
-                body: JSON.stringify({
-                    action: 'cancelarAdmin',
-                    nome: nome,
-                    hora: hora
-                })
+                body: JSON.stringify({ action: 'cancelarAdmin', nome: nome, hora: hora })
             });
-            
             const resultado = await response.json();
-            
             if (resultado.status === 'success') {
                 mostrarSucesso(resultado.message);
-                carregarDados();
-                carregarGantt();
+                carregarDados(); carregarGantt();
             } else {
                 mostrarErro(resultado.message || 'Erro ao cancelar');
             }
@@ -1008,13 +1124,9 @@
             if (resultado.status === 'success') {
                 mostrarSucesso('Reserva criada! ID: ' + resultado.id);
                 this.reset();
-                
                 const hoje = new Date().toISOString().split('T')[0];
                 document.getElementById('dataManual').value = hoje;
-                
-                // Esconder aviso
                 document.getElementById('avisoLotacao').classList.remove('visivel');
-                
                 await carregarDados();
                 await carregarGantt();
             } else {
@@ -1042,4 +1154,3 @@
 
 </body>
 </html>
-
