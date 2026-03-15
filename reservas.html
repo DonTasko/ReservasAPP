@@ -353,7 +353,6 @@
 </div>
 
 <script>
-    // URL_SCRIPT vem do config.js
     const campoData = document.getElementById('dataReserva');
     const selectHorario = document.getElementById('selectHorario');
     const campoPax = document.getElementById('numPax');
@@ -363,51 +362,50 @@
     const msgErro = document.getElementById('msg-erro');
     const consentData = document.getElementById('consentData');
     const consentError = document.getElementById('consentError');
-    
+
     let configsGlobal = {};
     let diasFechados = [];
     let horarios = {};
 
+    // ============================
+    //  CARREGAR CONFIGURAÇÕES
+    // ============================
     async function carregarDados() {
         try {
             const [fechados, hors, configs] = await Promise.all([
-                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getDiasFechados'})}).then(r => r.json()),
-                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getHorarios'})}).then(r => r.json()),
-                fetch(URL_SCRIPT, {method:'POST', body:JSON.stringify({action:'getConfigs'})}).then(r => r.json())
+                apiRequest("getDiasFechados", {}, CONFIG.SCRIPT_RESERVAS),
+                apiRequest("getHorarios", {}, CONFIG.SCRIPT_RESERVAS),
+                apiRequest("getConfigs", {}, CONFIG.SCRIPT_RESERVAS)
             ]);
-            
+
             configsGlobal = configs || {};
             diasFechados = Array.isArray(fechados) ? fechados : [];
             horarios = hors || {};
-            
-            console.log('✅ Configurações carregadas:');
-            console.log('Dias fechados:', diasFechados);
-            console.log('Horários:', horarios);
-            console.log('Configs:', configsGlobal);
-            
+
             campoData.min = new Date().toISOString().split('T')[0];
-            
+
             campoData.addEventListener('change', verificarDataEGerarHoras);
             campoPax.addEventListener('input', verificarGrupoEDisponibilidade);
             selectHorario.addEventListener('change', verificarDisponibilidadeHorario);
-            consentData.addEventListener('change', function() {
-                if (this.checked) {
-                    consentError.style.display = 'none';
-                }
+
+            consentData.addEventListener('change', () => {
+                if (consentData.checked) consentError.style.display = 'none';
             });
-            
-            // Carregar horários iniciais
+
             verificarDataEGerarHoras();
-        } catch(e) { 
+        } catch (e) {
             console.error("Erro ao carregar dados:", e);
             mostrarErro("Erro ao carregar configurações. Tenta novamente mais tarde.");
         }
     }
 
+    // ============================
+    //  VERIFICAR DATA E HORÁRIOS
+    // ============================
     function verificarDataEGerarHoras() {
         const dataValue = campoData.value;
         avisoFechado.style.display = 'none';
-        
+
         if (!dataValue) {
             selectHorario.innerHTML = '<option value="">Seleciona uma data</option>';
             avisoDisp.style.display = 'none';
@@ -415,9 +413,8 @@
         }
 
         const data = new Date(dataValue + 'T00:00:00');
-        const diaSemana = data.toLocaleDateString('pt-PT', {weekday:'long'}).toLowerCase();
-        
-        // Verificar se está fechado
+        const diaSemana = data.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
+
         if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
             avisoFechado.style.display = 'block';
             selectHorario.innerHTML = '<option value="">Encerrado</option>';
@@ -425,7 +422,7 @@
             avisoDisp.style.display = 'none';
             return;
         }
-        
+
         selectHorario.disabled = false;
         gerarHoras(horarios);
         verificarDisponibilidadeHorario();
@@ -439,7 +436,7 @@
     function verificarGrupo() {
         const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
         const pax = parseInt(campoPax.value);
-        
+
         if (pax > max) {
             btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
             btnEnviar.classList.add('btn-whatsapp');
@@ -458,71 +455,46 @@
         const pax = parseInt(campoPax.value);
         const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
         const hora = selectHorario.value || '';
-        
-        const tel = configsGlobal.WHATSAPP_URL ? 
-            configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
-        
+
+        const tel = configsGlobal.WHATSAPP_URL ? configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
+
         if (!tel) {
             mostrarErro("WhatsApp não configurado.");
             return;
         }
-        
+
         const mensagem = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
         window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(mensagem), '_blank');
     }
 
+    // ============================
+    //  GERAR HORÁRIOS
+    // ============================
     function gerarHoras(h) {
-        console.log('gerarHoras chamado com:', h);
         selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
-        
-        if (!h) {
-            console.error('Horários não definidos');
-            return;
-        }
-        
-        // Verificar se tem a estrutura com .slots (nova estrutura)
-        if (h.almoco && h.almoco.slots) {
-            // Nova estrutura: usar os slots diretamente
+
+        if (!h) return;
+
+        if (h.almoco?.slots) {
             h.almoco.slots.forEach(slot => {
                 const opt = document.createElement('option');
                 opt.value = opt.text = slot;
                 selectHorario.appendChild(opt);
             });
-            
-            if (h.jantar && h.jantar.slots) {
+
+            if (h.jantar?.slots) {
                 h.jantar.slots.forEach(slot => {
                     const opt = document.createElement('option');
                     opt.value = opt.text = slot;
                     selectHorario.appendChild(opt);
                 });
             }
-        } else {
-            // Estrutura antiga (fallback)
-            [h.almoco, h.jantar].forEach(intervalo => {
-                if (!intervalo || typeof intervalo !== 'string') return;
-                
-                const parts = intervalo.replace(/–|—/g, '-').split('-');
-                let [hAt, mAt] = parts[0].trim().split(':').map(Number);
-                const [hFim, mFim] = parts[1].trim().split(':').map(Number);
-                
-                while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
-                    const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
-                    const opt = document.createElement('option');
-                    opt.value = opt.text = tempo;
-                    selectHorario.appendChild(opt);
-                    mAt += 15;
-                    if (mAt >= 60) {
-                        mAt = 0;
-                        hAt++;
-                    }
-                }
-            });
         }
-        
-        selectHorario.value = '';
-        console.log('✅ Horários gerados:', selectHorario.options.length - 1, 'opções');
     }
 
+    // ============================
+    //  VERIFICAR DISPONIBILIDADE
+    // ============================
     async function verificarDisponibilidadeHorario() {
         if (!campoData.value || !selectHorario.value) {
             avisoDisp.style.display = 'none';
@@ -530,18 +502,12 @@
         }
 
         try {
-            const response = await fetch(URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'verificarDisponiblidade',
-                    data: campoData.value,
-                    pax: parseInt(campoPax.value),
-                    horario: selectHorario.value
-                })
-            });
-            
-            const resultado = await response.json();
-            
+            const resultado = await apiRequest("verificarDisponiblidade", {
+                data: campoData.value,
+                pax: parseInt(campoPax.value),
+                horario: selectHorario.value
+            }, CONFIG.SCRIPT_RESERVAS);
+
             if (!resultado.disponivel) {
                 avisoDisp.textContent = "⚠️ Sem disponibilidade para este horário. Escolhe outro.";
                 avisoDisp.classList.add('indisponivel');
@@ -550,12 +516,9 @@
             } else {
                 avisoDisp.classList.remove('indisponivel');
                 selectHorario.style.borderColor = '';
-                
-                const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
-                if (parseInt(campoPax.value) <= max) {
-                    btnEnviar.disabled = false;
-                }
+                btnEnviar.disabled = false;
             }
+
             avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
         } catch (error) {
             console.error("Erro ao verificar disponibilidade:", error);
@@ -563,77 +526,52 @@
         }
     }
 
-    function mostrarErro(mensagem) {
-        msgErro.textContent = "❌ " + mensagem;
-        msgErro.style.display = 'block';
-        setTimeout(() => {
-            msgErro.style.display = 'none';
-        }, 6000);
-    }
-
+    // ============================
+    //  ENVIAR RESERVA
+    // ============================
     document.getElementById('formReserva').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Validar consentimento RGPD
+
         if (!consentData.checked) {
             consentError.style.display = 'block';
             consentData.focus();
-            window.scrollTo({
-                top: consentData.offsetTop - 100,
-                behavior: 'smooth'
-            });
             return;
         }
-        
-        // Validação final
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
-        if (parseInt(campoPax.value) > max) {
-            mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
-            return;
-        }
-        
-        if (!campoData.value || !selectHorario.value) {
-            mostrarErro("Por favor, preenche todos os campos obrigatórios.");
-            return;
-        }
-        
+
         btnEnviar.disabled = true;
         btnEnviar.innerText = "A processar...";
         document.getElementById('formReserva').classList.add('carregando');
-        
+
         try {
             const dados = Object.fromEntries(new FormData(e.target));
-            dados.action = "reservaSite";
-            
-            const response = await fetch(URL_SCRIPT, {
-                method:'POST', 
-                body:JSON.stringify(dados)
-            });
-            
-            const res = await response.json();
-            
+            const res = await apiRequest("reservaSite", dados, CONFIG.SCRIPT_RESERVAS);
+
             if (res.status === 'success') {
                 document.getElementById('formReserva').style.display = 'none';
                 document.getElementById('msg-sucesso').style.display = 'block';
             } else {
-                mostrarErro(res.message || "Erro ao processar reserva. Tenta novamente.");
+                mostrarErro(res.message || "Erro ao processar reserva.");
                 btnEnviar.disabled = false;
                 btnEnviar.innerText = "Confirmar Reserva";
                 document.getElementById('formReserva').classList.remove('carregando');
             }
         } catch (error) {
             console.error("Erro:", error);
-            mostrarErro("Erro ao processar reserva. Verifica a conexão e tenta novamente.");
+            mostrarErro("Erro ao processar reserva.");
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Confirmar Reserva";
             document.getElementById('formReserva').classList.remove('carregando');
         }
     });
-    
+
+    function mostrarErro(mensagem) {
+        msgErro.textContent = "❌ " + mensagem;
+        msgErro.style.display = 'block';
+        setTimeout(() => msgErro.style.display = 'none', 6000);
+    }
+
     carregarDados();
 </script>
 
-<!-- Cookie Banner Script -->
-<script src="cookie-banner.js"></script>
 </body>
 </html>
