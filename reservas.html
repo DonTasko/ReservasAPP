@@ -198,7 +198,7 @@
             font-size: 13px;
             animation: slideIn 0.3s ease;
         }
-        
+
         /* RGPD Consent Box */
         .consent-box {
             margin: 20px 0;
@@ -246,7 +246,7 @@
             margin-top: 10px;
             font-weight: bold;
         }
-        
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -262,92 +262,70 @@
             opacity: 0.6;
             pointer-events: none;
         }
-        
-        @media (max-width: 600px) {
-            .booking-card { 
-                padding: 20px;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .form-row > div:not(:first-child) label {
-                margin-top: 15px;
-            }
-            
-            .btn-submit {
-                font-size: 16px;
-                padding: 12px;
-            }
-        }
     </style>
 </head>
 <body>
-
 <div class="booking-card">
     <div class="logo">
         <img src="logo.png" alt="Don Tasko">
-        <h1>Don Tasko</h1>
-        <p>Reserva de Mesa</p>
+        <h1>Reserva de Mesa</h1>
+        <p>Garante já o teu lugar no Don Tasko</p>
     </div>
-    
-    <div id="msg-sucesso">✅ Reserva enviada! Verifica o teu e-mail para confirmação.</div>
+
+    <div id="msg-sucesso">✅ Reserva enviada com sucesso! Vais receber confirmação em breve.</div>
     <div id="msg-erro"></div>
-    
+
     <form id="formReserva">
-        <label>Nome Completo</label>
-        <input type="text" name="nome" placeholder="O teu nome completo" required minlength="2">
-        
-        <label>Telemóvel</label>
-        <input type="tel" name="telemovel" placeholder="Ex: 912345678" required pattern="[0-9\s\-\+]{9,}">
-        
-        <label>E-mail</label>
-        <input type="email" name="email" placeholder="O teu e-mail" required>
-        
+        <label for="nome">Nome Completo</label>
+        <input type="text" id="nome" name="nome" placeholder="o teu nome completo" required>
+
+        <label for="telefone">Telemóvel</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="Ex: 912345678" required>
+
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="o teu e-mail" required>
+
         <div class="form-row">
             <div>
-                <label>Data</label>
-                <input type="date" name="data" id="dataReserva" required>
-                <div id="avisoFechado" class="aviso-fechado">❌ Encerrado nesta data.</div>
+                <label for="dataReserva">Data</label>
+                <input type="date" id="dataReserva" name="data" required>
+                <div id="avisoFechado" class="aviso-fechado">
+                    ⚠️ Nesse dia estamos encerrados. Escolhe outra data.
+                </div>
             </div>
             <div>
-                <label>Pessoas</label>
-                <input type="number" name="pax" id="numPax" value="2" min="1" max="20" required>
+                <label for="numPax">Pessoas</label>
+                <input type="number" id="numPax" name="pessoas" min="1" max="20" value="2" required>
             </div>
         </div>
-        
-        <label>Horário</label>
-        <select name="horario" id="selectHorario" required>
-            <option value="">A carregar...</option>
+
+        <label for="selectHorario">Horário</label>
+        <select id="selectHorario" name="horario" required>
+            <option value="">Seleciona um horário</option>
         </select>
         <div id="avisoDisponibilidade" class="aviso-disponibilidade"></div>
-        
-        <label>Observações</label>
-        <textarea name="obs" rows="2" placeholder="Alergias, preferências, etc. (opcional)"></textarea>
-        
-        <!-- Consentimento RGPD -->
+
+        <label for="obs">Alergias, preferências, etc. (opcional)</label>
+        <textarea id="obs" name="observacoes" rows="3" placeholder="Ex: alergias, cadeira bebé, aniversário..."></textarea>
+
         <div class="consent-box">
             <div class="checkbox-wrapper">
-                <input type="checkbox" id="consentData" name="consentData" required>
+                <input type="checkbox" id="consentData" required>
                 <label for="consentData">
-                    Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. <span style="color: var(--error);">*</span>
+                    Li e aceito a <a href="/politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. *
                 </label>
             </div>
-            
             <div class="checkbox-wrapper">
-                <input type="checkbox" id="consentMarketing" name="consentMarketing">
+                <input type="checkbox" id="consentMarketing">
                 <label for="consentMarketing">
-                    Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional)
+                    Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional).
                 </label>
             </div>
-            
             <div id="consentError" class="consent-error">
-                ⚠️ Por favor, aceite a Política de Privacidade para continuar.
+                Tens de aceitar a Política de Privacidade para continuar.
             </div>
         </div>
-        
+
         <button type="submit" class="btn-submit" id="btnEnviar">Confirmar Reserva</button>
     </form>
 </div>
@@ -367,9 +345,6 @@
     let diasFechados = [];
     let horarios = {};
 
-    // ============================
-    //  CARREGAR CONFIGURAÇÕES
-    // ============================
     async function carregarDados() {
         try {
             const [fechados, hors, configs] = await Promise.all([
@@ -399,9 +374,6 @@
         }
     }
 
-    // ============================
-    //  VERIFICAR DATA E HORÁRIOS
-    // ============================
     function verificarDataEGerarHoras() {
         const dataValue = campoData.value;
         avisoFechado.style.display = 'none';
@@ -467,22 +439,19 @@
         window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(mensagem), '_blank');
     }
 
-    // ============================
-    //  GERAR HORÁRIOS
-    // ============================
     function gerarHoras(h) {
         selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
 
         if (!h) return;
 
-        if (h.almoco?.slots) {
+        if (h.almoco && h.almoco.slots) {
             h.almoco.slots.forEach(slot => {
                 const opt = document.createElement('option');
                 opt.value = opt.text = slot;
                 selectHorario.appendChild(opt);
             });
 
-            if (h.jantar?.slots) {
+            if (h.jantar && h.jantar.slots) {
                 h.jantar.slots.forEach(slot => {
                     const opt = document.createElement('option');
                     opt.value = opt.text = slot;
@@ -492,9 +461,6 @@
         }
     }
 
-    // ============================
-    //  VERIFICAR DISPONIBILIDADE
-    // ============================
     async function verificarDisponibilidadeHorario() {
         if (!campoData.value || !selectHorario.value) {
             avisoDisp.style.display = 'none';
@@ -526,15 +492,35 @@
         }
     }
 
-    // ============================
-    //  ENVIAR RESERVA
-    // ============================
+    function mostrarErro(mensagem) {
+        msgErro.textContent = "❌ " + mensagem;
+        msgErro.style.display = 'block';
+        setTimeout(() => {
+            msgErro.style.display = 'none';
+        }, 6000);
+    }
+
     document.getElementById('formReserva').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         if (!consentData.checked) {
             consentError.style.display = 'block';
             consentData.focus();
+            window.scrollTo({
+                top: consentData.offsetTop - 100,
+                behavior: 'smooth'
+            });
+            return;
+        }
+
+        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+        if (parseInt(campoPax.value) > max) {
+            mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
+            return;
+        }
+
+        if (!campoData.value || !selectHorario.value) {
+            mostrarErro("Por favor, preenche todos os campos obrigatórios.");
             return;
         }
 
@@ -550,28 +536,24 @@
                 document.getElementById('formReserva').style.display = 'none';
                 document.getElementById('msg-sucesso').style.display = 'block';
             } else {
-                mostrarErro(res.message || "Erro ao processar reserva.");
+                mostrarErro(res.message || "Erro ao processar reserva. Tenta novamente.");
                 btnEnviar.disabled = false;
                 btnEnviar.innerText = "Confirmar Reserva";
                 document.getElementById('formReserva').classList.remove('carregando');
             }
         } catch (error) {
             console.error("Erro:", error);
-            mostrarErro("Erro ao processar reserva.");
+            mostrarErro("Erro ao processar reserva. Verifica a conexão e tenta novamente.");
             btnEnviar.disabled = false;
             btnEnviar.innerText = "Confirmar Reserva";
             document.getElementById('formReserva').classList.remove('carregando');
         }
     });
 
-    function mostrarErro(mensagem) {
-        msgErro.textContent = "❌ " + mensagem;
-        msgErro.style.display = 'block';
-        setTimeout(() => msgErro.style.display = 'none', 6000);
-    }
-
     carregarDados();
 </script>
 
+<!-- Cookie Banner Script -->
+<script src="cookie-banner.js"></script>
 </body>
 </html>
