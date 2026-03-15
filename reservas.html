@@ -199,7 +199,6 @@
             animation: slideIn 0.3s ease;
         }
 
-        /* RGPD Consent Box */
         .consent-box {
             margin: 20px 0;
             padding: 15px;
@@ -267,9 +266,9 @@
 <body>
 <div class="booking-card">
     <div class="logo">
-        <img src="logo.png" alt="Don Tasko">
-        <h1>Reserva de Mesa</h1>
-        <p>Garante já o teu lugar no Don Tasko</p>
+        <img src="logo.png" alt="Don Tasko" onerror="this.style.display='none'">
+        <h1>Don Tasko</h1>
+        <p>Reserva de Mesa</p>
     </div>
 
     <div id="msg-sucesso">✅ Reserva enviada com sucesso! Vais receber confirmação em breve.</div>
@@ -277,13 +276,13 @@
 
     <form id="formReserva">
         <label for="nome">Nome Completo</label>
-        <input type="text" id="nome" name="nome" placeholder="o teu nome completo" required>
+        <input type="text" id="nome" name="nome" placeholder="O teu nome completo" required minlength="2">
 
         <label for="telefone">Telemóvel</label>
-        <input type="tel" id="telefone" name="telefone" placeholder="Ex: 912345678" required>
+        <input type="tel" id="telefone" name="telemovel" placeholder="Ex: 925504212" required pattern="[0-9]{9}" title="Digite 9 dígitos">
 
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" placeholder="o teu e-mail" required>
+        <input type="email" id="email" name="email" placeholder="o teu e-mail">
 
         <div class="form-row">
             <div>
@@ -295,7 +294,7 @@
             </div>
             <div>
                 <label for="numPax">Pessoas</label>
-                <input type="number" id="numPax" name="pessoas" min="1" max="20" value="2" required>
+                <input type="number" id="numPax" name="pax" min="1" max="20" value="2" required>
             </div>
         </div>
 
@@ -305,20 +304,20 @@
         </select>
         <div id="avisoDisponibilidade" class="aviso-disponibilidade"></div>
 
-        <label for="obs">Alergias, preferências, etc. (opcional)</label>
-        <textarea id="obs" name="observacoes" rows="3" placeholder="Ex: alergias, cadeira bebé, aniversário..."></textarea>
+        <label for="obs">Observações (opcional)</label>
+        <textarea id="obs" name="obs" rows="3" placeholder="Alergias, preferências, etc. (opcional)"></textarea>
 
         <div class="consent-box">
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="consentData" required>
                 <label for="consentData">
-                    Li e aceito a <a href="/politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. *
+                    Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais para processamento da reserva. *
                 </label>
             </div>
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="consentMarketing">
                 <label for="consentMarketing">
-                    Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional).
+                    Desejo receber comunicações de marketing e newsletter do Don Tasko (opcional)
                 </label>
             </div>
             <div id="consentError" class="consent-error">
@@ -331,125 +330,160 @@
 </div>
 
 <script>
-    const campoData = document.getElementById('dataReserva');
-    const selectHorario = document.getElementById('selectHorario');
-    const campoPax = document.getElementById('numPax');
-    const btnEnviar = document.getElementById('btnEnviar');
-    const avisoDisp = document.getElementById('avisoDisponibilidade');
-    const avisoFechado = document.getElementById('avisoFechado');
-    const msgErro = document.getElementById('msg-erro');
-    const consentData = document.getElementById('consentData');
-    const consentError = document.getElementById('consentError');
+console.log('🚀 Reservas Don Tasko iniciando...');
 
-    let configsGlobal = {};
-    let diasFechados = [];
-    let horarios = {};
+const campoData = document.getElementById('dataReserva');
+const selectHorario = document.getElementById('selectHorario');
+const campoPax = document.getElementById('numPax');
+const campoTelemovel = document.getElementById('telefone');
+const btnEnviar = document.getElementById('btnEnviar');
+const avisoDisp = document.getElementById('avisoDisponibilidade');
+const avisoFechado = document.getElementById('avisoFechado');
+const msgErro = document.getElementById('msg-erro');
+const consentData = document.getElementById('consentData');
+const consentError = document.getElementById('consentError');
 
-    async function carregarDados() {
-        try {
-            const [fechados, hors, configs] = await Promise.all([
-                apiRequest("getDiasFechados", {}, CONFIG.SCRIPT_RESERVAS),
-                apiRequest("getHorarios", {}, CONFIG.SCRIPT_RESERVAS),
-                apiRequest("getConfigs", {}, CONFIG.SCRIPT_RESERVAS)
-            ]);
+let configsGlobal = {};
+let diasFechados = [];
+let horarios = {};
 
-            configsGlobal = configs || {};
-            diasFechados = Array.isArray(fechados) ? fechados : [];
-            horarios = hors || {};
-
-            campoData.min = new Date().toISOString().split('T')[0];
-
-            campoData.addEventListener('change', verificarDataEGerarHoras);
-            campoPax.addEventListener('input', verificarGrupoEDisponibilidade);
-            selectHorario.addEventListener('change', verificarDisponibilidadeHorario);
-
-            consentData.addEventListener('change', () => {
-                if (consentData.checked) consentError.style.display = 'none';
-            });
-
-            verificarDataEGerarHoras();
-        } catch (e) {
-            console.error("Erro ao carregar dados:", e);
-            mostrarErro("Erro ao carregar configurações. Tenta novamente mais tarde.");
+// Helper para fazer requests ao Apps Script
+async function apiRequest(action, data = {}) {
+    try {
+        console.log(`📡 API Request: ${action}`, data);
+        
+        const response = await fetch(CONFIG.SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action, ...data })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+        
+        const result = await response.json();
+        console.log(`✅ API Response: ${action}`, result);
+        
+        return result;
+    } catch (error) {
+        console.error(`❌ Erro na API (${action}):`, error);
+        throw error;
     }
+}
 
-    function verificarDataEGerarHoras() {
-        const dataValue = campoData.value;
-        avisoFechado.style.display = 'none';
+async function carregarDados() {
+    try {
+        console.log('🔄 Carregando configurações...');
+        
+        const [fechados, hors, configs] = await Promise.all([
+            apiRequest('getDiasFechados'),
+            apiRequest('getHorarios'),
+            apiRequest('getConfigs')
+        ]);
 
-        if (!dataValue) {
-            selectHorario.innerHTML = '<option value="">Seleciona uma data</option>';
-            avisoDisp.style.display = 'none';
-            return;
-        }
+        configsGlobal = configs || {};
+        diasFechados = Array.isArray(fechados) ? fechados : [];
+        horarios = hors || {};
 
-        const data = new Date(dataValue + 'T00:00:00');
-        const diaSemana = data.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
+        console.log('✅ Configurações carregadas:');
+        console.log('  Dias fechados:', diasFechados);
+        console.log('  Horários:', horarios);
+        console.log('  Configs:', configsGlobal);
 
-        if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
-            avisoFechado.style.display = 'block';
-            selectHorario.innerHTML = '<option value="">Encerrado</option>';
-            selectHorario.disabled = true;
-            avisoDisp.style.display = 'none';
-            return;
-        }
+        // Definir data mínima (hoje)
+        const hoje = new Date();
+        campoData.min = hoje.toISOString().split('T')[0];
 
-        selectHorario.disabled = false;
-        gerarHoras(horarios);
-        verificarDisponibilidadeHorario();
+        // Event listeners
+        campoData.addEventListener('change', verificarDataEGerarHoras);
+        campoPax.addEventListener('input', verificarGrupoEDisponibilidade);
+        selectHorario.addEventListener('change', verificarDisponibilidadeHorario);
+        consentData.addEventListener('change', () => {
+            if (consentData.checked) consentError.style.display = 'none';
+        });
+
+        verificarDataEGerarHoras();
+    } catch (e) {
+        console.error('❌ Erro ao carregar dados:', e);
+        mostrarErro('Erro ao carregar configurações. Tenta novamente mais tarde.');
     }
+}
 
-    function verificarGrupoEDisponibilidade() {
-        verificarGrupo();
-        verificarDisponibilidadeHorario();
-    }
+function verificarDataEGerarHoras() {
+    const dataValue = campoData.value;
+    avisoFechado.style.display = 'none';
 
-    function verificarGrupo() {
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
-        const pax = parseInt(campoPax.value);
-
-        if (pax > max) {
-            btnEnviar.innerText = "Reservar via WhatsApp (Grupo > " + max + ")";
-            btnEnviar.classList.add('btn-whatsapp');
-            btnEnviar.type = 'button';
-            btnEnviar.onclick = abrirWhatsApp;
-        } else {
-            btnEnviar.innerText = "Confirmar Reserva";
-            btnEnviar.classList.remove('btn-whatsapp');
-            btnEnviar.type = 'submit';
-            btnEnviar.onclick = null;
-        }
-    }
-
-    function abrirWhatsApp(e) {
-        e.preventDefault();
-        const pax = parseInt(campoPax.value);
-        const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
-        const hora = selectHorario.value || '';
-
-        const tel = configsGlobal.WHATSAPP_URL ? configsGlobal.WHATSAPP_URL.toString().replace(/\D/g, "") : "";
-
-        if (!tel) {
-            mostrarErro("WhatsApp não configurado.");
-            return;
-        }
-
-        const mensagem = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
-        window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(mensagem), '_blank');
-    }
-
-    function gerarHoras(h) {
-    console.log('gerarHoras chamado com:', h);
-    selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
-
-    if (!h) {
-        console.error('Horários não definidos');
+    if (!dataValue) {
+        selectHorario.innerHTML = '<option value="">Seleciona uma data primeiro</option>';
+        avisoDisp.style.display = 'none';
         return;
     }
 
-    // ✅ Caso 1: nova estrutura com slots
+    const data = new Date(dataValue + 'T00:00:00');
+    const diaSemana = data.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
+
+    // Verificar se está fechado
+    if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
+        avisoFechado.style.display = 'block';
+        selectHorario.innerHTML = '<option value="">Encerrado</option>';
+        selectHorario.disabled = true;
+        avisoDisp.style.display = 'none';
+        return;
+    }
+
+    selectHorario.disabled = false;
+    gerarHoras(horarios);
+    verificarDisponibilidadeHorario();
+}
+
+function verificarGrupoEDisponibilidade() {
+    verificarGrupo();
+    verificarDisponibilidadeHorario();
+}
+
+function verificarGrupo() {
+    const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 8;
+    const pax = parseInt(campoPax.value);
+
+    if (pax > max) {
+        btnEnviar.innerText = `Reservar via WhatsApp (Grupo > ${max})`;
+        btnEnviar.classList.add('btn-whatsapp');
+        btnEnviar.type = 'button';
+        btnEnviar.onclick = abrirWhatsApp;
+    } else {
+        btnEnviar.innerText = 'Confirmar Reserva';
+        btnEnviar.classList.remove('btn-whatsapp');
+        btnEnviar.type = 'submit';
+        btnEnviar.onclick = null;
+    }
+}
+
+function abrirWhatsApp(e) {
+    e.preventDefault();
+    const pax = parseInt(campoPax.value);
+    const data = campoData.value ? new Date(campoData.value + 'T00:00:00').toLocaleDateString('pt-PT') : '';
+    const hora = selectHorario.value || '';
+
+    const tel = configsGlobal.TELEFONE_RESTAURANTE || '925504212';
+
+    const mensagem = `Olá! Queria reservar mesa para ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' pelas ' + hora : ''}.`;
+    window.open(`https://wa.me/351${tel}?text=${encodeURIComponent(mensagem)}`, '_blank');
+}
+
+function gerarHoras(h) {
+    console.log('🕐 gerarHoras chamado com:', h);
+    selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
+
+    if (!h) {
+        console.error('❌ Horários não definidos');
+        return;
+    }
+
+    // Estrutura nova com .slots
     if (h.almoco && h.almoco.slots) {
+        console.log('✅ Usando estrutura nova (slots)');
+        
         h.almoco.slots.forEach(slot => {
             const opt = document.createElement('option');
             opt.value = opt.text = slot;
@@ -464,7 +498,9 @@
             });
         }
     } else {
-        // ✅ Caso 2: estrutura antiga com intervalos tipo "12:00-15:00"
+        // Estrutura antiga com intervalos
+        console.log('⚠️ Usando estrutura antiga (intervalos)');
+        
         [h.almoco, h.jantar].forEach(intervalo => {
             if (!intervalo || typeof intervalo !== 'string') return;
 
@@ -488,101 +524,126 @@
         });
     }
 
-    console.log('✅ Horários gerados:', selectHorario.options.length - 1, 'opções');
+    console.log(`✅ Horários gerados: ${selectHorario.options.length - 1} opções`);
 }
 
-
-    async function verificarDisponibilidadeHorario() {
-        if (!campoData.value || !selectHorario.value) {
-            avisoDisp.style.display = 'none';
-            return;
-        }
-
-        try {
-            const resultado = await apiRequest("verificarDisponiblidade", {
-                data: campoData.value,
-                pax: parseInt(campoPax.value),
-                horario: selectHorario.value
-            }, CONFIG.SCRIPT_RESERVAS);
-
-            if (!resultado.disponivel) {
-                avisoDisp.textContent = "⚠️ Sem disponibilidade para este horário. Escolhe outro.";
-                avisoDisp.classList.add('indisponivel');
-                selectHorario.style.borderColor = '#e74c3c';
-                btnEnviar.disabled = true;
-            } else {
-                avisoDisp.classList.remove('indisponivel');
-                selectHorario.style.borderColor = '';
-                btnEnviar.disabled = false;
-            }
-
-            avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
-        } catch (error) {
-            console.error("Erro ao verificar disponibilidade:", error);
-            avisoDisp.style.display = 'none';
-        }
+async function verificarDisponibilidadeHorario() {
+    if (!campoData.value || !selectHorario.value) {
+        avisoDisp.style.display = 'none';
+        return;
     }
 
-    function mostrarErro(mensagem) {
-        msgErro.textContent = "❌ " + mensagem;
-        msgErro.style.display = 'block';
-        setTimeout(() => {
-            msgErro.style.display = 'none';
-        }, 6000);
-    }
+    try {
+        const resultado = await apiRequest('verificarDisponiblidade', {
+            data: campoData.value,
+            pax: parseInt(campoPax.value),
+            horario: selectHorario.value
+        });
 
-    document.getElementById('formReserva').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        if (!consentData.checked) {
-            consentError.style.display = 'block';
-            consentData.focus();
-            window.scrollTo({
-                top: consentData.offsetTop - 100,
-                behavior: 'smooth'
-            });
-            return;
-        }
-
-        const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
-        if (parseInt(campoPax.value) > max) {
-            mostrarErro("Grupo muito grande. Utiliza o WhatsApp.");
-            return;
-        }
-
-        if (!campoData.value || !selectHorario.value) {
-            mostrarErro("Por favor, preenche todos os campos obrigatórios.");
-            return;
-        }
-
-        btnEnviar.disabled = true;
-        btnEnviar.innerText = "A processar...";
-        document.getElementById('formReserva').classList.add('carregando');
-
-        try {
-            const dados = Object.fromEntries(new FormData(e.target));
-            console.log("DADOS ENVIADOS:", dados);
-            const res = await apiRequest("reservaSite", dados, CONFIG.SCRIPT_RESERVAS);
-
-            if (res.status === 'success') {
-                document.getElementById('formReserva').style.display = 'none';
-                document.getElementById('msg-sucesso').style.display = 'block';
-            } else {
-                mostrarErro(res.message || "Erro ao processar reserva. Tenta novamente.");
-                btnEnviar.disabled = false;
-                btnEnviar.innerText = "Confirmar Reserva";
-                document.getElementById('formReserva').classList.remove('carregando');
-            }
-        } catch (error) {
-            console.error("Erro:", error);
-            mostrarErro("Erro ao processar reserva. Verifica a conexão e tenta novamente.");
+        if (!resultado.disponivel) {
+            avisoDisp.textContent = '⚠️ Sem disponibilidade para este horário. Escolhe outro.';
+            avisoDisp.classList.add('indisponivel');
+            selectHorario.style.borderColor = '#e74c3c';
+            btnEnviar.disabled = true;
+        } else {
+            avisoDisp.classList.remove('indisponivel');
+            selectHorario.style.borderColor = '';
             btnEnviar.disabled = false;
-            btnEnviar.innerText = "Confirmar Reserva";
-            document.getElementById('formReserva').classList.remove('carregando');
         }
-    });
 
-    carregarDados();
+        avisoDisp.style.display = resultado.disponivel ? 'none' : 'block';
+    } catch (error) {
+        console.error('❌ Erro ao verificar disponibilidade:', error);
+        avisoDisp.style.display = 'none';
+    }
+}
+
+function mostrarErro(mensagem) {
+    msgErro.textContent = '❌ ' + mensagem;
+    msgErro.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    setTimeout(() => {
+        msgErro.style.display = 'none';
+    }, 8000);
+}
+
+// Submit do formulário
+document.getElementById('formReserva').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Validar consentimento
+    if (!consentData.checked) {
+        consentError.style.display = 'block';
+        consentData.focus();
+        window.scrollTo({
+            top: consentData.offsetTop - 100,
+            behavior: 'smooth'
+        });
+        return;
+    }
+
+    // Validar grupo
+    const max = parseInt(configsGlobal.MAX_CONVIDADOS) || 6;
+    if (parseInt(campoPax.value) > max) {
+        mostrarErro(`Grupo muito grande (máx ${max} pessoas). Utilize o WhatsApp.`);
+        return;
+    }
+
+    // Validar campos obrigatórios
+    if (!campoData.value || !selectHorario.value) {
+        mostrarErro('Por favor, preenche todos os campos obrigatórios.');
+        return;
+    }
+
+    btnEnviar.disabled = true;
+    btnEnviar.innerText = 'A processar...';
+    document.getElementById('formReserva').classList.add('carregando');
+
+    try {
+        // Preparar dados
+        const formData = new FormData(e.target);
+        const dados = Object.fromEntries(formData);
+        
+        // Garantir que o telemóvel está no formato correto
+        dados.telemovel = dados.telemovel.replace(/\D/g, '');
+        
+        console.log('📤 DADOS A ENVIAR:', dados);
+
+        // Enviar reserva
+        const res = await apiRequest('reservaSite', dados);
+
+        console.log('📥 RESPOSTA:', res);
+
+        if (res.status === 'success') {
+            document.getElementById('formReserva').style.display = 'none';
+            document.getElementById('msg-sucesso').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            throw new Error(res.message || 'Erro desconhecido ao processar reserva');
+        }
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        mostrarErro(error.message || 'Erro ao processar reserva. Verifica a conexão e tenta novamente.');
+        btnEnviar.disabled = false;
+        btnEnviar.innerText = 'Confirmar Reserva';
+        document.getElementById('formReserva').classList.remove('carregando');
+    }
+});
+
+// Validação de telemóvel em tempo real
+campoTelemovel.addEventListener('input', function() {
+    // Remove tudo que não é dígito
+    this.value = this.value.replace(/\D/g, '');
+    
+    // Limita a 9 dígitos
+    if (this.value.length > 9) {
+        this.value = this.value.slice(0, 9);
+    }
+});
+
+// Iniciar
+carregarDados();
 </script>
 
 <!-- Cookie Banner Script -->
