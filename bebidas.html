@@ -27,7 +27,6 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
 header {
   position: sticky;
   top: 0;
@@ -73,7 +72,6 @@ header {
   color: var(--accent);
 }
 
-/* Main Content */
 .wrapper {
   max-width: 900px;
   margin: 0 auto;
@@ -98,7 +96,6 @@ header {
   margin-bottom: 3rem;
 }
 
-/* Loading */
 .loading {
   text-align: center;
   padding: 3rem;
@@ -106,7 +103,6 @@ header {
   font-size: 1.2rem;
 }
 
-/* Categories */
 .category {
   margin-bottom: 3rem;
 }
@@ -139,7 +135,6 @@ header {
   transform: rotate(-90deg);
 }
 
-/* Items */
 .items {
   display: grid;
   gap: 1.2rem;
@@ -150,7 +145,7 @@ header {
 }
 
 .item {
-  background: var(--);
+  background: var(--card);
   border-radius: 12px;
   padding: 1.5rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -164,14 +159,12 @@ header {
   border-color: var(--accent);
 }
 
-/* Item com imagem */
 .item-content {
   display: flex;
   gap: 1rem;
   align-items: start;
 }
 
-/* Thumbnail da imagem */
 .item-image {
   width: 80px;
   height: 80px;
@@ -220,7 +213,6 @@ header {
   line-height: 1.6;
 }
 
-/* Badge de Rotura */
 .badge-rotura {
   position: absolute;
   top: 10px;
@@ -256,7 +248,6 @@ header {
   color: #999;
 }
 
-/* Modal de Imagem Ampliada */
 .image-modal {
   display: none;
   position: fixed;
@@ -311,7 +302,6 @@ header {
   to { opacity: 1; }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;
@@ -366,180 +356,121 @@ header {
 <div class="wrapper">
   <h1 class="page-title">Carta de Vinhos</h1>
   <p class="page-subtitle">Seleção Premium</p>
-  
   <div id="menu" class="loading">Carregando bebidas...</div>
 </div>
 
-<!-- Modal de Imagem -->
 <div class="image-modal" id="imageModal" onclick="closeImageModal()">
   <span class="close-btn" onclick="closeImageModal()">×</span>
   <img id="modalImage" src="" alt="" onclick="event.stopPropagation()">
 </div>
 
+<script src="config.js"></script>
 <script>
-// CONFIGURAÇÃO
-const SHEET_ID = '1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA';
-const API_KEY = 'AIzaSyBNw0g2aBy2vyKfCCvApwrkbiLyeR7vqbI';
+const SHEET_ID = CONFIG.SHEET_ID;
+const API_KEY = CONFIG.API_KEY;
 const SHEET_NAME = 'Bebidas';
-
-let MENU_DATA = null;
 
 async function loadMenu() {
   try {
+    console.log('🔍 Carregando bebidas...');
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
     const response = await fetch(url);
+    
+    if (!response.ok) throw new Error(`Erro ${response.status}`);
+    
     const data = await response.json();
-    
-    if (!data.values) {
-      throw new Error('Nenhum dado encontrado na planilha');
-    }
-    
+    if (!data.values || data.values.length === 0) throw new Error('Aba vazia');
+
     const headers = data.values[0];
     const rows = data.values.slice(1);
-    
-    console.log('Cabeçalhos encontrados:', headers);
-    
     const menu = {};
-    
+
     rows.forEach(row => {
       const item = {};
-      headers.forEach((header, index) => {
-        item[header] = row[index] || '';
-      });
-      
-      console.log('Item processado:', item);
-      
-      // Pular linhas vazias
+      headers.forEach((h, i) => item[h] = row[i] || '');
       if (!item.Categoria || !item.Nome) return;
-      
-      if (!menu[item.Categoria]) {
-        menu[item.Categoria] = [];
-      }
-      
-      // Converter preço para número
+      if (!menu[item.Categoria]) menu[item.Categoria] = [];
       item.Preço = parseFloat(item.Preço.toString().replace(',', '.')) || 0;
-      
       menu[item.Categoria].push(item);
     });
-    
-    MENU_DATA = menu;
-    console.log('Menu completo:', menu);
+
+    console.log('✅ Carregado:', Object.keys(menu).length, 'categorias');
     renderMenu(menu);
-    
   } catch (error) {
-    console.error('Erro ao carregar menu:', error);
+    console.error('❌ Erro:', error);
     document.getElementById('menu').innerHTML = `
-      <div style="text-align: center; color: #ff6b6b; padding: 3rem;">
-        <h3>Erro ao carregar as bebidas</h3>
-        <p>Por favor, verifique a configuração do Google Sheets.</p>
-        <p style="font-size: 0.9rem; margin-top: 1rem;">Erro: ${error.message}</p>
-      </div>
-    `;
+      <div style="text-align: center; color: #e74c3c; padding: 3rem;">
+        <h3>Erro ao carregar bebidas</h3>
+        <p>${error.message}</p>
+        <button onclick="location.reload()" style="margin-top: 2rem; padding: 0.8rem 1.5rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Tentar novamente</button>
+      </div>`;
   }
 }
 
 function renderMenu(menu) {
   const container = document.getElementById('menu');
   container.innerHTML = '';
-  container.className = '';
-  
-  Object.keys(menu).forEach(categoria => {
+
+  Object.keys(menu).forEach(cat => {
     const section = document.createElement('div');
     section.className = 'category';
-    
+
     const h2 = document.createElement('h2');
-    h2.textContent = categoria;
-    section.appendChild(h2);
-    
+    h2.textContent = `${cat} (${menu[cat].length})`;
     const items = document.createElement('div');
     items.className = 'items';
-    
-    // Toggle categoria
+
     h2.onclick = () => {
       items.classList.toggle('hidden');
       h2.classList.toggle('collapsed');
     };
-    
-    menu[categoria].forEach(item => {
-      // Verificar rotura (coluna I = Rotura)
-      const emRotura = item.Rotura && (item.Rotura.toUpperCase() === 'X' || item.Rotura.toUpperCase() === 'TRUE');
-      
-      // URL da imagem (coluna F = Link_Imagem)
-      const imagemUrl = item.Link_Imagem || item.Imagem || '';
-      
-      // Observações (coluna E)
-      const observacoes = item.Observações || item.Observacoes || '';
-      
-      console.log(`Item: ${item.Nome}, Rotura: ${emRotura}, Imagem: ${imagemUrl}`);
-      
+
+    menu[cat].forEach(item => {
+      const esgotado = item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase());
+      const img = item.Link_Imagem || item.Imagem || '';
+      const obs = item.Observações || item.Observacoes || '';
+
       const div = document.createElement('div');
-      div.className = 'item' + (emRotura ? ' esgotado' : '');
-      
-      let itemHTML = '';
-      
-      // Badge de rotura
-      if (emRotura) {
-        itemHTML += '<div class="badge-rotura">🔴 Esgotado</div>';
-      }
-      
-      itemHTML += '<div class="item-content">';
-      
-      // Imagem (se existir)
-      if (imagemUrl && imagemUrl.trim() !== '') {
-        itemHTML += `<img src="${imagemUrl}" alt="${item.Nome}" class="item-image" onclick="openImageModal('${imagemUrl}', '${item.Nome.replace(/'/g, "\\'")}')">`;
-      }
-      
-      itemHTML += '<div class="item-info">';
-      itemHTML += `
+      div.className = 'item' + (esgotado ? ' esgotado' : '');
+
+      let html = esgotado ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
+      html += '<div class="item-content">';
+      if (img) html += `<img src="${img}" alt="${item.Nome}" class="item-image" onclick="openImageModal('${img}', '${item.Nome.replace(/'/g, "\\'")}')">`;
+      html += `<div class="item-info">
         <div class="item-top">
           <div class="item-name">${item.Nome}</div>
           <div class="price">${item.Preço.toFixed(2)} €</div>
         </div>
-        ${observacoes ? `<div class="desc">${observacoes}</div>` : ''}
-      `;
-      itemHTML += '</div>'; // item-info
-      itemHTML += '</div>'; // item-content
-      
-      div.innerHTML = itemHTML;
+        ${obs ? `<div class="desc">${obs}</div>` : ''}
+      </div></div>`;
+
+      div.innerHTML = html;
       items.appendChild(div);
     });
-    
+
+    section.appendChild(h2);
     section.appendChild(items);
     container.appendChild(section);
   });
 }
 
-// Funções para modal de imagem
-function openImageModal(imageUrl, itemName) {
+function openImageModal(url, name) {
   event.stopPropagation();
-  const modal = document.getElementById('imageModal');
-  const modalImg = document.getElementById('modalImage');
-  modal.classList.add('active');
-  modalImg.src = imageUrl;
-  modalImg.alt = itemName;
+  document.getElementById('imageModal').classList.add('active');
+  document.getElementById('modalImage').src = url;
+  document.getElementById('modalImage').alt = name;
   document.body.style.overflow = 'hidden';
 }
 
 function closeImageModal() {
-  const modal = document.getElementById('imageModal');
-  modal.classList.remove('active');
+  document.getElementById('imageModal').classList.remove('active');
   document.body.style.overflow = 'auto';
 }
 
-// Fechar modal com tecla ESC
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeImageModal();
-  }
-});
-
-// Carregar menu quando a página carregar
-loadMenu();
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
+window.addEventListener('DOMContentLoaded', loadMenu);
 </script>
 
-<!-- Cookie Banner Script -->
 <script src="cookie-banner.js"></script>
 </body>
 </html>
-
-
