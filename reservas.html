@@ -561,6 +561,7 @@
 
         try {
             const dados = Object.fromEntries(new FormData(e.target));
+            console.log("DADOS ENVIADOS:", dados);
             const res = await apiRequest("reservaSite", dados, CONFIG.SCRIPT_RESERVAS);
 
             if (res.status === 'success') {
