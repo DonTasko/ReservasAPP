@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bebidas | Don Tasko</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1a1a1a;
+  --accent: #d4a574;
+  --light: #f5f5f0;
+  --secondary: #5a4a3a;
+  --card: #2a2a2a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--primary);
+  color: var(--light);
+  min-height: 100vh;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background: var(--primary);
+  border-bottom: 1px solid var(--accent);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--light);
+  letter-spacing: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 3px;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.category {
+  margin-bottom: 3rem;
+}
+
+.category h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid var(--accent);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category h2:hover {
+  color: var(--accent);
+}
+
+.category h2::after {
+  content: '▼';
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.category h2.collapsed::after {
+  transform: rotate(-90deg);
+}
+
+.items {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.items.hidden {
+  display: none;
+}
+
+.item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid transparent;
+  position: relative;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 165, 116, 0.2);
+  border-color: var(--accent);
+}
+
+.item-content {
+  display: flex;
+  gap: 1rem;
+  align-items: start;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+}
+
+.item-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.item-name {
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  font-size: 1.1rem;
+}
+
+.desc {
+  font-size: 0.95rem;
+  color: #bdbdbd;
+  line-height: 1.6;
+}
+
+.badge-rotura {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.item.esgotado {
+  opacity: 0.6;
+  border-color: #e74c3c;
+}
+
+.item.esgotado .item-name {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.item.esgotado .price {
+  color: #999;
+}
+
+.image-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+}
+
+.image-modal.active {
+  display: flex;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+  cursor: default;
+}
+
+.image-modal .close-btn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.image-modal .close-btn:hover {
+  background: var(--accent);
+  transform: rotate(90deg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .item-top {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .item-content {
+    flex-direction: column;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .image-modal .close-btn {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <div class="logo">Don Tasko</div>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="menu.html">Comida</a>
+      <a href="reservas.html">Reservas</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrapper">
+  <h1 class="page-title">Carta de Vinhos</h1>
+  <p class="page-subtitle">Seleção Premium</p>
+  <div id="menu" class="loading">Carregando bebidas...</div>
+</div>
+
+<div class="image-modal" id="imageModal" onclick="closeImageModal()">
+  <span class="close-btn" onclick="closeImageModal()">×</span>
+  <img id="modalImage" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<script src="config.js"></script>
+<script>
+const SHEET_ID = CONFIG.SHEET_ID;
+const API_KEY = CONFIG.API_KEY;
+const SHEET_NAME = 'Bebidas';
+
+async function loadMenu() {
+  try {
+    console.log('🔍 Carregando bebidas...');
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) throw new Error(`Erro ${response.status}`);
+    
+    const data = await response.json();
+    if (!data.values || data.values.length === 0) throw new Error('Aba vazia');
+
+    const headers = data.values[0];
+    const rows = data.values.slice(1);
+    const menu = {};
+
+    rows.forEach(row => {
+      const item = {};
+      headers.forEach((h, i) => item[h] = row[i] || '');
+      if (!item.Categoria || !item.Nome) return;
+      if (!menu[item.Categoria]) menu[item.Categoria] = [];
+      item.Preço = parseFloat(item.Preço.toString().replace(',', '.')) || 0;
+      menu[item.Categoria].push(item);
+    });
+
+    console.log('✅ Carregado:', Object.keys(menu).length, 'categorias');
+    renderMenu(menu);
+  } catch (error) {
+    console.error('❌ Erro:', error);
+    document.getElementById('menu').innerHTML = `
+      <div style="text-align: center; color: #e74c3c; padding: 3rem;">
+        <h3>Erro ao carregar bebidas</h3>
+        <p>${error.message}</p>
+        <button onclick="location.reload()" style="margin-top: 2rem; padding: 0.8rem 1.5rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Tentar novamente</button>
+      </div>`;
+  }
+}
+
+function renderMenu(menu) {
+  const container = document.getElementById('menu');
+  container.innerHTML = '';
+
+  Object.keys(menu).forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'category';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = `${cat} (${menu[cat].length})`;
+    const items = document.createElement('div');
+    items.className = 'items';
+
+    h2.onclick = () => {
+      items.classList.toggle('hidden');
+      h2.classList.toggle('collapsed');
+    };
+
+    menu[cat].forEach(item => {
+      const esgotado = item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase());
+      const img = item.Link_Imagem || item.Imagem || '';
+      const obs = item.Observações || item.Observacoes || '';
+
+      const div = document.createElement('div');
+      div.className = 'item' + (esgotado ? ' esgotado' : '');
+
+      let html = esgotado ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
+      html += '<div class="item-content">';
+      if (img) html += `<img src="${img}" alt="${item.Nome}" class="item-image" onclick="openImageModal('${img}', '${item.Nome.replace(/'/g, "\\'")}')">`;
+      html += `<div class="item-info">
+        <div class="item-top">
+          <div class="item-name">${item.Nome}</div>
+          <div class="price">${item.Preço.toFixed(2)} €</div>
+        </div>
+        ${obs ? `<div class="desc">${obs}</div>` : ''}
+      </div></div>`;
+
+      div.innerHTML = html;
+      items.appendChild(div);
+    });
+
+    section.appendChild(h2);
+    section.appendChild(items);
+    container.appendChild(section);
+  });
+}
+
+function openImageModal(url, name) {
+  event.stopPropagation();
+  document.getElementById('imageModal').classList.add('active');
+  document.getElementById('modalImage').src = url;
+  document.getElementById('modalImage').alt = name;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+  document.getElementById('imageModal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
+window.addEventListener('DOMContentLoaded', loadMenu);
+</script>
+
+<script src="cookie-banner.js"></script>
+</body>
+</html>
