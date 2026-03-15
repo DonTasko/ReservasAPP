@@ -8,6 +8,24 @@
     <!-- Configuração Centralizada -->
     <script src="config.js"></script>
     
+    <!-- Fallback se config.js não carregar -->
+    <script>
+    // Verificar se CONFIG foi carregado, senão usar fallback
+    window.addEventListener('DOMContentLoaded', function() {
+        if (typeof CONFIG === 'undefined') {
+            console.warn('⚠️ config.js não carregado! Usando configuração inline...');
+            window.CONFIG = {
+                SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwzHgqkBG4GLPccDyx27IEreU6sn2BS8bTPgPQCgQU6dMaT_gjNf-MUtV4b8WGWngcP/exec",
+                SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
+                API_KEY: "COLE_AQUI_A_NOVA_API_KEY",
+                APP_NAME: "Don Tasko",
+                VERSION: "4.5"
+            };
+        }
+        console.log('✅ CONFIG carregado:', CONFIG);
+    });
+    </script>
+    
     <style>
         :root { 
             --primary: #2c3e50; 
@@ -347,39 +365,14 @@ let configsGlobal = {};
 let diasFechados = [];
 let horarios = {};
 
-// Helper para fazer requests ao Apps Script
-async function apiRequest(action, data = {}) {
-    try {
-        console.log(`📡 API Request: ${action}`, data);
-        
-        const response = await fetch(CONFIG.SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ action, ...data })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const result = await response.json();
-        console.log(`✅ API Response: ${action}`, result);
-        
-        return result;
-    } catch (error) {
-        console.error(`❌ Erro na API (${action}):`, error);
-        throw error;
-    }
-}
-
 async function carregarDados() {
     try {
         console.log('🔄 Carregando configurações...');
         
         const [fechados, hors, configs] = await Promise.all([
-            apiRequest('getDiasFechados'),
-            apiRequest('getHorarios'),
-            apiRequest('getConfigs')
+            apiRequest('getDiasFechados', {}, CONFIG.SCRIPT_RESERVAS),
+            apiRequest('getHorarios', {}, CONFIG.SCRIPT_RESERVAS),
+            apiRequest('getConfigs', {}, CONFIG.SCRIPT_RESERVAS)
         ]);
 
         configsGlobal = configs || {};
@@ -538,7 +531,7 @@ async function verificarDisponibilidadeHorario() {
             data: campoData.value,
             pax: parseInt(campoPax.value),
             horario: selectHorario.value
-        });
+        }, CONFIG.SCRIPT_RESERVAS);
 
         if (!resultado.disponivel) {
             avisoDisp.textContent = '⚠️ Sem disponibilidade para este horário. Escolhe outro.';
@@ -611,7 +604,7 @@ document.getElementById('formReserva').addEventListener('submit', async (e) => {
         console.log('📤 DADOS A ENVIAR:', dados);
 
         // Enviar reserva
-        const res = await apiRequest('reservaSite', dados);
+        const res = await apiRequest('reservaSite', dados, CONFIG.SCRIPT_RESERVAS);
 
         console.log('📥 RESPOSTA:', res);
 
