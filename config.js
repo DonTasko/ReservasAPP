@@ -27,7 +27,7 @@ const CONFIG = {
   SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
   
   // API Key do Google (para acesso público à Sheet)
-  API_KEY: "AIzaSyBNw0g2aBy2vyKfCCvApwrkbiLyeR7vqbI",
+  API_KEY: "AIzaSyDLIi7p9KpWhvZfPRbgtCfm-_eboLxqkik",
   
   // ========== INFO DA APLICAÇÃO ==========
   APP_NAME: "Don Tasko",
