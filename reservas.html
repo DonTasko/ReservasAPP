@@ -440,26 +440,57 @@
     }
 
     function gerarHoras(h) {
-        selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
+    console.log('gerarHoras chamado com:', h);
+    selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
 
-        if (!h) return;
+    if (!h) {
+        console.error('Horários não definidos');
+        return;
+    }
 
-        if (h.almoco && h.almoco.slots) {
-            h.almoco.slots.forEach(slot => {
+    // ✅ Caso 1: nova estrutura com slots
+    if (h.almoco && h.almoco.slots) {
+        h.almoco.slots.forEach(slot => {
+            const opt = document.createElement('option');
+            opt.value = opt.text = slot;
+            selectHorario.appendChild(opt);
+        });
+
+        if (h.jantar && h.jantar.slots) {
+            h.jantar.slots.forEach(slot => {
                 const opt = document.createElement('option');
                 opt.value = opt.text = slot;
                 selectHorario.appendChild(opt);
             });
-
-            if (h.jantar && h.jantar.slots) {
-                h.jantar.slots.forEach(slot => {
-                    const opt = document.createElement('option');
-                    opt.value = opt.text = slot;
-                    selectHorario.appendChild(opt);
-                });
-            }
         }
+    } else {
+        // ✅ Caso 2: estrutura antiga com intervalos tipo "12:00-15:00"
+        [h.almoco, h.jantar].forEach(intervalo => {
+            if (!intervalo || typeof intervalo !== 'string') return;
+
+            const parts = intervalo.replace(/–|—/g, '-').split('-');
+            if (parts.length < 2) return;
+
+            let [hAt, mAt] = parts[0].trim().split(':').map(Number);
+            const [hFim, mFim] = parts[1].trim().split(':').map(Number);
+
+            while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
+                const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
+                const opt = document.createElement('option');
+                opt.value = opt.text = tempo;
+                selectHorario.appendChild(opt);
+                mAt += 15;
+                if (mAt >= 60) {
+                    mAt = 0;
+                    hAt++;
+                }
+            }
+        });
     }
+
+    console.log('✅ Horários gerados:', selectHorario.options.length - 1, 'opções');
+}
+
 
     async function verificarDisponibilidadeHorario() {
         if (!campoData.value || !selectHorario.value) {
