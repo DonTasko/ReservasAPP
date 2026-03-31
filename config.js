@@ -18,7 +18,7 @@ const CONFIG = {
   SCRIPT_RESERVAS: "https://script.google.com/macros/s/AKfycbxpUplMzBP6lrs68XuV13hJkYYsAZtFo2NhfJChdLEXJqQwjJDv-_PlornXCwvxaEVs/exec",
   
   // URL PRINCIPAL (para compatibilidade com código antigo)
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxpq1IjemVgcl30NKu1SW6wODzuEhN-Jk8BXBxcsxY36zj_BZSC-0sX6cjNom3ZCoo-/exec",
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxpUplMzBP6lrs68XuV13hJkYYsAZtFo2NhfJChdLEXJqQwjJDv-_PlornXCwvxaEVs/exec",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   // ID da Google Sheet (para menu e bebidas via API)
