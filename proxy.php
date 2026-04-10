@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-$script_url = 'https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec';
+$script_url = 'https://script.google.com/macros/s/AKfycbxWP26hCQUehwyLLI38tMygkc_QqKh6OBPPyhhoD45XVDNpaWgW39J_oIdvVvrpuaXn/execc';
 
 $ch = curl_init($script_url);
 curl_setopt($ch, CURLOPT_POST, true);
