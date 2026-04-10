@@ -12,13 +12,13 @@
 const CONFIG = {
   // ========== GOOGLE APPS SCRIPT URLS ==========
   // URL do Apps Script para MENUS e BEBIDAS
-  SCRIPT_MENUS: "https://script.google.com/macros/s/AKfycbwx6tDHXUjJ4ZsPsWAPROb6jngryzkPHwAcx7q7gDlPGG9STUaLAqO3_4fVr2CJikt-/exec",
+  SCRIPT_MENUS: "https://script.google.com/macros/s/AKfycbxg_JCJZqzPTBlQlFupY4WmwrQ1Sd6K-vP4L7eaJ7q0WcwWOta-Bbqvk6konDIlBpk8/exec",
   
   // URL do Apps Script para RESERVAS e ADMIN
-  SCRIPT_RESERVAS: "https://script.google.com/macros/s/AKfycbwx6tDHXUjJ4ZsPsWAPROb6jngryzkPHwAcx7q7gDlPGG9STUaLAqO3_4fVr2CJikt-/exec",
+  SCRIPT_RESERVAS: "https://script.google.com/macros/s/AKfycbxg_JCJZqzPTBlQlFupY4WmwrQ1Sd6K-vP4L7eaJ7q0WcwWOta-Bbqvk6konDIlBpk8/exec",
   
   // URL PRINCIPAL (para compatibilidade com código antigo)
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwx6tDHXUjJ4ZsPsWAPROb6jngryzkPHwAcx7q7gDlPGG9STUaLAqO3_4fVr2CJikt-/exec",
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxg_JCJZqzPTBlQlFupY4WmwrQ1Sd6K-vP4L7eaJ7q0WcwWOta-Bbqvk6konDIlBpk8/exec",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   // ID da Google Sheet (para menu e bebidas via API)
