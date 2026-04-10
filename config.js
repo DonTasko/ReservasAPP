@@ -12,7 +12,7 @@
 const CONFIG = {
   // ========== GOOGLE APPS SCRIPT URLS ==========
   // URL do Apps Script para MENUS e BEBIDAS
-  SCRIPT_MENUS: "https://script.google.com/macros/s/AKfycbwXoIQQ1wGv7JV0NvFV4v2QFSi3b2q5l7j-WW4QAHEOyJZIta_geraZRAPJLdrs0xI/exec",
+  SCRIPT_MENUS: "https://script.google.com/macros/s/AKfycbxpUplMzBP6lrs68XuV13hJkYYsAZtFo2NhfJChdLEXJqQwjJDv-_PlornXCwvxaEVs/exec",
   
   // URL do Apps Script para RESERVAS e ADMIN
   SCRIPT_RESERVAS: "https://script.google.com/macros/s/AKfycbxpUplMzBP6lrs68XuV13hJkYYsAZtFo2NhfJChdLEXJqQwjJDv-_PlornXCwvxaEVs/exec",
