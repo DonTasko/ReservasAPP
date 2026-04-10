@@ -5,7 +5,7 @@
 const CONFIG = {
   // ========== GOOGLE APPS SCRIPT URLS ==========
   // URL direta do Apps Script (mantida para referência)
-  SCRIPT_MENUS_DIRECT: "https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec",
+  SCRIPT_MENUS_DIRECT: "https://script.google.com/macros/s/AKfycbxWP26hCQUehwyLLI38tMygkc_QqKh6OBPPyhhoD45XVDNpaWgW39J_oIdvVvrpuaXn/exec",
   
   // URL do PROXY PHP (para resolver CORS) - IMPORTANTE: use o caminho correto do seu servidor
   SCRIPT_RESERVAS: "/proxy.php",  // se estiver na mesma pasta que o HTML
