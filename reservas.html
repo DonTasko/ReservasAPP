@@ -10,7 +10,6 @@
     
     <!-- Fallback se config.js não carregar -->
     <script>
-    // Verificar se CONFIG foi carregado, senão usar fallback
     window.addEventListener('DOMContentLoaded', function() {
         if (typeof CONFIG === 'undefined') {
             console.warn('⚠️ config.js não carregado! Usando configuração inline...');
@@ -365,6 +364,23 @@ let configsGlobal = {};
 let diasFechados = [];
 let horarios = {};
 
+// ========== FUNÇÃO AUXILIAR apiRequest (garantia) ==========
+async function apiRequest(action, params = {}, scriptUrl = CONFIG.SCRIPT_URL) {
+    try {
+        const response = await fetch(scriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, ...params })
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(`❌ Erro na API (${action}):`, error);
+        throw error;
+    }
+}
+
+// ========== CARREGAR CONFIGURAÇÕES ==========
 async function carregarDados() {
     try {
         console.log('🔄 Carregando configurações...');
@@ -403,6 +419,87 @@ async function carregarDados() {
     }
 }
 
+// ========== VERIFICAR DIA FECHADO (apenas por data) ==========
+function isDiaFechado(dataValue) {
+    // Verifica se a data (YYYY-MM-DD) está na lista de dias fechados
+    return diasFechados.includes(dataValue);
+}
+
+// ========== GERAR HORÁRIOS (a cada 30 minutos) ==========
+function gerarHoras(h) {
+    console.log('🕐 gerarHoras chamado com:', h);
+    selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
+
+    if (!h) {
+        console.error('❌ Horários não definidos');
+        return;
+    }
+
+    // Função para gerar slots de 30 em 30 minutos dentro de um intervalo
+    function gerarSlots30min(inicio, fim) {
+        const slots = [];
+        let [hInicio, mInicio] = inicio.split(':').map(Number);
+        let [hFim, mFim] = fim.split(':').map(Number);
+        let minutos = hInicio * 60 + mInicio;
+        const fimMinutos = hFim * 60 + mFim;
+        
+        while (minutos <= fimMinutos) {
+            const hora = Math.floor(minutos / 60);
+            const minuto = minutos % 60;
+            const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
+            slots.push(horaStr);
+            minutos += 30; // intervalos de 30 minutos
+        }
+        return slots;
+    }
+
+    // Tentar usar estrutura nova (com slots) ou antiga (intervalos)
+    if (h.almoco && typeof h.almoco === 'object' && h.almoco.slots) {
+        // Estrutura nova
+        console.log('✅ Usando estrutura nova (slots)');
+        h.almoco.slots.forEach(slot => {
+            const opt = document.createElement('option');
+            opt.value = opt.text = slot;
+            selectHorario.appendChild(opt);
+        });
+        if (h.jantar && h.jantar.slots) {
+            h.jantar.slots.forEach(slot => {
+                const opt = document.createElement('option');
+                opt.value = opt.text = slot;
+                selectHorario.appendChild(opt);
+            });
+        }
+    } else {
+        // Estrutura antiga: strings "HH:MM-HH:MM"
+        console.log('⚠️ Usando estrutura antiga (intervalos) – gerando slots de 30min');
+        
+        if (h.almoco && typeof h.almoco === 'string' && h.almoco.includes('-')) {
+            const [inicio, fim] = h.almoco.split('-');
+            const slots = gerarSlots30min(inicio.trim(), fim.trim());
+            slots.forEach(slot => {
+                const opt = document.createElement('option');
+                opt.value = opt.text = slot;
+                opt.setAttribute('data-turno', 'Almoço');
+                selectHorario.appendChild(opt);
+            });
+        }
+        
+        if (h.jantar && typeof h.jantar === 'string' && h.jantar.includes('-')) {
+            const [inicio, fim] = h.jantar.split('-');
+            const slots = gerarSlots30min(inicio.trim(), fim.trim());
+            slots.forEach(slot => {
+                const opt = document.createElement('option');
+                opt.value = opt.text = slot;
+                opt.setAttribute('data-turno', 'Jantar');
+                selectHorario.appendChild(opt);
+            });
+        }
+    }
+
+    console.log(`✅ Horários gerados: ${selectHorario.options.length - 1} opções`);
+}
+
+// ========== VERIFICAR DATA E GERAR HORÁRIOS ==========
 function verificarDataEGerarHoras() {
     const dataValue = campoData.value;
     avisoFechado.style.display = 'none';
@@ -413,11 +510,8 @@ function verificarDataEGerarHoras() {
         return;
     }
 
-    const data = new Date(dataValue + 'T00:00:00');
-    const diaSemana = data.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
-
-    // Verificar se está fechado
-    if (diasFechados.includes(diaSemana) || diasFechados.includes(dataValue)) {
+    // Verificar se é dia fechado (apenas por data, não por nome do dia)
+    if (isDiaFechado(dataValue)) {
         avisoFechado.style.display = 'block';
         selectHorario.innerHTML = '<option value="">Encerrado</option>';
         selectHorario.disabled = true;
@@ -430,6 +524,7 @@ function verificarDataEGerarHoras() {
     verificarDisponibilidadeHorario();
 }
 
+// ========== GRUPO GRANDE → WHATSAPP ==========
 function verificarGrupoEDisponibilidade() {
     verificarGrupo();
     verificarDisponibilidadeHorario();
@@ -464,62 +559,7 @@ function abrirWhatsApp(e) {
     window.open(`https://wa.me/351${tel}?text=${encodeURIComponent(mensagem)}`, '_blank');
 }
 
-function gerarHoras(h) {
-    console.log('🕐 gerarHoras chamado com:', h);
-    selectHorario.innerHTML = '<option value="">Seleciona um horário</option>';
-
-    if (!h) {
-        console.error('❌ Horários não definidos');
-        return;
-    }
-
-    // Estrutura nova com .slots
-    if (h.almoco && h.almoco.slots) {
-        console.log('✅ Usando estrutura nova (slots)');
-        
-        h.almoco.slots.forEach(slot => {
-            const opt = document.createElement('option');
-            opt.value = opt.text = slot;
-            selectHorario.appendChild(opt);
-        });
-
-        if (h.jantar && h.jantar.slots) {
-            h.jantar.slots.forEach(slot => {
-                const opt = document.createElement('option');
-                opt.value = opt.text = slot;
-                selectHorario.appendChild(opt);
-            });
-        }
-    } else {
-        // Estrutura antiga com intervalos
-        console.log('⚠️ Usando estrutura antiga (intervalos)');
-        
-        [h.almoco, h.jantar].forEach(intervalo => {
-            if (!intervalo || typeof intervalo !== 'string') return;
-
-            const parts = intervalo.replace(/–|—/g, '-').split('-');
-            if (parts.length < 2) return;
-
-            let [hAt, mAt] = parts[0].trim().split(':').map(Number);
-            const [hFim, mFim] = parts[1].trim().split(':').map(Number);
-
-            while (hAt < hFim || (hAt === hFim && mAt <= mFim)) {
-                const tempo = `${String(hAt).padStart(2,'0')}:${String(mAt).padStart(2,'0')}`;
-                const opt = document.createElement('option');
-                opt.value = opt.text = tempo;
-                selectHorario.appendChild(opt);
-                mAt += 15;
-                if (mAt >= 60) {
-                    mAt = 0;
-                    hAt++;
-                }
-            }
-        });
-    }
-
-    console.log(`✅ Horários gerados: ${selectHorario.options.length - 1} opções`);
-}
-
+// ========== VERIFICAR DISPONIBILIDADE DE HORÁRIO ==========
 async function verificarDisponibilidadeHorario() {
     if (!campoData.value || !selectHorario.value) {
         avisoDisp.style.display = 'none';
@@ -561,7 +601,7 @@ function mostrarErro(mensagem) {
     }, 8000);
 }
 
-// Submit do formulário
+// ========== SUBMIT DO FORMULÁRIO ==========
 document.getElementById('formReserva').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -626,13 +666,7 @@ document.getElementById('formReserva').addEventListener('submit', async (e) => {
 
 // Validação de telemóvel em tempo real
 campoTelemovel.addEventListener('input', function() {
-    // Remove tudo que não é dígito
-    this.value = this.value.replace(/\D/g, '');
-    
-    // Limita a 9 dígitos
-    if (this.value.length > 9) {
-        this.value = this.value.slice(0, 9);
-    }
+    this.value = this.value.replace(/\D/g, '').slice(0, 9);
 });
 
 // Iniciar
