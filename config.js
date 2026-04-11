@@ -13,7 +13,7 @@ const CONFIG = {
   SCRIPT_RESERVAS: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbykmTu-gk-_EhWpbIaDsoWk4jAcPJeKIMZufLQjaBtVKyVBEn8w6acC0mbLMIU9WqEU/exec",
   
   // URL PRINCIPAL (aponta para o proxy)
-  SCRIPT_URL: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec",
+  SCRIPT_URL: "https://seu-projeto.vercel.app/proxy",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
