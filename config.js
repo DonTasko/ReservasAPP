@@ -5,15 +5,15 @@
 const CONFIG = {
   // ========== GOOGLE APPS SCRIPT URLS ==========
   // URL direta do Apps Script (mantida para referência)
-  SCRIPT_MENUS_DIRECT: "https://script.google.com/macros/s/AKfycbykmTu-gk-_EhWpbIaDsoWk4jAcPJeKIMZufLQjaBtVKyVBEn8w6acC0mbLMIU9WqEU/exec",
+  SCRIPT_MENUS_DIRECT: "https://script.google.com/macros/s/AKfycbytc7ZB52wz30eZvuJBFt8faTDbJjVPju7w2HPKfkqzLibuWnPE9WBxixw0e2bbPvY7/exec",
   
   // URL do PROXY PHP (para resolver CORS) - IMPORTANTE: use o caminho correto do seu servidor
   // SCRIPT_RESERVAS: "/proxy.php",  // se estiver na mesma pasta que o HTML
   // SCRIPT_RESERVAS: "https://dontasko.pt/proxy.php",  // alternativa com URL completo
-  SCRIPT_RESERVAS: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbykmTu-gk-_EhWpbIaDsoWk4jAcPJeKIMZufLQjaBtVKyVBEn8w6acC0mbLMIU9WqEU/exec",
+  SCRIPT_RESERVAS: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbytc7ZB52wz30eZvuJBFt8faTDbJjVPju7w2HPKfkqzLibuWnPE9WBxixw0e2bbPvY7/exec",
   
   // URL PRINCIPAL (aponta para o proxy)
- SCRIPT_URL: "https://proxy.cors.sh/https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec",
+ SCRIPT_URL: "https://proxy.cors.sh/https://script.google.com/macros/s/AKfycbytc7ZB52wz30eZvuJBFt8faTDbJjVPju7w2HPKfkqzLibuWnPE9WBxixw0e2bbPvY7/exec",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
