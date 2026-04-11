@@ -21,13 +21,13 @@
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
-        h1 { text-align: center; color: #2c3e50; font-size: 28px; }
+        h1 { text-align: center; color: #2c3e50; }
         .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-size: 14px; }
         label { display: block; margin-top: 15px; font-weight: 600; color: #2c3e50; font-size: 14px; }
         input, select, textarea {
             width: 100%; padding: 12px; margin-top: 5px;
             border: 2px solid #ecf0f1; border-radius: 10px;
-            font-size: 16px; transition: all 0.3s;
+            font-size: 16px;
         }
         input:focus, select:focus { outline: none; border-color: #3498db; }
         .row { display: flex; gap: 15px; }
@@ -37,38 +37,19 @@
             background: #27ae60; color: white;
             border: none; border-radius: 10px;
             font-size: 18px; font-weight: bold;
-            cursor: pointer; transition: all 0.3s;
+            cursor: pointer;
         }
-        button:hover { background: #219a52; transform: translateY(-2px); }
-        button:disabled { background: #95a5a6; cursor: not-allowed; transform: none; }
+        button:hover { background: #219a52; }
+        button:disabled { background: #95a5a6; cursor: not-allowed; }
         .btn-whatsapp { background: #25D366; }
-        .btn-whatsapp:hover { background: #1da851; }
-        .alert {
-            padding: 12px; border-radius: 10px; margin-bottom: 20px;
-            display: none; font-size: 14px;
-        }
-        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .fechado {
-            background: #f8d7da; color: #721c24;
-            padding: 12px; border-radius: 10px; margin-top: 10px;
-            display: none; font-size: 13px;
-        }
-        .checkbox {
-            display: flex; align-items: center; gap: 10px;
-            margin: 20px 0; padding: 10px;
-            background: #f8f9fa; border-radius: 10px;
-        }
-        .checkbox input { width: auto; margin: 0; }
-        .checkbox label { margin: 0; font-weight: normal; font-size: 13px; }
-        .consent-error { color: #e74c3c; font-size: 12px; margin-top: 5px; display: none; }
-        .loading {
-            text-align: center; padding: 30px;
-            color: #3498db; font-size: 16px;
-        }
-        select:disabled { background: #f0f0f0; cursor: not-allowed; }
-        hr { margin: 20px 0; border: none; border-top: 1px solid #ecf0f1; }
+        .alert { padding: 12px; border-radius: 10px; margin-bottom: 20px; display: none; }
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+        .fechado { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 10px; margin-top: 10px; display: none; }
+        .loading { text-align: center; padding: 30px; color: #3498db; }
+        .checkbox { display: flex; align-items: center; gap: 10px; margin: 20px 0; }
+        .checkbox input { width: auto; }
+        select:disabled { background: #f0f0f0; }
     </style>
 </head>
 <body>
@@ -77,59 +58,53 @@
     <div class="subtitle">Reserva de Mesa</div>
 
     <div id="alert" class="alert"></div>
-    <div id="loading" class="loading">⏳ A carregar sistema de reservas...</div>
+    <div id="loading" class="loading">⏳ A carregar...</div>
 
     <div id="form" style="display: none;">
-        <label>📝 Nome Completo *</label>
+        <label>Nome Completo *</label>
         <input type="text" id="nome" placeholder="Ex: João Silva" required>
 
-        <label>📱 Telemóvel *</label>
+        <label>Telemóvel *</label>
         <input type="tel" id="telefone" placeholder="925504212" required>
 
-        <label>📧 E-mail</label>
+        <label>E-mail</label>
         <input type="email" id="email" placeholder="exemplo@email.com">
 
         <div class="row">
             <div>
-                <label>📅 Data *</label>
+                <label>Data *</label>
                 <input type="date" id="data" required>
                 <div id="fechadoMsg" class="fechado">❌ Restaurante fechado neste dia</div>
             </div>
             <div>
-                <label>👥 Pessoas *</label>
+                <label>Pessoas *</label>
                 <input type="number" id="pax" min="1" max="20" value="2" required>
             </div>
         </div>
 
-        <label>⏰ Horário *</label>
+        <label>Horário *</label>
         <select id="horario" required disabled>
-            <option value="">Selecione uma data primeiro</option>
+            <option value="">Selecione uma data</option>
         </select>
 
-        <label>📝 Observações</label>
-        <textarea id="obs" rows="3" placeholder="Alergias, preferências, etc."></textarea>
+        <label>Observações</label>
+        <textarea id="obs" rows="3" placeholder="Alergias, preferências..."></textarea>
 
         <div class="checkbox">
             <input type="checkbox" id="consent" required>
-            <label>Aceito a <a href="#" onclick="alert('Política de Privacidade - Don Tasko'); return false;">Política de Privacidade</a> *</label>
+            <label>Aceito a Política de Privacidade *</label>
         </div>
-        <div id="consentError" class="consent-error">⚠️ Deve aceitar a Política de Privacidade para continuar</div>
+        <div id="consentError" style="color: #e74c3c; font-size: 12px; display: none;">Aceite a política para continuar</div>
 
         <button type="submit" id="btn">Confirmar Reserva</button>
     </div>
 </div>
 
 <script>
-// Configurações globais
-let configs = {
-    LOTACAO_MAXIMA: 30,
-    MAX_CONVIDADOS: 6,
-    TELEFONE_RESTAURANTE: "925504212"
-};
+let configs = { MAX_CONVIDADOS: 6, TELEFONE_RESTAURANTE: "925504212" };
 let diasFechados = [];
 let horarios = { almoco: "12:00-14:15", jantar: "19:30-20:30" };
 
-// Elementos DOM
 const dataInput = document.getElementById('data');
 const horarioSelect = document.getElementById('horario');
 const paxInput = document.getElementById('pax');
@@ -139,33 +114,22 @@ const fechadoMsg = document.getElementById('fechadoMsg');
 const loadingDiv = document.getElementById('loading');
 const formDiv = document.getElementById('form');
 
-// Função para mostrar alertas
 function showAlert(msg, type) {
     alertDiv.className = `alert alert-${type}`;
     alertDiv.innerHTML = msg;
     alertDiv.style.display = 'block';
-    setTimeout(() => {
-        alertDiv.style.display = 'none';
-    }, 5000);
+    setTimeout(() => alertDiv.style.display = 'none', 5000);
 }
 
-// Função para fazer requisições à API
 async function apiRequest(action, data = {}) {
-    try {
-        const response = await fetch(CONFIG.SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, ...data })
-        });
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('Erro na requisição:', error);
-        throw error;
-    }
+    const response = await fetch(CONFIG.SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, ...data })
+    });
+    return await response.json();
 }
 
-// Gerar horários de 30 em 30 minutos
 function gerarHorarios() {
     horarioSelect.innerHTML = '<option value="">Selecione um horário</option>';
     
@@ -174,11 +138,10 @@ function gerarHorarios() {
         let [h2, m2] = fim.split(':').map(Number);
         let minutos = h1 * 60 + m1;
         let fimMin = h2 * 60 + m2;
-        
         while (minutos <= fimMin) {
             let hora = Math.floor(minutos / 60);
             let minuto = minutos % 60;
-            let time = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
+            let time = `${hora.toString().padStart(2,'0')}:${minuto.toString().padStart(2,'0')}`;
             let opt = document.createElement('option');
             opt.value = time;
             opt.text = `${time} (${turno})`;
@@ -191,236 +154,125 @@ function gerarHorarios() {
         let [inicio, fim] = horarios.almoco.split('-');
         addSlots(inicio.trim(), fim.trim(), 'Almoço');
     }
-    
     if (horarios.jantar && horarios.jantar.includes('-')) {
         let [inicio, fim] = horarios.jantar.split('-');
         addSlots(inicio.trim(), fim.trim(), 'Jantar');
     }
-    
-    if (horarioSelect.options.length === 1) {
-        horarioSelect.innerHTML = '<option value="">Nenhum horário disponível</option>';
-        horarioSelect.disabled = true;
-    } else {
-        horarioSelect.disabled = false;
-    }
 }
 
-// Verificar disponibilidade do horário
-async function verificarDisponibilidade() {
-    const data = dataInput.value;
-    const hora = horarioSelect.value;
-    const pax = parseInt(paxInput.value);
-    
-    if (!data || !hora || pax > configs.MAX_CONVIDADOS) {
-        return;
-    }
-    
-    try {
-        const result = await apiRequest('verificarDisponiblidade', {
-            data: data,
-            pax: pax,
-            horario: hora
-        });
-        
-        if (result.disponivel === false) {
-            showAlert('⚠️ Sem disponibilidade para este horário. Escolha outro.', 'warning');
-            btn.disabled = true;
-        } else {
-            btn.disabled = false;
-        }
-    } catch (error) {
-        console.error('Erro ao verificar disponibilidade:', error);
-        btn.disabled = false;
-    }
-}
-
-// Verificar se a data é dia fechado
 function verificarData() {
     const data = dataInput.value;
+    if (!data) return;
     
-    if (!data) {
-        horarioSelect.innerHTML = '<option value="">Selecione uma data primeiro</option>';
-        horarioSelect.disabled = true;
-        fechadoMsg.style.display = 'none';
-        return;
-    }
-    
-    // Verificar se o dia está na lista de fechados
     if (diasFechados.includes(data)) {
         fechadoMsg.style.display = 'block';
-        horarioSelect.innerHTML = '<option value="">Encerrado neste dia</option>';
+        horarioSelect.innerHTML = '<option value="">Encerrado</option>';
         horarioSelect.disabled = true;
-        btn.disabled = true;
         return;
     }
     
     fechadoMsg.style.display = 'none';
     horarioSelect.disabled = false;
     gerarHorarios();
-    verificarDisponibilidade();
 }
 
-// Verificar grupo (mais de 6 pessoas vai para WhatsApp)
 function verificarGrupo() {
     const pax = parseInt(paxInput.value);
     const max = configs.MAX_CONVIDADOS || 6;
     
     if (pax > max) {
-        btn.innerHTML = `📱 Reservar via WhatsApp (Grupo > ${max} pessoas)`;
+        btn.innerHTML = `📱 WhatsApp (Grupo > ${max})`;
         btn.classList.add('btn-whatsapp');
         btn.onclick = (e) => {
             e.preventDefault();
             const data = dataInput.value ? new Date(dataInput.value).toLocaleDateString('pt-PT') : '';
             const hora = horarioSelect.value;
-            const msg = `Olá! Gostaria de reservar mesa para ${pax} pessoas${data ? ' no dia ' + data : ''}${hora ? ' às ' + hora : ''}.`;
+            const msg = `Reserva: ${pax} pessoas${data ? ' em ' + data : ''}${hora ? ' às ' + hora : ''}`;
             window.open(`https://wa.me/351${configs.TELEFONE_RESTAURANTE}?text=${encodeURIComponent(msg)}`, '_blank');
         };
         btn.type = 'button';
-        btn.disabled = false;
     } else {
         btn.innerHTML = 'Confirmar Reserva';
         btn.classList.remove('btn-whatsapp');
         btn.onclick = null;
         btn.type = 'submit';
-        if (horarioSelect.value && !fechadoMsg.style.display === 'block') {
-            verificarDisponibilidade();
-        }
     }
 }
 
-// Carregar todas as configurações
-async function carregarConfiguracoes() {
+async function carregarDados() {
     try {
-        loadingDiv.style.display = 'block';
-        
-        // Carregar configurações, dias fechados e horários em paralelo
-        const [configsData, fechadosData, horariosData] = await Promise.all([
-            apiRequest('getConfigs'),
+        const [fechados, hors, configsData] = await Promise.all([
             apiRequest('getDiasFechados'),
-            apiRequest('getHorarios')
+            apiRequest('getHorarios'),
+            apiRequest('getConfigs')
         ]);
         
+        diasFechados = fechados || [];
+        horarios = hors || { almoco: "12:00-14:15", jantar: "19:30-20:30" };
         configs = { ...configs, ...configsData };
-        diasFechados = fechadosData || [];
-        horarios = horariosData || { almoco: "12:00-14:15", jantar: "19:30-20:30" };
         
-        console.log('Configurações carregadas:', configs);
-        console.log('Dias fechados:', diasFechados);
-        console.log('Horários:', horarios);
+        const hoje = new Date().toISOString().split('T')[0];
+        dataInput.min = hoje;
         
-        // Configurar data mínima (hoje)
-        const hoje = new Date();
-        const hojeStr = hoje.toISOString().split('T')[0];
-        dataInput.min = hojeStr;
-        
-        // Adicionar event listeners
         dataInput.addEventListener('change', () => {
             verificarData();
             verificarGrupo();
         });
-        
-        paxInput.addEventListener('input', () => {
-            verificarGrupo();
-            if (horarioSelect.value && dataInput.value && !fechadoMsg.style.display === 'block') {
-                verificarDisponibilidade();
-            }
-        });
-        
-        horarioSelect.addEventListener('change', () => {
-            if (horarioSelect.value && dataInput.value && !fechadoMsg.style.display === 'block') {
-                verificarDisponibilidade();
-            }
-        });
-        
-        // Verificar se já há data selecionada
-        if (dataInput.value) {
-            verificarData();
-        }
-        
-        verificarGrupo();
+        paxInput.addEventListener('input', verificarGrupo);
         
         loadingDiv.style.display = 'none';
         formDiv.style.display = 'block';
         
-    } catch (error) {
-        console.error('Erro ao carregar configurações:', error);
-        loadingDiv.innerHTML = '❌ Erro ao carregar o sistema. Recarregue a página.';
-        showAlert('Erro ao carregar configurações. Verifique sua conexão.', 'error');
+        if (dataInput.value) verificarData();
+        verificarGrupo();
+    } catch(e) {
+        loadingDiv.innerHTML = '❌ Erro ao carregar. Recarregue.';
+        console.error(e);
     }
 }
 
-// Enviar reserva
 document.getElementById('form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Validar consentimento
     if (!document.getElementById('consent').checked) {
         document.getElementById('consentError').style.display = 'block';
         return;
     }
     document.getElementById('consentError').style.display = 'none';
     
-    const pax = parseInt(paxInput.value);
-    if (pax > configs.MAX_CONVIDADOS) return;
-    
     btn.disabled = true;
-    btn.innerHTML = '⏳ A processar...';
+    btn.innerHTML = 'A processar...';
     
     const dados = {
-        nome: document.getElementById('nome').value.trim(),
+        nome: document.getElementById('nome').value,
         telemovel: document.getElementById('telefone').value.replace(/\D/g, ''),
-        email: document.getElementById('email').value.trim(),
+        email: document.getElementById('email').value,
         data: dataInput.value,
         horario: horarioSelect.value,
-        pax: pax,
-        obs: document.getElementById('obs').value.trim()
+        pax: parseInt(paxInput.value),
+        obs: document.getElementById('obs').value
     };
     
-    // Validar campos obrigatórios
-    if (!dados.nome || dados.nome.length < 2) {
-        showAlert('Por favor, insira um nome válido', 'error');
-        btn.disabled = false;
-        btn.innerHTML = 'Confirmar Reserva';
-        return;
-    }
-    
-    if (dados.telemovel.length !== 9) {
-        showAlert('Por favor, insira um telemóvel válido (9 dígitos)', 'error');
-        btn.disabled = false;
-        btn.innerHTML = 'Confirmar Reserva';
-        return;
-    }
-    
-    if (!dados.data || !dados.horario) {
-        showAlert('Por favor, selecione data e horário', 'error');
-        btn.disabled = false;
-        btn.innerHTML = 'Confirmar Reserva';
-        return;
-    }
-    
     try {
-        const result = await apiRequest('reservaSite', dados);
-        
-        if (result.status === 'success') {
+        const res = await apiRequest('reservaSite', dados);
+        if (res.status === 'success') {
             formDiv.style.display = 'none';
-            showAlert('✅ Reserva confirmada com sucesso! Enviaremos a confirmação para o seu email.', 'success');
+            showAlert('✅ Reserva confirmada!', 'success');
         } else {
-            throw new Error(result.message || 'Erro ao processar reserva');
+            throw new Error(res.message);
         }
-    } catch (error) {
-        showAlert('❌ ' + error.message, 'error');
+    } catch(e) {
+        showAlert('❌ Erro: ' + e.message, 'error');
         btn.disabled = false;
         btn.innerHTML = 'Confirmar Reserva';
     }
 });
 
-// Máscara para telemóvel
 document.getElementById('telefone').addEventListener('input', function() {
     this.value = this.value.replace(/\D/g, '').slice(0, 9);
 });
 
-// Iniciar
-carregarConfiguracoes();
+carregarDados();
 </script>
 </body>
 </html>
