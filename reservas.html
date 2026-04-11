@@ -3,15 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Reservas Don Tasko</title>
+    <script>
+        const URL_API = "https://script.google.com/macros/s/SEU_ID_AQUI/exec";
+        
+        async function enviarReserva() {
+            const dados = {
+                nome: document.getElementById('nome').value,
+                telemovel: document.getElementById('telefone').value,
+                email: document.getElementById('email').value,
+                data: document.getElementById('data').value,
+                horario: document.getElementById('horario').value,
+                pax: parseInt(document.getElementById('pax').value),
+                obs: document.getElementById('obs').value
+            };
+            
+            const response = await fetch(URL_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+            
+            const resultado = await response.json();
+            if (resultado.status === 'success') {
+                alert('Reserva confirmada!');
+                document.getElementById('form').reset();
+            } else {
+                alert('Erro: ' + (resultado.message || 'Tente novamente'));
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Don Tasko - Reservas</h1>
-    <form action="https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec" method="POST">
-        <input type="text" name="nome" placeholder="Nome" required>
-        <input type="tel" name="telemovel" placeholder="Telemóvel" required>
-        <input type="date" name="data" required>
-        <input type="number" name="pax" placeholder="Pessoas" required>
-        <input type="time" name="horario" required>
+    <form id="form" onsubmit="event.preventDefault(); enviarReserva();">
+        <input type="text" id="nome" placeholder="Nome" required><br>
+        <input type="tel" id="telefone" placeholder="Telemóvel" required><br>
+        <input type="email" id="email" placeholder="Email"><br>
+        <input type="date" id="data" required><br>
+        <input type="time" id="horario" required><br>
+        <input type="number" id="pax" placeholder="Pessoas" required><br>
+        <textarea id="obs" placeholder="Observações"></textarea><br>
         <button type="submit">Reservar</button>
     </form>
 </body>
