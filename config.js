@@ -11,8 +11,9 @@ const CONFIG = {
   // SCRIPT_RESERVAS: "/proxy.php",  // se estiver na mesma pasta que o HTML
   // SCRIPT_RESERVAS: "https://dontasko.pt/proxy.php",  // alternativa com URL completo
   SCRIPT_RESERVAS: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbykmTu-gk-_EhWpbIaDsoWk4jAcPJeKIMZufLQjaBtVKyVBEn8w6acC0mbLMIU9WqEU/exec",
+  
   // URL PRINCIPAL (aponta para o proxy)
-  SCRIPT_URL: "https://dontasko.pt/proxy.php",
+  SCRIPT_URL: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
