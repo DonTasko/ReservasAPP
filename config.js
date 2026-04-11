@@ -12,7 +12,7 @@ const CONFIG = {
   // SCRIPT_RESERVAS: "https://dontasko.pt/proxy.php",  // alternativa com URL completo
   SCRIPT_RESERVAS: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbykmTu-gk-_EhWpbIaDsoWk4jAcPJeKIMZufLQjaBtVKyVBEn8w6acC0mbLMIU9WqEU/exec",
   // URL PRINCIPAL (aponta para o proxy)
-  SCRIPT_URL: "/proxy.php",
+  SCRIPT_URL: "https://dontasko.pt/proxy.php",
   
   // ========== GOOGLE SHEETS CONFIG ==========
   SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
