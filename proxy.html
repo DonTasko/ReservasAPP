@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Proxy</title>
+</head>
+<body>
+<script>
+// Proxy usando fetch
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaC1Ptv2MT0-C18sE-IrhChVk5sOoIuxGmMGDub3So35WbxsWqDCL5805Xn33ycnE/exec';
+
+self.addEventListener('fetch', function(event) {
+    if (event.request.method === 'POST') {
+        event.respondWith(
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: event.request.body
+            }).then(response => {
+                const newResponse = new Response(response.body, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                return newResponse;
+            })
+        );
+    }
+});
+</script>
+</body>
+</html>
