@@ -5,7 +5,7 @@
 
 const CONFIG = {
     // URL do Google Apps Script (NÃO ALTERAR - já está correto)
-    SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxR8c2eKxvyjeB2d17IiBtCgp3r5y6Ju-nOpDt6Gu16dmkOTXA3kX2UhhNHjvDuUXe6/exec",
+    SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyDWw0AJWMw2iLr7dFR8JwQpErC1gaOYgMKUHMeCr2fdXQVAVPJd-gMQGgwsFy4Wb-3/exec",
     
     // Informações da aplicação
     APP_NAME: "Don Tasko",
