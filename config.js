@@ -1,91 +1,152 @@
 /**
- * CONFIGURAÇÃO CENTRALIZADA - DON TASKO
- * 
- * ⚠️ IMPORTANTE: Este é o ÚNICO lugar onde precisa colar URLs e configurações!
- * Todos os arquivos HTML importam este ficheiro.
- * 
- * Agora com suporte para múltiplos Apps Scripts:
- *  - SCRIPT_MENUS → usado pelos menus e bebidas
- *  - SCRIPT_RESERVAS → usado pelo formulário de reservas e admin
+ * DON TASKO - CONFIGURAÇÃO CENTRAL v6.0
+ * Configuração unificada para todo o sistema
  */
 
 const CONFIG = {
-  // ========== GOOGLE APPS SCRIPT URLS ==========
-  // URL do Apps Script para MENUS e BEBIDAS
-  SCRIPT_MENUS: "https://script.google.com/macros/s/AKfycbyDWw0AJWMw2iLr7dFR8JwQpErC1gaOYgMKUHMeCr2fdXQVAVPJd-gMQGgwsFy4Wb-3/exec",
+  // URL do Apps Script (ÚNICO - todos os módulos estão integrados)
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyDWw0AJWMw2iLr7dFR8JwQpErC1gaOYgMKUHMeCr2fdXQVAVPJd-gMQGgwsFy4Wb-3/exec',
   
-  // URL do Apps Script para RESERVAS e ADMIN
-  SCRIPT_RESERVAS: "https://script.google.com/macros/s/AKfycbyDWw0AJWMw2iLr7dFR8JwQpErC1gaOYgMKUHMeCr2fdXQVAVPJd-gMQGgwsFy4Wb-3/exec",
+  // Informação da app
+  APP_NAME: 'Don Tasko',
+  VERSION: '6.0',
   
-  // URL PRINCIPAL (para compatibilidade com código antigo)
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyDWw0AJWMw2iLr7dFR8JwQpErC1gaOYgMKUHMeCr2fdXQVAVPJd-gMQGgwsFy4Wb-3/exec",
+  // Debug
+  DEBUG: true,
   
-  // ========== GOOGLE SHEETS CONFIG ==========
-  // ID da Google Sheet (para menu e bebidas via API)
-  SHEET_ID: "1xjJzNJvhLnoISLsP0qHNQ9HvqrEUZpxwbIdIjGsn3uA",
-  
-  // API Key do Google (para acesso público à Sheet)
-  API_KEY: "AIzaSyDLIi7p9KpWhvZfPRbgtCfm-_eboLxqkik",
-  
-  // ========== INFO DA APLICAÇÃO ==========
-  APP_NAME: "Don Tasko",
-  VERSION: "4.5",
-  
-  // ========== CONFIGURAÇÕES OPCIONAIS ==========
-  DEBUG: false, // Ativar logs detalhados no console
-  CACHE_ENABLED: true // Usar cache de configurações
+  // Cache
+  CACHE_ENABLED: true,
+  CACHE_DURATION: 5 * 60 * 1000, // 5 minutos
 };
 
-// ========== EXPORTAR PARA COMPATIBILIDADE ==========
-// Para que o código existente continue a funcionar
-const URL_SCRIPT = CONFIG.SCRIPT_RESERVAS;
-
-// ========== FUNÇÃO AUXILIAR PARA API REQUESTS ==========
-/**
- * Faz um request para o Google Apps Script correto
- * @param {string} action - Nome da ação (ex: 'getMenu', 'criarReserva')
- * @param {object} data - Dados adicionais para enviar
- * @param {string} endpoint - Qual script usar (SCRIPT_MENUS ou SCRIPT_RESERVAS)
- * @returns {Promise} Response JSON
- */
-async function apiRequest(action, data = {}, endpoint = null) {
+// ========== FUNÇÃO API COM CORS CORRIGIDO ==========
+async function apiRequest(action, data = {}) {
+  const url = CONFIG.SCRIPT_URL;
+  
   try {
-    // Se não especificar endpoint, usa o de reservas por padrão
-    const scriptUrl = endpoint || CONFIG.SCRIPT_RESERVAS;
-    
     if (CONFIG.DEBUG) {
-      console.log(`📡 API Request: ${action}`, data, "→", scriptUrl);
+      console.log(`📤 API Request [${action}]:`, data);
     }
     
-    const response = await fetch(scriptUrl, {
+    const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action, ...data })
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ action, ...data }),
+      mode: 'cors', // IMPORTANTE: modo CORS
+      redirect: 'follow'
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const result = await response.json();
     
     if (CONFIG.DEBUG) {
-      console.log(`✅ API Response: ${action}`, result);
+      console.log(`📥 API Response [${action}]:`, result);
     }
     
     return result;
   } catch (error) {
-    console.error(`❌ Erro na API (${action}):`, error);
+    console.error(`❌ Erro na API [${action}]:`, error);
+    
+    // Mensagem de erro amigável
+    if (error.message.includes('Failed to fetch')) {
+      throw new Error('Não foi possível conectar ao servidor. Verifique sua conexão.');
+    }
+    
     throw error;
   }
 }
 
-// ========== LOG DE INICIALIZAÇÃO ==========
-console.log(`%c✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION}`, 'color: #27ae60; font-weight: bold; font-size: 14px;');
-console.log(`%c📡 Scripts configurados: MENUS + RESERVAS`, 'color: #3498db;');
-console.log(`%c📊 Google Sheets ID: ${CONFIG.SHEET_ID.substring(0, 20)}...`, 'color: #95a5a6;');
+// ========== CACHE SIMPLES ==========
+const cache = {
+  data: {},
+  
+  set(key, value, duration = CONFIG.CACHE_DURATION) {
+    if (!CONFIG.CACHE_ENABLED) return;
+    
+    this.data[key] = {
+      value: value,
+      expiry: Date.now() + duration
+    };
+  },
+  
+  get(key) {
+    if (!CONFIG.CACHE_ENABLED) return null;
+    
+    const item = this.data[key];
+    if (!item) return null;
+    
+    if (Date.now() > item.expiry) {
+      delete this.data[key];
+      return null;
+    }
+    
+    return item.value;
+  },
+  
+  clear() {
+    this.data = {};
+  }
+};
 
+// ========== HELPERS ==========
+function formatarData(data) {
+  if (!data) return '';
+  const d = new Date(data);
+  return d.toLocaleDateString('pt-PT', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+}
+
+function formatarDataISO(data) {
+  if (!data) return '';
+  const d = new Date(data);
+  return d.toISOString().split('T')[0];
+}
+
+function formatarHora(hora) {
+  if (!hora) return '';
+  return hora.substring(0, 5); // HH:MM
+}
+
+function mostrarErro(mensagem, container = 'body') {
+  const div = document.createElement('div');
+  div.className = 'alert alert-danger';
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;';
+  div.innerHTML = `
+    <strong>❌ Erro:</strong> ${mensagem}
+    <button type="button" class="close" onclick="this.parentElement.remove()">
+      <span>&times;</span>
+    </button>
+  `;
+  document.querySelector(container).appendChild(div);
+  
+  setTimeout(() => div.remove(), 5000);
+}
+
+function mostrarSucesso(mensagem, container = 'body') {
+  const div = document.createElement('div');
+  div.className = 'alert alert-success';
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;';
+  div.innerHTML = `
+    <strong>✅ Sucesso:</strong> ${mensagem}
+    <button type="button" class="close" onclick="this.parentElement.remove()">
+      <span>&times;</span>
+    </button>
+  `;
+  document.querySelector(container).appendChild(div);
+  
+  setTimeout(() => div.remove(), 3000);
+}
+
+// ========== LOG DE INICIALIZAÇÃO ==========
 if (CONFIG.DEBUG) {
-  console.log('%c🔧 Modo DEBUG ativado', 'color: #f39c12; font-weight: bold;');
-  console.log('CONFIG completo:', CONFIG);
+  console.log(`✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION}`);
+  console.log(`📡 API URL: ${CONFIG.SCRIPT_URL}`);
 }
