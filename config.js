@@ -1,90 +1,69 @@
 /**
- * DON TASKO v6.1 - CORS FIX
- * Usa GET para evitar CORS preflight
+ * DON TASKO v6.2 - JSONP
+ * SEM CORS, SEM FETCH
  */
 
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzX14WZe7GxcSf17lWyffniher2tmpTd_RTaZhYkZmvlcvg5RMwId7PIV80FneIrDOH/exec',
   APP_NAME: 'Don Tasko',
-  VERSION: '6.1',
+  VERSION: '6.2',
   DEBUG: true,
   CACHE_ENABLED: true,
   CACHE_DURATION: 5 * 60 * 1000,
 };
 
-// ========== API REQUEST (GET SIMPLES - SEM CORS PREFLIGHT) ==========
-async function apiRequest(action, data = {}) {
-  try {
-    if (CONFIG.DEBUG) {
-      console.log(`📤 API Request [${action}]:`, data);
-    }
+// ========== JSONP (SEM CORS) ==========
+let jsonpCounter = 0;
+
+function apiRequest(action, data = {}) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `jsonp_callback_${++jsonpCounter}`;
     
-    // Construir URL com parâmetros
-    const params = new URLSearchParams({ action, ...data });
+    // Criar parâmetros
+    const params = new URLSearchParams({ action, callback: callbackName, ...data });
     const url = `${CONFIG.SCRIPT_URL}?${params.toString()}`;
     
     if (CONFIG.DEBUG) {
+      console.log(`📤 JSONP Request [${action}]:`, data);
       console.log(`🔗 URL: ${url}`);
     }
     
-    // USAR GET EM VEZ DE POST (evita CORS preflight)
-    const response = await fetch(url, {
-      method: 'GET',
-      redirect: 'follow'
-    });
+    // Timeout
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error('Timeout: servidor não respondeu'));
+    }, 30000); // 30 segundos
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    // Callback global
+    window[callbackName] = (response) => {
+      cleanup();
+      
+      if (CONFIG.DEBUG) {
+        console.log(`📥 JSONP Response [${action}]:`, response);
+      }
+      
+      resolve(response);
+    };
+    
+    // Cleanup
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     }
     
-    const result = await response.json();
+    // Criar script tag
+    const script = document.createElement('script');
+    script.src = url;
+    script.onerror = () => {
+      cleanup();
+      reject(new Error('Erro ao carregar script'));
+    };
     
-    if (CONFIG.DEBUG) {
-      console.log(`📥 API Response [${action}]:`, result);
-    }
-    
-    return result;
-    
-  } catch (error) {
-    console.error(`❌ Erro na API [${action}]:`, error);
-    
-    if (error.message.includes('Failed to fetch')) {
-      throw new Error('Não foi possível conectar ao servidor. Verifique sua conexão.');
-    }
-    
-    throw error;
-  }
-}
-
-// ========== API REQUEST PARA POST (dados grandes) ==========
-async function apiRequestPOST(action, data = {}) {
-  try {
-    if (CONFIG.DEBUG) {
-      console.log(`📤 API POST [${action}]:`, data);
-    }
-    
-    const response = await fetch(CONFIG.SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action, ...data }),
-      redirect: 'follow'
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const result = await response.json();
-    
-    if (CONFIG.DEBUG) {
-      console.log(`📥 API Response [${action}]:`, result);
-    }
-    
-    return result;
-    
-  } catch (error) {
-    console.error(`❌ Erro POST [${action}]:`, error);
-    throw error;
-  }
+    document.head.appendChild(script);
+  });
 }
 
 // ========== CACHE ==========
@@ -119,8 +98,8 @@ const cache = {
 function formatarData(data) {
   if (!data) return '';
   const d = new Date(data);
-  return d.toLocaleDateString('pt-PT', { 
-    day: '2-digit', month: '2-digit', year: 'numeric' 
+  return d.toLocaleDateString('pt-PT', {
+    day: '2-digit', month: '2-digit', year: 'numeric'
   });
 }
 
@@ -138,7 +117,7 @@ function formatarHora(hora) {
 function mostrarErro(mensagem) {
   const div = document.createElement('div');
   div.className = 'alert alert-danger alert-dismissible fade show';
-  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;';
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
   div.innerHTML = `
     <strong>❌ Erro:</strong> ${mensagem}
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -150,7 +129,7 @@ function mostrarErro(mensagem) {
 function mostrarSucesso(mensagem) {
   const div = document.createElement('div');
   div.className = 'alert alert-success alert-dismissible fade show';
-  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;';
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
   div.innerHTML = `
     <strong>✅ Sucesso:</strong> ${mensagem}
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -159,8 +138,16 @@ function mostrarSucesso(mensagem) {
   setTimeout(() => div.remove(), 3000);
 }
 
+// ========== LOADING ==========
+function mostrarLoading(show = true) {
+  const loading = document.getElementById('loading');
+  if (loading) {
+    loading.style.display = show ? 'flex' : 'none';
+  }
+}
+
 // ========== INIT ==========
 if (CONFIG.DEBUG) {
-  console.log(`✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION}`);
+  console.log(`✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION} - JSONP Mode`);
   console.log(`📡 API URL: ${CONFIG.SCRIPT_URL}`);
 }
