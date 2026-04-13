@@ -1,219 +1,968 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Reservas | Don Tasko</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservas - Don Tasko Restaurante</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    :root {
+      --primary: #2c3e50;
+      --secondary: #e74c3c;
+      --success: #27ae60;
+      --info: #3498db;
+      --warning: #f39c12;
+      --dark: #1a1a1a;
+      --light: #ecf0f1;
+      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--gradient-1);
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
+    /* Hero Section com Imagem */
+    .hero-section {
+      position: relative;
+      height: 300px;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), 
+                  url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1200&q=80') center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      margin-bottom: -80px;
+    }
 
-        /* Banner de Manutenção */
-        .maintenance-banner {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
-            text-align: center;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            animation: pulse 2s infinite;
-        }
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+      margin-bottom: 10px;
+      animation: fadeInDown 0.8s ease-out;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.9; }
-        }
+    .hero-content p {
+      font-size: 1.3rem;
+      font-weight: 300;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
 
-        .maintenance-banner h2 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+    .hero-content .restaurant-info {
+      margin-top: 20px;
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
 
-        .maintenance-banner p {
-            font-size: 0.9rem;
-            opacity: 0.95;
-        }
+    .hero-content .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
 
-        /* Card de Reservas (desfocado/desabilitado) */
-        .booking-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            position: relative;
-            filter: blur(3px);
-            pointer-events: none;
-            opacity: 0.7;
-        }
+    .hero-content .info-item i {
+      color: var(--warning);
+    }
 
-        /* Overlay de bloqueio */
-        .blocked-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.1);
-            border-radius: 20px;
-            z-index: 10;
-        }
+    /* Container Principal */
+    .main-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 10;
+    }
+    
+    /* Card de Reserva */
+    .reservation-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: slideInUp 0.6s ease-out;
+    }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .card-header-custom {
+      background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
 
-        .logo h1 {
-            color: #2c3e50;
-            font-size: 1.8rem;
-        }
+    .card-header-custom h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        .logo p {
-            color: #7f8c8d;
-            font-size: 0.8rem;
-            margin-top: 5px;
-        }
+    .card-header-custom .subtitle {
+      font-size: 0.95rem;
+      font-weight: 300;
+      margin-top: 8px;
+      opacity: 0.9;
+    }
 
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.85rem;
-        }
+    .card-body-custom {
+      padding: 40px 30px;
+    }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border: 2px solid #ecf0f1;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            background: #f9f9f9;
-        }
+    /* Form Groups */
+    .form-group-custom {
+      margin-bottom: 25px;
+      animation: fadeIn 0.5s ease-out;
+    }
 
-        .row {
-            display: flex;
-            gap: 15px;
-        }
+    .form-group-custom label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
 
-        .row > div {
-            flex: 1;
-        }
+    .form-group-custom label i {
+      margin-right: 8px;
+      color: var(--secondary);
+      width: 20px;
+      text-align: center;
+    }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 25px;
-            background: #bdc3c7;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: not-allowed;
-        }
+    .form-control-custom, 
+    .form-select-custom {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
 
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.7);
-        }
+    .form-control-custom:focus, 
+    .form-select-custom:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.1);
+      transform: translateY(-2px);
+    }
 
-        @media (max-width: 550px) {
-            .row {
-                flex-direction: column;
-                gap: 0;
-            }
-            .booking-card {
-                padding: 20px;
-            }
-        }
-    </style>
+    .form-control-custom:hover,
+    .form-select-custom:hover {
+      border-color: #bdc3c7;
+    }
+
+    /* Time Slots */
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .time-slot {
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .time-slot:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .time-slot.selected {
+      background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+      color: white;
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .time-slot.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #e0e0e0;
+    }
+
+    .time-slot.disabled:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: #e0e0e0;
+    }
+
+    /* Botão de Submissão */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--secondary) 0%, #c0392b 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-submit:active:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-submit:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn-submit span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Informações */
+    .info-box {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffe4a3 100%);
+      border-left: 5px solid var(--warning);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+      animation: slideInLeft 0.5s ease-out;
+    }
+
+    .info-box h5 {
+      margin: 0 0 10px 0;
+      color: #856404;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-box ul {
+      margin: 10px 0 0 0;
+      padding-left: 20px;
+      color: #856404;
+    }
+
+    .info-box ul li {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+
+    /* Loading */
+    #loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .loading-content {
+      text-align: center;
+      color: white;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(255,255,255,0.2);
+      border-top: 5px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      font-weight: 300;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: white;
+      margin-top: 40px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .footer .contact-info {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .footer .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer .contact-item i {
+      color: var(--warning);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        height: 250px;
+        margin-bottom: -60px;
+      }
+
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+
+      .hero-content p {
+        font-size: 1rem;
+      }
+
+      .hero-content .restaurant-info {
+        gap: 15px;
+      }
+
+      .hero-content .info-item {
+        font-size: 0.9rem;
+      }
+
+      .card-body-custom {
+        padding: 30px 20px;
+      }
+
+      .time-slots {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 8px;
+      }
+
+      .time-slot {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Success Message */
+    .success-message {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      border-left: 5px solid var(--success);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 20px 0;
+      animation: slideInUp 0.5s ease-out;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .success-message h4 {
+      color: #155724;
+      margin: 0 0 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .success-message p {
+      color: #155724;
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+
+    .success-message strong {
+      color: #0d4015;
+    }
+  </style>
+  
+  <!-- Config.js PRIMEIRO -->
+  <script src="config.js"></script>
+  
+  <script>
+    console.log('✅ CONFIG carregado:', CONFIG);
+  </script>
 </head>
 <body>
-<div class="container">
-    
-    <!-- BANNER DE MANUTENÇÃO -->
-    <div class="maintenance-banner">
-        <h2>
-            🔧 EM MANUTENÇÃO 🔧
-        </h2>
-        <p>
-            Estamos a melhorar o nosso sistema de reservas para lhe oferecer a melhor experiência.
-        </p>
-        <p style="margin-top: 8px; font-weight: bold;">
-            ⭐ Prometemos ser breves! ⭐
-        </p>
-    </div>
 
-    <!-- FORMULÁRIO DE RESERVAS (DESATIVADO) -->
-    <div class="booking-card">
-        <div class="blocked-overlay"></div>
-        <div class="logo">
-            <h1>🍽️ Don Tasko</h1>
-            <p>Reserva de Mesa</p>
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1><i class="fas fa-utensils"></i> Don Tasko</h1>
+      <p>Reserve a sua mesa num dos melhores restaurantes da região</p>
+      <div class="restaurant-info">
+        <div class="info-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Castelo Branco</span>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-phone"></i>
+          <span>+351 925 504 212</span>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-clock"></i>
+          <span>12:00 - 23:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container Principal -->
+  <div class="main-container">
+    <div class="reservation-card">
+      
+      <!-- Header -->
+      <div class="card-header-custom">
+        <h2>
+          <i class="fas fa-calendar-check"></i>
+          Fazer Reserva
+        </h2>
+        <div class="subtitle">Preencha os dados abaixo para reservar a sua mesa</div>
+      </div>
+
+      <!-- Body -->
+      <div class="card-body-custom">
+        
+        <!-- Mensagem de Sucesso -->
+        <div id="successMessage" class="success-message">
+          <h4>
+            <i class="fas fa-check-circle"></i>
+            Reserva Confirmada!
+          </h4>
+          <p><strong>Nome:</strong> <span id="confirmNome"></span></p>
+          <p><strong>Data:</strong> <span id="confirmData"></span></p>
+          <p><strong>Horário:</strong> <span id="confirmHora"></span></p>
+          <p><strong>Pessoas:</strong> <span id="confirmPax"></span></p>
+          <p style="margin-top: 15px;">
+            <i class="fas fa-envelope"></i>
+            Receberá um email de confirmação em breve.
+          </p>
         </div>
 
+        <!-- Formulário -->
         <form id="formReserva">
-            <label>📝 Nome Completo</label>
-            <input type="text" placeholder="Ex: João Silva" disabled>
+          
+          <!-- Nome -->
+          <div class="form-group-custom">
+            <label for="nome">
+              <i class="fas fa-user"></i>
+              Nome Completo
+            </label>
+            <input 
+              type="text" 
+              id="nome" 
+              name="nome" 
+              class="form-control-custom" 
+              required 
+              placeholder="O seu nome"
+              autocomplete="name"
+            >
+          </div>
 
-            <label>📱 Telemóvel</label>
-            <input type="tel" placeholder="925504212" disabled>
+          <!-- Email -->
+          <div class="form-group-custom">
+            <label for="email">
+              <i class="fas fa-envelope"></i>
+              Email
+            </label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              class="form-control-custom" 
+              required 
+              placeholder="seuemail@exemplo.com"
+              autocomplete="email"
+            >
+          </div>
 
-            <label>📧 E-mail</label>
-            <input type="email" placeholder="exemplo@email.com" disabled>
+          <!-- Telefone -->
+          <div class="form-group-custom">
+            <label for="telemovel">
+              <i class="fas fa-phone"></i>
+              Telemóvel
+            </label>
+            <input 
+              type="tel" 
+              id="telemovel" 
+              name="telemovel" 
+              class="form-control-custom" 
+              required 
+              placeholder="925 504 212"
+              autocomplete="tel"
+              pattern="[0-9]{9,}"
+            >
+          </div>
 
-            <div class="row">
-                <div>
-                    <label>📅 Data</label>
-                    <input type="date" disabled>
-                </div>
-                <div>
-                    <label>👥 Pessoas</label>
-                    <input type="number" value="2" disabled>
-                </div>
-            </div>
+          <!-- Data -->
+          <div class="form-group-custom">
+            <label for="data">
+              <i class="fas fa-calendar"></i>
+              Data da Reserva
+            </label>
+            <input 
+              type="text" 
+              id="data" 
+              name="data" 
+              class="form-control-custom" 
+              required 
+              placeholder="Selecione a data"
+              readonly
+            >
+          </div>
 
-            <label>⏰ Horário</label>
-            <select disabled>
-                <option>19:30</option>
-                <option>20:00</option>
-                <option>20:30</option>
+          <!-- Número de Pessoas -->
+          <div class="form-group-custom">
+            <label for="pax">
+              <i class="fas fa-users"></i>
+              Número de Pessoas
+            </label>
+            <select 
+              id="pax" 
+              name="pax" 
+              class="form-select-custom" 
+              required
+            >
+              <option value="">Selecione</option>
+              <option value="1">1 pessoa</option>
+              <option value="2">2 pessoas</option>
+              <option value="3">3 pessoas</option>
+              <option value="4">4 pessoas</option>
+              <option value="5">5 pessoas</option>
+              <option value="6">6 pessoas</option>
+              <option value="7">7 pessoas</option>
+              <option value="8">8 pessoas</option>
             </select>
+          </div>
 
-            <label>📝 Observações</label>
-            <textarea rows="3" placeholder="Alergias, preferências..." disabled></textarea>
+          <!-- Horários -->
+          <div class="form-group-custom">
+            <label>
+              <i class="fas fa-clock"></i>
+              Escolha o Horário
+            </label>
+            <div id="timeSlots" class="time-slots">
+              <!-- Preenchido dinamicamente -->
+            </div>
+            <input type="hidden" id="horario" name="horario" required>
+          </div>
 
-            <button disabled>⏳ Reservas temporariamente indisponíveis</button>
+          <!-- Observações -->
+          <div class="form-group-custom">
+            <label for="obs">
+              <i class="fas fa-comment"></i>
+              Observações (opcional)
+            </label>
+            <textarea 
+              id="obs" 
+              name="obs" 
+              class="form-control-custom" 
+              rows="3" 
+              placeholder="Alergias, pedidos especiais, etc."
+            ></textarea>
+          </div>
+
+          <!-- Info Box -->
+          <div class="info-box">
+            <h5>
+              <i class="fas fa-info-circle"></i>
+              Informação Importante
+            </h5>
+            <ul>
+              <li>Tolerância de atraso: <strong>10 minutos</strong></li>
+              <li>Cancelamentos: mínimo <strong>24h de antecedência</strong></li>
+              <li>Receberá confirmação por email e SMS</li>
+            </ul>
+          </div>
+
+          <!-- Botão -->
+          <button type="submit" class="btn-submit" id="btnSubmit">
+            <span>
+              <i class="fas fa-check-circle"></i>
+              Confirmar Reserva
+            </span>
+          </button>
+
         </form>
+
+      </div>
     </div>
-    
+
+    <!-- Footer -->
     <div class="footer">
-        Don Tasko - Gastronomia & Tradição
+      <p>&copy; 2024 Don Tasko - Todos os direitos reservados</p>
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Castelo Branco, Portugal</span>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <span>+351 925 504 212</span>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <span>reservas@dontasko.pt</span>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text">A processar a sua reserva...</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+
+  <script>
+    console.log('🚀 Reservas Don Tasko iniciando...');
+
+    let configsGlobal = {};
+    let horariosGlobal = {};
+    let diasFechadosGlobal = [];
+
+    // ========== INICIALIZAÇÃO ==========
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🔄 Carregando configurações...');
+      
+      try {
+        await carregarDados();
+        inicializarCalendario();
+        gerarHorarios();
+        
+        document.getElementById('formReserva').addEventListener('submit', submeterReserva);
+        
+      } catch (error) {
+        console.error('❌ Erro na inicialização:', error);
+        mostrarErro('Erro ao carregar dados do sistema. Por favor, recarregue a página.');
+      }
+    });
+
+    // ========== CARREGAR DADOS ==========
+    async function carregarDados() {
+      try {
+        const [diasFechados, horarios, configs] = await Promise.all([
+          apiRequest('getDiasFechados'),
+          apiRequest('getHorarios'),
+          apiRequest('getConfigs')
+        ]);
+
+        diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
+        horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-21:30' };
+        configsGlobal = configs || {};
+
+        console.log('✅ Configurações carregadas:');
+        console.log('  Dias fechados:', diasFechadosGlobal);
+        console.log('  Horários:', horariosGlobal);
+        console.log('  Configs:', configsGlobal);
+
+      } catch (error) {
+        console.error('❌ Erro ao carregar dados:', error);
+        throw error;
+      }
+    }
+
+    // ========== CALENDÁRIO ==========
+    function inicializarCalendario() {
+      flatpickr('#data', {
+        locale: 'pt',
+        minDate: 'today',
+        dateFormat: 'Y-m-d',
+        disable: [
+          function(date) {
+            const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
+            const dateStr = date.toISOString().split('T')[0];
+            return diasFechadosGlobal.includes(dayName) || diasFechadosGlobal.includes(dateStr);
+          }
+        ],
+        onChange: function(selectedDates, dateStr) {
+          console.log('📅 Data selecionada:', dateStr);
+          gerarHorarios();
+        }
+      });
+    }
+
+    // ========== GERAR HORÁRIOS ==========
+    function gerarHorarios() {
+      const container = document.getElementById('timeSlots');
+      container.innerHTML = '';
+
+      const horarios = [];
+
+      // Almoço
+      if (horariosGlobal.almoco) {
+        const [inicio, fim] = horariosGlobal.almoco.split('-');
+        const horariosAlmoco = gerarIntervaloHorarios(inicio, fim);
+        horarios.push(...horariosAlmoco);
+      }
+
+      // Jantar
+      if (horariosGlobal.jantar) {
+        const [inicio, fim] = horariosGlobal.jantar.split('-');
+        const horariosJantar = gerarIntervaloHorarios(inicio, fim);
+        horarios.push(...horariosJantar);
+      }
+
+      horarios.forEach(hora => {
+        const slot = document.createElement('div');
+        slot.className = 'time-slot';
+        slot.textContent = hora;
+        slot.onclick = () => selecionarHorario(hora, slot);
+        container.appendChild(slot);
+      });
+    }
+
+    function gerarIntervaloHorarios(inicio, fim) {
+      const horarios = [];
+      let [h, m] = inicio.split(':').map(Number);
+      const [hFim, mFim] = fim.split(':').map(Number);
+      
+      while (h < hFim || (h === hFim && m < mFim)) {
+        horarios.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+        m += 30;
+        if (m >= 60) {
+          m = 0;
+          h++;
+        }
+      }
+      
+      return horarios;
+    }
+
+    // ========== SELECIONAR HORÁRIO ==========
+    function selecionarHorario(hora, elemento) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      
+      elemento.classList.add('selected');
+      document.getElementById('horario').value = hora;
+      
+      console.log('🕐 Horário selecionado:', hora);
+    }
+
+    // ========== SUBMETER RESERVA ==========
+    async function submeterReserva(e) {
+      e.preventDefault();
+      
+      const form = e.target;
+      const dados = {
+        nome: form.nome.value.trim(),
+        email: form.email.value.trim(),
+        telemovel: form.telemovel.value.replace(/\D/g, ''),
+        data: form.data.value,
+        pax: parseInt(form.pax.value),
+        horario: form.horario.value,
+        obs: form.obs.value.trim()
+      };
+
+      console.log('📝 Dados da reserva:', dados);
+
+      // Validações
+      if (!dados.horario) {
+        mostrarErro('Por favor, selecione um horário.');
+        return;
+      }
+
+      if (dados.telemovel.length < 9) {
+        mostrarErro('Telemóvel inválido. Digite pelo menos 9 dígitos.');
+        return;
+      }
+
+      try {
+        mostrarLoading(true);
+        
+        const resultado = await apiRequest('reservaSite', dados);
+        
+        console.log('✅ Resultado:', resultado);
+
+        if (resultado.status === 'success') {
+          // Mostrar mensagem de sucesso
+          document.getElementById('confirmNome').textContent = dados.nome;
+          document.getElementById('confirmData').textContent = formatarData(dados.data);
+          document.getElementById('confirmHora').textContent = dados.horario;
+          document.getElementById('confirmPax').textContent = dados.pax + (dados.pax === 1 ? ' pessoa' : ' pessoas');
+          
+          document.getElementById('successMessage').classList.add('show');
+          form.style.display = 'none';
+          
+          mostrarSucesso('Reserva confirmada com sucesso!');
+          
+          // Scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+        } else {
+          throw new Error(resultado.message || 'Erro ao processar reserva');
+        }
+        
+      } catch (error) {
+        console.error('❌ Erro ao submeter:', error);
+        mostrarErro(error.message || 'Erro ao processar a reserva. Tente novamente.');
+      } finally {
+        mostrarLoading(false);
+      }
+    }
+
+    // ========== HELPERS ==========
+    function formatarData(data) {
+      const d = new Date(data + 'T00:00:00');
+      return d.toLocaleDateString('pt-PT', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+    }
+  </script>
+
 </body>
 </html>
