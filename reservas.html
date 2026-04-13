@@ -33,6 +33,7 @@
       --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --whatsapp: #25D366;
     }
     
     body {
@@ -286,6 +287,31 @@
       z-index: 1;
     }
 
+    /* Botão WhatsApp */
+    .btn-whatsapp {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--whatsapp) 0%, #128C7E 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-whatsapp:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+      color: white;
+    }
+
     /* Informações */
     .info-box {
       background: linear-gradient(135deg, #fff3cd 0%, #ffe4a3 100%);
@@ -437,15 +463,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
       .hero-section {
@@ -552,7 +569,7 @@
         </div>
         <div class="info-item">
           <i class="fas fa-clock"></i>
-          <span>12:00-15:00 | 19:30-23:00</span>
+          <span>12:00-14:00 | 19:30-20:15</span>
         </div>
       </div>
     </div>
@@ -678,6 +695,7 @@
               name="pax" 
               class="form-select-custom" 
               required
+              onchange="verificarGrupoGrande()"
             >
               <option value="">Selecione</option>
               <option value="1">1 pessoa</option>
@@ -688,6 +706,10 @@
               <option value="6">6 pessoas</option>
               <option value="7">7 pessoas</option>
               <option value="8">8 pessoas</option>
+              <option value="9">9 pessoas</option>
+              <option value="10">10 pessoas</option>
+              <option value="11">11 pessoas</option>
+              <option value="12">12 pessoas</option>
             </select>
           </div>
 
@@ -728,16 +750,12 @@
             <ul>
               <li>Tolerância de atraso: <strong>10 minutos</strong></li>
               <li>Receberá confirmação por email (verifique a pasta de SPAM)</li>
+              <li>Reservas para grupos superiores a 6 pessoas devem ser feitas por WhatsApp</li>
             </ul>
           </div>
 
-          <!-- Botão -->
-          <button type="submit" class="btn-submit" id="btnSubmit">
-            <span>
-              <i class="fas fa-check-circle"></i>
-              Confirmar Reserva
-            </span>
-          </button>
+          <!-- Container dos Botões -->
+          <div id="buttonContainer"></div>
 
         </form>
 
@@ -780,57 +798,72 @@
   <script>
     // URL do Google Apps Script
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzX14WZe7GxcSf17lWyffniher2tmpTd_RTaZhYkZmvlcvg5RMwId7PIV80FneIrDOH/exec';
+    const WHATSAPP_NUMBER = '351925504212'; // Número do WhatsApp sem o +
     
     console.log('🚀 Reservas Don Tasko iniciando...');
     console.log('📡 API URL:', SCRIPT_URL);
 
     let configsGlobal = {};
-    let horariosGlobal = { almoco: '12:00-15:00', jantar: '19:30-21:30' };
+    let horariosGlobal = { almoco: '12:00-14:00', jantar: '19:30-20:15' };
     let diasFechadosGlobal = [];
 
-    // ========== FUNÇÃO DE REQUISIÇÃO (CORS/JSONP) ==========
-    function apiRequest(action, data = null) {
-      return new Promise((resolve, reject) => {
-        const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-        
-        let url = `${SCRIPT_URL}?action=${action}&callback=${callbackName}`;
-        
-        // Se for POST (reserva), adiciona dados ao URL
-        if (data && action === 'reservaSite') {
-          // Converter dados para parâmetros URL
-          const params = new URLSearchParams();
-          for (let key in data) {
-            params.append(key, data[key]);
+    // ========== FUNÇÃO PARA BUSCAR DIAS FECHADOS DA SHEET ==========
+    async function carregarDiasFechados() {
+      try {
+        // Tentar buscar os dias fechados da sheet Calendario_Fecho
+        const response = await fetch(`${SCRIPT_URL}?action=getDiasFechados&t=${Date.now()}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) {
+            diasFechadosGlobal = data;
+            console.log('✅ Dias fechados carregados da sheet:', diasFechadosGlobal);
+            return;
           }
-          url += '&' + params.toString();
         }
+        throw new Error('Não foi possível carregar dias fechados');
+      } catch (error) {
+        console.warn('⚠️ Usando dias fechados padrão (domingos):', error);
+        diasFechadosGlobal = ['domingo'];
+      }
+    }
+
+    // ========== FUNÇÃO DE REQUISIÇÃO ALTERNATIVA ==========
+    async function apiRequest(action, data = null) {
+      try {
+        let url = `${SCRIPT_URL}?action=${action}&t=${Date.now()}`;
         
-        // Criar callback global
-        window[callbackName] = function(response) {
-          delete window[callbackName];
-          document.body.removeChild(script);
-          resolve(response);
-        };
-        
-        // Criar script tag
-        const script = document.createElement('script');
-        script.src = url;
-        script.onerror = function() {
-          delete window[callbackName];
-          document.body.removeChild(script);
-          reject(new Error('Erro ao carregar script. Verifique a conexão e se o Google Apps Script está publicado.'));
-        };
-        
-        document.body.appendChild(script);
-        
-        // Timeout de 10 segundos
-        setTimeout(() => {
-          if (window[callbackName]) {
-            delete window[callbackName];
-            reject(new Error('Timeout na requisição'));
+        if (data && action === 'reservaSite') {
+          // Para POST, usar fetch com mode cors
+          const formData = new URLSearchParams();
+          for (let key in data) {
+            formData.append(key, data[key]);
           }
-        }, 10000);
-      });
+          
+          const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData.toString()
+          });
+          
+          if (response.ok) {
+            return await response.json();
+          }
+          throw new Error('Erro na requisição');
+        } else {
+          // Para GET
+          const response = await fetch(url);
+          if (response.ok) {
+            return await response.json();
+          }
+          throw new Error('Erro na requisição');
+        }
+      } catch (error) {
+        console.error('Erro na API:', error);
+        throw error;
+      }
     }
 
     // ========== INICIALIZAÇÃO ==========
@@ -838,11 +871,14 @@
       console.log('🔄 Carregando configurações...');
       
       try {
-        await carregarDados();
+        await carregarDiasFechados();
         inicializarCalendario();
         gerarHorarios();
         
         document.getElementById('formReserva').addEventListener('submit', submeterReserva);
+        
+        // Inicializar botão
+        verificarGrupoGrande();
         
       } catch (error) {
         console.error('❌ Erro na inicialização:', error);
@@ -852,35 +888,9 @@
         inicializarCalendario();
         gerarHorarios();
         document.getElementById('formReserva').addEventListener('submit', submeterReserva);
+        verificarGrupoGrande();
       }
     });
-
-    // ========== CARREGAR DADOS ==========
-    async function carregarDados() {
-      try {
-        // Tentar carregar dados do servidor
-        const [diasFechados, horarios, configs] = await Promise.all([
-          apiRequest('getDiasFechados'),
-          apiRequest('getHorarios'),
-          apiRequest('getConfigs')
-        ]);
-
-        diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
-        horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-21:30' };
-        configsGlobal = configs || {};
-
-        console.log('✅ Configurações carregadas:');
-        console.log('  Dias fechados:', diasFechadosGlobal);
-        console.log('  Horários:', horariosGlobal);
-        console.log('  Configs:', configsGlobal);
-
-      } catch (error) {
-        console.warn('⚠️ Usando configurações padrão:', error);
-        // Manter valores padrão
-        diasFechadosGlobal = ['domingo'];
-        horariosGlobal = { almoco: '12:00-15:00', jantar: '19:30-21:30' };
-      }
-    }
 
     // ========== CALENDÁRIO ==========
     function inicializarCalendario() {
@@ -911,19 +921,17 @@
 
       const horarios = [];
 
-      // Almoço
-      if (horariosGlobal.almoco) {
-        const [inicio, fim] = horariosGlobal.almoco.split('-');
-        const horariosAlmoco = gerarIntervaloHorarios(inicio, fim);
-        horarios.push(...horariosAlmoco);
-      }
+      // Almoço: 12:00 às 14:00 (a cada 30 minutos)
+      const almocoInicio = '12:00';
+      const almocoFim = '14:00';
+      const horariosAlmoco = gerarIntervaloHorarios(almocoInicio, almocoFim);
+      horarios.push(...horariosAlmoco);
 
-      // Jantar
-      if (horariosGlobal.jantar) {
-        const [inicio, fim] = horariosGlobal.jantar.split('-');
-        const horariosJantar = gerarIntervaloHorarios(inicio, fim);
-        horarios.push(...horariosJantar);
-      }
+      // Jantar: 19:30 às 20:15 (a cada 15 minutos para dar mais opções)
+      const jantarInicio = '19:30';
+      const jantarFim = '20:15';
+      const horariosJantar = gerarIntervaloHorariosComMinutos(jantarInicio, jantarFim, 15);
+      horarios.push(...horariosJantar);
 
       if (horarios.length === 0) {
         container.innerHTML = '<div class="text-muted text-center p-3">Sem horários disponíveis</div>';
@@ -956,6 +964,23 @@
       return horarios;
     }
 
+    function gerarIntervaloHorariosComMinutos(inicio, fim, intervaloMinutos) {
+      const horarios = [];
+      let [h, m] = inicio.split(':').map(Number);
+      const [hFim, mFim] = fim.split(':').map(Number);
+      
+      while (h < hFim || (h === hFim && m <= mFim)) {
+        horarios.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
+        m += intervaloMinutos;
+        if (m >= 60) {
+          m = m - 60;
+          h++;
+        }
+      }
+      
+      return horarios;
+    }
+
     // ========== SELECIONAR HORÁRIO ==========
     function selecionarHorario(hora, elemento) {
       document.querySelectorAll('.time-slot').forEach(slot => {
@@ -968,11 +993,55 @@
       console.log('🕐 Horário selecionado:', hora);
     }
 
+    // ========== VERIFICAR GRUPO GRANDE ==========
+    function verificarGrupoGrande() {
+      const pax = parseInt(document.getElementById('pax').value);
+      const buttonContainer = document.getElementById('buttonContainer');
+      const form = document.getElementById('formReserva');
+      const submitBtn = document.getElementById('submitBtn');
+      const whatsappBtn = document.getElementById('whatsappBtn');
+      
+      if (!buttonContainer) return;
+      
+      if (pax > 6) {
+        // Mostrar botão WhatsApp
+        buttonContainer.innerHTML = `
+          <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Gostaria de fazer uma reserva para ${pax} pessoas no Don Tasko. Data: ${document.getElementById('data')?.value || 'a definir'}. Horário: ${document.getElementById('horario')?.value || 'a definir'}. Nome: ${document.getElementById('nome')?.value || 'a definir'}" 
+             class="btn-whatsapp" 
+             target="_blank"
+             id="whatsappBtn">
+            <i class="fab fa-whatsapp"></i>
+            Reservar via WhatsApp (Grupo > 6 pessoas)
+          </a>
+        `;
+        // Esconder o botão de submit original
+        if (submitBtn) submitBtn.style.display = 'none';
+      } else {
+        // Mostrar botão normal
+        buttonContainer.innerHTML = `
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span>
+              <i class="fas fa-check-circle"></i>
+              Confirmar Reserva
+            </span>
+          </button>
+        `;
+        // Adicionar event listener ao novo botão
+        const newSubmitBtn = document.getElementById('submitBtn');
+        if (newSubmitBtn) {
+          newSubmitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            submeterReserva(e);
+          });
+        }
+      }
+    }
+
     // ========== SUBMETER RESERVA ==========
     async function submeterReserva(e) {
       e.preventDefault();
       
-      const form = e.target;
+      const form = document.getElementById('formReserva');
       const dados = {
         nome: form.nome.value.trim(),
         email: form.email.value.trim(),
@@ -1013,6 +1082,11 @@
 
       if (!dados.horario) {
         mostrarErro('Por favor, selecione um horário.');
+        return;
+      }
+
+      if (dados.pax > 6) {
+        mostrarErro('Para grupos superiores a 6 pessoas, use o botão do WhatsApp.');
         return;
       }
 
@@ -1062,14 +1136,11 @@
 
     function mostrarLoading(show) {
       const loading = document.getElementById('loading');
-      const btn = document.getElementById('btnSubmit');
       
       if (show) {
         loading.style.display = 'flex';
-        if (btn) btn.disabled = true;
       } else {
         loading.style.display = 'none';
-        if (btn) btn.disabled = false;
       }
     }
 
@@ -1088,6 +1159,30 @@
       const errorDiv = document.getElementById('errorMessage');
       if (errorDiv) errorDiv.classList.remove('show');
     }
+
+    // Monitorar mudanças no número de pessoas
+    document.addEventListener('DOMContentLoaded', () => {
+      const paxSelect = document.getElementById('pax');
+      if (paxSelect) {
+        paxSelect.addEventListener('change', verificarGrupoGrande);
+      }
+      
+      const dataInput = document.getElementById('data');
+      if (dataInput) {
+        dataInput.addEventListener('change', verificarGrupoGrande);
+      }
+      
+      const nomeInput = document.getElementById('nome');
+      if (nomeInput) {
+        nomeInput.addEventListener('input', verificarGrupoGrande);
+      }
+      
+      const horarioInput = document.getElementById('horario');
+      if (horarioInput) {
+        const observer = new MutationObserver(verificarGrupoGrande);
+        observer.observe(horarioInput, { attributes: true, attributeFilter: ['value'] });
+      }
+    });
   </script>
 
 </body>
