@@ -85,7 +85,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     .hero-content .info-item i {
@@ -176,6 +176,14 @@
       border-color: var(--primary);
       background: white;
       box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+    }
+
+    /* Small helper text */
+    .helper-text {
+      font-size: 0.7rem;
+      color: #6c757d;
+      margin-top: 4px;
+      display: block;
     }
 
     /* Time Slots */
@@ -314,7 +322,7 @@
       padding: 24px 16px;
       color: white;
       margin-top: 30px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
 
     .footer .contact-info {
@@ -368,6 +376,14 @@
       }
     }
 
+    /* Flatpickr custom */
+    .flatpickr-day.disabled {
+      background-color: #f8d7da !important;
+      border-color: #f5c6cb !important;
+      color: #721c24 !important;
+      text-decoration: line-through;
+    }
+
     /* Responsive */
     @media (max-width: 480px) {
       .hero-section {
@@ -384,7 +400,7 @@
       }
       
       .hero-content .info-item {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
       }
       
       .card-body-custom {
@@ -453,6 +469,7 @@
           <div class="form-group-custom">
             <label for="telemovel"><i class="fas fa-phone"></i> Telemóvel</label>
             <input type="tel" id="telemovel" name="telemovel" class="form-control-custom" required placeholder="925504212">
+            <small class="helper-text"><i class="fas fa-info-circle"></i> Tarifa para chamada móvel nacional</small>
           </div>
 
           <div class="form-group-custom">
@@ -493,7 +510,7 @@
           </div>
 
           <div class="info-box">
-            <h5><i class="fas fa-info-circle"></i> Informações</h5>
+            <h5><i class="fas fa-info-circle"></i> Informação Importante</h5>
             <ul>
               <li>Tolerância de atraso: <strong>10 minutos</strong></li>
               <li>Confirmação por email (verifique SPAM)</li>
@@ -508,7 +525,7 @@
     </div>
 
     <div class="footer">
-      <p>&copy; 2025 Don Tasko</p>
+      <p>&copy; 2025 Don Tasko - Todos os direitos reservados</p>
       <div class="contact-info">
         <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Castelo Branco</span></div>
         <div class="contact-item"><i class="fas fa-phone"></i><span>+351 925 504 212</span></div>
@@ -529,11 +546,11 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
   <script>
-    // Verificar se CONFIG existe
+    // Aguardar carregamento do config.js
     if (typeof CONFIG === 'undefined') {
       console.error('❌ config.js não carregado!');
       var CONFIG = {
-        SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzX14WZe7GxcSf17lWyffniher2tmpTd_RTaZhYkZmvlcvg5RMwId7PIV80FneIrDOH/exec',
+        SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxubwTlylS-jDtqnx9M16ffs6WkR3ktOyqDTqyHKqvs_BKM1HtMUTxWOmBQNv0S-u1qgg/exec',
         DIAS_FECHADOS: ['domingo'],
         HORARIOS: { almoco: '12:00-14:00', jantar: '19:30-20:15' },
         WHATSAPP_NUMBER: '351925504212',
@@ -591,16 +608,19 @@
     // ========== VERIFICAR DATA FECHADA ==========
     function isDataFechada(date) {
       const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
-      const dateStr = date.toISOString().split('T')[0];
-      const dateFormatted = `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
+      const dia = date.getDate().toString().padStart(2, '0');
+      const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+      const ano = date.getFullYear();
+      const dateFormatted = `${dia}/${mes}/${ano}`;
+      const dateISO = date.toISOString().split('T')[0];
       
       // Verificar nos dias fechados do config
       const fechado = CONFIG.DIAS_FECHADOS.some(d => {
-        return d === dayName || d === dateStr || d === dateFormatted;
+        return d === dayName || d === dateISO || d === dateFormatted;
       });
       
       if (fechado && CONFIG.DEBUG) {
-        console.log(`📅 Data fechada: ${dateStr} (${dayName})`);
+        console.log(`📅 Data fechada: ${dateISO} (${dayName})`);
       }
       
       return fechado;
@@ -615,22 +635,29 @@
       document.getElementById('pax').addEventListener('change', verificarGrupoGrande);
       document.getElementById('data').addEventListener('change', verificarGrupoGrande);
       document.getElementById('nome').addEventListener('input', verificarGrupoGrande);
-      document.getElementById('horario').addEventListener('change', verificarGrupoGrande);
       
       verificarGrupoGrande();
     });
 
     // ========== CALENDÁRIO ==========
     function inicializarCalendario() {
-      flatpickr('#data', {
+      const inputData = document.getElementById('data');
+      if (!inputData) return;
+      
+      flatpickr(inputData, {
         locale: 'pt',
         minDate: 'today',
         dateFormat: 'Y-m-d',
         disable: [isDataFechada],
-        onChange: function(selectedDates, dateStr) {
+        onChange: function(selectedDates, dateStr, instance) {
           console.log('📅 Data selecionada:', dateStr);
-          gerarHorarios();
-          verificarGrupoGrande();
+          if (dateStr) {
+            gerarHorarios();
+            verificarGrupoGrande();
+          }
+        },
+        onReady: function(selectedDates, dateStr, instance) {
+          console.log('📅 Calendário inicializado');
         }
       });
     }
@@ -658,7 +685,7 @@
       horarios.push(...horariosJantar);
 
       if (horarios.length === 0) {
-        container.innerHTML = '<div class="text-muted text-center p-3">Sem horários</div>';
+        container.innerHTML = '<div class="text-muted text-center p-3">Sem horários disponíveis</div>';
         return;
       }
 
@@ -670,7 +697,7 @@
           document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
           slot.classList.add('selected');
           document.getElementById('horario').value = hora;
-          console.log('🕐 Horário:', hora);
+          console.log('🕐 Horário selecionado:', hora);
           verificarGrupoGrande();
         };
         container.appendChild(slot);
@@ -704,7 +731,7 @@
       if (!buttonContainer) return;
       
       if (pax > 6) {
-        const msg = `Olá! Reserva para ${pax} pessoas%0A📅 ${data || 'a definir'}%0A🕐 ${horario || 'a definir'}%0A👤 ${nome || 'a definir'}`;
+        const msg = `Olá! Gostaria de fazer uma reserva para ${pax} pessoas no Don Tasko.%0A%0A📅 Data: ${data || 'a definir'}%0A🕐 Horário: ${horario || 'a definir'}%0A👤 Nome: ${nome || 'a definir'}`;
         buttonContainer.innerHTML = `
           <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" class="btn-whatsapp" target="_blank">
             <i class="fab fa-whatsapp"></i> Reservar via WhatsApp (${pax} pessoas)
@@ -773,18 +800,23 @@
     }
 
     function mostrarLoading(show) {
-      document.getElementById('loading').style.display = show ? 'flex' : 'none';
+      const loading = document.getElementById('loading');
+      if (loading) loading.style.display = show ? 'flex' : 'none';
     }
 
     function mostrarErro(msg) {
       const div = document.getElementById('errorMessage');
-      document.getElementById('errorText').textContent = msg;
-      div.classList.add('show');
-      setTimeout(() => div.classList.remove('show'), 5000);
+      const text = document.getElementById('errorText');
+      if (text) text.textContent = msg;
+      if (div) div.classList.add('show');
+      setTimeout(() => {
+        if (div) div.classList.remove('show');
+      }, 5000);
     }
 
     function ocultarErro() {
-      document.getElementById('errorMessage').classList.remove('show');
+      const div = document.getElementById('errorMessage');
+      if (div) div.classList.remove('show');
     }
   </script>
 </body>
