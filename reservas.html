@@ -369,6 +369,18 @@
       text-decoration: line-through;
     }
 
+    /* Debug info */
+    .debug-info {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 15px;
+      font-size: 0.7rem;
+      color: #666;
+      display: none;
+    }
+
     @media (max-width: 480px) {
       .hero-section {
         height: 240px;
@@ -412,7 +424,7 @@
       <div class="restaurant-info">
         <div class="info-item"><i class="fas fa-map-marker-alt"></i><span>Castelo Branco</span></div>
         <div class="info-item"><i class="fas fa-phone"></i><span>+351 925 504 212</span></div>
-        <div class="info-item"><i class="fas fa-clock"></i><span>12:00-14:00 | 19:30-20:15</span></div>
+        <div class="info-item"><i class="fas fa-clock"></i><span>12:00-14:15 | 19:30-20:15</span></div>
       </div>
     </div>
   </div>
@@ -509,6 +521,10 @@
           </div>
         </form>
 
+        <!-- Debug info -->
+        <div id="debugInfo" class="debug-info">
+          <strong>🔧 Debug:</strong> <span id="debugText"></span>
+        </div>
       </div>
     </div>
 
@@ -533,10 +549,11 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
   <script>
-    // Configuração
+    // Configuração - CORRIGIR DIAS FECHADOS
     const CONFIG = {
       SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxubwTlylS-jDtqnx9M16ffs6WkR3ktOyqDTqyHKqvs_BKM1HtMUTxWOmBQNv0S-u1qgg/exec',
-      DIAS_FECHADOS: ['segundas', 'terça', 'quarta', '25/12/2026', '01/01/2027', '01/01/2026'],
+      // IMPORTANTE: Usar singular: 'segunda' em vez de 'segundas'
+      DIAS_FECHADOS: ['domingo', 'segunda', 'terça', 'quarta', '25/12/2026', '01/01/2027', '01/01/2026'],
       HORARIOS: { almoco: '12:00-14:15', jantar: '19:30-20:15' },
       WHATSAPP_NUMBER: '351925504212',
       DEBUG: true
@@ -561,7 +578,7 @@
         
         const timeout = setTimeout(() => {
           cleanup();
-          reject(new Error('O servidor não respondeu. Tente novamente.'));
+          reject(new Error('Timeout: O servidor não respondeu.'));
         }, 15000);
         
         window[callbackName] = (response) => {
@@ -580,7 +597,7 @@
         script.src = url;
         script.onerror = () => {
           cleanup();
-          reject(new Error('Erro de conexão com o servidor. Verifique a sua internet.'));
+          reject(new Error('Erro de conexão. O Google Apps Script pode não estar publicado corretamente.'));
         };
         
         document.head.appendChild(script);
@@ -600,7 +617,7 @@
         return d === dayName || d === dateISO || d === dateFormatted;
       });
       
-      if (fechado && CONFIG.DEBUG) {
+      if (fechado) {
         console.log(`📅 Data fechada: ${dateISO} (${dayName})`);
       }
       
@@ -746,6 +763,14 @@
       
       if (pax > 6) { mostrarErro('Para grupos >6 pessoas use o WhatsApp'); return; }
 
+      // Mostrar debug
+      const debugDiv = document.getElementById('debugInfo');
+      const debugText = document.getElementById('debugText');
+      if (debugDiv && debugText) {
+        debugDiv.style.display = 'block';
+        debugText.innerHTML = `A enviar para: ${CONFIG.SCRIPT_URL}`;
+      }
+
       try {
         mostrarLoading(true);
         ocultarErro();
@@ -757,6 +782,8 @@
         });
         
         console.log('✅ Resultado:', resultado);
+        
+        if (debugText) debugText.innerHTML = `Resposta: ${JSON.stringify(resultado)}`;
         
         if (resultado.status === 'success') {
           document.getElementById('confirmNome').textContent = nome;
@@ -772,6 +799,7 @@
         }
       } catch (error) {
         console.error('❌ Erro:', error);
+        if (debugText) debugText.innerHTML = `Erro: ${error.message}`;
         mostrarErro(error.message || 'Erro de conexão. Por favor, tente novamente ou contacte o restaurante por WhatsApp.');
       } finally {
         mostrarLoading(false);
