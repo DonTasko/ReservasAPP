@@ -559,23 +559,22 @@
     }
 
     const WHATSAPP_NUMBER = CONFIG.WHATSAPP_NUMBER || '351925504212';
-    let jsonpCounter = 0;
+    // NOTA: jsonpCounter já está definido no config.js, não declarar novamente!
 
     console.log('🚀 Reservas Don Tasko iniciando...');
     console.log('📅 Dias fechados do config:', CONFIG.DIAS_FECHADOS);
     console.log('🕐 Horários do config:', CONFIG.HORARIOS);
 
-    // ========== JSONP REQUEST ==========
-    function apiRequest(action, data = {}) {
+    // Usar a função apiRequest do config.js
+    // Se não existir, criar uma
+    const apiRequest = window.apiRequest || function(action, data = {}) {
       return new Promise((resolve, reject) => {
-        const callbackName = `jsonp_callback_${++jsonpCounter}_${Date.now()}`;
+        const callbackName = `jsonp_callback_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;
         
         const params = new URLSearchParams({ action, callback: callbackName, ...data });
         const url = `${CONFIG.SCRIPT_URL}?${params.toString()}`;
         
-        if (CONFIG.DEBUG) {
-          console.log(`📤 JSONP [${action}]:`, url);
-        }
+        if (CONFIG.DEBUG) console.log(`📤 JSONP [${action}]:`, url);
         
         const timeout = setTimeout(() => {
           cleanup();
@@ -603,7 +602,7 @@
         
         document.head.appendChild(script);
       });
-    }
+    };
 
     // ========== VERIFICAR DATA FECHADA ==========
     function isDataFechada(date) {
