@@ -4,12 +4,48 @@
  */
 
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzX14WZe7GxcSf17lWyffniher2tmpTd_RTaZhYkZmvlcvg5RMwId7PIV80FneIrDOH/exec',
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxubwTlylS-jDtqnx9M16ffs6WkR3ktOyqDTqyHKqvs_BKM1HtMUTxWOmBQNv0S-u1qgg/exec',
   APP_NAME: 'Don Tasko',
   VERSION: '6.2',
   DEBUG: true,
   CACHE_ENABLED: true,
   CACHE_DURATION: 5 * 60 * 1000,
+  
+  // ========== DIAS FECHADOS (MANUAL) ==========
+  // Adicione aqui os dias que o restaurante está fechado
+  // Formatos aceitos:
+  // - Dias da semana: 'domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'
+  // - Datas específicas: '25/12/2024', '01/01/2025', '01/05/2025'
+  DIAS_FECHADOS: [
+    'domingo',           // Todos os domingos
+    'segunda',
+    'terça',
+    'quarta',
+    '25/12/2026',        // Natal
+    '01/01/2027',        // Ano Novo
+  //  '01/05/2025',        // Dia do Trabalhador
+  //  '10/06/2025',        // Dia de Portugal
+  //  '15/08/2025',        // Assunção de Nossa Senhora
+  //  '05/10/2025',        // Implantação da República
+  //  '01/11/2025',        // Dia de Todos os Santos
+  //  '08/12/2025',        // Imaculada Conceição
+  //  '25/12/2025',        // Natal
+    '01/01/2026'         // Ano Novo
+  ],
+  
+  // ========== HORÁRIOS (MANUAL) ==========
+  HORARIOS: {
+    almoco: '12:00-14:00',
+    jantar: '19:30-20:15'
+  },
+  
+  // ========== WHATSAPP ==========
+  WHATSAPP_NUMBER: '351925504212',
+  
+  // ========== LIMITES ==========
+  MAX_PAX_NORMAL: 6,      // Acima disso vai para WhatsApp
+  MAX_PAX_TOTAL: 12,      // Máximo permitido
+  LOTACAO_MAXIMA: 50      // Lugares no restaurante
 };
 
 // ========== JSONP (SEM CORS) ==========
@@ -94,6 +130,47 @@ const cache = {
   }
 };
 
+// ========== FUNÇÕES DE DIAS FECHADOS ==========
+function getDiasFechados() {
+  return CONFIG.DIAS_FECHADOS;
+}
+
+function isDataFechada(dataStr) {
+  try {
+    const data = new Date(dataStr);
+    const diaSemana = data.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
+    const dataFormatada = formatarDataPT(dataStr);
+    
+    // Verificar se é domingo ou outro dia fechado
+    if (CONFIG.DIAS_FECHADOS.includes(diaSemana)) {
+      return true;
+    }
+    
+    // Verificar datas específicas
+    for (let fechado of CONFIG.DIAS_FECHADOS) {
+      if (fechado.includes('/')) {
+        if (dataFormatada === fechado) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  } catch(e) {
+    console.error('Erro ao verificar data fechada:', e);
+    return false;
+  }
+}
+
+function formatarDataPT(data) {
+  if (!data) return '';
+  const d = new Date(data);
+  const dia = d.getDate().toString().padStart(2, '0');
+  const mes = (d.getMonth() + 1).toString().padStart(2, '0');
+  const ano = d.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
+
 // ========== HELPERS ==========
 function formatarData(data) {
   if (!data) return '';
@@ -146,8 +223,22 @@ function mostrarLoading(show = true) {
   }
 }
 
+// ========== OBTER HORÁRIOS ==========
+function getHorarios() {
+  return CONFIG.HORARIOS;
+}
+
+// ========== OBTER WHATSAPP ==========
+function getWhatsappUrl(mensagem = '') {
+  const text = encodeURIComponent(mensagem);
+  return `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${text}`;
+}
+
 // ========== INIT ==========
 if (CONFIG.DEBUG) {
   console.log(`✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION} - JSONP Mode`);
   console.log(`📡 API URL: ${CONFIG.SCRIPT_URL}`);
+  console.log(`📅 Dias fechados:`, CONFIG.DIAS_FECHADOS);
+  console.log(`🕐 Horários:`, CONFIG.HORARIOS);
+  console.log(`📱 WhatsApp: ${CONFIG.WHATSAPP_NUMBER}`);
 }
