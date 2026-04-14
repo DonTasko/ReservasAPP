@@ -2,7 +2,8 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#2c3e50">
   <title>Reservas - Don Tasko Restaurante</title>
   
   <!-- Bootstrap CSS -->
@@ -14,6 +15,9 @@
   <!-- Flatpickr CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+  
+  <!-- Config.js -->
+  <script src="config.js"></script>
   
   <style>
     * {
@@ -31,25 +35,21 @@
       --dark: #1a1a1a;
       --light: #ecf0f1;
       --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
       --whatsapp: #25D366;
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--gradient-1);
       min-height: 100vh;
       padding: 0;
       margin: 0;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    /* Hero Section com Imagem */
+    /* Hero Section */
     .hero-section {
       position: relative;
-      height: 300px;
+      height: 280px;
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), 
                   url('img1.png') center/cover;
       display: flex;
@@ -57,38 +57,35 @@
       justify-content: center;
       color: white;
       text-align: center;
-      margin-bottom: -80px;
+      margin-bottom: -70px;
     }
 
     .hero-content h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       font-weight: 700;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-      margin-bottom: 10px;
-      animation: fadeInDown 0.8s ease-out;
+      margin-bottom: 8px;
     }
 
     .hero-content p {
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 300;
       text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-      animation: fadeInUp 0.8s ease-out 0.2s both;
     }
 
     .hero-content .restaurant-info {
-      margin-top: 20px;
+      margin-top: 15px;
       display: flex;
-      gap: 30px;
+      gap: 20px;
       justify-content: center;
       flex-wrap: wrap;
-      animation: fadeInUp 0.8s ease-out 0.4s both;
     }
 
     .hero-content .info-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 1rem;
+      gap: 6px;
+      font-size: 0.85rem;
     }
 
     .hero-content .info-item i {
@@ -99,53 +96,50 @@
     .main-container {
       max-width: 600px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 16px;
       position: relative;
       z-index: 10;
     }
     
-    /* Card de Reserva */
+    /* Card */
     .reservation-card {
       background: white;
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       overflow: hidden;
-      animation: slideInUp 0.6s ease-out;
     }
 
     .card-header-custom {
       background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
       color: white;
-      padding: 30px;
+      padding: 24px 20px;
       text-align: center;
-      position: relative;
     }
 
     .card-header-custom h2 {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: 700;
       margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .card-header-custom .subtitle {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 300;
-      margin-top: 8px;
+      margin-top: 6px;
       opacity: 0.9;
     }
 
     .card-body-custom {
-      padding: 40px 30px;
+      padding: 24px 20px;
     }
 
     /* Form Groups */
     .form-group-custom {
-      margin-bottom: 25px;
-      animation: fadeIn 0.5s ease-out;
+      margin-bottom: 20px;
     }
 
     .form-group-custom label {
@@ -153,7 +147,7 @@
       font-weight: 600;
       margin-bottom: 8px;
       color: var(--dark);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .form-group-custom label i {
@@ -166,12 +160,14 @@
     .form-control-custom, 
     .form-select-custom {
       width: 100%;
-      padding: 14px 18px;
+      padding: 14px 16px;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
       font-size: 1rem;
       transition: all 0.3s ease;
       background: #f8f9fa;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     .form-control-custom:focus, 
@@ -179,60 +175,39 @@
       outline: none;
       border-color: var(--primary);
       background: white;
-      box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .form-control-custom:hover,
-    .form-select-custom:hover {
-      border-color: #bdc3c7;
+      box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
     }
 
     /* Time Slots */
     .time-slots {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      gap: 10px;
     }
 
     .time-slot {
-      padding: 12px 16px;
+      padding: 12px 8px;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       background: #f8f9fa;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
-    .time-slot:hover {
-      border-color: var(--primary);
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .time-slot:active {
+      transform: scale(0.98);
     }
 
     .time-slot.selected {
       background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
       color: white;
       border-color: var(--primary);
-      transform: scale(1.05);
     }
 
-    .time-slot.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      background: #e0e0e0;
-    }
-
-    .time-slot.disabled:hover {
-      transform: none;
-      box-shadow: none;
-      border-color: #e0e0e0;
-    }
-
-    /* Botão de Submissão */
+    /* Botões */
     .btn-submit {
       width: 100%;
       padding: 16px;
@@ -240,23 +215,15 @@
       border: none;
       border-radius: 12px;
       color: white;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       margin-top: 20px;
-      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-      position: relative;
-      overflow: hidden;
     }
 
-    .btn-submit:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: translateY(-1px);
+    .btn-submit:active {
+      transform: scale(0.98);
     }
 
     .btn-submit:disabled {
@@ -264,30 +231,6 @@
       cursor: not-allowed;
     }
 
-    .btn-submit::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-
-    .btn-submit:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .btn-submit span {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Botão WhatsApp */
     .btn-whatsapp {
       width: 100%;
       padding: 16px;
@@ -295,51 +238,45 @@
       border: none;
       border-radius: 12px;
       color: white;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       margin-top: 20px;
-      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
       text-decoration: none;
       display: inline-block;
       text-align: center;
     }
 
-    .btn-whatsapp:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-      color: white;
+    .btn-whatsapp:active {
+      transform: scale(0.98);
     }
 
-    /* Informações */
+    /* Info Box */
     .info-box {
       background: linear-gradient(135deg, #fff3cd 0%, #ffe4a3 100%);
       border-left: 5px solid var(--warning);
-      padding: 20px;
+      padding: 16px;
       border-radius: 12px;
-      margin: 25px 0;
-      animation: slideInLeft 0.5s ease-out;
+      margin: 20px 0;
     }
 
     .info-box h5 {
-      margin: 0 0 10px 0;
+      margin: 0 0 8px 0;
       color: #856404;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 0.95rem;
     }
 
     .info-box ul {
-      margin: 10px 0 0 0;
-      padding-left: 20px;
+      margin: 8px 0 0 0;
+      padding-left: 18px;
       color: #856404;
+      font-size: 0.85rem;
     }
 
     .info-box ul li {
-      margin: 8px 0;
-      line-height: 1.6;
+      margin: 6px 0;
     }
 
     /* Loading */
@@ -354,108 +291,16 @@
       z-index: 9999;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(5px);
-    }
-
-    .loading-content {
-      text-align: center;
-      color: white;
     }
 
     .spinner {
-      width: 60px;
-      height: 60px;
-      border: 5px solid rgba(255,255,255,0.2);
-      border-top: 5px solid white;
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top: 4px solid white;
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    .loading-text {
-      font-size: 1.2rem;
-      font-weight: 300;
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 30px 20px;
-      color: white;
-      margin-top: 40px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    }
-
-    .footer .contact-info {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    .footer .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .footer .contact-item i {
-      color: var(--warning);
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes slideInUp {
-      from {
-        opacity: 0;
-        transform: translateY(50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes slideInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      margin: 0 auto 15px;
     }
 
     @keyframes spin {
@@ -463,240 +308,161 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero-section {
-        height: 250px;
-        margin-bottom: -60px;
-      }
-
-      .hero-content h1 {
-        font-size: 2rem;
-      }
-
-      .hero-content p {
-        font-size: 1rem;
-      }
-
-      .hero-content .restaurant-info {
-        gap: 15px;
-      }
-
-      .hero-content .info-item {
-        font-size: 0.9rem;
-      }
-
-      .card-body-custom {
-        padding: 30px 20px;
-      }
-
-      .time-slots {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-        gap: 8px;
-      }
-
-      .time-slot {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-      }
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: white;
+      margin-top: 30px;
+      font-size: 0.8rem;
     }
 
-    /* Success Message */
+    .footer .contact-info {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .footer .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Messages */
+    .success-message, .error-message {
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .success-message.show, .error-message.show {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
     .success-message {
       background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
       border-left: 5px solid var(--success);
-      padding: 25px;
-      border-radius: 12px;
-      margin: 20px 0;
-      animation: slideInUp 0.5s ease-out;
-      display: none;
-    }
-
-    .success-message.show {
-      display: block;
-    }
-
-    .success-message h4 {
       color: #155724;
-      margin: 0 0 15px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
-    .success-message p {
-      color: #155724;
-      margin: 8px 0;
-      line-height: 1.6;
-    }
-
-    .success-message strong {
-      color: #0d4015;
-    }
-
-    /* Error Message */
     .error-message {
       background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
       border-left: 5px solid #dc3545;
-      padding: 15px 20px;
-      border-radius: 12px;
-      margin: 20px 0;
       color: #721c24;
-      display: none;
     }
 
-    .error-message.show {
-      display: block;
-      animation: slideInUp 0.5s ease-out;
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .hero-section {
+        height: 240px;
+        margin-bottom: -60px;
+      }
+      
+      .hero-content h1 {
+        font-size: 2rem;
+      }
+      
+      .hero-content p {
+        font-size: 0.9rem;
+      }
+      
+      .hero-content .info-item {
+        font-size: 0.75rem;
+      }
+      
+      .card-body-custom {
+        padding: 20px 16px;
+      }
+      
+      .time-slots {
+        grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+        gap: 8px;
+      }
+      
+      .time-slot {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero Section -->
   <div class="hero-section">
     <div class="hero-content">
       <h1><i class="fas fa-utensils"></i> Don Tasko</h1>
       <p>Reserve a sua mesa</p>
       <div class="restaurant-info">
-        <div class="info-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Castelo Branco</span>
-        </div>
-        <div class="info-item">
-          <i class="fas fa-phone"></i>
-          <span>+351 925 504 212 (Tarifa móvel nacional)</span>
-        </div>
-        <div class="info-item">
-          <i class="fas fa-clock"></i>
-          <span>12:00-15:00 | 19:30-23:00</span>
-        </div>
+        <div class="info-item"><i class="fas fa-map-marker-alt"></i><span>Castelo Branco</span></div>
+        <div class="info-item"><i class="fas fa-phone"></i><span>+351 925 504 212</span></div>
+        <div class="info-item"><i class="fas fa-clock"></i><span>12:00-14:00 | 19:30-20:15</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Container Principal -->
   <div class="main-container">
     <div class="reservation-card">
-      
-      <!-- Header -->
       <div class="card-header-custom">
-        <h2>
-          <i class="fas fa-calendar-check"></i>
-          Fazer Reserva
-        </h2>
-        <div class="subtitle">Preencha os dados abaixo para reservar a sua mesa</div>
+        <h2><i class="fas fa-calendar-check"></i> Fazer Reserva</h2>
+        <div class="subtitle">Preencha os dados abaixo</div>
       </div>
-
-      <!-- Body -->
       <div class="card-body-custom">
         
-        <!-- Mensagem de Erro -->
         <div id="errorMessage" class="error-message">
           <i class="fas fa-exclamation-triangle"></i>
           <span id="errorText"></span>
         </div>
 
-        <!-- Mensagem de Sucesso -->
         <div id="successMessage" class="success-message">
-          <h4>
-            <i class="fas fa-check-circle"></i>
-            Reserva Confirmada!
-          </h4>
+          <h4 style="margin:0 0 10px 0;font-size:1rem;"><i class="fas fa-check-circle"></i> Reserva Confirmada!</h4>
           <p><strong>Nome:</strong> <span id="confirmNome"></span></p>
           <p><strong>Data:</strong> <span id="confirmData"></span></p>
           <p><strong>Horário:</strong> <span id="confirmHora"></span></p>
           <p><strong>Pessoas:</strong> <span id="confirmPax"></span></p>
-          <p style="margin-top: 15px;">
-            <i class="fas fa-envelope"></i>
-            Receberá um email de confirmação em breve.
-          </p>
+          <p style="margin-top: 10px;"><i class="fas fa-envelope"></i> Receberá um email de confirmação</p>
         </div>
 
-        <!-- Formulário -->
         <form id="formReserva">
-          
-          <!-- Nome -->
           <div class="form-group-custom">
-            <label for="nome">
-              <i class="fas fa-user"></i>
-              Nome Completo
-            </label>
-            <input 
-              type="text" 
-              id="nome" 
-              name="nome" 
-              class="form-control-custom" 
-              required 
-              placeholder="O seu nome"
-              autocomplete="name"
-            >
+            <label for="nome"><i class="fas fa-user"></i> Nome Completo</label>
+            <input type="text" id="nome" name="nome" class="form-control-custom" required placeholder="Seu nome">
           </div>
 
-          <!-- Email -->
           <div class="form-group-custom">
-            <label for="email">
-              <i class="fas fa-envelope"></i>
-              Email
-            </label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              class="form-control-custom" 
-              required 
-              placeholder="seuemail@exemplo.com"
-              autocomplete="email"
-            >
+            <label for="email"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" id="email" name="email" class="form-control-custom" required placeholder="email@exemplo.com">
           </div>
 
-          <!-- Telefone -->
           <div class="form-group-custom">
-            <label for="telemovel">
-              <i class="fas fa-phone"></i>
-              Telemóvel
-            </label>
-            <input 
-              type="tel" 
-              id="telemovel" 
-              name="telemovel" 
-              class="form-control-custom" 
-              required 
-              placeholder=""
-              autocomplete="tel"
-            >
+            <label for="telemovel"><i class="fas fa-phone"></i> Telemóvel</label>
+            <input type="tel" id="telemovel" name="telemovel" class="form-control-custom" required placeholder="925504212">
           </div>
 
-          <!-- Data -->
           <div class="form-group-custom">
-            <label for="data">
-              <i class="fas fa-calendar"></i>
-              Data da Reserva
-            </label>
-            <input 
-              type="text" 
-              id="data" 
-              name="data" 
-              class="form-control-custom" 
-              required 
-              placeholder="Selecione a data"
-              readonly
-            >
+            <label for="data"><i class="fas fa-calendar"></i> Data</label>
+            <input type="text" id="data" name="data" class="form-control-custom" required placeholder="Selecione a data" readonly>
           </div>
 
-          <!-- Número de Pessoas -->
           <div class="form-group-custom">
-            <label for="pax">
-              <i class="fas fa-users"></i>
-              Número de Pessoas
-            </label>
-            <select 
-              id="pax" 
-              name="pax" 
-              class="form-select-custom" 
-              required
-              onchange="verificarGrupoGrande()"
-            >
+            <label for="pax"><i class="fas fa-users"></i> Pessoas</label>
+            <select id="pax" name="pax" class="form-select-custom" required>
               <option value="">Selecione</option>
               <option value="1">1 pessoa</option>
               <option value="2">2 pessoas</option>
@@ -713,183 +479,145 @@
             </select>
           </div>
 
-          <!-- Horários -->
           <div class="form-group-custom">
-            <label>
-              <i class="fas fa-clock"></i>
-              Escolha o Horário
-            </label>
+            <label><i class="fas fa-clock"></i> Horário</label>
             <div id="timeSlots" class="time-slots">
-              <!-- Preenchido dinamicamente -->
-              <div class="text-muted text-center p-3">Carregando horários...</div>
+              <div class="text-muted text-center p-3">Carregando...</div>
             </div>
             <input type="hidden" id="horario" name="horario" required>
           </div>
 
-          <!-- Observações -->
           <div class="form-group-custom">
-            <label for="obs">
-              <i class="fas fa-comment"></i>
-              Observações (opcional)
-            </label>
-            <textarea 
-              id="obs" 
-              name="obs" 
-              class="form-control-custom" 
-              rows="3" 
-              placeholder="Alergias, pedidos especiais, etc."
-            ></textarea>
+            <label for="obs"><i class="fas fa-comment"></i> Observações</label>
+            <textarea id="obs" name="obs" class="form-control-custom" rows="2" placeholder="Alergias, pedidos especiais..."></textarea>
           </div>
 
-          <!-- Info Box -->
           <div class="info-box">
-            <h5>
-              <i class="fas fa-info-circle"></i>
-              Informação Importante
-            </h5>
+            <h5><i class="fas fa-info-circle"></i> Informações</h5>
             <ul>
               <li>Tolerância de atraso: <strong>10 minutos</strong></li>
-              <li>Receberá confirmação por email (verifique a pasta de SPAM)</li>
-              <li>Reservas para grupos superiores a 6 pessoas devem ser feitas por WhatsApp</li>
+              <li>Confirmação por email (verifique SPAM)</li>
+              <li>Grupos >6 pessoas: reserva por WhatsApp</li>
             </ul>
           </div>
 
-          <!-- Container dos Botões -->
           <div id="buttonContainer"></div>
-
         </form>
 
       </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
-      <p>&copy; 2024 Don Tasko - Todos os direitos reservados</p>
+      <p>&copy; 2025 Don Tasko</p>
       <div class="contact-info">
-        <div class="contact-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Castelo Branco, Portugal</span>
-        </div>
-        <div class="contact-item">
-          <i class="fas fa-phone"></i>
-          <span>+351 925 504 212(Tarifa móvel nacional)</span>
-        </div>
-        <div class="contact-item">
-          <i class="fas fa-envelope"></i>
-          <span>geral@dontasko.pt</span>
-        </div>
+        <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Castelo Branco</span></div>
+        <div class="contact-item"><i class="fas fa-phone"></i><span>+351 925 504 212</span></div>
+        <div class="contact-item"><i class="fas fa-envelope"></i><span>geral@dontasko.pt</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Loading -->
   <div id="loading">
     <div class="loading-content">
       <div class="spinner"></div>
-      <div class="loading-text">A processar a sua reserva...</div>
+      <div class="loading-text">A processar...</div>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
   <script>
-    // URL do Google Apps Script
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzX14WZe7GxcSf17lWyffniher2tmpTd_RTaZhYkZmvlcvg5RMwId7PIV80FneIrDOH/exec';
-    const WHATSAPP_NUMBER = '351925504212'; // Número do WhatsApp sem o +
-    
+    // Verificar se CONFIG existe
+    if (typeof CONFIG === 'undefined') {
+      console.error('❌ config.js não carregado!');
+      var CONFIG = {
+        SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzX14WZe7GxcSf17lWyffniher2tmpTd_RTaZhYkZmvlcvg5RMwId7PIV80FneIrDOH/exec',
+        DIAS_FECHADOS: ['domingo'],
+        HORARIOS: { almoco: '12:00-14:00', jantar: '19:30-20:15' },
+        WHATSAPP_NUMBER: '351925504212',
+        DEBUG: true
+      };
+    }
+
+    const WHATSAPP_NUMBER = CONFIG.WHATSAPP_NUMBER || '351925504212';
+    let jsonpCounter = 0;
+
     console.log('🚀 Reservas Don Tasko iniciando...');
-    console.log('📡 API URL:', SCRIPT_URL);
+    console.log('📅 Dias fechados do config:', CONFIG.DIAS_FECHADOS);
+    console.log('🕐 Horários do config:', CONFIG.HORARIOS);
 
-    let configsGlobal = {};
-    let horariosGlobal = { almoco: '12:00-14:00', jantar: '19:30-20:15' };
-    let diasFechadosGlobal = [];
-
-    // ========== FUNÇÃO PARA BUSCAR DIAS FECHADOS DA SHEET ==========
-    async function carregarDiasFechados() {
-      try {
-        // Tentar buscar os dias fechados da sheet Calendario_Fecho
-        const response = await fetch(`${SCRIPT_URL}?action=getDiasFechados&t=${Date.now()}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data)) {
-            diasFechadosGlobal = data;
-            console.log('✅ Dias fechados carregados da sheet:', diasFechadosGlobal);
-            return;
-          }
-        }
-        throw new Error('Não foi possível carregar dias fechados');
-      } catch (error) {
-        console.warn('⚠️ Usando dias fechados padrão (domingos):', error);
-        diasFechadosGlobal = ['domingo'];
-      }
-    }
-
-    // ========== FUNÇÃO DE REQUISIÇÃO ALTERNATIVA ==========
-    async function apiRequest(action, data = null) {
-      try {
-        let url = `${SCRIPT_URL}?action=${action}&t=${Date.now()}`;
+    // ========== JSONP REQUEST ==========
+    function apiRequest(action, data = {}) {
+      return new Promise((resolve, reject) => {
+        const callbackName = `jsonp_callback_${++jsonpCounter}_${Date.now()}`;
         
-        if (data && action === 'reservaSite') {
-          // Para POST, usar fetch com mode cors
-          const formData = new URLSearchParams();
-          for (let key in data) {
-            formData.append(key, data[key]);
-          }
-          
-          const response = await fetch(url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formData.toString()
-          });
-          
-          if (response.ok) {
-            return await response.json();
-          }
-          throw new Error('Erro na requisição');
-        } else {
-          // Para GET
-          const response = await fetch(url);
-          if (response.ok) {
-            return await response.json();
-          }
-          throw new Error('Erro na requisição');
+        const params = new URLSearchParams({ action, callback: callbackName, ...data });
+        const url = `${CONFIG.SCRIPT_URL}?${params.toString()}`;
+        
+        if (CONFIG.DEBUG) {
+          console.log(`📤 JSONP [${action}]:`, url);
         }
-      } catch (error) {
-        console.error('Erro na API:', error);
-        throw error;
-      }
+        
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('Timeout: servidor não respondeu'));
+        }, 20000);
+        
+        window[callbackName] = (response) => {
+          cleanup();
+          if (CONFIG.DEBUG) console.log(`📥 Response [${action}]:`, response);
+          resolve(response);
+        };
+        
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+        
+        const script = document.createElement('script');
+        script.src = url;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Erro de conexão'));
+        };
+        
+        document.head.appendChild(script);
+      });
     }
 
-    // ========== INICIALIZAÇÃO ==========
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('🔄 Carregando configurações...');
+    // ========== VERIFICAR DATA FECHADA ==========
+    function isDataFechada(date) {
+      const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
+      const dateStr = date.toISOString().split('T')[0];
+      const dateFormatted = `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}/${date.getFullYear()}`;
       
-      try {
-        await carregarDiasFechados();
-        inicializarCalendario();
-        gerarHorarios();
-        
-        document.getElementById('formReserva').addEventListener('submit', submeterReserva);
-        
-        // Inicializar botão
-        verificarGrupoGrande();
-        
-      } catch (error) {
-        console.error('❌ Erro na inicialização:', error);
-        mostrarErro('Erro ao carregar dados do sistema. A usar configurações padrão.');
-        
-        // Usar configurações padrão
-        inicializarCalendario();
-        gerarHorarios();
-        document.getElementById('formReserva').addEventListener('submit', submeterReserva);
-        verificarGrupoGrande();
+      // Verificar nos dias fechados do config
+      const fechado = CONFIG.DIAS_FECHADOS.some(d => {
+        return d === dayName || d === dateStr || d === dateFormatted;
+      });
+      
+      if (fechado && CONFIG.DEBUG) {
+        console.log(`📅 Data fechada: ${dateStr} (${dayName})`);
       }
+      
+      return fechado;
+    }
+
+    // ========== INICIALIZAR ==========
+    document.addEventListener('DOMContentLoaded', async () => {
+      inicializarCalendario();
+      gerarHorarios();
+      
+      document.getElementById('formReserva').addEventListener('submit', submeterReserva);
+      document.getElementById('pax').addEventListener('change', verificarGrupoGrande);
+      document.getElementById('data').addEventListener('change', verificarGrupoGrande);
+      document.getElementById('nome').addEventListener('input', verificarGrupoGrande);
+      document.getElementById('horario').addEventListener('change', verificarGrupoGrande);
+      
+      verificarGrupoGrande();
     });
 
     // ========== CALENDÁRIO ==========
@@ -898,16 +626,11 @@
         locale: 'pt',
         minDate: 'today',
         dateFormat: 'Y-m-d',
-        disable: [
-          function(date) {
-            const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
-            const dateStr = date.toISOString().split('T')[0];
-            return diasFechadosGlobal.includes(dayName) || diasFechadosGlobal.includes(dateStr);
-          }
-        ],
+        disable: [isDataFechada],
         onChange: function(selectedDates, dateStr) {
           console.log('📅 Data selecionada:', dateStr);
           gerarHorarios();
+          verificarGrupoGrande();
         }
       });
     }
@@ -918,23 +641,24 @@
       if (!container) return;
       
       container.innerHTML = '';
-
       const horarios = [];
 
-      // Almoço: 12:00 às 14:00 (a cada 30 minutos)
-      const almocoInicio = '12:00';
-      const almocoFim = '14:00';
-      const horariosAlmoco = gerarIntervaloHorarios(almocoInicio, almocoFim);
+      // Usar horários do config.js
+      const horarioAlmoco = CONFIG.HORARIOS?.almoco || '12:00-14:00';
+      const horarioJantar = CONFIG.HORARIOS?.jantar || '19:30-20:15';
+      
+      // Almoço
+      const [almocoInicio, almocoFim] = horarioAlmoco.split('-');
+      const horariosAlmoco = gerarIntervalo(almocoInicio, almocoFim, 30);
       horarios.push(...horariosAlmoco);
 
-      // Jantar: 19:30 às 20:15 (a cada 15 minutos para dar mais opções)
-      const jantarInicio = '19:30';
-      const jantarFim = '20:15';
-      const horariosJantar = gerarIntervaloHorariosComMinutos(jantarInicio, jantarFim, 15);
+      // Jantar
+      const [jantarInicio, jantarFim] = horarioJantar.split('-');
+      const horariosJantar = gerarIntervalo(jantarInicio, jantarFim, 15);
       horarios.push(...horariosJantar);
 
       if (horarios.length === 0) {
-        container.innerHTML = '<div class="text-muted text-center p-3">Sem horários disponíveis</div>';
+        container.innerHTML = '<div class="text-muted text-center p-3">Sem horários</div>';
         return;
       }
 
@@ -942,98 +666,56 @@
         const slot = document.createElement('div');
         slot.className = 'time-slot';
         slot.textContent = hora;
-        slot.onclick = () => selecionarHorario(hora, slot);
+        slot.onclick = () => {
+          document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+          slot.classList.add('selected');
+          document.getElementById('horario').value = hora;
+          console.log('🕐 Horário:', hora);
+          verificarGrupoGrande();
+        };
         container.appendChild(slot);
       });
     }
 
-    function gerarIntervaloHorarios(inicio, fim) {
-      const horarios = [];
-      let [h, m] = inicio.split(':').map(Number);
-      const [hFim, mFim] = fim.split(':').map(Number);
-      
-      while (h < hFim || (h === hFim && m < mFim)) {
-        horarios.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
-        m += 30;
-        if (m >= 60) {
-          m = 0;
-          h++;
-        }
-      }
-      
-      return horarios;
-    }
-
-    function gerarIntervaloHorariosComMinutos(inicio, fim, intervaloMinutos) {
+    function gerarIntervalo(inicio, fim, intervalo) {
       const horarios = [];
       let [h, m] = inicio.split(':').map(Number);
       const [hFim, mFim] = fim.split(':').map(Number);
       
       while (h < hFim || (h === hFim && m <= mFim)) {
         horarios.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`);
-        m += intervaloMinutos;
+        m += intervalo;
         if (m >= 60) {
           m = m - 60;
           h++;
         }
       }
-      
       return horarios;
-    }
-
-    // ========== SELECIONAR HORÁRIO ==========
-    function selecionarHorario(hora, elemento) {
-      document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('selected');
-      });
-      
-      elemento.classList.add('selected');
-      document.getElementById('horario').value = hora;
-      
-      console.log('🕐 Horário selecionado:', hora);
     }
 
     // ========== VERIFICAR GRUPO GRANDE ==========
     function verificarGrupoGrande() {
       const pax = parseInt(document.getElementById('pax').value);
       const buttonContainer = document.getElementById('buttonContainer');
-      const form = document.getElementById('formReserva');
-      const submitBtn = document.getElementById('submitBtn');
-      const whatsappBtn = document.getElementById('whatsappBtn');
+      const data = document.getElementById('data').value;
+      const horario = document.getElementById('horario').value;
+      const nome = document.getElementById('nome').value;
       
       if (!buttonContainer) return;
       
       if (pax > 6) {
-        // Mostrar botão WhatsApp
+        const msg = `Olá! Reserva para ${pax} pessoas%0A📅 ${data || 'a definir'}%0A🕐 ${horario || 'a definir'}%0A👤 ${nome || 'a definir'}`;
         buttonContainer.innerHTML = `
-          <a href="https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Gostaria de fazer uma reserva para ${pax} pessoas no Don Tasko. Data: ${document.getElementById('data')?.value || 'a definir'}. Horário: ${document.getElementById('horario')?.value || 'a definir'}. Nome: ${document.getElementById('nome')?.value || 'a definir'}" 
-             class="btn-whatsapp" 
-             target="_blank"
-             id="whatsappBtn">
-            <i class="fab fa-whatsapp"></i>
-            Reservar via WhatsApp (Grupo > 6 pessoas)
+          <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" class="btn-whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i> Reservar via WhatsApp (${pax} pessoas)
           </a>
         `;
-        // Esconder o botão de submit original
-        if (submitBtn) submitBtn.style.display = 'none';
       } else {
-        // Mostrar botão normal
         buttonContainer.innerHTML = `
-          <button type="submit" class="btn-submit" id="submitBtn">
-            <span>
-              <i class="fas fa-check-circle"></i>
-              Confirmar Reserva
-            </span>
+          <button type="submit" class="btn-submit">
+            <span><i class="fas fa-check-circle"></i> Confirmar Reserva</span>
           </button>
         `;
-        // Adicionar event listener ao novo botão
-        const newSubmitBtn = document.getElementById('submitBtn');
-        if (newSubmitBtn) {
-          newSubmitBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            submeterReserva(e);
-          });
-        }
       }
     }
 
@@ -1041,149 +723,69 @@
     async function submeterReserva(e) {
       e.preventDefault();
       
-      const form = document.getElementById('formReserva');
-      const dados = {
-        nome: form.nome.value.trim(),
-        email: form.email.value.trim(),
-        telemovel: form.telemovel.value.replace(/\D/g, ''),
-        data: form.data.value,
-        pax: parseInt(form.pax.value),
-        horario: form.horario.value,
-        obs: form.obs.value.trim()
-      };
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const telemovel = document.getElementById('telemovel').value.replace(/\D/g, '');
+      const data = document.getElementById('data').value;
+      const pax = parseInt(document.getElementById('pax').value);
+      const horario = document.getElementById('horario').value;
+      const obs = document.getElementById('obs').value.trim();
 
-      console.log('📝 Dados da reserva:', dados);
-
-      // Validações
-      if (!dados.nome) {
-        mostrarErro('Por favor, digite o seu nome.');
-        return;
-      }
-
-      if (!dados.email || !dados.email.includes('@')) {
-        mostrarErro('Por favor, digite um email válido.');
-        return;
-      }
-
-      if (!dados.telemovel || dados.telemovel.length < 9) {
-        mostrarErro('Telemóvel inválido. Digite pelo menos 9 dígitos.');
-        return;
-      }
-
-      if (!dados.data) {
-        mostrarErro('Por favor, selecione uma data.');
-        return;
-      }
-
-      if (!dados.pax) {
-        mostrarErro('Por favor, selecione o número de pessoas.');
-        return;
-      }
-
-      if (!dados.horario) {
-        mostrarErro('Por favor, selecione um horário.');
-        return;
-      }
-
-      if (dados.pax > 6) {
-        mostrarErro('Para grupos superiores a 6 pessoas, use o botão do WhatsApp.');
-        return;
-      }
+      if (!nome) { mostrarErro('Digite seu nome'); return; }
+      if (!email || !email.includes('@')) { mostrarErro('Email inválido'); return; }
+      if (!telemovel || telemovel.length < 9) { mostrarErro('Telemóvel inválido (mínimo 9 dígitos)'); return; }
+      if (!data) { mostrarErro('Selecione uma data'); return; }
+      if (!pax) { mostrarErro('Selecione o número de pessoas'); return; }
+      if (!horario) { mostrarErro('Selecione um horário'); return; }
+      if (pax > 6) { mostrarErro('Para grupos >6 pessoas use o WhatsApp'); return; }
 
       try {
         mostrarLoading(true);
         ocultarErro();
         
-        const resultado = await apiRequest('reservaSite', dados);
+        const resultado = await apiRequest('reservaSite', {
+          nome, email, telemovel, data, pax, horario, obs
+        });
         
-        console.log('✅ Resultado:', resultado);
-
         if (resultado.status === 'success') {
-          // Mostrar mensagem de sucesso
-          document.getElementById('confirmNome').textContent = dados.nome;
-          document.getElementById('confirmData').textContent = formatarData(dados.data);
-          document.getElementById('confirmHora').textContent = dados.horario;
-          document.getElementById('confirmPax').textContent = dados.pax + (dados.pax === 1 ? ' pessoa' : ' pessoas');
+          document.getElementById('confirmNome').textContent = nome;
+          document.getElementById('confirmData').textContent = formatarDataPT(data);
+          document.getElementById('confirmHora').textContent = horario;
+          document.getElementById('confirmPax').textContent = pax + (pax === 1 ? ' pessoa' : ' pessoas');
           
           document.getElementById('successMessage').classList.add('show');
-          form.style.display = 'none';
-          
-          // Scroll to top
+          document.getElementById('formReserva').style.display = 'none';
           window.scrollTo({ top: 0, behavior: 'smooth' });
-          
         } else {
-          throw new Error(resultado.message || 'Erro ao processar reserva');
+          throw new Error(resultado.message || 'Erro na reserva');
         }
-        
       } catch (error) {
-        console.error('❌ Erro ao submeter:', error);
-        mostrarErro(error.message || 'Erro ao processar a reserva. Tente novamente ou contacte o restaurante.');
+        console.error('❌ Erro:', error);
+        mostrarErro(error.message);
       } finally {
         mostrarLoading(false);
       }
     }
 
-    // ========== HELPERS ==========
-    function formatarData(data) {
+    function formatarDataPT(data) {
       const d = new Date(data + 'T00:00:00');
-      return d.toLocaleDateString('pt-PT', { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-      });
+      return d.toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     }
 
     function mostrarLoading(show) {
-      const loading = document.getElementById('loading');
-      
-      if (show) {
-        loading.style.display = 'flex';
-      } else {
-        loading.style.display = 'none';
-      }
+      document.getElementById('loading').style.display = show ? 'flex' : 'none';
     }
 
-    function mostrarErro(mensagem) {
-      const errorDiv = document.getElementById('errorMessage');
-      const errorText = document.getElementById('errorText');
-      if (errorText) errorText.textContent = mensagem;
-      if (errorDiv) errorDiv.classList.add('show');
-      
-      setTimeout(() => {
-        if (errorDiv) errorDiv.classList.remove('show');
-      }, 5000);
+    function mostrarErro(msg) {
+      const div = document.getElementById('errorMessage');
+      document.getElementById('errorText').textContent = msg;
+      div.classList.add('show');
+      setTimeout(() => div.classList.remove('show'), 5000);
     }
 
     function ocultarErro() {
-      const errorDiv = document.getElementById('errorMessage');
-      if (errorDiv) errorDiv.classList.remove('show');
+      document.getElementById('errorMessage').classList.remove('show');
     }
-
-    // Monitorar mudanças no número de pessoas
-    document.addEventListener('DOMContentLoaded', () => {
-      const paxSelect = document.getElementById('pax');
-      if (paxSelect) {
-        paxSelect.addEventListener('change', verificarGrupoGrande);
-      }
-      
-      const dataInput = document.getElementById('data');
-      if (dataInput) {
-        dataInput.addEventListener('change', verificarGrupoGrande);
-      }
-      
-      const nomeInput = document.getElementById('nome');
-      if (nomeInput) {
-        nomeInput.addEventListener('input', verificarGrupoGrande);
-      }
-      
-      const horarioInput = document.getElementById('horario');
-      if (horarioInput) {
-        const observer = new MutationObserver(verificarGrupoGrande);
-        observer.observe(horarioInput, { attributes: true, attributeFilter: ['value'] });
-      }
-    });
   </script>
-
 </body>
 </html>
