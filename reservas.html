@@ -16,9 +16,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
   
-  <!-- Config.js -->
-  <script src="config.js"></script>
-  
   <style>
     * {
       margin: 0;
@@ -499,7 +496,7 @@
           <div class="form-group-custom">
             <label><i class="fas fa-clock"></i> Horário</label>
             <div id="timeSlots" class="time-slots">
-              <div class="text-muted text-center p-3">Carregando...</div>
+              <div class="text-muted text-center p-3">Carregando horários...</div>
             </div>
             <input type="hidden" id="horario" name="horario" required>
           </div>
@@ -518,7 +515,11 @@
             </ul>
           </div>
 
-          <div id="buttonContainer"></div>
+          <div id="buttonContainer">
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <span><i class="fas fa-check-circle"></i> Confirmar Reserva</span>
+            </button>
+          </div>
         </form>
 
       </div>
@@ -541,35 +542,30 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
   <script>
-    // Aguardar carregamento do config.js
-    if (typeof CONFIG === 'undefined') {
-      console.error('❌ config.js não carregado!');
-      var CONFIG = {
-        SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxubwTlylS-jDtqnx9M16ffs6WkR3ktOyqDTqyHKqvs_BKM1HtMUTxWOmBQNv0S-u1qgg/exec',
-        DIAS_FECHADOS: ['domingo'],
-        HORARIOS: { almoco: '12:00-14:00', jantar: '19:30-20:15' },
-        WHATSAPP_NUMBER: '351925504212',
-        DEBUG: true
-      };
-    }
+    // Configuração manual (fallback caso config.js não carregue)
+    const CONFIG = {
+      SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxubwTlylS-jDtqnx9M16ffs6WkR3ktOyqDTqyHKqvs_BKM1HtMUTxWOmBQNv0S-u1qgg/exec',
+      DIAS_FECHADOS: ['domingo', 'segunda', 'terça', 'quarta', '25/12/2026', '01/01/2027', '01/01/2026'],
+      HORARIOS: { almoco: '12:00-14:00', jantar: '19:30-20:15' },
+      WHATSAPP_NUMBER: '351925504212',
+      DEBUG: true
+    };
 
-    const WHATSAPP_NUMBER = CONFIG.WHATSAPP_NUMBER || '351925504212';
-    // NOTA: jsonpCounter já está definido no config.js, não declarar novamente!
+    const WHATSAPP_NUMBER = CONFIG.WHATSAPP_NUMBER;
+    let jsonpCounter = 0;
 
     console.log('🚀 Reservas Don Tasko iniciando...');
-    console.log('📅 Dias fechados do config:', CONFIG.DIAS_FECHADOS);
-    console.log('🕐 Horários do config:', CONFIG.HORARIOS);
+    console.log('📅 Dias fechados:', CONFIG.DIAS_FECHADOS);
+    console.log('🕐 Horários:', CONFIG.HORARIOS);
 
-    // Usar a função apiRequest do config.js
-    // Se não existir, criar uma
-    const apiRequest = window.apiRequest || function(action, data = {}) {
+    // ========== JSONP REQUEST ==========
+    function apiRequest(action, data = {}) {
       return new Promise((resolve, reject) => {
-        const callbackName = `jsonp_callback_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;
+        const callbackName = `jsonp_callback_${++jsonpCounter}_${Date.now()}`;
         
         const params = new URLSearchParams({ action, callback: callbackName, ...data });
         const url = `${CONFIG.SCRIPT_URL}?${params.toString()}`;
@@ -602,7 +598,7 @@
         
         document.head.appendChild(script);
       });
-    };
+    }
 
     // ========== VERIFICAR DATA FECHADA ==========
     function isDataFechada(date) {
@@ -613,7 +609,6 @@
       const dateFormatted = `${dia}/${mes}/${ano}`;
       const dateISO = date.toISOString().split('T')[0];
       
-      // Verificar nos dias fechados do config
       const fechado = CONFIG.DIAS_FECHADOS.some(d => {
         return d === dayName || d === dateISO || d === dateFormatted;
       });
@@ -625,42 +620,6 @@
       return fechado;
     }
 
-    // ========== INICIALIZAR ==========
-    document.addEventListener('DOMContentLoaded', async () => {
-      inicializarCalendario();
-      gerarHorarios();
-      
-      document.getElementById('formReserva').addEventListener('submit', submeterReserva);
-      document.getElementById('pax').addEventListener('change', verificarGrupoGrande);
-      document.getElementById('data').addEventListener('change', verificarGrupoGrande);
-      document.getElementById('nome').addEventListener('input', verificarGrupoGrande);
-      
-      verificarGrupoGrande();
-    });
-
-    // ========== CALENDÁRIO ==========
-    function inicializarCalendario() {
-      const inputData = document.getElementById('data');
-      if (!inputData) return;
-      
-      flatpickr(inputData, {
-        locale: 'pt',
-        minDate: 'today',
-        dateFormat: 'Y-m-d',
-        disable: [isDataFechada],
-        onChange: function(selectedDates, dateStr, instance) {
-          console.log('📅 Data selecionada:', dateStr);
-          if (dateStr) {
-            gerarHorarios();
-            verificarGrupoGrande();
-          }
-        },
-        onReady: function(selectedDates, dateStr, instance) {
-          console.log('📅 Calendário inicializado');
-        }
-      });
-    }
-
     // ========== GERAR HORÁRIOS ==========
     function gerarHorarios() {
       const container = document.getElementById('timeSlots');
@@ -669,7 +628,6 @@
       container.innerHTML = '';
       const horarios = [];
 
-      // Usar horários do config.js
       const horarioAlmoco = CONFIG.HORARIOS?.almoco || '12:00-14:00';
       const horarioJantar = CONFIG.HORARIOS?.jantar || '19:30-20:15';
       
@@ -738,16 +696,46 @@
         `;
       } else {
         buttonContainer.innerHTML = `
-          <button type="submit" class="btn-submit">
+          <button type="submit" class="btn-submit" id="submitBtn">
             <span><i class="fas fa-check-circle"></i> Confirmar Reserva</span>
           </button>
         `;
+        // Re-adicionar o event listener
+        document.getElementById('submitBtn')?.addEventListener('click', submeterReserva);
+      }
+    }
+
+    // ========== INICIALIZAR CALENDÁRIO ==========
+    function inicializarCalendario() {
+      const inputData = document.getElementById('data');
+      if (!inputData) {
+        console.error('❌ Input data não encontrado');
+        return;
+      }
+      
+      try {
+        flatpickr(inputData, {
+          locale: 'pt',
+          minDate: 'today',
+          dateFormat: 'Y-m-d',
+          disable: [isDataFechada],
+          onChange: function(selectedDates, dateStr) {
+            console.log('📅 Data selecionada:', dateStr);
+            if (dateStr) {
+              gerarHorarios();
+              verificarGrupoGrande();
+            }
+          }
+        });
+        console.log('✅ Calendário inicializado');
+      } catch(e) {
+        console.error('❌ Erro ao inicializar flatpickr:', e);
       }
     }
 
     // ========== SUBMETER RESERVA ==========
     async function submeterReserva(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
       
       const nome = document.getElementById('nome').value.trim();
       const email = document.getElementById('email').value.trim();
@@ -817,6 +805,36 @@
       const div = document.getElementById('errorMessage');
       if (div) div.classList.remove('show');
     }
+
+    // ========== EVENT LISTENERS ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('📄 DOM carregado');
+      
+      inicializarCalendario();
+      gerarHorarios();
+      
+      const form = document.getElementById('formReserva');
+      if (form) {
+        form.addEventListener('submit', submeterReserva);
+      }
+      
+      const paxSelect = document.getElementById('pax');
+      if (paxSelect) {
+        paxSelect.addEventListener('change', verificarGrupoGrande);
+      }
+      
+      const dataInput = document.getElementById('data');
+      if (dataInput) {
+        dataInput.addEventListener('change', verificarGrupoGrande);
+      }
+      
+      const nomeInput = document.getElementById('nome');
+      if (nomeInput) {
+        nomeInput.addEventListener('input', verificarGrupoGrande);
+      }
+      
+      verificarGrupoGrande();
+    });
   </script>
 </body>
 </html>
