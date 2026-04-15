@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reservas - Don Tasko Restaurante</title>
+  <title>Reservas - Don Tasko</title>
   
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Flatpickr CSS -->
+  <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
   
@@ -23,171 +23,183 @@
     }
 
     :root {
-      --primary: #2c3e50;
-      --secondary: #e74c3c;
-      --success: #27ae60;
-      --info: #3498db;
-      --warning: #f39c12;
+      /* Cores do site principal Don Tasko */
+      --primary: #d4a574;        /* Dourado/Bronze */
+      --secondary: #2c2c2c;      /* Preto/Carvão */
+      --accent: #8b6f47;         /* Marrom escuro */
+      --success: #5cb85c;
+      --danger: #d9534f;
+      --light: #f8f5f0;          /* Bege claro */
       --dark: #1a1a1a;
-      --light: #ecf0f1;
-      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--gradient-1);
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: var(--light);
       min-height: 100vh;
-      padding: 0;
-      margin: 0;
-      position: relative;
-      overflow-x: hidden;
+      color: var(--dark);
     }
 
-    /* Hero Section com Imagem */
-    .hero-section {
+    /* ========== HERO SECTION ========== */
+    .hero {
       position: relative;
-      height: 300px;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), 
-                  url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1200&q=80') center/cover;
+      height: 400px;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), 
+                  url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80') center/cover;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       text-align: center;
-      margin-bottom: -80px;
+      margin-bottom: -100px;
     }
 
-    .hero-content h1 {
-      font-size: 3rem;
+    .hero-content {
+      z-index: 2;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
       font-weight: 700;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-      margin-bottom: 10px;
-      animation: fadeInDown 0.8s ease-out;
+      color: var(--primary);
+      text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+      margin-bottom: 15px;
+      letter-spacing: 2px;
     }
 
-    .hero-content p {
-      font-size: 1.3rem;
+    .hero p {
+      font-size: 1.4rem;
       font-weight: 300;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-      animation: fadeInUp 0.8s ease-out 0.2s both;
+      margin-bottom: 25px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
     }
 
-    .hero-content .restaurant-info {
-      margin-top: 20px;
+    .hero-info {
       display: flex;
       gap: 30px;
       justify-content: center;
       flex-wrap: wrap;
-      animation: fadeInUp 0.8s ease-out 0.4s both;
+      margin-top: 20px;
     }
 
-    .hero-content .info-item {
+    .hero-info-item {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 1rem;
+      background: rgba(212, 165, 116, 0.2);
+      padding: 8px 16px;
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
     }
 
-    .hero-content .info-item i {
-      color: var(--warning);
+    .hero-info-item i {
+      color: var(--primary);
     }
 
-    /* Container Principal */
+    /* ========== CONTAINER PRINCIPAL ========== */
     .main-container {
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
       padding: 20px;
       position: relative;
       z-index: 10;
     }
-    
-    /* Card de Reserva */
-    .reservation-card {
+
+    /* ========== CARD ========== */
+    .card {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
       overflow: hidden;
+      border: 3px solid var(--primary);
       animation: slideInUp 0.6s ease-out;
     }
 
-    .card-header-custom {
-      background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+    .card-header {
+      background: linear-gradient(135deg, var(--secondary) 0%, #3a3a3a 100%);
       color: white;
-      padding: 30px;
+      padding: 35px 30px;
       text-align: center;
       position: relative;
     }
 
-    .card-header-custom h2 {
-      font-size: 1.8rem;
+    .card-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .card-header h2 {
+      font-size: 2rem;
       font-weight: 700;
       margin: 0;
+      color: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .card-header-custom .subtitle {
-      font-size: 0.95rem;
+    .card-header .subtitle {
+      font-size: 1rem;
       font-weight: 300;
-      margin-top: 8px;
+      margin-top: 10px;
       opacity: 0.9;
+      color: #ccc;
     }
 
-    .card-body-custom {
-      padding: 40px 30px;
+    .card-body {
+      padding: 40px 35px;
+      background: var(--light);
     }
 
-    /* Form Groups */
-    .form-group-custom {
+    /* ========== FORM ========== */
+    .form-group {
       margin-bottom: 25px;
-      animation: fadeIn 0.5s ease-out;
     }
 
-    .form-group-custom label {
+    .form-group label {
       display: block;
       font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--dark);
+      margin-bottom: 10px;
+      color: var(--secondary);
       font-size: 0.95rem;
     }
 
-    .form-group-custom label i {
+    .form-group label i {
       margin-right: 8px;
-      color: var(--secondary);
+      color: var(--primary);
       width: 20px;
       text-align: center;
     }
 
-    .form-control-custom, 
-    .form-select-custom {
+    .form-control,
+    .form-select {
       width: 100%;
       padding: 14px 18px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
       font-size: 1rem;
-      transition: all 0.3s ease;
-      background: #f8f9fa;
+      transition: all 0.3s;
+      background: white;
+      color: var(--dark);
     }
 
-    .form-control-custom:focus, 
-    .form-select-custom:focus {
+    .form-control:focus,
+    .form-select:focus {
       outline: none;
       border-color: var(--primary);
-      background: white;
-      box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.1);
+      box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.15);
       transform: translateY(-2px);
     }
 
-    .form-control-custom:hover,
-    .form-select-custom:hover {
-      border-color: #bdc3c7;
-    }
-
-    /* Time Slots */
+    /* ========== TIME SLOTS ========== */
     .time-slots {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -195,67 +207,64 @@
     }
 
     .time-slot {
-      padding: 12px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
-      background: #f8f9fa;
+      transition: all 0.3s;
+      background: white;
       font-weight: 600;
-      font-size: 0.95rem;
+      color: var(--secondary);
     }
 
     .time-slot:hover {
       border-color: var(--primary);
+      background: rgba(212, 165, 116, 0.1);
       transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 20px rgba(212, 165, 116, 0.3);
     }
 
     .time-slot.selected {
-      background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
       border-color: var(--primary);
       transform: scale(1.05);
+      box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4);
     }
 
     .time-slot.disabled {
       opacity: 0.4;
       cursor: not-allowed;
-      background: #e0e0e0;
+      background: #e9ecef;
     }
 
     .time-slot.disabled:hover {
       transform: none;
       box-shadow: none;
-      border-color: #e0e0e0;
     }
 
-    /* Botão de Submissão */
+    /* ========== BOTÃO ========== */
     .btn-submit {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--secondary) 0%, #c0392b 100%);
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
       border: none;
       border-radius: 12px;
       color: white;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 20px;
-      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-      position: relative;
-      overflow: hidden;
+      transition: all 0.3s;
+      margin-top: 25px;
+      box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .btn-submit:hover:not(:disabled) {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(212, 165, 116, 0.5);
     }
 
     .btn-submit:disabled {
@@ -263,42 +272,22 @@
       cursor: not-allowed;
     }
 
-    .btn-submit::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+    .btn-submit i {
+      margin-right: 10px;
     }
 
-    .btn-submit:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .btn-submit span {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Informações */
+    /* ========== INFO BOX ========== */
     .info-box {
-      background: linear-gradient(135deg, #fff3cd 0%, #ffe4a3 100%);
-      border-left: 5px solid var(--warning);
+      background: linear-gradient(135deg, #fff8e1, #ffecb3);
+      border-left: 5px solid var(--primary);
       padding: 20px;
       border-radius: 12px;
       margin: 25px 0;
-      animation: slideInLeft 0.5s ease-out;
     }
 
     .info-box h5 {
-      margin: 0 0 10px 0;
-      color: #856404;
+      margin: 0 0 12px 0;
+      color: var(--accent);
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -308,7 +297,7 @@
     .info-box ul {
       margin: 10px 0 0 0;
       padding-left: 20px;
-      color: #856404;
+      color: #795548;
     }
 
     .info-box ul li {
@@ -316,7 +305,41 @@
       line-height: 1.6;
     }
 
-    /* Loading */
+    /* ========== SUCCESS MESSAGE ========== */
+    .success-message {
+      background: linear-gradient(135deg, #d4edda, #c3e6cb);
+      border-left: 5px solid var(--success);
+      padding: 30px;
+      border-radius: 12px;
+      margin: 20px 0;
+      display: none;
+      animation: slideInUp 0.5s;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .success-message h4 {
+      color: #155724;
+      margin: 0 0 20px 0;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .success-message p {
+      color: #155724;
+      margin: 10px 0;
+      font-size: 1.05rem;
+    }
+
+    .success-message strong {
+      color: #0d4015;
+    }
+
+    /* ========== LOADING ========== */
     #loading {
       display: none;
       position: fixed;
@@ -324,7 +347,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       z-index: 9999;
       justify-content: center;
       align-items: center;
@@ -337,27 +360,28 @@
     }
 
     .spinner {
-      width: 60px;
-      height: 60px;
-      border: 5px solid rgba(255,255,255,0.2);
-      border-top: 5px solid white;
+      width: 70px;
+      height: 70px;
+      border: 6px solid rgba(212, 165, 116, 0.2);
+      border-top: 6px solid var(--primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
+      margin: 0 auto 25px;
     }
 
     .loading-text {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 300;
     }
 
-    /* Footer */
+    /* ========== FOOTER ========== */
     .footer {
       text-align: center;
-      padding: 30px 20px;
-      color: white;
-      margin-top: 40px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      padding: 40px 20px;
+      color: var(--secondary);
+      margin-top: 50px;
+      border-top: 2px solid var(--primary);
+      background: white;
     }
 
     .footer .contact-info {
@@ -365,40 +389,21 @@
       justify-content: center;
       gap: 30px;
       flex-wrap: wrap;
-      margin-top: 15px;
+      margin-top: 20px;
     }
 
     .footer .contact-item {
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--secondary);
     }
 
     .footer .contact-item i {
-      color: var(--warning);
+      color: var(--primary);
     }
 
-    /* Animations */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    /* ========== ANIMATIONS ========== */
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -421,10 +426,14 @@
       }
     }
 
-    @keyframes slideInLeft {
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideIn {
       from {
         opacity: 0;
-        transform: translateX(-30px);
+        transform: translateX(100px);
       }
       to {
         opacity: 1;
@@ -432,160 +441,103 @@
       }
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
-    /* Responsive */
+    /* ========== RESPONSIVE ========== */
     @media (max-width: 768px) {
-      .hero-section {
-        height: 250px;
-        margin-bottom: -60px;
+      .hero {
+        height: 320px;
+        margin-bottom: -80px;
       }
 
-      .hero-content h1 {
-        font-size: 2rem;
+      .hero h1 {
+        font-size: 2.5rem;
       }
 
-      .hero-content p {
-        font-size: 1rem;
+      .hero p {
+        font-size: 1.1rem;
       }
 
-      .hero-content .restaurant-info {
-        gap: 15px;
-      }
-
-      .hero-content .info-item {
-        font-size: 0.9rem;
-      }
-
-      .card-body-custom {
+      .card-body {
         padding: 30px 20px;
       }
 
       .time-slots {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
         gap: 8px;
       }
 
       .time-slot {
-        padding: 10px 12px;
-        font-size: 0.85rem;
+        padding: 12px;
+        font-size: 0.9rem;
       }
     }
 
-    /* Success Message */
-    .success-message {
-      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-      border-left: 5px solid var(--success);
-      padding: 25px;
-      border-radius: 12px;
-      margin: 20px 0;
-      animation: slideInUp 0.5s ease-out;
-      display: none;
-    }
-
-    .success-message.show {
-      display: block;
-    }
-
-    .success-message h4 {
-      color: #155724;
-      margin: 0 0 15px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .success-message p {
-      color: #155724;
-      margin: 8px 0;
-      line-height: 1.6;
-    }
-
-    .success-message strong {
-      color: #0d4015;
+    /* Flatpickr custom colors */
+    .flatpickr-day.selected {
+      background: var(--primary) !important;
+      border-color: var(--primary) !important;
     }
   </style>
   
-  <!-- Config.js PRIMEIRO -->
   <script src="config.js"></script>
-  
-  <script>
-    console.log('✅ CONFIG carregado:', CONFIG);
-  </script>
 </head>
 <body>
 
-  <!-- Hero Section -->
-  <div class="hero-section">
+  <!-- Hero -->
+  <div class="hero">
     <div class="hero-content">
-      <h1><i class="fas fa-utensils"></i> Don Tasko</h1>
-      <p>Reserve a sua mesa num dos melhores restaurantes da região</p>
-      <div class="restaurant-info">
-        <div class="info-item">
+      <h1><i class="fas fa-utensils"></i> DON TASKO</h1>
+      <p>Experiência gastronómica autêntica no coração de Castelo Branco</p>
+      <div class="hero-info">
+        <div class="hero-info-item">
           <i class="fas fa-map-marker-alt"></i>
           <span>Castelo Branco</span>
         </div>
-        <div class="info-item">
+        <div class="hero-info-item">
           <i class="fas fa-phone"></i>
-          <span>+351 925 504 212</span>
+          <span>925 504 212</span>
         </div>
-        <div class="info-item">
+        <div class="hero-info-item">
           <i class="fas fa-clock"></i>
-          <span>12:00 - 23:00</span>
+          <span>12h - 23h</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Container Principal -->
+  <!-- Container -->
   <div class="main-container">
-    <div class="reservation-card">
+    <div class="card">
       
-      <!-- Header -->
-      <div class="card-header-custom">
+      <div class="card-header">
         <h2>
           <i class="fas fa-calendar-check"></i>
-          Fazer Reserva
+          Reserve a Sua Mesa
         </h2>
-        <div class="subtitle">Preencha os dados abaixo para reservar a sua mesa</div>
+        <div class="subtitle">Complete o formulário para garantir a sua reserva</div>
       </div>
 
-      <!-- Body -->
-      <div class="card-body-custom">
+      <div class="card-body">
         
-        <!-- Mensagem de Sucesso -->
+        <!-- Success Message -->
         <div id="successMessage" class="success-message">
           <h4>
             <i class="fas fa-check-circle"></i>
-            Reserva Confirmada!
+            Reserva Confirmada com Sucesso!
           </h4>
           <p><strong>Nome:</strong> <span id="confirmNome"></span></p>
           <p><strong>Data:</strong> <span id="confirmData"></span></p>
           <p><strong>Horário:</strong> <span id="confirmHora"></span></p>
           <p><strong>Pessoas:</strong> <span id="confirmPax"></span></p>
-          <p style="margin-top: 15px;">
+          <p style="margin-top: 20px; font-size: 0.95rem;">
             <i class="fas fa-envelope"></i>
-            Receberá um email de confirmação em breve.
+            Receberá a confirmação por email em breve com todos os detalhes.
           </p>
         </div>
 
-        <!-- Formulário -->
+        <!-- Form -->
         <form id="formReserva">
           
-          <!-- Nome -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label for="nome">
               <i class="fas fa-user"></i>
               Nome Completo
@@ -593,16 +545,13 @@
             <input 
               type="text" 
               id="nome" 
-              name="nome" 
-              class="form-control-custom" 
+              class="form-control" 
               required 
-              placeholder="O seu nome"
-              autocomplete="name"
+              placeholder="Digite o seu nome"
             >
           </div>
 
-          <!-- Email -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label for="email">
               <i class="fas fa-envelope"></i>
               Email
@@ -610,16 +559,13 @@
             <input 
               type="email" 
               id="email" 
-              name="email" 
-              class="form-control-custom" 
+              class="form-control" 
               required 
               placeholder="seuemail@exemplo.com"
-              autocomplete="email"
             >
           </div>
 
-          <!-- Telefone -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label for="telemovel">
               <i class="fas fa-phone"></i>
               Telemóvel
@@ -627,17 +573,14 @@
             <input 
               type="tel" 
               id="telemovel" 
-              name="telemovel" 
-              class="form-control-custom" 
+              class="form-control" 
               required 
               placeholder="925 504 212"
-              autocomplete="tel"
               pattern="[0-9]{9,}"
             >
           </div>
 
-          <!-- Data -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label for="data">
               <i class="fas fa-calendar"></i>
               Data da Reserva
@@ -645,26 +588,19 @@
             <input 
               type="text" 
               id="data" 
-              name="data" 
-              class="form-control-custom" 
+              class="form-control" 
               required 
               placeholder="Selecione a data"
               readonly
             >
           </div>
 
-          <!-- Número de Pessoas -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label for="pax">
               <i class="fas fa-users"></i>
               Número de Pessoas
             </label>
-            <select 
-              id="pax" 
-              name="pax" 
-              class="form-select-custom" 
-              required
-            >
+            <select id="pax" class="form-select" required>
               <option value="">Selecione</option>
               <option value="1">1 pessoa</option>
               <option value="2">2 pessoas</option>
@@ -672,57 +608,46 @@
               <option value="4">4 pessoas</option>
               <option value="5">5 pessoas</option>
               <option value="6">6 pessoas</option>
-              <option value="7">7 pessoas</option>
-              <option value="8">8 pessoas</option>
             </select>
           </div>
 
-          <!-- Horários -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label>
               <i class="fas fa-clock"></i>
               Escolha o Horário
             </label>
-            <div id="timeSlots" class="time-slots">
-              <!-- Preenchido dinamicamente -->
-            </div>
-            <input type="hidden" id="horario" name="horario" required>
+            <div id="timeSlots" class="time-slots"></div>
+            <input type="hidden" id="horario" required>
           </div>
 
-          <!-- Observações -->
-          <div class="form-group-custom">
+          <div class="form-group">
             <label for="obs">
               <i class="fas fa-comment"></i>
               Observações (opcional)
             </label>
             <textarea 
               id="obs" 
-              name="obs" 
-              class="form-control-custom" 
+              class="form-control" 
               rows="3" 
               placeholder="Alergias, pedidos especiais, etc."
             ></textarea>
           </div>
 
-          <!-- Info Box -->
           <div class="info-box">
             <h5>
               <i class="fas fa-info-circle"></i>
-              Informação Importante
+              Informações Importantes
             </h5>
             <ul>
               <li>Tolerância de atraso: <strong>10 minutos</strong></li>
-              <li>Cancelamentos: mínimo <strong>24h de antecedência</strong></li>
-              <li>Receberá confirmação por email e SMS</li>
+              <li>Cancelamentos com <strong>24h de antecedência</strong></li>
+              <li>Confirmação por email e SMS</li>
             </ul>
           </div>
 
-          <!-- Botão -->
-          <button type="submit" class="btn-submit" id="btnSubmit">
-            <span>
-              <i class="fas fa-check-circle"></i>
-              Confirmar Reserva
-            </span>
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-check-circle"></i>
+            Confirmar Reserva
           </button>
 
         </form>
@@ -732,7 +657,7 @@
 
     <!-- Footer -->
     <div class="footer">
-      <p>&copy; 2024 Don Tasko - Todos os direitos reservados</p>
+      <p style="font-weight:600;">&copy; 2024 Don Tasko - Sabores Autênticos</p>
       <div class="contact-info">
         <div class="contact-item">
           <i class="fas fa-map-marker-alt"></i>
@@ -764,15 +689,12 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
   <script>
-    console.log('🚀 Reservas Don Tasko iniciando...');
-
     let configsGlobal = {};
     let horariosGlobal = {};
     let diasFechadosGlobal = [];
 
-    // ========== INICIALIZAÇÃO ==========
     document.addEventListener('DOMContentLoaded', async () => {
-      console.log('🔄 Carregando configurações...');
+      console.log('🚀 Iniciando sistema de reservas...');
       
       try {
         await carregarDados();
@@ -782,12 +704,11 @@
         document.getElementById('formReserva').addEventListener('submit', submeterReserva);
         
       } catch (error) {
-        console.error('❌ Erro na inicialização:', error);
-        mostrarErro('Erro ao carregar dados do sistema. Por favor, recarregue a página.');
+        console.error('❌ Erro:', error);
+        mostrarErro('Erro ao carregar. Recarregue a página.');
       }
     });
 
-    // ========== CARREGAR DADOS ==========
     async function carregarDados() {
       try {
         const [diasFechados, horarios, configs] = await Promise.all([
@@ -797,21 +718,16 @@
         ]);
 
         diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
-        horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-21:30' };
+        horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-23:00' };
         configsGlobal = configs || {};
 
-        console.log('✅ Configurações carregadas:');
-        console.log('  Dias fechados:', diasFechadosGlobal);
-        console.log('  Horários:', horariosGlobal);
-        console.log('  Configs:', configsGlobal);
-
+        console.log('✅ Dados carregados');
       } catch (error) {
-        console.error('❌ Erro ao carregar dados:', error);
+        console.error('❌ Erro ao carregar:', error);
         throw error;
       }
     }
 
-    // ========== CALENDÁRIO ==========
     function inicializarCalendario() {
       flatpickr('#data', {
         locale: 'pt',
@@ -825,31 +741,26 @@
           }
         ],
         onChange: function(selectedDates, dateStr) {
-          console.log('📅 Data selecionada:', dateStr);
+          console.log('📅 Data:', dateStr);
           gerarHorarios();
         }
       });
     }
 
-    // ========== GERAR HORÁRIOS ==========
     function gerarHorarios() {
       const container = document.getElementById('timeSlots');
       container.innerHTML = '';
 
       const horarios = [];
 
-      // Almoço
       if (horariosGlobal.almoco) {
         const [inicio, fim] = horariosGlobal.almoco.split('-');
-        const horariosAlmoco = gerarIntervaloHorarios(inicio, fim);
-        horarios.push(...horariosAlmoco);
+        horarios.push(...gerarIntervaloHorarios(inicio, fim));
       }
 
-      // Jantar
       if (horariosGlobal.jantar) {
         const [inicio, fim] = horariosGlobal.jantar.split('-');
-        const horariosJantar = gerarIntervaloHorarios(inicio, fim);
-        horarios.push(...horariosJantar);
+        horarios.push(...gerarIntervaloHorarios(inicio, fim));
       }
 
       horarios.forEach(hora => {
@@ -878,7 +789,6 @@
       return horarios;
     }
 
-    // ========== SELECIONAR HORÁRIO ==========
     function selecionarHorario(hora, elemento) {
       document.querySelectorAll('.time-slot').forEach(slot => {
         slot.classList.remove('selected');
@@ -886,11 +796,8 @@
       
       elemento.classList.add('selected');
       document.getElementById('horario').value = hora;
-      
-      console.log('🕐 Horário selecionado:', hora);
     }
 
-    // ========== SUBMETER RESERVA ==========
     async function submeterReserva(e) {
       e.preventDefault();
       
@@ -905,16 +812,13 @@
         obs: form.obs.value.trim()
       };
 
-      console.log('📝 Dados da reserva:', dados);
-
-      // Validações
       if (!dados.horario) {
         mostrarErro('Por favor, selecione um horário.');
         return;
       }
 
       if (dados.telemovel.length < 9) {
-        mostrarErro('Telemóvel inválido. Digite pelo menos 9 dígitos.');
+        mostrarErro('Telemóvel inválido.');
         return;
       }
 
@@ -922,11 +826,8 @@
         mostrarLoading(true);
         
         const resultado = await apiRequest('reservaSite', dados);
-        
-        console.log('✅ Resultado:', resultado);
 
         if (resultado.status === 'success') {
-          // Mostrar mensagem de sucesso
           document.getElementById('confirmNome').textContent = dados.nome;
           document.getElementById('confirmData').textContent = formatarData(dados.data);
           document.getElementById('confirmHora').textContent = dados.horario;
@@ -935,24 +836,21 @@
           document.getElementById('successMessage').classList.add('show');
           form.style.display = 'none';
           
-          mostrarSucesso('Reserva confirmada com sucesso!');
-          
-          // Scroll to top
+          mostrarSucesso('Reserva confirmada!');
           window.scrollTo({ top: 0, behavior: 'smooth' });
           
         } else {
-          throw new Error(resultado.message || 'Erro ao processar reserva');
+          throw new Error(resultado.message || 'Erro ao processar');
         }
         
       } catch (error) {
-        console.error('❌ Erro ao submeter:', error);
-        mostrarErro(error.message || 'Erro ao processar a reserva. Tente novamente.');
+        console.error('❌ Erro:', error);
+        mostrarErro(error.message || 'Erro ao processar a reserva.');
       } finally {
         mostrarLoading(false);
       }
     }
 
-    // ========== HELPERS ==========
     function formatarData(data) {
       const d = new Date(data + 'T00:00:00');
       return d.toLocaleDateString('pt-PT', { 
