@@ -1,51 +1,15 @@
 /**
- * DON TASKO v6.2 - JSONP
- * SEM CORS, SEM FETCH
+ * DON TASKO v7.0 - JSONP (SEM CORS)
+ * Configuração unificada
  */
 
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyreUHYVXW_DsPBhbCAQNJEv58ueGuuU00rRULXJ_1Jj8tFuE9NTBLcl91zc_EmamnpsA/exec',
+  SCRIPT_URL: 'COLE_AQUI_O_URL_DO_APPS_SCRIPT_DEPOIS_DE_IMPLEMENTAR',
   APP_NAME: 'Don Tasko',
-  VERSION: '6.2',
+  VERSION: '7.0',
   DEBUG: true,
   CACHE_ENABLED: true,
   CACHE_DURATION: 5 * 60 * 1000,
-  
-  // ========== DIAS FECHADOS (MANUAL) ==========
-  // Adicione aqui os dias que o restaurante está fechado
-  // Formatos aceitos:
-  // - Dias da semana: 'domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'
-  // - Datas específicas: '25/12/2024', '01/01/2025', '01/05/2025'
-  DIAS_FECHADOS: [
-    'domingo',           // Todos os domingos
-    'segunda',
-    'terça',
-    'quarta',
-    '25/12/2026',        // Natal
-    '01/01/2027',        // Ano Novo
-  //  '01/05/2025',        // Dia do Trabalhador
-  //  '10/06/2025',        // Dia de Portugal
-  //  '15/08/2025',        // Assunção de Nossa Senhora
-  //  '05/10/2025',        // Implantação da República
-  //  '01/11/2025',        // Dia de Todos os Santos
-  //  '08/12/2025',        // Imaculada Conceição
-  //  '25/12/2025',        // Natal
-    '01/01/2026'         // Ano Novo
-  ],
-  
-  // ========== HORÁRIOS (MANUAL) ==========
-  HORARIOS: {
-    almoco: '12:00-14:00',
-    jantar: '19:30-20:15'
-  },
-  
-  // ========== WHATSAPP ==========
-  WHATSAPP_NUMBER: '351925504212',
-  
-  // ========== LIMITES ==========
-  MAX_PAX_NORMAL: 6,      // Acima disso vai para WhatsApp
-  MAX_PAX_TOTAL: 12,      // Máximo permitido
-  LOTACAO_MAXIMA: 50      // Lugares no restaurante
 };
 
 // ========== JSONP (SEM CORS) ==========
@@ -60,22 +24,21 @@ function apiRequest(action, data = {}) {
     const url = `${CONFIG.SCRIPT_URL}?${params.toString()}`;
     
     if (CONFIG.DEBUG) {
-      console.log(`📤 JSONP Request [${action}]:`, data);
-      console.log(`🔗 URL: ${url}`);
+      console.log(`📤 JSONP [${action}]:`, data);
     }
     
     // Timeout
     const timeout = setTimeout(() => {
       cleanup();
       reject(new Error('Timeout: servidor não respondeu'));
-    }, 30000); // 30 segundos
+    }, 30000);
     
     // Callback global
     window[callbackName] = (response) => {
       cleanup();
       
       if (CONFIG.DEBUG) {
-        console.log(`📥 JSONP Response [${action}]:`, response);
+        console.log(`📥 Response [${action}]:`, response);
       }
       
       resolve(response);
@@ -102,75 +65,6 @@ function apiRequest(action, data = {}) {
   });
 }
 
-// ========== CACHE ==========
-const cache = {
-  data: {},
-  
-  set(key, value, duration = CONFIG.CACHE_DURATION) {
-    if (!CONFIG.CACHE_ENABLED) return;
-    this.data[key] = {
-      value: value,
-      expiry: Date.now() + duration
-    };
-  },
-  
-  get(key) {
-    if (!CONFIG.CACHE_ENABLED) return null;
-    const item = this.data[key];
-    if (!item) return null;
-    if (Date.now() > item.expiry) {
-      delete this.data[key];
-      return null;
-    }
-    return item.value;
-  },
-  
-  clear() {
-    this.data = {};
-  }
-};
-
-// ========== FUNÇÕES DE DIAS FECHADOS ==========
-function getDiasFechados() {
-  return CONFIG.DIAS_FECHADOS;
-}
-
-function isDataFechada(dataStr) {
-  try {
-    const data = new Date(dataStr);
-    const diaSemana = data.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
-    const dataFormatada = formatarDataPT(dataStr);
-    
-    // Verificar se é domingo ou outro dia fechado
-    if (CONFIG.DIAS_FECHADOS.includes(diaSemana)) {
-      return true;
-    }
-    
-    // Verificar datas específicas
-    for (let fechado of CONFIG.DIAS_FECHADOS) {
-      if (fechado.includes('/')) {
-        if (dataFormatada === fechado) {
-          return true;
-        }
-      }
-    }
-    
-    return false;
-  } catch(e) {
-    console.error('Erro ao verificar data fechada:', e);
-    return false;
-  }
-}
-
-function formatarDataPT(data) {
-  if (!data) return '';
-  const d = new Date(data);
-  const dia = d.getDate().toString().padStart(2, '0');
-  const mes = (d.getMonth() + 1).toString().padStart(2, '0');
-  const ano = d.getFullYear();
-  return `${dia}/${mes}/${ano}`;
-}
-
 // ========== HELPERS ==========
 function formatarData(data) {
   if (!data) return '';
@@ -186,18 +80,13 @@ function formatarDataISO(data) {
   return d.toISOString().split('T')[0];
 }
 
-function formatarHora(hora) {
-  if (!hora) return '';
-  return hora.substring(0, 5);
-}
-
 function mostrarErro(mensagem) {
   const div = document.createElement('div');
-  div.className = 'alert alert-danger alert-dismissible fade show';
-  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+  div.className = 'alert alert-danger';
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;animation:slideIn 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.2);';
   div.innerHTML = `
     <strong>❌ Erro:</strong> ${mensagem}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
   `;
   document.body.appendChild(div);
   setTimeout(() => div.remove(), 5000);
@@ -205,17 +94,16 @@ function mostrarErro(mensagem) {
 
 function mostrarSucesso(mensagem) {
   const div = document.createElement('div');
-  div.className = 'alert alert-success alert-dismissible fade show';
-  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+  div.className = 'alert alert-success';
+  div.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;max-width:400px;animation:slideIn 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.2);';
   div.innerHTML = `
     <strong>✅ Sucesso:</strong> ${mensagem}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
   `;
   document.body.appendChild(div);
   setTimeout(() => div.remove(), 3000);
 }
 
-// ========== LOADING ==========
 function mostrarLoading(show = true) {
   const loading = document.getElementById('loading');
   if (loading) {
@@ -223,22 +111,6 @@ function mostrarLoading(show = true) {
   }
 }
 
-// ========== OBTER HORÁRIOS ==========
-function getHorarios() {
-  return CONFIG.HORARIOS;
-}
-
-// ========== OBTER WHATSAPP ==========
-function getWhatsappUrl(mensagem = '') {
-  const text = encodeURIComponent(mensagem);
-  return `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${text}`;
-}
-
-// ========== INIT ==========
 if (CONFIG.DEBUG) {
-  console.log(`✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION} - JSONP Mode`);
-  console.log(`📡 API URL: ${CONFIG.SCRIPT_URL}`);
-  console.log(`📅 Dias fechados:`, CONFIG.DIAS_FECHADOS);
-  console.log(`🕐 Horários:`, CONFIG.HORARIOS);
-  console.log(`📱 WhatsApp: ${CONFIG.WHATSAPP_NUMBER}`);
+  console.log(`✅ ${CONFIG.APP_NAME} v${CONFIG.VERSION} - JSONP`);
 }
