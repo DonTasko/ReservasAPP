@@ -733,13 +733,21 @@
         locale: 'pt',
         minDate: 'today',
         dateFormat: 'Y-m-d',
-        disable: [
-          function(date) {
-            const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' }).toLowerCase();
-            const dateStr = date.toISOString().split('T')[0];
-            return diasFechadosGlobal.includes(dayName) || diasFechadosGlobal.includes(dateStr);
-          }
-        ],
+       disable: [
+  function(date) {
+    const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' })
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '');
+    const dateStr = date.toISOString().split('T')[0];
+    
+    const diasNormalizados = diasFechadosGlobal.map(d => 
+      d.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    );
+    
+    return diasNormalizados.includes(dayName) || diasNormalizados.includes(dateStr);
+  }
+],
         onChange: function(selectedDates, dateStr) {
           console.log('📅 Data:', dateStr);
           gerarHorarios();
