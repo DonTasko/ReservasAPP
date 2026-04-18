@@ -14,11 +14,7 @@
   --card: #2a2a2a;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Montserrat', sans-serif;
@@ -53,11 +49,7 @@ header {
   letter-spacing: 2px;
 }
 
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
 
 .nav-links a {
   color: var(--light);
@@ -68,9 +60,7 @@ header {
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-  color: var(--accent);
-}
+.nav-links a:hover { color: var(--accent); }
 
 .wrapper {
   max-width: 900px;
@@ -103,9 +93,7 @@ header {
   font-size: 1.2rem;
 }
 
-.category {
-  margin-bottom: 3rem;
-}
+.category { margin-bottom: 3rem; }
 
 .category h2 {
   font-family: 'Cormorant Garamond', serif;
@@ -121,9 +109,7 @@ header {
   align-items: center;
 }
 
-.category h2:hover {
-  color: var(--accent);
-}
+.category h2:hover { color: var(--accent); }
 
 .category h2::after {
   content: '▼';
@@ -131,18 +117,10 @@ header {
   transition: transform 0.3s ease;
 }
 
-.category h2.collapsed::after {
-  transform: rotate(-90deg);
-}
+.category h2.collapsed::after { transform: rotate(-90deg); }
 
-.items {
-  display: grid;
-  gap: 1.2rem;
-}
-
-.items.hidden {
-  display: none;
-}
+.items { display: grid; gap: 1.2rem; }
+.items.hidden { display: none; }
 
 .item {
   background: var(--card);
@@ -159,11 +137,7 @@ header {
   border-color: var(--accent);
 }
 
-.item-content {
-  display: flex;
-  gap: 1rem;
-  align-items: start;
-}
+.item-content { display: flex; gap: 1rem; align-items: start; }
 
 .item-image {
   width: 80px;
@@ -181,10 +155,7 @@ header {
   box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
 }
 
-.item-info {
-  flex: 1;
-  min-width: 0;
-}
+.item-info { flex: 1; min-width: 0; }
 
 .item-top {
   display: flex;
@@ -201,36 +172,13 @@ header {
   letter-spacing: 0.5px;
 }
 
-.price-wrapper {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
+.price-wrapper { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
 
-.old-price {
-  text-decoration: line-through;
-  color: #999;
-  font-size: 0.95rem;
-}
+.old-price { text-decoration: line-through; color: #999; font-size: 0.95rem; }
+.promo-price { color: var(--accent); font-weight: 700; font-size: 1.2rem; }
+.regular-price { font-weight: 600; color: var(--accent); font-size: 1.1rem; }
 
-.promo-price {
-  color: var(--accent);
-  font-weight: 700;
-  font-size: 1.2rem;
-}
-
-.regular-price {
-  font-weight: 600;
-  color: var(--accent);
-  font-size: 1.1rem;
-}
-
-.desc {
-  font-size: 0.95rem;
-  color: #bdbdbd;
-  line-height: 1.6;
-}
+.desc { font-size: 0.95rem; color: #bdbdbd; line-height: 1.6; }
 
 .badge-rotura {
   position: absolute;
@@ -253,28 +201,16 @@ header {
   50% { opacity: 0.8; }
 }
 
-.item.esgotado {
-  opacity: 0.6;
-  border-color: #e74c3c;
-}
-
-.item.esgotado .item-name {
-  color: #999;
-  text-decoration: line-through;
-}
-
-.item.esgotado .price-wrapper {
-  opacity: 0.7;
-}
+.item.esgotado { opacity: 0.6; border-color: #e74c3c; }
+.item.esgotado .item-name { color: #999; text-decoration: line-through; }
+.item.esgotado .price-wrapper { opacity: 0.7; }
 
 .image-modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95);
   z-index: 1000;
   justify-content: center;
   align-items: center;
@@ -282,28 +218,24 @@ header {
   animation: fadeIn 0.3s ease;
 }
 
-.image-modal.active {
-  display: flex;
-}
+.image-modal.active { display: flex; }
 
 .image-modal img {
   max-width: 90%;
   max-height: 90%;
   border-radius: 10px;
-  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 50px rgba(0,0,0,0.8);
   cursor: default;
 }
 
 .image-modal .close-btn {
   position: absolute;
-  top: 30px;
-  right: 30px;
+  top: 30px; right: 30px;
   font-size: 3rem;
   color: white;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.5);
-  width: 50px;
-  height: 50px;
+  background: rgba(0,0,0,0.5);
+  width: 50px; height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -311,56 +243,23 @@ header {
   transition: all 0.3s ease;
 }
 
-.image-modal .close-btn:hover {
-  background: var(--accent);
-  transform: rotate(90deg);
-}
+.image-modal .close-btn:hover { background: var(--accent); transform: rotate(90deg); }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .nav-links {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .item-top {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .item-content {
-    flex-direction: column;
-  }
-
-  .item-image {
-    width: 100%;
-    height: 200px;
-  }
-
-  .image-modal .close-btn {
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    font-size: 2rem;
-  }
+  .header-content { flex-direction: column; gap: 1rem; }
+  .nav-links { flex-direction: column; gap: 1rem; }
+  .page-title { font-size: 2rem; }
+  .item-top { flex-direction: column; align-items: stretch; }
+  .item-content { flex-direction: column; }
+  .item-image { width: 100%; height: 200px; }
+  .image-modal .close-btn { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 2rem; }
 }
 </style>
 </head>
 <body>
+
 <header>
   <div class="header-content">
     <div class="logo">Don Tasko</div>
@@ -385,61 +284,30 @@ header {
 
 <script src="config.js"></script>
 <script>
-const SHEET_ID = CONFIG.SHEET_ID;
-const API_KEY = CONFIG.API_KEY;
-const SHEET_NAME = 'Bebidas';
-
 async function loadMenu() {
   try {
-    console.log('🔍 Carregando bebidas...');
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
-    const response = await fetch(url);
-    
-    if (!response.ok) throw new Error(`Erro ${response.status}`);
-    
-    const data = await response.json();
-    if (!data.values || data.values.length === 0) throw new Error('Aba vazia');
+    const itens = await apiRequest('getBebidas');
 
-    const headers = data.values[0];
-    const rows = data.values.slice(1);
+    if (!Array.isArray(itens)) throw new Error(itens.message || 'Erro ao carregar bebidas');
+
     const menu = {};
-
-    rows.forEach(row => {
-      const item = {};
-      headers.forEach((h, i) => item[h] = row[i] || '');
+    itens.forEach(item => {
       if (!item.Categoria || !item.Nome) return;
-      
-      // Preço original (coluna C, índice 2)
-      let precoOriginal = 0;
-      if (item.Preço) {
-        precoOriginal = parseFloat(item.Preço.toString().replace(',', '.'));
-        if (isNaN(precoOriginal)) precoOriginal = 0;
-      }
-      item.Preço = precoOriginal;
-      
-      // Preço promocional (coluna D, índice 3)
-      let precoPromo = null;
-      if (row.length > 3 && row[3] && row[3].toString().trim() !== '') {
-        const promoRaw = row[3].toString().replace(',', '.');
-        precoPromo = parseFloat(promoRaw);
-        if (isNaN(precoPromo)) precoPromo = null;
-      }
-      item._promoPrice = precoPromo;
-      
       if (!menu[item.Categoria]) menu[item.Categoria] = [];
       menu[item.Categoria].push(item);
     });
 
-    console.log('✅ Carregado:', Object.keys(menu).length, 'categorias');
     renderMenu(menu);
+
   } catch (error) {
     console.error('❌ Erro:', error);
     document.getElementById('menu').innerHTML = `
-      <div style="text-align: center; color: #e74c3c; padding: 3rem;">
+      <div style="text-align:center; color:#e74c3c; padding:3rem;">
         <h3>Erro ao carregar bebidas</h3>
         <p>${error.message}</p>
-        <button onclick="location.reload()" style="margin-top: 2rem; padding: 0.8rem 1.5rem; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Tentar novamente</button>
-      </div>`;
+        <button onclick="location.reload()" style="margin-top:2rem; padding:0.8rem 1.5rem; background:var(--accent); color:#1a1a1a; border:none; border-radius:8px; cursor:pointer; font-weight:600;">🔄 Tentar novamente</button>
+      </div>
+    `;
   }
 }
 
@@ -465,24 +333,19 @@ function renderMenu(menu) {
       const esgotado = item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase());
       const img = item.Link_Imagem || item.Imagem || '';
       const obs = item.Observações || item.Observacoes || '';
+      const preco = parseFloat(item['Preço']) || 0;
+      const promoPrice = item['_promoPrice'] ? parseFloat(item['_promoPrice']) : null;
+      const hasPromo = promoPrice && !isNaN(promoPrice) && promoPrice > 0;
+
+      const priceHtml = hasPromo
+        ? `<div class="price-wrapper">
+             <span class="old-price">${preco.toFixed(2)} €</span>
+             <span class="promo-price">${promoPrice.toFixed(2)} €</span>
+           </div>`
+        : `<div class="price-wrapper"><span class="regular-price">${preco.toFixed(2)} €</span></div>`;
 
       const div = document.createElement('div');
       div.className = 'item' + (esgotado ? ' esgotado' : '');
-
-      // Construção do HTML do preço (com ou sem promoção)
-      let priceHtml = '';
-      const hasPromo = item._promoPrice !== null && !isNaN(item._promoPrice) && item._promoPrice > 0;
-      
-      if (hasPromo) {
-        priceHtml = `
-          <div class="price-wrapper">
-            <span class="old-price">${item.Preço.toFixed(2)} €</span>
-            <span class="promo-price">${item._promoPrice.toFixed(2)} €</span>
-          </div>
-        `;
-      } else {
-        priceHtml = `<div class="price-wrapper"><span class="regular-price">${item.Preço.toFixed(2)} €</span></div>`;
-      }
 
       let html = esgotado ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
       html += '<div class="item-content">';
