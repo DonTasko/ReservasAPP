@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cardápio Don Tasko</title>
 
-<!-- Configuração Centralizada -->
 <script src="config.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
@@ -18,11 +17,7 @@
   --card: #2a2a2a;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Montserrat', sans-serif;
@@ -31,7 +26,6 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
 header {
   position: sticky;
   top: 0;
@@ -73,14 +67,9 @@ header {
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-  color: var(--accent);
-}
+.nav-links a:hover { color: var(--accent); }
 
-.lang-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
+.lang-buttons { display: flex; gap: 0.5rem; }
 
 .lang-buttons button {
   background: transparent;
@@ -94,17 +83,12 @@ header {
   font-family: 'Montserrat', sans-serif;
 }
 
-.lang-buttons button:hover {
-  background: var(--accent);
-  color: var(--primary);
-}
-
+.lang-buttons button:hover,
 .lang-buttons button.active {
   background: var(--accent);
   color: var(--primary);
 }
 
-/* Main Content */
 .wrapper {
   max-width: 900px;
   margin: 0 auto;
@@ -129,7 +113,6 @@ header {
   margin-bottom: 3rem;
 }
 
-/* Loading */
 .loading {
   text-align: center;
   padding: 3rem;
@@ -137,10 +120,7 @@ header {
   font-size: 1.2rem;
 }
 
-/* Categories */
-.category {
-  margin-bottom: 3rem;
-}
+.category { margin-bottom: 3rem; }
 
 .category h2 {
   font-family: 'Cormorant Garamond', serif;
@@ -156,9 +136,7 @@ header {
   align-items: center;
 }
 
-.category h2:hover {
-  color: var(--accent);
-}
+.category h2:hover { color: var(--accent); }
 
 .category h2::after {
   content: '▼';
@@ -166,19 +144,10 @@ header {
   transition: transform 0.3s ease;
 }
 
-.category h2.collapsed::after {
-  transform: rotate(-90deg);
-}
+.category h2.collapsed::after { transform: rotate(-90deg); }
 
-/* Items */
-.items {
-  display: grid;
-  gap: 1.2rem;
-}
-
-.items.hidden {
-  display: none;
-}
+.items { display: grid; gap: 1.2rem; }
+.items.hidden { display: none; }
 
 .item {
   background: var(--card);
@@ -221,30 +190,16 @@ header {
   line-height: 1.6;
 }
 
-/* Mobile */
 @media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .nav-links {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .item-top {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+  .header-content { flex-direction: column; gap: 1rem; }
+  .nav-links { flex-direction: column; gap: 1rem; }
+  .page-title { font-size: 2rem; }
+  .item-top { flex-direction: column; gap: 0.5rem; }
 }
 </style>
 </head>
 <body>
+
 <header>
   <div class="header-content">
     <div class="logo">Don Tasko</div>
@@ -264,105 +219,43 @@ header {
 <div class="wrapper">
   <h1 class="page-title">Nosso Menu</h1>
   <p class="page-subtitle">Sabores Autênticos</p>
-  
   <div id="menu" class="loading">Carregando menu...</div>
 </div>
 
 <script>
-// CONFIGURAÇÃO vem do config.js
-const SHEET_ID = CONFIG.SHEET_ID;
-const API_KEY = CONFIG.API_KEY;
-const SHEET_NAME = 'Cardapio'; // Nome da aba da planilha
-
 let LANG = 'PT';
 let MENU_DATA = null;
 
 function setLang(lang) {
   LANG = lang;
-  
-  // Atualizar botões ativos
-  document.querySelectorAll('.lang-buttons button').forEach(btn => {
-    btn.classList.remove('active');
-  });
+  document.querySelectorAll('.lang-buttons button').forEach(btn => btn.classList.remove('active'));
   document.getElementById(`btn-${lang}`).classList.add('active');
-  
-  // Re-renderizar menu
-  if (MENU_DATA) {
-    renderMenu(MENU_DATA);
-  }
+  if (MENU_DATA) renderMenu(MENU_DATA);
 }
 
 async function loadMenu() {
   try {
-    console.log('🔍 Iniciando loadMenu()');
-    console.log('Sheet ID:', SHEET_ID);
-    console.log('API Key:', API_KEY ? 'Configurada ✓' : '❌ FALTANDO');
-    console.log('Sheet Name:', SHEET_NAME);
-    
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
-    console.log('URL:', url);
-    
-    const response = await fetch(url);
-    console.log('Response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Erro na resposta:', errorText);
-      throw new Error(`Erro ${response.status}: ${errorText}`);
-    }
-    
-    const data = await response.json();
-    console.log('✅ Data recebida:', data);
-    
-    if (!data.values || data.values.length === 0) {
-      console.error('❌ data.values está vazio ou undefined');
-      throw new Error('A aba "Cardapio" está vazia ou não existe');
-    }
-    
-    // Processar dados da planilha
-    const headers = data.values[0];
-    const rows = data.values.slice(1);
-    
-    // Debug: mostrar cabeçalhos no console
-    console.log('📋 Cabeçalhos encontrados:', headers);
-    console.log('📊 Total de linhas de dados:', rows.length);
-    
-    // Organizar por categoria
+    const itens = await apiRequest('getCardapio');
+
+    if (!Array.isArray(itens)) throw new Error(itens.message || 'Erro ao carregar cardápio');
+
     const menu = {};
-    
-    rows.forEach(row => {
-      const item = {};
-      headers.forEach((header, index) => {
-        item[header] = row[index] || '';
-      });
-      
-      // Debug: mostrar item no console
-      console.log('Item processado:', item);
-      
-      // Pular linhas vazias
-      if (!item.Categoria || !item.Nome) return;
-      
-      if (!menu[item.Categoria]) {
-        menu[item.Categoria] = [];
-      }
-      
-      // Converter preço para número
-      item.Preço = parseFloat(item.Preço.toString().replace(',', '.')) || 0;
-      
+    itens.forEach(item => {
+      if (item.Ativo && item.Ativo.toLowerCase() === 'não') return;
+      if (!menu[item.Categoria]) menu[item.Categoria] = [];
       menu[item.Categoria].push(item);
     });
-    
+
     MENU_DATA = menu;
-    console.log('Menu completo:', menu);
     renderMenu(menu);
-    
+
   } catch (error) {
     console.error('Erro ao carregar menu:', error);
     document.getElementById('menu').innerHTML = `
-      <div style="text-align: center; color: #ff6b6b; padding: 3rem;">
+      <div style="text-align:center; color:#ff6b6b; padding:3rem;">
         <h3>Erro ao carregar o menu</h3>
-        <p>Por favor, verifique a configuração do Google Sheets.</p>
-        <p style="font-size: 0.9rem; margin-top: 1rem;">Erro: ${error.message}</p>
+        <p>${error.message}</p>
+        <button onclick="location.reload()" style="margin-top:1.5rem; padding:0.8rem 1.5rem; background:var(--accent); color:#1a1a1a; border:none; border-radius:8px; cursor:pointer; font-weight:600;">🔄 Tentar novamente</button>
       </div>
     `;
   }
@@ -372,64 +265,55 @@ function renderMenu(menu) {
   const container = document.getElementById('menu');
   container.innerHTML = '';
   container.className = '';
-  
+
   Object.keys(menu).forEach(categoria => {
     const section = document.createElement('div');
     section.className = 'category';
-    
+
     const h2 = document.createElement('h2');
     h2.textContent = categoria;
     section.appendChild(h2);
-    
+
     const items = document.createElement('div');
     items.className = 'items';
-    
-    // Toggle categoria
+
     h2.onclick = () => {
       items.classList.toggle('hidden');
       h2.classList.toggle('collapsed');
     };
-    
+
     menu[categoria].forEach(item => {
-      // Pular itens inativos
-      if (item.Ativo && item.Ativo.toLowerCase() === 'não') return;
-      
-      // Selecionar descrição baseada no idioma
-      // Tentar várias variações de nomes de colunas
       let desc = '';
-      
       if (LANG === 'PT') {
-        desc = item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || item.Portugues || item.Português || '';
+        desc = item['Descrição_PT'] || item['Descrição PT'] || item['PT'] || item['Portugues'] || item['Português'] || '';
       } else if (LANG === 'EN') {
-        desc = item.Descrição_EN || item['Descrição EN'] || item.EN || item.en || item.English || item.Inglês || item.Ingles || item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || '';
+        desc = item['Descrição_EN'] || item['Descrição EN'] || item['EN'] || item['Inglês'] || item['Ingles'] || item['Descrição_PT'] || item['Descrição PT'] || item['PT'] || '';
       } else if (LANG === 'FR') {
-        desc = item.Descrição_FR || item['Descrição FR'] || item.FR || item.fr || item.French || item.Francês || item.Frances || item.Descrição_PT || item['Descrição PT'] || item.PT || item.pt || '';
+        desc = item['Descrição_FR'] || item['Descrição FR'] || item['FR'] || item['Francês'] || item['Frances'] || item['Descrição_PT'] || item['Descrição PT'] || item['PT'] || '';
       }
-      
-      console.log(`Item: ${item.Nome}, Idioma: ${LANG}, Descrição: ${desc}`);
-      
+
+      const preco = parseFloat(item['Preço']) || 0;
+
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
         <div class="item-top">
           <div class="item-name">${item.Nome}</div>
-          <div class="price">${item.Preço.toFixed(2)} €</div>
+          <div class="price">${preco.toFixed(2)} €</div>
         </div>
-        ${desc ? `<div class="desc">${desc}</div>` : '<div class="desc" style="color: #ff6b6b; font-style: italic;">Tradução não disponível</div>'}
+        ${desc ? `<div class="desc">${desc}</div>` : ''}
       `;
       items.appendChild(div);
     });
-    
+
     section.appendChild(items);
     container.appendChild(section);
   });
 }
 
-// Carregar menu quando a página carregar
 loadMenu();
 </script>
 
-<!-- Cookie Banner Script -->
 <script src="cookie-banner.js"></script>
 </body>
 </html>
