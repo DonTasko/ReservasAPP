@@ -83,7 +83,64 @@ header {
   font-size: 1rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
+}
+
+/* ========== FILTROS ========== */
+.filtros-container {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 14px;
+  padding: 1.2rem 1rem;
+  margin-bottom: 2rem;
+}
+
+.filtros-titulo {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.7rem;
+}
+
+.filtros-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.filtros-row:last-child { margin-bottom: 0; }
+
+.filtro-separator {
+  height: 1px;
+  background: #333;
+  margin: 0.8rem 0;
+}
+
+.filtro-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #999;
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.filtro-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.filtro-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .loading {
@@ -110,13 +167,7 @@ header {
 }
 
 .category h2:hover { color: var(--accent); }
-
-.category h2::after {
-  content: '▼';
-  font-size: 1rem;
-  transition: transform 0.3s ease;
-}
-
+.category h2::after { content: '▼'; font-size: 1rem; transition: transform 0.3s ease; }
 .category h2.collapsed::after { transform: rotate(-90deg); }
 
 .items { display: grid; gap: 1.2rem; }
@@ -140,8 +191,7 @@ header {
 .item-content { display: flex; gap: 1rem; align-items: start; }
 
 .item-image {
-  width: 80px;
-  height: 80px;
+  width: 80px; height: 80px;
   border-radius: 8px;
   object-fit: cover;
   cursor: pointer;
@@ -150,10 +200,7 @@ header {
   flex-shrink: 0;
 }
 
-.item-image:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
-}
+.item-image:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4); }
 
 .item-info { flex: 1; min-width: 0; }
 
@@ -166,86 +213,55 @@ header {
   flex-wrap: wrap;
 }
 
-.item-name {
-  font-weight: 500;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-
+.item-name { font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; }
 .price-wrapper { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
-
 .old-price { text-decoration: line-through; color: #999; font-size: 0.95rem; }
 .promo-price { color: var(--accent); font-weight: 700; font-size: 1.2rem; }
 .regular-price { font-weight: 600; color: var(--accent); font-size: 1.1rem; }
-
 .desc { font-size: 0.95rem; color: #bdbdbd; line-height: 1.6; }
 
 .badge-rotura {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: absolute; top: 10px; right: 10px;
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+  color: white; padding: 6px 12px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
   animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
 .item.esgotado { opacity: 0.6; border-color: #e74c3c; }
 .item.esgotado .item-name { color: #999; text-decoration: line-through; }
-.item.esgotado .price-wrapper { opacity: 0.7; }
+
+.sem-resultados {
+  text-align: center; padding: 3rem; color: #666;
+  font-size: 1rem; display: none;
+}
 
 .image-modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.95);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  animation: fadeIn 0.3s ease;
+  display: none; position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95); z-index: 1000;
+  justify-content: center; align-items: center; cursor: pointer;
 }
 
 .image-modal.active { display: flex; }
 
 .image-modal img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 10px 50px rgba(0,0,0,0.8);
-  cursor: default;
+  max-width: 90%; max-height: 90%;
+  border-radius: 10px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); cursor: default;
 }
 
 .image-modal .close-btn {
-  position: absolute;
-  top: 30px; right: 30px;
-  font-size: 3rem;
-  color: white;
-  cursor: pointer;
-  background: rgba(0,0,0,0.5);
-  width: 50px; height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute; top: 30px; right: 30px;
+  font-size: 3rem; color: white; cursor: pointer;
+  background: rgba(0,0,0,0.5); width: 50px; height: 50px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
   transition: all 0.3s ease;
 }
 
 .image-modal .close-btn:hover { background: var(--accent); transform: rotate(90deg); }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 @media (max-width: 768px) {
   .header-content { flex-direction: column; gap: 1rem; }
@@ -274,7 +290,18 @@ header {
 <div class="wrapper">
   <h1 class="page-title">Carta de Vinhos</h1>
   <p class="page-subtitle">Seleção Premium</p>
+
+  <!-- Filtros -->
+  <div class="filtros-container" id="filtrosContainer" style="display:none;">
+    <p class="filtros-titulo">Tipo</p>
+    <div class="filtros-row" id="filtrosTipo"></div>
+    <div class="filtro-separator"></div>
+    <p class="filtros-titulo">Região</p>
+    <div class="filtros-row" id="filtrosRegiao"></div>
+  </div>
+
   <div id="menu" class="loading">Carregando bebidas...</div>
+  <div class="sem-resultados" id="semResultados">Nenhum resultado para esta combinação de filtros.</div>
 </div>
 
 <div class="image-modal" id="imageModal" onclick="closeImageModal()">
@@ -284,20 +311,56 @@ header {
 
 <script src="config.js"></script>
 <script>
+let todosItens = [];
+let filtroTipoAtivo = 'Todos';
+let filtroRegiaoAtivo = 'Todas';
+
+// Regiões conhecidas — extrai da categoria
+const REGIOES_CONHECIDAS = [
+  'Alentejo','Douro','Beiras','Setubal','Setúbal','Minho',
+  'Dão','Dao','Tejo','Lisboa','Algarve','Verde','Verdes','Ribatejo'
+];
+
+function parsearCategoria(categoria) {
+  let regiao = null;
+  let tipo = categoria;
+
+  for (const r of REGIOES_CONHECIDAS) {
+    const regex = new RegExp('\\b' + r + '\\b', 'i');
+    if (regex.test(categoria)) {
+      regiao = r === 'Dao' ? 'Dão' : r === 'Setubal' ? 'Setúbal' : r === 'Verde' || r === 'Verdes' ? 'Minho' : r;
+      tipo = categoria.replace(regex, '').replace(/\s+/g, ' ').trim();
+      break;
+    }
+  }
+
+  return {
+    tipo: tipo || categoria,
+    regiao: regiao || 'Outras'
+  };
+}
+
 async function loadMenu() {
   try {
     const itens = await apiRequest('getBebidas');
-
     if (!Array.isArray(itens)) throw new Error(itens.message || 'Erro ao carregar bebidas');
 
-    const menu = {};
-    itens.forEach(item => {
-      if (!item.Categoria || !item.Nome) return;
-      if (!menu[item.Categoria]) menu[item.Categoria] = [];
-      menu[item.Categoria].push(item);
+    todosItens = itens.filter(item => item.Categoria && item.Nome);
+
+    const tipos = new Set();
+    const regioes = new Set();
+
+    todosItens.forEach(item => {
+      const { tipo, regiao } = parsearCategoria(item.Categoria);
+      item._tipo = tipo;
+      item._regiao = regiao;
+      tipos.add(tipo);
+      regioes.add(regiao);
     });
 
-    renderMenu(menu);
+    construirFiltros([...tipos].sort(), [...regioes].sort());
+    renderMenu();
+    document.getElementById('filtrosContainer').style.display = 'block';
 
   } catch (error) {
     console.error('❌ Erro:', error);
@@ -311,9 +374,70 @@ async function loadMenu() {
   }
 }
 
-function renderMenu(menu) {
+function construirFiltros(tipos, regioes) {
+  const cTipo = document.getElementById('filtrosTipo');
+  const cRegiao = document.getElementById('filtrosRegiao');
+
+  // Tipo
+  const btnTodos = criarBtn('Todos', true, () => setFiltroTipo('Todos', btnTodos));
+  cTipo.appendChild(btnTodos);
+  tipos.forEach(tipo => {
+    const btn = criarBtn(tipo, false, () => setFiltroTipo(tipo, btn));
+    cTipo.appendChild(btn);
+  });
+
+  // Região
+  const btnTodas = criarBtn('Todas', true, () => setFiltroRegiao('Todas', btnTodas));
+  cRegiao.appendChild(btnTodas);
+  regioes.forEach(regiao => {
+    const btn = criarBtn(regiao, false, () => setFiltroRegiao(regiao, btn));
+    cRegiao.appendChild(btn);
+  });
+}
+
+function criarBtn(label, ativo, onClick) {
+  const btn = document.createElement('button');
+  btn.className = 'filtro-btn' + (ativo ? ' active' : '');
+  btn.textContent = label;
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+
+function setFiltroTipo(valor, btnClicado) {
+  filtroTipoAtivo = valor;
+  document.querySelectorAll('#filtrosTipo .filtro-btn').forEach(b => b.classList.remove('active'));
+  btnClicado.classList.add('active');
+  renderMenu();
+}
+
+function setFiltroRegiao(valor, btnClicado) {
+  filtroRegiaoAtivo = valor;
+  document.querySelectorAll('#filtrosRegiao .filtro-btn').forEach(b => b.classList.remove('active'));
+  btnClicado.classList.add('active');
+  renderMenu();
+}
+
+function renderMenu() {
   const container = document.getElementById('menu');
   container.innerHTML = '';
+  container.className = '';
+
+  const itensFiltrados = todosItens.filter(item => {
+    const tipoOk = filtroTipoAtivo === 'Todos' || item._tipo === filtroTipoAtivo;
+    const regiaoOk = filtroRegiaoAtivo === 'Todas' || item._regiao === filtroRegiaoAtivo;
+    return tipoOk && regiaoOk;
+  });
+
+  const semResultados = document.getElementById('semResultados');
+  if (itensFiltrados.length === 0) { semResultados.style.display = 'block'; return; }
+  semResultados.style.display = 'none';
+
+  // Agrupar por categoria original
+  const menu = {};
+  itensFiltrados.forEach(item => {
+    if (!menu[item.Categoria]) menu[item.Categoria] = [];
+    menu[item.Categoria].push(item);
+  });
 
   Object.keys(menu).forEach(cat => {
     const section = document.createElement('div');
@@ -324,10 +448,7 @@ function renderMenu(menu) {
     const itemsDiv = document.createElement('div');
     itemsDiv.className = 'items';
 
-    h2.onclick = () => {
-      itemsDiv.classList.toggle('hidden');
-      h2.classList.toggle('collapsed');
-    };
+    h2.onclick = () => { itemsDiv.classList.toggle('hidden'); h2.classList.toggle('collapsed'); };
 
     menu[cat].forEach(item => {
       const esgotado = item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase());
@@ -338,10 +459,7 @@ function renderMenu(menu) {
       const hasPromo = promoPrice && !isNaN(promoPrice) && promoPrice > 0;
 
       const priceHtml = hasPromo
-        ? `<div class="price-wrapper">
-             <span class="old-price">${preco.toFixed(2)} €</span>
-             <span class="promo-price">${promoPrice.toFixed(2)} €</span>
-           </div>`
+        ? `<div class="price-wrapper"><span class="old-price">${preco.toFixed(2)} €</span><span class="promo-price">${promoPrice.toFixed(2)} €</span></div>`
         : `<div class="price-wrapper"><span class="regular-price">${preco.toFixed(2)} €</span></div>`;
 
       const div = document.createElement('div');
@@ -385,6 +503,5 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageMo
 window.addEventListener('DOMContentLoaded', loadMenu);
 </script>
 
-<script src="cookie-banner.js"></script>
 </body>
 </html>
