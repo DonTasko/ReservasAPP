@@ -1257,26 +1257,66 @@ function mudarTurnoMapa(turno, btn) {
     renderizarMesas();
 }
 
+// ── MAPA DE MESAS ──
+function mudarTurnoMapa(turno, btn) {
+    turnoMapa = turno;
+    document.querySelectorAll('.turno-tab').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+    renderizarMesas();
+}
+
+function atribuirReservasAMesas(reservas) {
+    // Para cada reserva, tenta encontrar a mesa livre com menor capacidade suficiente
+    // Se não houver mesa suficiente, vai para a maior disponível
+    const mesasLivres = MESAS.map(m => ({ ...m, reserva: null }));
+
+    // Ordenar reservas por pax desc para encaixar primeiro as maiores
+    const reservasOrdenadas = [...reservas].sort((a, b) => b.pax - a.pax);
+
+    reservasOrdenadas.forEach(reserva => {
+        // Mesas livres com capacidade suficiente, ordenadas por capacidade asc (best fit)
+        const candidatas = mesasLivres
+            .filter(m => !m.reserva && m.cap >= reserva.pax)
+            .sort((a, b) => a.cap - b.cap);
+
+        if (candidatas.length > 0) {
+            candidatas[0].reserva = reserva;
+        } else {
+            // Não há mesa com capacidade — coloca na maior livre disponível
+            const maior = mesasLivres
+                .filter(m => !m.reserva)
+                .sort((a, b) => b.cap - a.cap)[0];
+            if (maior) maior.reserva = { ...reserva, overflow: true };
+        }
+    });
+
+    return mesasLivres;
+}
+
 function renderizarMesas() {
     const grid = document.getElementById('mesasGrid');
     const reservasTurno = todasReservas.filter(r => r.turno === turnoMapa);
+    const mesasAtribuidas = atribuirReservasAMesas(reservasTurno);
 
-    // Distribuir reservas pelas mesas de forma simples
-    // (sem atribuição real de mesa — mostrar reservas por ordem)
-    const reservasOrdenadas = [...reservasTurno].sort((a, b) => a.hora.localeCompare(b.hora));
-
-    grid.innerHTML = MESAS.map((mesa, idx) => {
-        const reserva = reservasOrdenadas[idx] || null;
+    grid.innerHTML = mesasAtribuidas.map(mesa => {
+        const reserva = mesa.reserva;
         let classe = 'livre';
         let clienteHTML = '<div class="mesa-pax" style="color:var(--text-dim)">Disponível</div>';
 
         if (reserva) {
-            const ocupacao = reserva.pax / mesa.cap;
-            classe = ocupacao >= 1 ? 'cheia' : 'parcial';
-            clienteHTML = `
-                <div class="mesa-cliente">${reserva.nome}</div>
-                <div class="mesa-pax">${reserva.pax} pax · ${reserva.hora}</div>
-            `;
+            if (reserva.overflow) {
+                classe = 'cheia'; // vermelho — não cabe
+                clienteHTML = `
+                    <div class="mesa-cliente">${reserva.nome}</div>
+                    <div class="mesa-pax" style="color:#e74c3c">⚠️ ${reserva.pax} pax · excede capacidade</div>
+                `;
+            } else {
+                classe = reserva.pax >= mesa.cap ? 'cheia' : 'parcial';
+                clienteHTML = `
+                    <div class="mesa-cliente">${reserva.nome}</div>
+                    <div class="mesa-pax">${reserva.pax} pax · ${reserva.hora}</div>
+                `;
+            }
         }
 
         return `
@@ -1288,15 +1328,18 @@ function renderizarMesas() {
             </div>
         `;
     }).join('');
+
+    // Guardar atribuição para o modal usar
+    window._mesasAtribuidas = mesasAtribuidas;
 }
 
 // ── MODAL MESA ──
 function abrirModalMesa(numMesa) {
-    const mesa = MESAS.find(m => m.num === numMesa);
-    const reservasTurno = todasReservas.filter(r => r.turno === turnoMapa);
-    const reservasOrdenadas = [...reservasTurno].sort((a, b) => a.hora.localeCompare(b.hora));
-    const idx = MESAS.indexOf(mesa);
-    const reserva = reservasOrdenadas[idx] || null;
+    const mesasAtribuidas = window._mesasAtribuidas || [];
+    const mesa = mesasAtribuidas.find(m => m.num === numMesa);
+    if (!mesa) return;
+
+    const reserva = mesa.reserva || null;
 
     document.getElementById('modalTitle').textContent = `Mesa ${numMesa}`;
     document.getElementById('modalSub').textContent = `${mesa.cap} lugares · ${turnoMapa}`;
@@ -1305,7 +1348,12 @@ function abrirModalMesa(numMesa) {
     if (!reserva) {
         content = `<div class="modal-empty">✅ Mesa livre para ${turnoMapa.toLowerCase()}</div>`;
     } else {
-        const badgeClass = reserva.status === 'Chegou' ? 'badge-chegou' : reserva.status === 'Cancelada' ? 'badge-cancelada' : 'badge-confirmada';
+        const badgeClass = reserva.status === 'Chegou' ? 'badge-chegou'
+            : reserva.status === 'Cancelada' ? 'badge-cancelada' : 'badge-confirmada';
+        const nomeEsc = reserva.nome.replace(/'/g, "\\'");
+        const avisoOverflow = reserva.overflow
+            ? `<div style="background:var(--red-dim);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:#e74c3c">⚠️ Reserva de ${reserva.pax} pax excede a capacidade desta mesa (${mesa.cap} lugares)</div>`
+            : '';
         content = `
             <div class="modal-reserva-item">
                 <div class="modal-res-nome">${reserva.nome}</div>
@@ -1315,10 +1363,13 @@ function abrirModalMesa(numMesa) {
                     ${reserva.tel ? `<span>📞 ${reserva.tel}</span>` : ''}
                 </div>
                 ${reserva.obs ? `<div style="font-size:12px;color:var(--text-muted);margin-top:6px">📝 ${reserva.obs}</div>` : ''}
+                ${avisoOverflow}
                 <span class="modal-res-badge ${badgeClass}">${reserva.status}</span>
                 <div class="modal-actions">
-                    ${reserva.status === 'Confirmada' ? `<button class="modal-btn verde" onclick="marcarChegada('${reserva.id}')">✅ Chegou</button>` : ''}
-                    <button class="modal-btn vermelho" onclick="cancelarReserva('${reserva.id}', '${reserva.nome.replace(/'/g,"\\'")}')">🗑️ Cancelar</button>
+                    ${reserva.status === 'Confirmada'
+                        ? `<button class="modal-btn verde" onclick="marcarChegada('${reserva.id}')">✅ Chegou</button>`
+                        : ''}
+                    <button class="modal-btn vermelho" onclick="cancelarReserva('${reserva.id}', '${nomeEsc}')">🗑️ Cancelar</button>
                 </div>
             </div>
         `;
@@ -1327,7 +1378,6 @@ function abrirModalMesa(numMesa) {
     document.getElementById('modalContent').innerHTML = content;
     document.getElementById('modalOverlay').classList.add('open');
 }
-
 function fecharModal(e) {
     if (e.target === document.getElementById('modalOverlay')) fecharModalDireto();
 }
