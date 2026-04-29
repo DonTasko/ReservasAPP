@@ -1,27 +1,47 @@
-</div>  <!-- fecha .container -->
+const HACCP_URL = 'https://script.google.com/macros/s/AKfycbyhbzKM9rK9VeuOrOIiO_2zFA6ZZP0Kwb345o-CAecduLycSBbJFX6NEoWGnDWn-2bO/exec';
 
-<script>
-
-// ========== CONFIGURAÇÃO ==========
-// Usa CONFIG.SCRIPT_URL do config.js (já carregado no <head>)
+let _jsonpCounter = 0;
+function haccpRequest(action, data = {}) {
+    return new Promise((resolve, reject) => {
+        const cb = `_hcb_${++_jsonpCounter}`;
+        const params = new URLSearchParams({ action, callback: cb, ...data });
+        const timeout = setTimeout(() => {
+            delete window[cb];
+            reject(new Error('Timeout'));
+        }, 30000);
+        window[cb] = (r) => {
+            clearTimeout(timeout);
+            delete window[cb];
+            const s = document.getElementById('_hscript_' + cb);
+            if (s) s.remove();
+            resolve(r);
+        };
+        const s = document.createElement('script');
+        s.id = '_hscript_' + cb;
+        s.src = HACCP_URL + '?' + params.toString();
+        s.onerror = () => { clearTimeout(timeout); delete window[cb]; reject(new Error('Erro de rede')); };
+        document.head.appendChild(s);
+    });
+}
 
 let currentTab = 'temperaturas';
 window.todosRegistos = [];
 
 const FALLBACKS = {
-    EQUIPAMENTO: ['Frigorífico 1','Frigorífico 2','Arca Congeladora','Vitrina Frios','Câmara Fria'],
-    AREA_LIMPEZA: ['Cozinha','Sala','Casas de Banho','Bar','Zona de Lavagem','Exterior'],
+    EQUIPAMENTO: ['Vitrine','Frigorífico Cozinha','Congelador','Frigorífico Cave','Arca Vertical','Arca Carne'],
+    AREA_LIMPEZA: ['Cozinha Geral','Zona de Cocção','Zona de Lavagem','Armazenamento','Instalações Sanitárias Mulheres','Instalações Sanitárias Homens','Instalações Sanitárias Colaboradores','Salão'],
     TURNO: ['Abertura','Almoço','Jantar','Fecho'],
-    FUNCIONARIO: []
+    FUNCIONARIO: ['Luis','Lena','Leandro']
 };
 
-function preencherSelect(selectId, items, placeholder = 'Selecione...') {
+function preencherSelect(selectId, items) {
     const select = document.getElementById(selectId);
     if (!select) return;
-    select.innerHTML = `<option value="">${placeholder}</option>`;
+    select.innerHTML = '<option value="">Selecione...</option>';
     items.forEach(item => {
+        const v = typeof item === 'object' ? item.item : item;
         const opt = document.createElement('option');
-        opt.value = opt.textContent = typeof item === 'object' ? item.item : item;
+        opt.value = opt.textContent = v;
         select.appendChild(opt);
     });
 }
@@ -39,7 +59,7 @@ function preencherDatalist(items) {
 
 async function carregarConfig(tipo, selectId) {
     try {
-        const data = await apiRequest('getConfigHACCP', { tipo });
+        const data = await haccpRequest('getConfigHACCP', { tipo });
         const items = Array.isArray(data) && data.length > 0 ? data : null;
         if (items) {
             if (tipo === 'FUNCIONARIO') preencherDatalist(items);
@@ -47,12 +67,12 @@ async function carregarConfig(tipo, selectId) {
             console.log(`✅ ${tipo} carregado (${items.length} itens)`);
             return true;
         }
-        throw new Error('Sem itens na resposta');
+        throw new Error('Sem itens');
     } catch(e) {
-        console.warn(`❌ ${tipo} falhou (${e.message}), a usar valores predefinidos`);
-        const fallback = FALLBACKS[tipo] || [];
-        if (tipo === 'FUNCIONARIO') preencherDatalist(fallback);
-        else if (selectId) preencherSelect(selectId, fallback);
+        console.warn(`❌ ${tipo} falhou (${e.message}), a usar fallback`);
+        const fb = FALLBACKS[tipo] || [];
+        if (tipo === 'FUNCIONARIO') preencherDatalist(fb);
+        else if (selectId) preencherSelect(selectId, fb);
         return false;
     }
 }
@@ -64,13 +84,15 @@ async function carregarConfiguracoesDinamicas() {
         carregarConfig('TURNO', 'tempTurno'),
         carregarConfig('FUNCIONARIO', null),
     ]);
-    const falhou = results.filter(r => r.value === false).length;
-    if (falhou > 0) {
-        const banner = document.getElementById('debug-banner');
-        banner.style.display = 'block';
-        banner.innerHTML = `<strong>ℹ️ Aviso:</strong> ${falhou} configuração(ões) HACCP não encontrada(s) na sheet. 
-            A usar valores predefinidos. Para personalizar, verifica se a aba <strong>HACCP-Config</strong> 
-            existe na tua Google Sheet com colunas <em>Tipo</em>, <em>Item</em> e <em>Ativo</em> (SIM/NÃO).`;
+    const falhou = results.filter(r => r.status === 'fulfilled' && r.value === false).length;
+    const banner = document.getElementById('debug-banner');
+    if (banner) {
+        if (falhou > 0) {
+            banner.style.display = 'block';
+            banner.innerHTML = `<strong>ℹ️ Aviso:</strong> ${falhou} configuração(ões) HACCP a usar valores predefinidos. Verifica a aba <strong>HACCP-Config</strong> na Google Sheet.`;
+        } else {
+            banner.style.display = 'none';
+        }
     }
 }
 
@@ -98,24 +120,24 @@ function switchTab(tab, btn) {
 
 function showAlert(msg, type = 'success') {
     const c = document.getElementById('alertContainer');
+    if (!c) return;
     c.innerHTML = `<div class="alert alert-${type}"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}</div>`;
     setTimeout(() => c.innerHTML = '', 5000);
 }
 
 async function registarTemperatura(event) {
     event.preventDefault();
-    const dados = {
-        tipo: 'temperaturas',
-        data: document.getElementById('tempData').value,
-        hora: document.getElementById('tempHora').value,
-        equipamento: document.getElementById('tempEquipamento').value,
-        temperatura: document.getElementById('tempTemperatura').value,
-        turno: document.getElementById('tempTurno').value,
-        funcionario: document.getElementById('tempFuncionario').value,
-        observacoes: document.getElementById('tempObservacoes').value,
-    };
     try {
-        const result = await apiRequest('registarHACCP', dados);
+        const result = await haccpRequest('registarHACCP', {
+            tipo: 'temperaturas',
+            data: document.getElementById('tempData').value,
+            hora: document.getElementById('tempHora').value,
+            equipamento: document.getElementById('tempEquipamento').value,
+            temperatura: document.getElementById('tempTemperatura').value,
+            turno: document.getElementById('tempTurno').value,
+            funcionario: document.getElementById('tempFuncionario').value,
+            observacoes: document.getElementById('tempObservacoes').value,
+        });
         if (result.status === 'success') {
             showAlert('✅ Temperatura registada com sucesso!', 'success');
             document.getElementById('formTemperaturas').reset();
@@ -124,23 +146,22 @@ async function registarTemperatura(event) {
         } else {
             showAlert('❌ Erro: ' + (result.message || JSON.stringify(result)), 'danger');
         }
-    } catch(e) { showAlert('❌ Erro ao registar: ' + e.message, 'danger'); }
+    } catch(e) { showAlert('❌ Erro: ' + e.message, 'danger'); }
 }
 
 async function registarLimpeza(event) {
     event.preventDefault();
-    const dados = {
-        tipo: 'limpeza',
-        data: document.getElementById('limpData').value,
-        hora: document.getElementById('limpHora').value,
-        area: document.getElementById('limpArea').value,
-        tipoLimpeza: document.getElementById('limpTipo').value,
-        produtos: document.getElementById('limpProdutos').value,
-        funcionario: document.getElementById('limpFuncionario').value,
-        observacoes: document.getElementById('limpObservacoes').value,
-    };
     try {
-        const result = await apiRequest('registarHACCP', dados);
+        const result = await haccpRequest('registarHACCP', {
+            tipo: 'limpeza',
+            data: document.getElementById('limpData').value,
+            hora: document.getElementById('limpHora').value,
+            area: document.getElementById('limpArea').value,
+            tipoLimpeza: document.getElementById('limpTipo').value,
+            produtos: document.getElementById('limpProdutos').value,
+            funcionario: document.getElementById('limpFuncionario').value,
+            observacoes: document.getElementById('limpObservacoes').value,
+        });
         if (result.status === 'success') {
             showAlert('✅ Limpeza registada com sucesso!', 'success');
             document.getElementById('formLimpeza').reset();
@@ -149,23 +170,22 @@ async function registarLimpeza(event) {
         } else {
             showAlert('❌ Erro: ' + (result.message || JSON.stringify(result)), 'danger');
         }
-    } catch(e) { showAlert('❌ Erro ao registar: ' + e.message, 'danger'); }
+    } catch(e) { showAlert('❌ Erro: ' + e.message, 'danger'); }
 }
 
 async function registarOcorrencia(event) {
     event.preventDefault();
-    const dados = {
-        tipo: 'ocorrencia',
-        data: document.getElementById('ocorData').value,
-        hora: document.getElementById('ocorHora').value,
-        tipoOcorrencia: document.getElementById('ocorTipo').value,
-        funcionario: document.getElementById('ocorFuncionario').value,
-        descricao: document.getElementById('ocorDescricao').value,
-        acao: document.getElementById('ocorAcao').value,
-        observacoes: document.getElementById('ocorObservacoes').value,
-    };
     try {
-        const result = await apiRequest('registarHACCP', dados);
+        const result = await haccpRequest('registarHACCP', {
+            tipo: 'ocorrencia',
+            data: document.getElementById('ocorData').value,
+            hora: document.getElementById('ocorHora').value,
+            tipoOcorrencia: document.getElementById('ocorTipo').value,
+            funcionario: document.getElementById('ocorFuncionario').value,
+            descricao: document.getElementById('ocorDescricao').value,
+            acao: document.getElementById('ocorAcao').value,
+            observacoes: document.getElementById('ocorObservacoes').value,
+        });
         if (result.status === 'success') {
             showAlert('✅ Ocorrência registada com sucesso!', 'success');
             document.getElementById('formOcorrencia').reset();
@@ -174,26 +194,27 @@ async function registarOcorrencia(event) {
         } else {
             showAlert('❌ Erro: ' + (result.message || JSON.stringify(result)), 'danger');
         }
-    } catch(e) { showAlert('❌ Erro ao registar: ' + e.message, 'danger'); }
+    } catch(e) { showAlert('❌ Erro: ' + e.message, 'danger'); }
 }
 
 async function carregarRegistos() {
-    document.getElementById('registosList').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> Carregando registos...</div>';
+    const lista = document.getElementById('registosList');
+    if (lista) lista.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> Carregando registos...</div>';
     window.todosRegistos = undefined;
     try {
-        const result = await apiRequest('getDashboardHACCP');
+        const result = await haccpRequest('getDashboardHACCP');
         window.todosRegistos = result.registos || [];
         carregarFuncionariosFiltro(window.todosRegistos);
         aplicarFiltros();
     } catch(e) {
         window.todosRegistos = [];
-        document.getElementById('registosList').innerHTML =
-            `<p style="text-align:center;padding:2rem;color:#f87171"><i class="fas fa-exclamation-circle"></i> Erro: ${e.message}</p>`;
+        if (lista) lista.innerHTML = `<p style="text-align:center;padding:2rem;color:#f87171"><i class="fas fa-exclamation-circle"></i> Erro: ${e.message}</p>`;
     }
 }
 
 function carregarFuncionariosFiltro(registos) {
     const sel = document.getElementById('filtroFuncionario');
+    if (!sel) return;
     const funcs = [...new Set(registos.map(r => r.funcionario).filter(Boolean))].sort();
     sel.innerHTML = '<option value="">Todos</option>';
     funcs.forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; sel.appendChild(o); });
@@ -201,10 +222,10 @@ function carregarFuncionariosFiltro(registos) {
 
 function aplicarFiltros() {
     if (window.todosRegistos === undefined) return;
-    const tipo = document.getElementById('filtroTipo').value;
-    const dIni = document.getElementById('filtroDataInicio').value;
-    const dFim = document.getElementById('filtroDataFim').value;
-    const func = document.getElementById('filtroFuncionario').value;
+    const tipo = document.getElementById('filtroTipo')?.value || '';
+    const dIni = document.getElementById('filtroDataInicio')?.value || '';
+    const dFim = document.getElementById('filtroDataFim')?.value || '';
+    const func = document.getElementById('filtroFuncionario')?.value || '';
     const filtrados = (window.todosRegistos || []).filter(r =>
         (!tipo || r.tipo === tipo) &&
         (!dIni || r.data >= dIni) &&
@@ -213,6 +234,7 @@ function aplicarFiltros() {
     );
     mostrarEstatisticas(filtrados);
     const container = document.getElementById('registosList');
+    if (!container) return;
     if (!filtrados.length) {
         container.innerHTML = '<p style="text-align:center;padding:2rem;color:#94a3b8"><i class="fas fa-inbox"></i> Nenhum registo encontrado</p>';
         return;
@@ -236,6 +258,7 @@ function limparFiltros() {
 
 function mostrarEstatisticas(registos) {
     const c = document.getElementById('statsContainer');
+    if (!c) return;
     if (!registos.length) { c.innerHTML = ''; c.style.display = 'none'; return; }
     c.style.display = 'grid';
     const porTipo = registos.reduce((acc, r) => { acc[r.tipo] = (acc[r.tipo]||0)+1; return acc; }, {});
@@ -246,21 +269,21 @@ function mostrarEstatisticas(registos) {
 }
 
 function getTipoIcon(tipo) {
-    return {temperaturas:'🌡️',limpeza:'🧼',ocorrencia:'⚠️'}[tipo] || '📋';
+    return {temperaturas:'🌡️', limpeza:'🧼', ocorrencia:'⚠️'}[tipo] || '📋';
 }
 
 function formatarTipoNome(tipo) {
-    return {temperaturas:'Temperatura',limpeza:'Limpeza',ocorrencia:'Ocorrência'}[tipo] || tipo;
+    return {temperaturas:'Temperatura', limpeza:'Limpeza', ocorrencia:'Ocorrência'}[tipo] || tipo;
 }
 
 function formatarData(data) {
     if (!data) return 'N/A';
-    const p = data.split('-');
+    const p = String(data).split('-');
     return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : data;
 }
 
 function getDetalhesCompletos(reg) {
-    let html = `<div style="display:flex;flex-direction:column;gap:0.3rem">`;
+    let html = '<div style="display:flex;flex-direction:column;gap:0.3rem">';
     html += `<div><i class="fas fa-user" style="width:20px"></i> <strong>Funcionário:</strong> ${reg.funcionario || 'N/A'}</div>`;
     if (reg.tipo === 'temperaturas') {
         html += `<div><i class="fas fa-box" style="width:20px"></i> <strong>Equipamento:</strong> ${reg.equipamento || 'N/A'}</div>`;
@@ -280,7 +303,7 @@ function getDetalhesCompletos(reg) {
 async function exportarPDF() {
     showAlert('⏳ A gerar relatório...', 'success');
     try {
-        const result = await apiRequest('gerarPDFHACCP', {});
+        const result = await haccpRequest('gerarPDFHACCP', {});
         if (result.status === 'success' && result.pdfUrl) {
             window.open(result.pdfUrl, '_blank');
             showAlert('✅ PDF gerado!', 'success');
@@ -289,7 +312,3 @@ async function exportarPDF() {
         }
     } catch(e) { showAlert('❌ Erro: ' + e.message, 'danger'); }
 }
-</script>
-
-</body>
-</html>
