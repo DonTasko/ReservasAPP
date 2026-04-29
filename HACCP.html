@@ -1,598 +1,5 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>HACCP Pro - Don Tasko</title>
-    <script src="config.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            color: #f1f5f9;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 24px;
-            padding: 1rem 2rem;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .logo h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #38bdf8, #a78bfa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo p {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 4px;
-        }
-
-        .back-btn {
-            background: rgba(51, 65, 85, 0.8);
-            color: #f1f5f9;
-            padding: 0.6rem 1.5rem;
-            border-radius: 40px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .back-btn:hover {
-            background: #38bdf8;
-            color: #0f172a;
-            border-color: #38bdf8;
-            transform: translateY(-2px);
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 1.2rem;
-            text-align: center;
-            border: 1px solid rgba(56, 189, 248, 0.15);
-            transition: all 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: #38bdf8;
-            background: rgba(30, 41, 59, 0.8);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: white;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 0.5rem;
-            border-radius: 60px;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(56, 189, 248, 0.1);
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 0.8rem 1.2rem;
-            border: none;
-            background: transparent;
-            color: #94a3b8;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .tab-btn i {
-            margin-right: 8px;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #38bdf8, #818cf8);
-            color: #0f172a;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: rgba(56, 189, 248, 0.15);
-            color: #f1f5f9;
-        }
-
-        /* Cards de formulário */
-        .content-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 28px;
-            padding: 2rem;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-        }
-
-        .content-card h2 {
-            font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.4rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #cbd5e1;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 16px;
-            color: #f1f5f9;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #38bdf8;
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: #475569;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-        }
-
-        /* Botões */
-        .btn {
-            padding: 0.8rem 1.8rem;
-            border: none;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(56, 189, 248, 0.2);
-            color: #38bdf8;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: #38bdf8;
-            color: #0f172a;
-            transform: translateY(-2px);
-        }
-
-        /* Filtros */
-        .filters-card {
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(56, 189, 248, 0.15);
-        }
-
-        .filters-card h3 {
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            color: #cbd5e1;
-        }
-
-        /* Registos */
-        .registos-list {
-            margin-top: 1.5rem;
-        }
-
-        .registo-item {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            padding: 1.2rem;
-            border-radius: 20px;
-            margin-bottom: 0.8rem;
-            border-left: 4px solid #38bdf8;
-            transition: all 0.2s;
-        }
-
-        .registo-item:hover {
-            background: rgba(30, 41, 59, 0.8);
-            transform: translateX(4px);
-        }
-
-        .registo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .registo-tipo {
-            font-weight: 600;
-            color: #38bdf8;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .registo-data {
-            color: #94a3b8;
-            font-size: 0.8rem;
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            border-radius: 16px;
-            margin-bottom: 1rem;
-            backdrop-filter: blur(4px);
-        }
-        .alert-success {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        .alert-danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .hidden { display: none !important; }
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #94a3b8;
-        }
-
-        #debug-banner {
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin-bottom: 1rem;
-            font-size: 13px;
-            display: none;
-            color: #fbbf24;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .header { flex-direction: column; text-align: center; padding: 1rem; }
-            .tabs { flex-direction: column; border-radius: 20px; }
-            .tab-btn { justify-content: center; }
-            .form-row { grid-template-columns: 1fr; }
-            .content-card { padding: 1.2rem; }
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-
-    <div class="header">
-        <div class="logo">
-            <h1><i class="fas fa-clipboard-list"></i> HACCP Pro</h1>
-            <p>Sistema de Controlo de Segurança Alimentar</p>
-        </div>
-        <a href="admin.html" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar ao Painel</a>
-    </div>
-
-    <!-- Stats Cards (aparecem só nos registos) -->
-    <div id="statsContainer" class="stats-grid" style="display: none;"></div>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('temperaturas', this)"><i class="fas fa-temperature-high"></i> Temperaturas</button>
-        <button class="tab-btn" onclick="switchTab('limpeza', this)"><i class="fas fa-broom"></i> Limpeza</button>
-        <button class="tab-btn" onclick="switchTab('ocorrencias', this)"><i class="fas fa-exclamation-triangle"></i> Ocorrências</button>
-        <button class="tab-btn" onclick="switchTab('registos', this)"><i class="fas fa-history"></i> Histórico</button>
-    </div>
-
-    <div id="alertContainer"></div>
-    <div id="debug-banner"></div>
-
-    <!-- TEMPERATURAS -->
-    <div id="tab-temperaturas" class="content-card">
-        <h2><i class="fas fa-thermometer-half" style="color: #38bdf8;"></i> Controlo de Temperaturas</h2>
-        <form id="formTemperaturas" onsubmit="registarTemperatura(event)">
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="far fa-calendar"></i> Data *</label>
-                    <input type="date" id="tempData" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="far fa-clock"></i> Hora *</label>
-                    <input type="time" id="tempHora" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-box"></i> Equipamento *</label>
-                    <select id="tempEquipamento" required>
-                        <option value="">A carregar...</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-chart-line"></i> Temperatura (°C) *</label>
-                    <input type="number" id="tempTemperatura" step="0.1" required placeholder="Ex: 4.5">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-chart-simple"></i> Turno *</label>
-                    <select id="tempTurno" required>
-                        <option value="">A carregar...</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Funcionário *</label>
-                    <input type="text" id="tempFuncionario" required placeholder="Nome do funcionário">
-                </div>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-pen"></i> Observações</label>
-                <textarea id="tempObservacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Registar Temperatura</button>
-        </form>
-    </div>
-
-    <!-- LIMPEZA -->
-    <div id="tab-limpeza" class="content-card hidden">
-        <h2><i class="fas fa-soap" style="color: #38bdf8;"></i> Registo de Limpeza</h2>
-        <form id="formLimpeza" onsubmit="registarLimpeza(event)">
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="far fa-calendar"></i> Data *</label>
-                    <input type="date" id="limpData" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="far fa-clock"></i> Hora *</label>
-                    <input type="time" id="limpHora" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-location-dot"></i> Área *</label>
-                    <select id="limpArea" required>
-                        <option value="">A carregar...</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-brush"></i> Tipo de Limpeza *</label>
-                    <select id="limpTipo" required>
-                        <option value="">Selecione...</option>
-                        <option value="Limpeza Diária">Limpeza Diária</option>
-                        <option value="Limpeza Profunda">Limpeza Profunda</option>
-                        <option value="Desinfeção">Desinfeção</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-flask"></i> Produtos Utilizados *</label>
-                    <input type="text" id="limpProdutos" required placeholder="Ex: Desengordurante, Detergente">
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Funcionário *</label>
-                    <input type="text" id="limpFuncionario" required placeholder="Nome do funcionário">
-                </div>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-pen"></i> Observações</label>
-                <textarea id="limpObservacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Registar Limpeza</button>
-        </form>
-    </div>
-
-    <!-- OCORRÊNCIAS -->
-    <div id="tab-ocorrencias" class="content-card hidden">
-        <h2><i class="fas fa-triangle-exclamation" style="color: #f59e0b;"></i> Registo de Ocorrências</h2>
-        <form id="formOcorrencia" onsubmit="registarOcorrencia(event)">
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="far fa-calendar"></i> Data *</label>
-                    <input type="date" id="ocorData" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="far fa-clock"></i> Hora *</label>
-                    <input type="time" id="ocorHora" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-tag"></i> Tipo de Ocorrência *</label>
-                    <select id="ocorTipo" required>
-                        <option value="">Selecione...</option>
-                        <option value="Temperatura Fora do Normal">Temperatura Fora do Normal</option>
-                        <option value="Equipamento Avariado">Equipamento Avariado</option>
-                        <option value="Produto Não Conforme">Produto Não Conforme</option>
-                        <option value="Contaminação">Contaminação</option>
-                        <option value="Outro">Outro</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Funcionário *</label>
-                    <input type="text" id="ocorFuncionario" required placeholder="Nome do funcionário">
-                </div>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-align-left"></i> Descrição da Ocorrência *</label>
-                <textarea id="ocorDescricao" rows="3" required placeholder="Descreva o que aconteceu"></textarea>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-bolt"></i> Ação Imediata Tomada *</label>
-                <textarea id="ocorAcao" rows="3" required placeholder="Que medidas foram tomadas?"></textarea>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-pen"></i> Observações</label>
-                <textarea id="ocorObservacoes" rows="2" placeholder="Observações adicionais (opcional)"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Registar Ocorrência</button>
-        </form>
-    </div>
-
-    <!-- REGISTOS -->
-    <div id="tab-registos" class="content-card hidden">
-        <h2><i class="fas fa-archive" style="color: #38bdf8;"></i> Histórico de Registos HACCP</h2>
-        
-        <div class="filters-card">
-            <h3><i class="fas fa-sliders-h"></i> Filtros</h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Tipo de Registo</label>
-                    <select id="filtroTipo">
-                        <option value="">Todos</option>
-                        <option value="temperaturas">🌡️ Temperaturas</option>
-                        <option value="limpeza">🧼 Limpeza</option>
-                        <option value="ocorrencia">⚠️ Ocorrências</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Data Início</label>
-                    <input type="date" id="filtroDataInicio">
-                </div>
-                <div class="form-group">
-                    <label>Data Fim</label>
-                    <input type="date" id="filtroDataFim">
-                </div>
-                <div class="form-group">
-                    <label>Funcionário</label>
-                    <select id="filtroFuncionario"><option value="">Todos</option></select>
-                </div>
-            </div>
-            <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap">
-                <button onclick="aplicarFiltros()" class="btn btn-primary"><i class="fas fa-search"></i> Aplicar Filtros</button>
-                <button onclick="limparFiltros()" class="btn btn-secondary"><i class="fas fa-undo"></i> Limpar</button>
-                <button onclick="carregarRegistos()" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Atualizar</button>
-                <button onclick="exportarPDF()" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
-            </div>
-        </div>
-
-        <div id="registosList" class="registos-list">
-            <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Carregando registos...</div>
-        </div>
-    </div>
-
-</div>
-
-<script>
-// ========== TODAS AS FUNÇÕES ORIGINAIS PERMANECEM IGUAIS ==========
-// (apenas com pequenos ajustes visuais nos alerts e stats)
-
-if (typeof URL_SCRIPT === 'undefined' || !URL_SCRIPT) {
-    document.getElementById('debug-banner').style.display = 'block';
-    document.getElementById('debug-banner').innerHTML =
-        '<strong>⚠️ Erro de configuração:</strong> URL_SCRIPT não está definido no config.js. ' +
-        'Certifica-te que o ficheiro config.js está na mesma pasta e tem a variável URL_SCRIPT preenchida.';
-}
+// ========== CONFIGURAÇÃO ==========
+// Usa CONFIG.SCRIPT_URL do config.js (já carregado no <head>)
 
 let currentTab = 'temperaturas';
 window.todosRegistos = [];
@@ -600,8 +7,8 @@ window.todosRegistos = [];
 const FALLBACKS = {
     EQUIPAMENTO: ['Frigorífico 1','Frigorífico 2','Arca Congeladora','Vitrina Frios','Câmara Fria'],
     AREA_LIMPEZA: ['Cozinha','Sala','Casas de Banho','Bar','Zona de Lavagem','Exterior'],
-    TURNO:        ['Manhã','Tarde','Noite'],
-    FUNCIONARIO:  []
+    TURNO: ['Abertura','Almoço','Jantar','Fecho'],
+    FUNCIONARIO: []
 };
 
 function preencherSelect(selectId, items, placeholder = 'Selecione...') {
@@ -610,19 +17,16 @@ function preencherSelect(selectId, items, placeholder = 'Selecione...') {
     select.innerHTML = `<option value="">${placeholder}</option>`;
     items.forEach(item => {
         const opt = document.createElement('option');
-        opt.value = opt.textContent = item;
+        opt.value = opt.textContent = typeof item === 'object' ? item.item : item;
         select.appendChild(opt);
     });
 }
 
 function preencherDatalist(items) {
     let dl = document.getElementById('funcionariosList');
-    if (!dl) {
-        dl = document.createElement('datalist');
-        dl.id = 'funcionariosList';
-        document.body.appendChild(dl);
-    }
-    dl.innerHTML = items.map(i => `<option value="${i}">`).join('');
+    if (!dl) { dl = document.createElement('datalist'); dl.id = 'funcionariosList'; document.body.appendChild(dl); }
+    const valores = items.map(i => typeof i === 'object' ? i.item : i);
+    dl.innerHTML = valores.map(i => `<option value="${i}">`).join('');
     ['tempFuncionario','limpFuncionario','ocorFuncionario'].forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.setAttribute('list','funcionariosList'); el.setAttribute('autocomplete','off'); }
@@ -631,27 +35,20 @@ function preencherDatalist(items) {
 
 async function carregarConfig(tipo, selectId) {
     try {
-        const r = await fetch(URL_SCRIPT, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'getConfigHACCP', tipo })
-        });
-        const data = await r.json();
-        const items = (data.status === 'success' && Array.isArray(data.items) && data.items.length > 0) ? data.items :
-                      (Array.isArray(data.items) && data.items.length > 0) ? data.items :
-                      (Array.isArray(data) && data.length > 0) ? data : null;
+        const data = await apiRequest('getConfigHACCP', { tipo });
+        const items = Array.isArray(data) && data.length > 0 ? data : null;
         if (items) {
-            if (tipo === 'FUNCIONARIO') { preencherDatalist(items); }
-            else { preencherSelect(selectId, items); }
+            if (tipo === 'FUNCIONARIO') preencherDatalist(items);
+            else preencherSelect(selectId, items);
             console.log(`✅ ${tipo} carregado (${items.length} itens)`);
             return true;
         }
-        console.warn(`⚠️ ${tipo}: resposta sem itens, a usar fallback`);
         throw new Error('Sem itens na resposta');
     } catch(e) {
         console.warn(`❌ ${tipo} falhou (${e.message}), a usar valores predefinidos`);
         const fallback = FALLBACKS[tipo] || [];
-        if (tipo === 'FUNCIONARIO') { preencherDatalist(fallback); }
-        else if (selectId) { preencherSelect(selectId, fallback); }
+        if (tipo === 'FUNCIONARIO') preencherDatalist(fallback);
+        else if (selectId) preencherSelect(selectId, fallback);
         return false;
     }
 }
@@ -675,9 +72,9 @@ async function carregarConfiguracoesDinamicas() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
-    const now   = new Date().toTimeString().slice(0,5);
-    ['tempData','limpData','ocorData'].forEach(id => document.getElementById(id).value = today);
-    ['tempHora','limpHora','ocorHora'].forEach(id => document.getElementById(id).value = now);
+    const now = new Date().toTimeString().slice(0,5);
+    ['tempData','limpData','ocorData'].forEach(id => { const el = document.getElementById(id); if(el) el.value = today; });
+    ['tempHora','limpHora','ocorHora'].forEach(id => { const el = document.getElementById(id); if(el) el.value = now; });
     carregarConfiguracoesDinamicas();
 });
 
@@ -701,18 +98,12 @@ function showAlert(msg, type = 'success') {
     setTimeout(() => c.innerHTML = '', 5000);
 }
 
-async function postScript(payload) {
-    const r = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
-    return await r.json();
-}
-
 async function registarTemperatura(event) {
     event.preventDefault();
     const dados = {
         tipo: 'temperaturas',
         data: document.getElementById('tempData').value,
         hora: document.getElementById('tempHora').value,
-        timestamp: new Date().toISOString(),
         equipamento: document.getElementById('tempEquipamento').value,
         temperatura: document.getElementById('tempTemperatura').value,
         turno: document.getElementById('tempTurno').value,
@@ -720,8 +111,8 @@ async function registarTemperatura(event) {
         observacoes: document.getElementById('tempObservacoes').value,
     };
     try {
-        const result = await postScript({ action: 'registarHACCP', dados });
-        if (result.status === 'success' || result.success) {
+        const result = await apiRequest('registarHACCP', dados);
+        if (result.status === 'success') {
             showAlert('✅ Temperatura registada com sucesso!', 'success');
             document.getElementById('formTemperaturas').reset();
             document.getElementById('tempData').value = new Date().toISOString().split('T')[0];
@@ -738,7 +129,6 @@ async function registarLimpeza(event) {
         tipo: 'limpeza',
         data: document.getElementById('limpData').value,
         hora: document.getElementById('limpHora').value,
-        timestamp: new Date().toISOString(),
         area: document.getElementById('limpArea').value,
         tipoLimpeza: document.getElementById('limpTipo').value,
         produtos: document.getElementById('limpProdutos').value,
@@ -746,8 +136,8 @@ async function registarLimpeza(event) {
         observacoes: document.getElementById('limpObservacoes').value,
     };
     try {
-        const result = await postScript({ action: 'registarHACCP', dados });
-        if (result.status === 'success' || result.success) {
+        const result = await apiRequest('registarHACCP', dados);
+        if (result.status === 'success') {
             showAlert('✅ Limpeza registada com sucesso!', 'success');
             document.getElementById('formLimpeza').reset();
             document.getElementById('limpData').value = new Date().toISOString().split('T')[0];
@@ -764,7 +154,6 @@ async function registarOcorrencia(event) {
         tipo: 'ocorrencia',
         data: document.getElementById('ocorData').value,
         hora: document.getElementById('ocorHora').value,
-        timestamp: new Date().toISOString(),
         tipoOcorrencia: document.getElementById('ocorTipo').value,
         funcionario: document.getElementById('ocorFuncionario').value,
         descricao: document.getElementById('ocorDescricao').value,
@@ -772,8 +161,8 @@ async function registarOcorrencia(event) {
         observacoes: document.getElementById('ocorObservacoes').value,
     };
     try {
-        const result = await postScript({ action: 'registarHACCP', dados });
-        if (result.status === 'success' || result.success) {
+        const result = await apiRequest('registarHACCP', dados);
+        if (result.status === 'success') {
             showAlert('✅ Ocorrência registada com sucesso!', 'success');
             document.getElementById('formOcorrencia').reset();
             document.getElementById('ocorData').value = new Date().toISOString().split('T')[0];
@@ -788,16 +177,10 @@ async function carregarRegistos() {
     document.getElementById('registosList').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> Carregando registos...</div>';
     window.todosRegistos = undefined;
     try {
-        const result = await postScript({ action: 'getDashboardHACCP' });
-        if (result.status === 'success' || result.success) {
-            window.todosRegistos = result.registos || [];
-            carregarFuncionariosFiltro(window.todosRegistos);
-            aplicarFiltros();
-        } else {
-            window.todosRegistos = [];
-            document.getElementById('registosList').innerHTML =
-                `<p style="text-align:center;padding:2rem;color:#f87171"><i class="fas fa-exclamation-triangle"></i> Erro ao carregar registos: ${result.message || JSON.stringify(result)}</p>`;
-        }
+        const result = await apiRequest('getDashboardHACCP');
+        window.todosRegistos = result.registos || [];
+        carregarFuncionariosFiltro(window.todosRegistos);
+        aplicarFiltros();
     } catch(e) {
         window.todosRegistos = [];
         document.getElementById('registosList').innerHTML =
@@ -827,8 +210,7 @@ function aplicarFiltros() {
     mostrarEstatisticas(filtrados);
     const container = document.getElementById('registosList');
     if (!filtrados.length) {
-        container.innerHTML = '<p style="text-align:center;padding:2rem;color:#94a3b8"><i class="fas fa-inbox"></i> Nenhum registo encontrado' +
-            (window.todosRegistos.length ? ' com os filtros aplicados' : ' — ainda não há registos HACCP na sheet') + '</p>';
+        container.innerHTML = '<p style="text-align:center;padding:2rem;color:#94a3b8"><i class="fas fa-inbox"></i> Nenhum registo encontrado</p>';
         return;
     }
     container.innerHTML = filtrados.map(reg => `
@@ -843,8 +225,7 @@ function aplicarFiltros() {
 
 function limparFiltros() {
     ['filtroTipo','filtroDataInicio','filtroDataFim','filtroFuncionario'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
+        const el = document.getElementById(id); if (el) el.value = '';
     });
     aplicarFiltros();
 }
@@ -855,25 +236,17 @@ function mostrarEstatisticas(registos) {
     c.style.display = 'grid';
     const porTipo = registos.reduce((acc, r) => { acc[r.tipo] = (acc[r.tipo]||0)+1; return acc; }, {});
     c.innerHTML = `
-        <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <div class="stat-value">${registos.length}</div>
-            <div class="stat-label">Total de Registos</div>
-        </div>
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${registos.length}</div><div class="stat-label">Total de Registos</div></div>
         ${Object.entries(porTipo).map(([t,n]) => `
-        <div class="stat-card">
-            <div class="stat-icon">${getTipoIcon(t)}</div>
-            <div class="stat-value">${n}</div>
-            <div class="stat-label">${formatarTipoNome(t)}</div>
-        </div>`).join('')}`;
+        <div class="stat-card"><div class="stat-icon">${getTipoIcon(t)}</div><div class="stat-value">${n}</div><div class="stat-label">${formatarTipoNome(t)}</div></div>`).join('')}`;
 }
 
 function getTipoIcon(tipo) {
-    return {temperaturas:'🌡️',limpeza:'🧼',ocorrencia:'⚠️',checklist:'✅',oleo:'🍟',rececao:'📦'}[tipo] || '📋';
+    return {temperaturas:'🌡️',limpeza:'🧼',ocorrencia:'⚠️'}[tipo] || '📋';
 }
 
 function formatarTipoNome(tipo) {
-    return {temperaturas:'Temperatura',limpeza:'Limpeza',ocorrencia:'Ocorrência',checklist:'Checklist',oleo:'Óleo',rececao:'Receção'}[tipo] || tipo;
+    return {temperaturas:'Temperatura',limpeza:'Limpeza',ocorrencia:'Ocorrência'}[tipo] || tipo;
 }
 
 function formatarData(data) {
@@ -890,8 +263,7 @@ function getDetalhesCompletos(reg) {
         html += `<div><i class="fas fa-thermometer-half" style="width:20px"></i> <strong>Temperatura:</strong> ${reg.temperatura || 'N/A'}°C</div>`;
         if (reg.turno) html += `<div><i class="fas fa-chart-simple" style="width:20px"></i> <strong>Turno:</strong> ${reg.turno}</div>`;
     } else if (reg.tipo === 'limpeza') {
-        html += `<div><i class="fas fa-location-dot" style="width:20px"></i> <strong>Área:</strong> ${reg.area || 'N/A'}</div>`;
-        if (reg.tipoLimpeza) html += `<div><i class="fas fa-brush" style="width:20px"></i> <strong>Tipo:</strong> ${reg.tipoLimpeza}</div>`;
+        html += `<div><i class="fas fa-location-dot" style="width:20px"></i> <strong>Área:</strong> ${reg.equipamento || 'N/A'}</div>`;
     } else if (reg.tipo === 'ocorrencia') {
         html += `<div><i class="fas fa-align-left" style="width:20px"></i> <strong>Descrição:</strong> ${reg.descricao || 'N/A'}</div>`;
         if (reg.acao) html += `<div><i class="fas fa-bolt" style="width:20px"></i> <strong>Ação:</strong> ${reg.acao}</div>`;
@@ -902,17 +274,14 @@ function getDetalhesCompletos(reg) {
 }
 
 async function exportarPDF() {
-    showAlert('⏳ A gerar PDF...', 'success');
+    showAlert('⏳ A gerar relatório...', 'success');
     try {
-        const result = await postScript({ action: 'gerarPDFHACCP', filtros: {} });
-        if (result.status === 'success' || result.success) {
+        const result = await apiRequest('gerarPDFHACCP', {});
+        if (result.status === 'success' && result.pdfUrl) {
             window.open(result.pdfUrl, '_blank');
             showAlert('✅ PDF gerado!', 'success');
         } else {
-            showAlert('❌ Erro ao gerar PDF: ' + (result.message || ''), 'danger');
+            showAlert('❌ ' + (result.message || 'Erro ao gerar PDF'), 'danger');
         }
     } catch(e) { showAlert('❌ Erro: ' + e.message, 'danger'); }
 }
-</script>
-</body>
-</html>
