@@ -756,30 +756,49 @@
     }
 
     function gerarHorarios() {
-      const container = document.getElementById('timeSlots');
-      container.innerHTML = '';
+    const container = document.getElementById('timeSlots');
+    container.innerHTML = '';
 
-      const horarios = [];
+    const dataSeleccionada = document.getElementById('data').value;
+    const ehDomingo = dataSeleccionada
+        ? new Date(dataSeleccionada + 'T12:00:00').getDay() === 0
+        : false;
 
-      if (horariosGlobal.almoco) {
+    const horarios = [];
+
+    // Almoço — sempre disponível
+    if (horariosGlobal.almoco) {
         const [inicio, fim] = horariosGlobal.almoco.split('-');
         horarios.push(...gerarIntervaloHorarios(inicio, fim));
-      }
+    }
 
-      if (horariosGlobal.jantar) {
+    // Jantar — só se não for domingo
+    if (!ehDomingo && horariosGlobal.jantar) {
         const [inicio, fim] = horariosGlobal.jantar.split('-');
         horarios.push(...gerarIntervaloHorarios(inicio, fim));
-      }
+    }
 
-      horarios.forEach(hora => {
+    if (horarios.length === 0) {
+        container.innerHTML = '<p style="color:#999;font-size:0.9rem">Selecione uma data para ver os horários disponíveis.</p>';
+        return;
+    }
+
+    // Aviso se for domingo
+    if (ehDomingo) {
+        const aviso = document.createElement('div');
+        aviso.style.cssText = 'background:#fff8e1;border-left:4px solid #d4a574;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:0.85rem;color:#795548;grid-column:1/-1';
+        aviso.innerHTML = '<i class="fas fa-info-circle"></i> Ao domingo apenas servimos almoço.';
+        container.appendChild(aviso);
+    }
+
+    horarios.forEach(hora => {
         const slot = document.createElement('div');
         slot.className = 'time-slot';
         slot.textContent = hora;
         slot.onclick = () => selecionarHorario(hora, slot);
         container.appendChild(slot);
-      });
-    }
-
+    });
+}
     function gerarIntervaloHorarios(inicio, fim) {
       const horarios = [];
       let [h, m] = inicio.split(':').map(Number);
