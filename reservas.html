@@ -27,7 +27,6 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -38,7 +37,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── HERO ── */
+    /* HERO */
     .hero {
       position: relative;
       height: 220px;
@@ -101,19 +100,15 @@
       color: var(--text-muted);
     }
 
-    .hero-meta-item i {
-      color: var(--gold);
-      font-size: 0.7rem;
-    }
+    .hero-meta-item i { color: var(--gold); font-size: 0.7rem; }
 
-    /* ── MAIN ── */
+    /* MAIN */
     .main {
       padding: 0 16px 40px;
       max-width: 520px;
       margin: 0 auto;
     }
 
-    /* ── SECTION TITLE ── */
     .section-title {
       font-family: 'Playfair Display', serif;
       font-size: 1.5rem;
@@ -129,10 +124,8 @@
       margin-bottom: 24px;
     }
 
-    /* ── FORM FIELDS ── */
-    .field {
-      margin-bottom: 16px;
-    }
+    /* FIELDS */
+    .field { margin-bottom: 16px; }
 
     .field label {
       display: flex;
@@ -146,11 +139,7 @@
       margin-bottom: 7px;
     }
 
-    .field label i {
-      color: var(--gold);
-      font-size: 0.7rem;
-      width: 14px;
-    }
+    .field label i { color: var(--gold); font-size: 0.7rem; width: 14px; }
 
     .field input,
     .field select,
@@ -177,18 +166,9 @@
     }
 
     .field input::placeholder,
-    .field textarea::placeholder {
-      color: var(--text-dim);
-    }
-
-    .field select option {
-      background: var(--surface2);
-    }
-
-    .field textarea {
-      resize: none;
-      height: 80px;
-    }
+    .field textarea::placeholder { color: var(--text-dim); }
+    .field select option { background: var(--surface2); }
+    .field textarea { resize: none; height: 80px; }
 
     .field-row {
       display: grid;
@@ -196,7 +176,7 @@
       gap: 12px;
     }
 
-    /* ── TIME SLOTS ── */
+    /* TIME SLOTS */
     .slots-label {
       display: flex;
       align-items: center;
@@ -209,14 +189,7 @@
       margin-bottom: 10px;
     }
 
-    .slots-label i {
-      color: var(--gold);
-      font-size: 0.7rem;
-    }
-
-    .slots-group {
-      margin-bottom: 8px;
-    }
+    .slots-label i { color: var(--gold); font-size: 0.7rem; }
 
     .slots-group-label {
       font-size: 0.7rem;
@@ -248,11 +221,7 @@
       font-family: 'DM Sans', sans-serif;
     }
 
-    .slot:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: var(--gold-dim);
-    }
+    .slot:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
 
     .slot.active {
       background: var(--gold);
@@ -262,33 +231,10 @@
       box-shadow: 0 4px 14px rgba(201,168,76,0.3);
     }
 
-    .slot.disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
+    /* DIVIDER */
+    .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
-    .sunday-notice {
-      background: var(--gold-dim);
-      border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 0.8rem;
-      color: var(--gold);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ── DIVIDER ── */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 24px 0;
-    }
-
-    /* ── INFO BOX ── */
+    /* INFO BOX */
     .info-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -317,15 +263,9 @@
     }
 
     .info-item:last-child { margin-bottom: 0; }
+    .info-item i { color: var(--gold); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
 
-    .info-item i {
-      color: var(--gold);
-      font-size: 0.7rem;
-      margin-top: 3px;
-      flex-shrink: 0;
-    }
-
-    /* ── SUBMIT ── */
+    /* SUBMIT */
     .btn-submit {
       width: 100%;
       background: var(--gold);
@@ -349,16 +289,9 @@
       box-shadow: 0 8px 28px rgba(201,168,76,0.35);
     }
 
-    .btn-submit:active:not(:disabled) {
-      transform: translateY(0);
-    }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* ── SUCCESS ── */
+    /* SUCCESS */
     .success-card {
       display: none;
       background: var(--surface);
@@ -402,16 +335,8 @@
       font-size: 0.85rem;
     }
 
-    .success-detail .key {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      letter-spacing: 0.5px;
-    }
-
-    .success-detail .val {
-      font-weight: 600;
-      color: var(--text);
-    }
+    .success-detail .key { color: var(--text-muted); font-size: 0.75rem; }
+    .success-detail .val { font-weight: 600; color: var(--text); }
 
     .success-note {
       font-size: 0.78rem;
@@ -420,7 +345,7 @@
       line-height: 1.6;
     }
 
-    /* ── LOADING ── */
+    /* LOADING */
     #loading {
       display: none;
       position: fixed;
@@ -445,7 +370,7 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── TOAST ── */
+    /* TOAST */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -464,15 +389,11 @@
       max-width: 90vw;
     }
 
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .toast.error { border-color: #c0392b; color: #e74c3c; }
     .toast.ok { border-color: var(--success); color: #4caf82; }
 
-    /* ── FOOTER ── */
+    /* FOOTER */
     .footer {
       border-top: 1px solid var(--border);
       padding: 24px 20px;
@@ -487,11 +408,7 @@
       margin-bottom: 12px;
     }
 
-    .footer-links {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; }
 
     .footer-link {
       display: flex;
@@ -505,7 +422,7 @@
 
     .footer-link i { color: var(--gold); font-size: 0.7rem; }
 
-    /* ── FLATPICKR CUSTOM ── */
+    /* FLATPICKR */
     .flatpickr-calendar {
       background: var(--surface2) !important;
       border: 1px solid var(--border) !important;
@@ -520,37 +437,19 @@
       color: var(--dark) !important;
     }
 
-    .flatpickr-day:hover {
-      background: var(--gold-dim) !important;
-    }
-
-    .flatpickr-months,
-    .flatpickr-weekdays {
-      background: var(--surface2) !important;
-    }
-
-    .flatpickr-current-month,
-    .flatpickr-weekday,
-    .flatpickr-day {
-      color: var(--text) !important;
-    }
-
-    .flatpickr-day.disabled,
-    .flatpickr-day.disabled:hover {
-      color: var(--text-dim) !important;
-    }
-
+    .flatpickr-day:hover { background: var(--gold-dim) !important; }
+    .flatpickr-months, .flatpickr-weekdays { background: var(--surface2) !important; }
+    .flatpickr-current-month, .flatpickr-weekday, .flatpickr-day { color: var(--text) !important; }
+    .flatpickr-day.disabled, .flatpickr-day.disabled:hover { color: var(--text-dim) !important; }
     span.flatpickr-weekday { color: var(--gold) !important; }
-
-    .flatpickr-prev-month svg,
-    .flatpickr-next-month svg { fill: var(--gold) !important; }
+    .flatpickr-prev-month svg, .flatpickr-next-month svg { fill: var(--gold) !important; }
   </style>
 
   <script src="config.js"></script>
 </head>
 <body>
 
-<!-- Hero compacto -->
+<!-- Hero -->
 <div class="hero">
   <div class="hero-img"></div>
   <div class="hero-content">
@@ -661,7 +560,7 @@
       </div>
       <div class="info-item">
         <i class="fas fa-circle"></i>
-        Ao domingo servimos apenas almoço
+        Encerrado segunda, terça e quarta-feira
       </div>
     </div>
 
@@ -704,7 +603,6 @@
   let horariosGlobal = {};
   let diasFechadosGlobal = [];
 
-  // ── TOAST ──
   function showToast(msg, type) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -712,13 +610,11 @@
     setTimeout(() => t.classList.remove('show'), 3500);
   }
 
-  // ── LOADING ──
   function setLoading(on) {
     document.getElementById('loading').classList.toggle('show', on);
     document.getElementById('btnSubmit').disabled = on;
   }
 
-  // ── INIT ──
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       await carregarDados();
@@ -741,7 +637,6 @@
     configsGlobal = configs || {};
   }
 
-  // ── CALENDÁRIO ──
   function inicializarCalendario() {
     flatpickr('#data', {
       locale: 'pt',
@@ -762,34 +657,23 @@
     });
   }
 
-  // ── HORÁRIOS ──
   function gerarHorarios() {
     const container = document.getElementById('timeSlots');
     container.innerHTML = '';
     document.getElementById('horario').value = '';
 
     const dataVal = document.getElementById('data').value;
-    const ehDomingo = dataVal
-      ? new Date(dataVal + 'T12:00:00').getDay() === 0
-      : false;
 
     if (!dataVal) {
       container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
       return;
     }
 
-    if (ehDomingo) {
-      const aviso = document.createElement('div');
-      aviso.className = 'sunday-notice';
-      aviso.innerHTML = '<i class="fas fa-info-circle"></i> Ao domingo servimos apenas almoço.';
-      container.appendChild(aviso);
-    }
-
     const almocoSlots = horariosGlobal.almoco
       ? gerarSlots(...horariosGlobal.almoco.split('-'))
       : [];
 
-    const jantarSlots = !ehDomingo && horariosGlobal.jantar
+    const jantarSlots = horariosGlobal.jantar
       ? gerarSlots(...horariosGlobal.jantar.split('-'))
       : [];
 
@@ -819,7 +703,7 @@
     let [h, m] = inicio.split(':').map(Number);
     const [hF, mF] = fim.split(':').map(Number);
     while (h < hF || (h === hF && m < mF)) {
-      slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+      slots.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
       m += 30;
       if (m >= 60) { m = 0; h++; }
     }
@@ -839,7 +723,6 @@
     return el;
   }
 
-  // ── SUBMIT ──
   async function submeterReserva(e) {
     e.preventDefault();
 
@@ -850,13 +733,13 @@
     if (tel.length < 9) { showToast('Telemóvel inválido.', 'error'); return; }
 
     const dados = {
-      nome:     document.getElementById('nome').value.trim(),
-      email:    document.getElementById('email').value.trim(),
+      nome:      document.getElementById('nome').value.trim(),
+      email:     document.getElementById('email').value.trim(),
       telemovel: tel,
-      data:     document.getElementById('data').value,
-      pax:      parseInt(document.getElementById('pax').value),
-      horario:  horario,
-      obs:      document.getElementById('obs').value.trim()
+      data:      document.getElementById('data').value,
+      pax:       parseInt(document.getElementById('pax').value),
+      horario:   horario,
+      obs:       document.getElementById('obs').value.trim()
     };
 
     try {
