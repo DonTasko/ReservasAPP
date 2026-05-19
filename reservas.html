@@ -37,7 +37,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* HERO */
     .hero {
       position: relative;
       height: 220px;
@@ -102,7 +101,6 @@
 
     .hero-meta-item i { color: var(--gold); font-size: 0.7rem; }
 
-    /* MAIN */
     .main {
       padding: 0 16px 40px;
       max-width: 520px;
@@ -124,7 +122,6 @@
       margin-bottom: 24px;
     }
 
-    /* FIELDS */
     .field { margin-bottom: 16px; }
 
     .field label {
@@ -176,7 +173,7 @@
       gap: 12px;
     }
 
-    /* TIME SLOTS */
+    /* SLOTS */
     .slots-label {
       display: flex;
       align-items: center;
@@ -230,6 +227,118 @@
       font-weight: 700;
       box-shadow: 0 4px 14px rgba(201,168,76,0.3);
     }
+
+    /* OPÇÕES ESPECIAIS */
+    .opcoes-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .opcoes-label i { color: var(--gold); font-size: 0.7rem; }
+
+    .opcao-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .opcao-item:hover { border-color: var(--gold); }
+
+    .opcao-item.selected {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .opcao-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .opcao-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      font-size: 0.7rem;
+      color: var(--dark);
+    }
+
+    .opcao-item.selected .opcao-check {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .opcao-check::after {
+      content: '';
+      display: none;
+    }
+
+    .opcao-item.selected .opcao-check::after {
+      content: '✓';
+      display: block;
+      font-weight: 700;
+    }
+
+    .opcao-text { flex: 1; }
+
+    .opcao-nome {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .opcao-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .opcao-extra {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .opcao-item.selected .opcao-extra { display: block; }
+
+    .opcao-extra textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      resize: none;
+      height: 70px;
+      transition: border-color 0.2s;
+    }
+
+    .opcao-extra textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .opcao-extra textarea::placeholder { color: var(--text-dim); }
 
     /* DIVIDER */
     .divider { height: 1px; background: var(--border); margin: 24px 0; }
@@ -449,7 +558,6 @@
 </head>
 <body>
 
-<!-- Hero -->
 <div class="hero">
   <div class="hero-img"></div>
   <div class="hero-content">
@@ -468,13 +576,11 @@
   </div>
 </div>
 
-<!-- Form -->
 <div class="main">
 
   <div class="section-title">Reserve a sua mesa</div>
   <div class="section-sub">Preencha os dados abaixo para confirmar a sua reserva</div>
 
-  <!-- Success -->
   <div id="successCard" class="success-card">
     <div class="success-icon">✓</div>
     <h3>Reserva Confirmada!</h3>
@@ -541,9 +647,45 @@
     <div id="timeSlots"></div>
     <input type="hidden" id="horario" required>
 
-    <div class="field" style="margin-top:16px">
-      <label><i class="fas fa-comment"></i> Notas (opcional)</label>
-      <textarea id="obs" placeholder="Alergias, ocasião especial..."></textarea>
+    <!-- OPÇÕES ESPECIAIS -->
+    <div style="margin-top:20px">
+      <div class="opcoes-label"><i class="fas fa-star"></i> Ocasião especial</div>
+
+      <!-- Grávida -->
+      <div class="opcao-item" id="opcao-gravida" onclick="toggleOpcao('gravida')">
+        <div class="opcao-row">
+          <div class="opcao-check" id="check-gravida"></div>
+          <div class="opcao-text">
+            <div class="opcao-nome">🤰 Grávida</div>
+            <div class="opcao-desc">Informaremos a cozinha para cuidados especiais</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aniversário -->
+      <div class="opcao-item" id="opcao-aniversario" onclick="toggleOpcao('aniversario')">
+        <div class="opcao-row">
+          <div class="opcao-check" id="check-aniversario"></div>
+          <div class="opcao-text">
+            <div class="opcao-nome">🎂 Aniversário</div>
+            <div class="opcao-desc">Se pretender trazer bolo, consulte as nossas regras no menu antes de confirmar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alergias -->
+      <div class="opcao-item" id="opcao-alergias" onclick="toggleOpcao('alergias')">
+        <div class="opcao-row">
+          <div class="opcao-check" id="check-alergias"></div>
+          <div class="opcao-text">
+            <div class="opcao-nome">⚠️ Alergias alimentares</div>
+            <div class="opcao-desc">Indique a que é alérgico para informarmos a cozinha</div>
+          </div>
+        </div>
+        <div class="opcao-extra" id="extra-alergias">
+          <textarea id="texto-alergias" placeholder="Ex: amendoim, glúten, marisco..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
     </div>
 
     <div class="divider"></div>
@@ -571,7 +713,6 @@
   </form>
 </div>
 
-<!-- Footer -->
 <div class="footer">
   <div class="footer-brand">DON TASKO</div>
   <div class="footer-links">
@@ -587,12 +728,7 @@
   </div>
 </div>
 
-<!-- Loading -->
-<div id="loading">
-  <div class="spinner"></div>
-</div>
-
-<!-- Toast -->
+<div id="loading"><div class="spinner"></div></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -602,6 +738,15 @@
   let configsGlobal = {};
   let horariosGlobal = {};
   let diasFechadosGlobal = [];
+
+  // Opções seleccionadas
+  const opcoesSeleccionadas = { gravida: false, aniversario: false, alergias: false };
+
+  function toggleOpcao(id) {
+    opcoesSeleccionadas[id] = !opcoesSeleccionadas[id];
+    const item = document.getElementById('opcao-' + id);
+    item.classList.toggle('selected', opcoesSeleccionadas[id]);
+  }
 
   function showToast(msg, type) {
     const t = document.getElementById('toast');
@@ -622,6 +767,7 @@
       gerarHorarios();
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
     } catch(e) {
+      console.error(e);
       showToast('Erro ao carregar. Recarregue a página.', 'error');
     }
   });
@@ -635,6 +781,28 @@
     diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
     horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-23:00' };
     configsGlobal = configs || {};
+    console.log('📅 Dias fechados:', diasFechadosGlobal);
+  }
+
+  // Normaliza string: minúsculas + sem acentos
+  function normalizar(str) {
+    return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+
+  // Converte qualquer valor de data para yyyy-mm-dd
+  function toISO(val) {
+    if (!val) return '';
+    // Já está em formato ISO
+    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
+    // Formato dd/mm/yyyy
+    const m1 = String(val).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m1) return m1[3] + '-' + m1[2].padStart(2,'0') + '-' + m1[1].padStart(2,'0');
+    // Date object ou timestamp
+    try {
+      const d = new Date(val);
+      if (!isNaN(d)) return d.toISOString().split('T')[0];
+    } catch(e) {}
+    return String(val).trim();
   }
 
   function inicializarCalendario() {
@@ -644,13 +812,28 @@
       dateFormat: 'Y-m-d',
       disable: [
         function(date) {
-          const dayName = date.toLocaleDateString('pt-PT', { weekday: 'long' })
-            .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          const dateStr = date.toISOString().split('T')[0];
-          const norm = diasFechadosGlobal.map(d =>
-            d.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          // Data do calendário em ISO local
+          const y = date.getFullYear();
+          const m = String(date.getMonth() + 1).padStart(2, '0');
+          const d = String(date.getDate()).padStart(2, '0');
+          const dateISO = y + '-' + m + '-' + d;
+
+          // Nome do dia sem acentos
+          const dayName = normalizar(
+            date.toLocaleDateString('pt-PT', { weekday: 'long' })
           );
-          return norm.includes(dayName) || norm.includes(dateStr);
+
+          for (let i = 0; i < diasFechadosGlobal.length; i++) {
+            const entrada = diasFechadosGlobal[i];
+            const entradaISO = toISO(entrada);
+            const entradaNorm = normalizar(entrada);
+
+            // Compara data específica
+            if (entradaISO === dateISO) return true;
+            // Compara nome do dia da semana
+            if (entradaNorm === dayName) return true;
+          }
+          return false;
         }
       ],
       onChange: function() { gerarHorarios(); }
@@ -669,13 +852,8 @@
       return;
     }
 
-    const almocoSlots = horariosGlobal.almoco
-      ? gerarSlots(...horariosGlobal.almoco.split('-'))
-      : [];
-
-    const jantarSlots = horariosGlobal.jantar
-      ? gerarSlots(...horariosGlobal.jantar.split('-'))
-      : [];
+    const almocoSlots = horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : [];
+    const jantarSlots = horariosGlobal.jantar ? gerarSlots(...horariosGlobal.jantar.split('-')) : [];
 
     if (almocoSlots.length) {
       const g = document.createElement('div');
@@ -723,6 +901,17 @@
     return el;
   }
 
+  function construirObs() {
+    const partes = [];
+    if (opcoesSeleccionadas.gravida) partes.push('GRÁVIDA');
+    if (opcoesSeleccionadas.aniversario) partes.push('ANIVERSÁRIO');
+    if (opcoesSeleccionadas.alergias) {
+      const txt = (document.getElementById('texto-alergias').value || '').trim();
+      partes.push('ALERGIAS: ' + (txt || 'não especificadas'));
+    }
+    return partes.join(' | ');
+  }
+
   async function submeterReserva(e) {
     e.preventDefault();
 
@@ -732,6 +921,8 @@
     const tel = document.getElementById('telemovel').value.replace(/\D/g,'');
     if (tel.length < 9) { showToast('Telemóvel inválido.', 'error'); return; }
 
+    const obs = construirObs();
+
     const dados = {
       nome:      document.getElementById('nome').value.trim(),
       email:     document.getElementById('email').value.trim(),
@@ -739,7 +930,7 @@
       data:      document.getElementById('data').value,
       pax:       parseInt(document.getElementById('pax').value),
       horario:   horario,
-      obs:       document.getElementById('obs').value.trim()
+      obs:       obs
     };
 
     try {
