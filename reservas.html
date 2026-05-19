@@ -855,34 +855,48 @@
     const dataVal = document.getElementById('data').value;
 
     if (!dataVal) {
-      container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
-      return;
+        container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
+        return;
     }
 
-    const almocoSlots = horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : [];
-    const jantarSlots = horariosGlobal.jantar ? gerarSlots(...horariosGlobal.jantar.split('-')) : [];
+    // 0 = domingo, 6 = sábado
+    const diaSemana = new Date(dataVal + 'T12:00:00').getDay();
+    const ehFimDeSemana = diaSemana === 0 || diaSemana === 6;
+
+    // Slots de almoço: fim de semana = 2 turnos fixos, semana = intervalos normais
+    const almocoSlots = ehFimDeSemana
+        ? ['12:00', '13:45']
+        : (horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : []);
+
+    // Jantar: sempre igual (exceto domingo se voltares a querer bloquear)
+    const jantarSlots = horariosGlobal.jantar
+        ? gerarSlots(...horariosGlobal.jantar.split('-'))
+        : [];
 
     if (almocoSlots.length) {
-      const g = document.createElement('div');
-      g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
-      const grid = document.createElement('div');
-      grid.className = 'slots-grid';
-      almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
-      g.appendChild(grid);
-      container.appendChild(g);
+        const g = document.createElement('div');
+        if (ehFimDeSemana) {
+            g.innerHTML = '<div class="slots-group-label">🌞 Almoço · 2 turnos</div>';
+        } else {
+            g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
+        }
+        const grid = document.createElement('div');
+        grid.className = 'slots-grid';
+        almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
+        g.appendChild(grid);
+        container.appendChild(g);
     }
 
     if (jantarSlots.length) {
-      const g = document.createElement('div');
-      g.innerHTML = '<div class="slots-group-label">🌙 Jantar</div>';
-      const grid = document.createElement('div');
-      grid.className = 'slots-grid';
-      jantarSlots.forEach(h => grid.appendChild(criarSlot(h)));
-      g.appendChild(grid);
-      container.appendChild(g);
+        const g = document.createElement('div');
+        g.innerHTML = '<div class="slots-group-label">🌙 Jantar</div>';
+        const grid = document.createElement('div');
+        grid.className = 'slots-grid';
+        jantarSlots.forEach(h => grid.appendChild(criarSlot(h)));
+        g.appendChild(grid);
+        container.appendChild(g);
     }
-  }
-
+}
   function gerarSlots(inicio, fim) {
     const slots = [];
     let [h, m] = inicio.split(':').map(Number);
