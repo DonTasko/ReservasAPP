@@ -959,7 +959,7 @@ function processInvoiceQR(qrData) {
     console.log('📍 QR Raw:', qrData);
     
     // Remover símbolo € se existir
-    qrData = qrData.replace('€', '').trim();
+   qrData = qrData.replace('€', '').replace(/O/g, '0').trim();
     
     // Formato esperado: NIF|VALOR|DATA ou apenas VALOR
     let nif, amount, date;
