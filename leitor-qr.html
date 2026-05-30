@@ -427,6 +427,15 @@
         <h2 class="section-title">📋 Histórico de Leituras</h2>
         <div id="historyContainer"></div>
     </div>
+
+    <!-- DEBUG PANEL (Mobile) -->
+    <div class="section" style="background: #1a1a1a; border: 2px solid #666;">
+        <h2 class="section-title" style="color: #999; font-size: 1rem;">🐛 Debug Info</h2>
+        <div id="debugPanel" style="background: #0a0a0a; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #81c784; line-height: 1.8; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">
+            Aguardando ação...
+        </div>
+        <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="clearDebugPanel()">Limpar Debug</button>
+    </div>
 </div>
 
 <!-- MODAL SCANNER -->
@@ -446,6 +455,34 @@
 
 <script>
 console.log('🔍 Leitor de QR Code - Iniciando v2.0');
+
+// ========== DEBUG VISUAL ==========
+let debugLog = [];
+
+function addDebug(msg) {
+    const timestamp = new Date().toLocaleTimeString('pt-PT');
+    const logEntry = `[${timestamp}] ${msg}`;
+    debugLog.push(logEntry);
+    
+    // Manter apenas últimas 20 linhas
+    if (debugLog.length > 20) debugLog.shift();
+    
+    updateDebugPanel();
+    console.log(msg);
+}
+
+function updateDebugPanel() {
+    const panel = document.getElementById('debugPanel');
+    if (panel) {
+        panel.textContent = debugLog.join('\n');
+        panel.scrollTop = panel.scrollHeight;
+    }
+}
+
+function clearDebugPanel() {
+    debugLog = [];
+    updateDebugPanel();
+}
 
 // ========== CONFIGURAÇÕES DE SEGURANÇA ==========
 const RESTAURANT_NIF = '516763482';  // NIF DO DON TASKO
@@ -488,10 +525,11 @@ function handleFileSelect(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    console.log('📁 Arquivo selecionado:', file.name, file.size, file.type);
+    addDebug(`📁 Arquivo: ${file.name}`);
 
     if (!file.type.startsWith('image/')) {
         showError('❌ Por favor, seleciona uma imagem válida (JPG ou PNG)');
+        addDebug('❌ Tipo de arquivo inválido: ' + file.type);
         return;
     }
 
@@ -500,26 +538,25 @@ function handleFileSelect(e) {
 
     const reader = new FileReader();
     reader.onload = function(event) {
-        console.log('📖 FileReader completo, tamanho:', event.target.result.length);
+        addDebug('📖 FileReader completo');
         const img = new Image();
         
         img.onload = function() {
-            console.log('🖼️ Imagem carregada:', img.width, 'x', img.height);
+            addDebug(`🖼️ Imagem carregada: ${img.width}x${img.height}`);
             processImage(img);
         };
         
         img.onerror = function() {
-            console.error('❌ Erro ao carregar imagem');
+            addDebug('❌ Erro ao carregar imagem');
             showError('❌ Erro ao carregar a imagem. Tenta com outro arquivo.');
             document.getElementById('processingSection').style.display = 'none';
         };
         
         img.src = event.target.result;
-        console.log('📸 Src da imagem definido');
     };
     
     reader.onerror = function() {
-        console.error('❌ Erro ao ler arquivo');
+        addDebug('❌ Erro ao ler arquivo');
         showError('❌ Erro ao ler o arquivo');
         document.getElementById('processingSection').style.display = 'none';
     };
@@ -529,7 +566,7 @@ function handleFileSelect(e) {
 
 // ========== PROCESSAR IMAGEM ==========
 function processImage(img) {
-    console.log('⚙️ Processando imagem:', img.width, 'x', img.height);
+    addDebug(`⚙️ Processando: ${img.width}x${img.height}`);
     
     try {
         const canvas = document.createElement('canvas');
@@ -538,48 +575,47 @@ function processImage(img) {
 
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) {
-            console.error('❌ Não consegui obter contexto 2D');
+            addDebug('❌ Não consegui obter contexto 2D');
             showError('❌ Erro ao processar imagem');
             document.getElementById('processingSection').style.display = 'none';
             return;
         }
 
         ctx.drawImage(img, 0, 0);
-        console.log('✅ Imagem desenhada no canvas');
+        addDebug('✅ Imagem desenhada');
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        console.log('✅ ImageData obtida:', imageData.width, 'x', imageData.height);
+        addDebug(`✅ ImageData: ${imageData.width}x${imageData.height}`);
         
-        console.log('🔎 Procurando QR code com jsQR...');
+        addDebug('🔎 Analisando QR...');
         const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-        console.log('📊 jsQR resultado:', code ? 'ENCONTRADO' : 'NÃO ENCONTRADO');
+        addDebug(`📊 Resultado: ${code ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
 
         setTimeout(() => {
             document.getElementById('processingSection').style.display = 'none';
 
             if (code && code.data) {
-                console.log('✅ QR Code encontrado! Dados:', code.data);
+                addDebug(`✅ QR: ${code.data}`);
                 parseQRData(code.data, img.src);
             } else {
-                console.log('❌ QR code não detectado');
-                showError('❌ Nenhum QR code encontrado. Certifica-te que a imagem é nítida e contém um QR code válido.');
+                addDebug('❌ Sem QR code detectado');
+                showError('❌ Nenhum QR code encontrado. Certifica-te que a imagem é nítida.');
             }
         }, 500);
     } catch (error) {
-        console.error('❌ Erro ao processar:', error);
-        showError('❌ Erro ao processar a imagem: ' + error.message);
+        addDebug(`❌ Erro: ${error.message}`);
+        showError('❌ Erro ao processar: ' + error.message);
         document.getElementById('processingSection').style.display = 'none';
     }
 }
 
 // ========== INICIAR SCANNER COM CÂMARA ==========
 function startScan() {
-    console.log('🎥 Iniciando câmara...');
+    addDebug('🎥 Iniciando câmara...');
     const video = document.getElementById('video');
     const modal = document.getElementById('scannerModal');
     
-    // Primeiro, tentar com constraints mais flexíveis
     const constraints = {
         video: {
             facingMode: 'environment'
@@ -589,32 +625,29 @@ function startScan() {
 
     navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
-            console.log('✅ Stream obtido, ativando vídeo');
+            addDebug('✅ Stream obtido');
             video.srcObject = stream;
             video.setAttribute('playsinline', 'true');
             
             modal.classList.add('active');
             scannerActive = true;
 
-            // Esperar que o vídeo comece
             video.onplay = () => {
-                console.log('📹 Vídeo a reproduzir');
+                addDebug('📹 Vídeo a reproduzir');
                 setTimeout(() => {
                     scanQRLoop();
                 }, 300);
             };
 
             video.play().catch(err => {
-                console.error('❌ Erro ao fazer play:', err);
+                addDebug(`❌ Play error: ${err.message}`);
             });
         })
         .catch(err => {
-            console.error('❌ Erro ao aceder câmara:', err);
-            console.error('Tipo de erro:', err.name, err.message);
+            addDebug(`❌ Câmara error: ${err.name}`);
             stopScanner();
-            showError('❌ Câmara não disponível. Por favor, carrega uma imagem em seu lugar.');
+            showError('❌ Câmara não disponível. Carrega uma imagem em seu lugar.');
             
-            // Fallback para upload
             setTimeout(() => {
                 document.getElementById('fileInput').click();
             }, 500);
@@ -627,7 +660,7 @@ function scanQRLoop() {
     const canvas = document.getElementById('canvas');
     
     if (!scannerActive) {
-        console.log('Scanning parou');
+        addDebug('Scanning parou');
         return;
     }
     
@@ -643,14 +676,14 @@ function scanQRLoop() {
             const code = jsQR(imageData.data, imageData.width, imageData.height);
             
             if (code && code.data) {
-                console.log('✅ QR Code encontrado via câmara:', code.data);
+                addDebug(`✅ QR: ${code.data}`);
                 scannerActive = false;
                 stopScanner();
                 parseQRData(code.data);
                 return;
             }
         } catch (err) {
-            console.warn('Erro ao escanear:', err);
+            addDebug(`⚠️ Error: ${err.message}`);
         }
     }
     
@@ -659,12 +692,12 @@ function scanQRLoop() {
 
 // ========== PARAR SCANNER ==========
 function stopScanner() {
-    console.log('🛑 Parando scanner');
+    addDebug('🛑 Parando scanner');
     scannerActive = false;
     const video = document.getElementById('video');
     if (video.srcObject) {
         video.srcObject.getTracks().forEach(track => {
-            console.log('Parando track:', track.kind);
+            addDebug(`Parando ${track.kind}`);
             track.stop();
         });
     }
@@ -702,9 +735,10 @@ function validateQRSecurity(nif, valor, data, rawData) {
         
         if (isDonTaskoInvoice) {
             validations.restaurant_match = true;
-            console.log(`✅ Fatura do Don Tasko (NIF: ${nif})`);
+            addDebug(`✅ Fatura Don Tasko`);
         } else {
             validations.messages.push(`❌ NIF não pertence ao Don Tasko (esperado: ${RESTAURANT_NIF}, recebido: ${nif})`);
+            addDebug(`❌ NIF inválido: ${nif}`);
         }
     }
 
@@ -727,7 +761,7 @@ function validateQRSecurity(nif, valor, data, rawData) {
 
 // ========== PARSE QR DATA ==========
 function parseQRData(qrRawData) {
-    console.log('📍 Analisando dados:', qrRawData);
+    addDebug(`📍 QR raw: ${qrRawData}`);
 
     let nif = null;
     let valor = null;
@@ -740,8 +774,10 @@ function parseQRData(qrRawData) {
         if (parts.length > 2) {
             data = parts[2].trim();
         }
+        addDebug('✅ Formato: NIF|VALOR|DATA');
     } else if (!isNaN(qrRawData)) {
         valor = parseFloat(qrRawData);
+        addDebug('⚠️ Formato: apenas valor');
     } else if (/^\d{9}/.test(qrRawData)) {
         nif = qrRawData.substring(0, 9);
         const restante = qrRawData.substring(9);
@@ -749,6 +785,7 @@ function parseQRData(qrRawData) {
         if (valorMatch) {
             valor = parseFloat(valorMatch[1]);
         }
+        addDebug('⚠️ Formato: NIF no início');
     } else {
         const valorMatch = qrRawData.match(/(\d+\.?\d*)/);
         if (valorMatch) {
@@ -758,26 +795,30 @@ function parseQRData(qrRawData) {
         if (nifMatch) {
             nif = nifMatch[0];
         }
+        addDebug('⚠️ Formato: padrão buscado');
     }
+
+    addDebug(`NIF: ${nif || 'não encontrado'}`);
+    addDebug(`Valor: €${valor || 'não encontrado'}`);
 
     const security = validateQRSecurity(nif, valor, data, qrRawData);
 
     if (security.messages.length > 0) {
         security.messages.forEach(msg => {
-            console.log(msg);
+            addDebug(msg);
             showError(msg);
         });
     }
 
     if (security.nif_valid && security.valor_valid && security.restaurant_match && security.not_duplicate) {
-        console.log('🟢 ACEITO');
+        addDebug('🟢 ACEITO');
         displayResults(nif, valor, data, qrRawData);
     } else {
-        console.log('🔴 REJEITADO');
+        addDebug('🔴 REJEITADO');
         if (!security.restaurant_match) {
-            showError('❌ REJEITADO: QR não pertence ao Don Tasko!');
+            showError('❌ QR não pertence ao Don Tasko!');
         } else if (!security.not_duplicate) {
-            showError('❌ REJEITADO: QR já foi processado!');
+            showError('❌ QR já foi processado!');
         }
     }
 }
