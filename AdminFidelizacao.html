@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin | Fidelização Don Tasko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4a574;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+            --light: #f5f5f0;
+            --card-bg: #2a2a2a;
+            --text-light: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* ========== LOGIN ========== */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 400px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-login {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-login h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-login p {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(212, 165, 116, 0.3);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .message {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--danger);
+            color: #ff7675;
+        }
+
+        .success-message {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid var(--success);
+            color: #81c784;
+        }
+
+        /* ========== DASHBOARD ========== */
+        .dashboard-screen {
+            display: none;
+        }
+
+        .dashboard-screen.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a2a2a 100%);
+            padding: 1.5rem 1rem;
+            border-bottom: 2px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .header-subtitle {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .header-user {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* ========== NAV TABS ========== */
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #333;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: #999;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .nav-tab:hover {
+            color: var(--accent);
+        }
+
+        /* ========== SECTIONS ========== */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ========== DASHBOARD STATS ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* ========== TABELA ========== */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            overflow-x: auto;
+        }
+
+        .table-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #1a1a1a;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        tbody tr:hover {
+            background: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: #ffd700;
+        }
+
+        .status-approved {
+            background: rgba(39, 174, 96, 0.2);
+            color: #81c784;
+        }
+
+        .status-rejected {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff7675;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            margin-right: 0.3rem;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #229954;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+        }
+
+        .btn-view {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        /* ========== FILTERS ========== */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #999;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.6rem;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #1a1a1a;
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid #333;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #333;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="logo-login">
+            <h1>Don Tasko</h1>
+            <p>Painel de Administração</p>
+        </div>
+
+        <div id="errorMessage" class="message error-message"></div>
+        <div id="successMessage" class="message success-message"></div>
+
+        <div class="form-group">
+            <label>Código Admin</label>
+            <input type="password" id="adminCode" placeholder="Código secreto" autofocus>
+        </div>
+        <button class="btn-primary" onclick="adminLogin()">Entrar</button>
+    </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div class="dashboard-screen" id="dashboardScreen">
+    <!-- HEADER -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div>
+                <div class="header-logo">Don Tasko Admin</div>
+                <div class="header-subtitle">Gestão de Fidelização</div>
+            </div>
+            <div class="header-user">
+                <button class="btn-logout" onclick="adminLogout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="dashboard-content">
+        <!-- NAV TABS -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('overview')">📊 Overview</button>
+            <button class="nav-tab" onclick="switchTab('transactions')">💳 Transações</button>
+            <button class="nav-tab" onclick="switchTab('customers')">👥 Clientes</button>
+            <button class="nav-tab" onclick="switchTab('rewards')">🎁 Recompensas</button>
+            <button class="nav-tab" onclick="switchTab('settings')">⚙️ Configurações</button>
+        </div>
+
+        <!-- ========== OVERVIEW SECTION ========== -->
+        <section class="section active" id="overviewSection">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-label">Total de Clientes</div>
+                    <div class="stat-value" id="totalCustomers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-label">Transações Pendentes</div>
+                    <div class="stat-value" id="pendingTransactions">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Volume Total (€)</div>
+                    <div class="stat-value" id="totalVolume">0 €</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-label">Pontos Ativos</div>
+                    <div class="stat-value" id="totalPoints">0</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3 class="table-title">Transações Recentes</h3>
+                <div id="recentTransactionsContainer"></div>
+            </div>
+        </section>
+
+        <!-- ========== TRANSACTIONS SECTION ========== -->
+        <section class="section" id="transactionsSection">
+            <div class="table-container">
+                <h3 class="table-title">Gerenciar Transações</h3>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="filterStatus" onchange="loadTransactions()">
+                            <option value="">Todas</option>
+                            <option value="pending">Pendentes</option>
+                            <option value="approved">Aprovadas</option>
+                            <option value="rejected">Rejeitadas</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>NIF Cliente</label>
+                        <input type="text" id="filterNIF" placeholder="123456789" onchange="loadTransactions()">
+                    </div>
+                    <div class="filter-group">
+                        <label>Data Inicial</label>
+                        <input type="date" id="filterDateFrom" onchange="loadTransactions()">
+                    </div>
+                    <div class="filter-group">
+                        <label>Data Final</label>
+                        <input type="date" id="filterDateTo" onchange="loadTransactions()">
+                    </div>
+                </div>
+
+                <div id="transactionsTableContainer"></div>
+            </div>
+        </section>
+
+        <!-- ========== CUSTOMERS SECTION ========== -->
+        <section class="section" id="customersSection">
+            <div class="table-container">
+                <h3 class="table-title">Gestão de Clientes</h3>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Pesquisar</label>
+                        <input type="text" id="filterCustomerName" placeholder="Nome ou NIF" onchange="loadCustomers()">
+                    </div>
+                    <div class="filter-group">
+                        <label>Ordenar por</label>
+                        <select id="filterCustomerSort" onchange="loadCustomers()">
+                            <option value="name">Nome</option>
+                            <option value="gasto">Gasto Total</option>
+                            <option value="pontos">Pontos</option>
+                            <option value="data">Data Registo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="customersTableContainer"></div>
+            </div>
+        </section>
+
+        <!-- ========== REWARDS SECTION ========== -->
+        <section class="section" id="rewardsSection">
+            <div class="table-container">
+                <h3 class="table-title">Recompensas Disponíveis</h3>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <button class="btn-primary" style="width: auto;" onclick="showAddRewardModal()">+ Adicionar Recompensa</button>
+                </div>
+
+                <div id="rewardsTableContainer"></div>
+            </div>
+        </section>
+
+        <!-- ========== SETTINGS SECTION ========== -->
+        <section class="section" id="settingsSection">
+            <div class="table-container">
+                <h3 class="table-title">⚙️ Configurações da Fidelização</h3>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Taxa de Cashback (%)</label>
+                        <input type="number" id="settingsCashback" min="0" max="100" step="0.1" value="5">
+                    </div>
+                    <div class="filter-group">
+                        <label>Pontos por Euro</label>
+                        <input type="number" id="settingsPoints" min="1" value="1">
+                    </div>
+                    <div class="filter-group">
+                        <label>Selos para Recompensa</label>
+                        <input type="number" id="settingsSeals" min="1" value="10">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="saveSettings()">Guardar Configurações</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- ========== MODAIS ========== -->
+
+<!-- Modal de Detalhes de Transação -->
+<div class="modal" id="transactionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Detalhes da Transação</div>
+            <button class="modal-close" onclick="closeModal('transactionModal')">×</button>
+        </div>
+        <div class="modal-body" id="transactionModalBody"></div>
+        <div class="modal-footer">
+            <button class="btn-sm btn-approve" onclick="approveTransaction()">✓ Aprovar</button>
+            <button class="btn-sm btn-reject" onclick="rejectTransaction()">✗ Rejeitar</button>
+            <button class="btn-sm" style="background: #444; color: white;" onclick="closeModal('transactionModal')">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Cliente -->
+<div class="modal" id="customerModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Detalhes do Cliente</div>
+            <button class="modal-close" onclick="closeModal('customerModal')">×</button>
+        </div>
+        <div class="modal-body" id="customerModalBody"></div>
+        <div class="modal-footer">
+            <button class="btn-sm" style="background: #444; color: white;" onclick="closeModal('customerModal')">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Recompensa -->
+<div class="modal" id="rewardModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Adicionar Recompensa</div>
+            <button class="modal-close" onclick="closeModal('rewardModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Nome da Recompensa</label>
+                <input type="text" id="rewardName" placeholder="Ex: Desconto 10%">
+            </div>
+            <div class="form-group">
+                <label>Pontos Necessários</label>
+                <input type="number" id="rewardPoints" placeholder="Ex: 100" min="1">
+            </div>
+            <div class="form-group">
+                <label>Descrição</label>
+                <textarea id="rewardDesc" placeholder="Descrição da recompensa" style="width: 100%; padding: 0.8rem; border: 1px solid #444; border-radius: 8px; background: #1a1a1a; color: var(--light); resize: vertical; height: 100px;"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-sm btn-approve" onclick="saveReward()">Guardar</button>
+            <button class="btn-sm" style="background: #444; color: white;" onclick="closeModal('rewardModal')">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script src="config.js"></script>
+
+<script>
+console.log('🔐 Painel Admin Don Tasko iniciando...');
+
+let adminUser = null;
+let currentTransactionId = null;
+let ADMIN_CODE = '2025admin'; // Código padrão (mude em produção!)
+
+// ========== AUTH ==========
+function adminLogin() {
+    const code = document.getElementById('adminCode').value.trim();
+    
+    if (!code) {
+        showError('Insira o código de acesso');
+        return;
+    }
+    
+    if (code !== ADMIN_CODE) {
+        showError('Código de acesso incorreto');
+        return;
+    }
+    
+    adminUser = { loggedAt: new Date() };
+    localStorage.setItem('admin_session', JSON.stringify(adminUser));
+    
+    showDashboard();
+}
+
+function adminLogout() {
+    adminUser = null;
+    localStorage.removeItem('admin_session');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboardScreen').classList.remove('active');
+    document.getElementById('adminCode').value = '';
+}
+
+function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboardScreen').classList.add('active');
+    
+    loadOverview();
+}
+
+// ========== SECTIONS ==========
+function switchTab(tabName) {
+    // Ocultar todas as secções
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    
+    // Desativar todos os tabs
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    
+    // Ativar tab selecionado
+    event.target.classList.add('active');
+    
+    // Ativar secção
+    document.getElementById(tabName + 'Section').classList.add('active');
+    
+    // Carregar dados
+    if (tabName === 'overview') loadOverview();
+    else if (tabName === 'transactions') loadTransactions();
+    else if (tabName === 'customers') loadCustomers();
+    else if (tabName === 'rewards') loadRewards();
+}
+
+// ========== OVERVIEW ==========
+function loadOverview() {
+    // Simular dados (em produção viriam da Sheet)
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    let totalSpent = 0;
+    let totalPoints = 0;
+    let pendingTrans = 0;
+    
+    const transactions = [];
+    customers.forEach(c => {
+        const stored = localStorage.getItem('customer_' + c.nif);
+        if (stored) {
+            const data = JSON.parse(stored);
+            totalSpent += data.transactions.reduce((sum, t) => sum + t.amount, 0);
+            totalPoints += data.points;
+            data.transactions.forEach(t => {
+                transactions.push({
+                    nif: c.nif,
+                    name: data.name,
+                    ...t
+                });
+            });
+        }
+    });
+    
+    document.getElementById('totalCustomers').textContent = customers.length;
+    document.getElementById('pendingTransactions').textContent = pendingTrans;
+    document.getElementById('totalVolume').textContent = totalSpent.toFixed(2) + ' €';
+    document.getElementById('totalPoints').textContent = totalPoints;
+    
+    // Transações recentes
+    const recent = transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+    const html = recent.length > 0
+        ? `<table><thead><tr><th>Cliente</th><th>NIF</th><th>Data</th><th>Valor</th><th>Pontos</th></tr></thead><tbody>${recent.map(t => `
+            <tr>
+                <td>${t.name}</td>
+                <td>${t.nif}</td>
+                <td>${formatDate(t.date)}</td>
+                <td>€${t.amount.toFixed(2)}</td>
+                <td>+${t.points}</td>
+            </tr>
+        `).join('')}</tbody></table>`
+        : '<div class="empty-state">Nenhuma transação ainda</div>';
+    
+    document.getElementById('recentTransactionsContainer').innerHTML = html;
+}
+
+// ========== TRANSACTIONS ==========
+function loadTransactions() {
+    const status = document.getElementById('filterStatus').value;
+    const nif = document.getElementById('filterNIF').value;
+    
+    // Simular dados
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    const transactions = [];
+    
+    customers.forEach(c => {
+        if (nif && c.nif !== nif) return;
+        const stored = localStorage.getItem('customer_' + c.nif);
+        if (stored) {
+            const data = JSON.parse(stored);
+            data.transactions.forEach((t, idx) => {
+                transactions.push({
+                    id: c.nif + '_' + idx,
+                    nif: c.nif,
+                    name: data.name,
+                    ...t,
+                    transStatus: 'approved'
+                });
+            });
+        }
+    });
+    
+    const filtered = status ? transactions.filter(t => t.transStatus === status) : transactions;
+    
+    const html = filtered.length > 0
+        ? `<table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>NIF</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Pontos</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filtered.map(t => `
+                    <tr>
+                        <td>${t.name}</td>
+                        <td>${t.nif}</td>
+                        <td>${formatDate(t.date)}</td>
+                        <td>€${t.amount.toFixed(2)}</td>
+                        <td>${t.points}</td>
+                        <td><span class="status-badge status-${t.transStatus}">${t.transStatus}</span></td>
+                        <td>
+                            <button class="btn-sm btn-view" onclick="viewTransaction('${t.id}', '${t.name}', '${t.nif}', ${t.amount}, ${t.points}, '${t.date}')">Ver</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>`
+        : '<div class="empty-state">Nenhuma transação encontrada</div>';
+    
+    document.getElementById('transactionsTableContainer').innerHTML = html;
+}
+
+function viewTransaction(id, name, nif, amount, points, date) {
+    currentTransactionId = id;
+    const html = `
+        <p><strong>Cliente:</strong> ${name}</p>
+        <p><strong>NIF:</strong> ${nif}</p>
+        <p><strong>Data:</strong> ${formatDate(date)}</p>
+        <p><strong>Valor:</strong> €${amount.toFixed(2)}</p>
+        <p><strong>Pontos:</strong> ${points}</p>
+        <p><strong>Cashback:</strong> €${(amount * 0.05).toFixed(2)}</p>
+    `;
+    document.getElementById('transactionModalBody').innerHTML = html;
+    openModal('transactionModal');
+}
+
+function approveTransaction() {
+    showSuccess('✓ Transação aprovada!');
+    closeModal('transactionModal');
+    loadTransactions();
+}
+
+function rejectTransaction() {
+    showSuccess('✗ Transação rejeitada');
+    closeModal('transactionModal');
+    loadTransactions();
+}
+
+// ========== CUSTOMERS ==========
+function loadCustomers() {
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    const search = document.getElementById('filterCustomerName').value.toLowerCase();
+    
+    let customerData = customers
+        .filter(c => !search || c.name.toLowerCase().includes(search) || c.nif.includes(search))
+        .map(c => {
+            const stored = JSON.parse(localStorage.getItem('customer_' + c.nif) || '{}');
+            return {
+                ...c,
+                pontos: stored.points || 0,
+                gasto: stored.transactions ? stored.transactions.reduce((sum, t) => sum + t.amount, 0) : 0
+            };
+        });
+    
+    const sort = document.getElementById('filterCustomerSort').value;
+    if (sort === 'gasto') customerData.sort((a, b) => b.gasto - a.gasto);
+    else if (sort === 'pontos') customerData.sort((a, b) => b.pontos - a.pontos);
+    else if (sort === 'data') customerData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    else customerData.sort((a, b) => a.name.localeCompare(b.name));
+    
+    const html = customerData.length > 0
+        ? `<table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>NIF</th>
+                    <th>Telemóvel</th>
+                    <th>Gasto (€)</th>
+                    <th>Pontos</th>
+                    <th>Data Registo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${customerData.map(c => `
+                    <tr>
+                        <td>${c.name}</td>
+                        <td>${c.nif}</td>
+                        <td>${c.tel}</td>
+                        <td>€${c.gasto.toFixed(2)}</td>
+                        <td>${c.pontos}</td>
+                        <td>${c.createdAt ? formatDate(c.createdAt) : '-'}</td>
+                        <td>
+                            <button class="btn-sm btn-view" onclick="viewCustomer('${c.nif}', '${c.name}', '${c.tel}', ${c.gasto}, ${c.pontos})">Ver</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>`
+        : '<div class="empty-state">Nenhum cliente encontrado</div>';
+    
+    document.getElementById('customersTableContainer').innerHTML = html;
+}
+
+function viewCustomer(nif, name, tel, gasto, pontos) {
+    const stored = JSON.parse(localStorage.getItem('customer_' + nif) || '{}');
+    const html = `
+        <p><strong>Nome:</strong> ${name}</p>
+        <p><strong>NIF:</strong> ${nif}</p>
+        <p><strong>Telemóvel:</strong> ${tel}</p>
+        <p><strong>Gasto Total:</strong> €${gasto.toFixed(2)}</p>
+        <p><strong>Pontos:</strong> ${pontos}</p>
+        <p><strong>Cashback:</strong> €${(stored.cashback || 0).toFixed(2)}</p>
+        <p><strong>Selos:</strong> ${stored.seals || 0}/10</p>
+        <p><strong>Consumos:</strong> ${(stored.transactions || []).length}</p>
+    `;
+    document.getElementById('customerModalBody').innerHTML = html;
+    openModal('customerModal');
+}
+
+// ========== REWARDS ==========
+function loadRewards() {
+    const rewards = JSON.parse(localStorage.getItem('rewards') || '[]');
+    
+    const html = rewards.length > 0
+        ? `<table>
+            <thead>
+                <tr>
+                    <th>Recompensa</th>
+                    <th>Pontos Necessários</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rewards.map((r, idx) => `
+                    <tr>
+                        <td>${r.name}</td>
+                        <td>${r.points}</td>
+                        <td>${r.desc}</td>
+                        <td>
+                            <button class="btn-sm btn-reject" onclick="deleteReward(${idx})">Apagar</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>`
+        : '<div class="empty-state">Nenhuma recompensa configurada</div>';
+    
+    document.getElementById('rewardsTableContainer').innerHTML = html;
+}
+
+function showAddRewardModal() {
+    document.getElementById('rewardName').value = '';
+    document.getElementById('rewardPoints').value = '';
+    document.getElementById('rewardDesc').value = '';
+    openModal('rewardModal');
+}
+
+function saveReward() {
+    const name = document.getElementById('rewardName').value.trim();
+    const points = parseInt(document.getElementById('rewardPoints').value);
+    const desc = document.getElementById('rewardDesc').value.trim();
+    
+    if (!name || !points || !desc) {
+        showError('Preenche todos os campos');
+        return;
+    }
+    
+    const rewards = JSON.parse(localStorage.getItem('rewards') || '[]');
+    rewards.push({ name, points, desc });
+    localStorage.setItem('rewards', JSON.stringify(rewards));
+    
+    showSuccess('✓ Recompensa adicionada!');
+    closeModal('rewardModal');
+    loadRewards();
+}
+
+function deleteReward(idx) {
+    if (confirm('Apagar esta recompensa?')) {
+        const rewards = JSON.parse(localStorage.getItem('rewards') || '[]');
+        rewards.splice(idx, 1);
+        localStorage.setItem('rewards', JSON.stringify(rewards));
+        loadRewards();
+    }
+}
+
+// ========== SETTINGS ==========
+function saveSettings() {
+    const settings = {
+        cashback: parseFloat(document.getElementById('settingsCashback').value) || 5,
+        points: parseInt(document.getElementById('settingsPoints').value) || 1,
+        seals: parseInt(document.getElementById('settingsSeals').value) || 10
+    };
+    
+    localStorage.setItem('loyalty_settings', JSON.stringify(settings));
+    showSuccess('✓ Configurações guardadas!');
+}
+
+// ========== MODAIS ==========
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add('active');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+}
+
+// ========== MENSAGENS ==========
+function showError(msg) {
+    const el = document.getElementById('errorMessage');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+}
+
+function showSuccess(msg) {
+    const el = document.getElementById('successMessage');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+}
+
+// ========== UTILS ==========
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// ========== INIT ==========
+window.addEventListener('DOMContentLoaded', () => {
+    const session = localStorage.getItem('admin_session');
+    if (session) {
+        adminUser = JSON.parse(session);
+        showDashboard();
+    }
+});
+
+console.log('✅ Painel Admin carregado');
+</script>
+
+</body>
+</html>
