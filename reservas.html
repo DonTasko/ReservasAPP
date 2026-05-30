@@ -771,7 +771,7 @@
     try {
       await carregarDados();
       inicializarCalendario();
-      gerarHorarios();
+      ();
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
     } catch(e) {
       console.error(e);
@@ -843,7 +843,7 @@
           return false;
         }
       ],
-      onChange: function() { gerarHorarios(); }
+      onChange: function() { (); }
     });
   }
 
@@ -859,27 +859,17 @@
         return;
     }
 
-    // 0 = domingo, 6 = sábado
-    const diaSemana = new Date(dataVal + 'T12:00:00').getDay();
-    const ehFimDeSemana = diaSemana === 0 || diaSemana === 6;
+    const almocoSlots = horariosGlobal.almoco
+        ? gerarSlots(...horariosGlobal.almoco.split('-'))
+        : [];
 
-    // Slots de almoço: fim de semana = 2 turnos fixos, semana = intervalos normais
-    const almocoSlots = ehFimDeSemana
-        ? ['12:00', '13:45']
-        : (horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : []);
-
-    // Jantar: sempre igual (exceto domingo se voltares a querer bloquear)
     const jantarSlots = horariosGlobal.jantar
         ? gerarSlots(...horariosGlobal.jantar.split('-'))
         : [];
 
     if (almocoSlots.length) {
         const g = document.createElement('div');
-        if (ehFimDeSemana) {
-            g.innerHTML = '<div class="slots-group-label">🌞 Almoço · 2 turnos</div>';
-        } else {
-            g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
-        }
+        g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
         const grid = document.createElement('div');
         grid.className = 'slots-grid';
         almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
