@@ -173,7 +173,6 @@
       gap: 12px;
     }
 
-    /* SLOTS */
     .slots-label {
       display: flex;
       align-items: center;
@@ -228,7 +227,6 @@
       box-shadow: 0 4px 14px rgba(201,168,76,0.3);
     }
 
-    /* OPÇÕES ESPECIAIS */
     .opcoes-label {
       font-size: 0.75rem;
       font-weight: 600;
@@ -255,17 +253,9 @@
     }
 
     .opcao-item:hover { border-color: var(--gold); }
+    .opcao-item.selected { border-color: var(--gold); background: var(--gold-dim); }
 
-    .opcao-item.selected {
-      border-color: var(--gold);
-      background: var(--gold-dim);
-    }
-
-    .opcao-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .opcao-row { display: flex; align-items: center; gap: 12px; }
 
     .opcao-check {
       width: 20px;
@@ -281,42 +271,15 @@
       color: var(--dark);
     }
 
-    .opcao-item.selected .opcao-check {
-      background: var(--gold);
-      border-color: var(--gold);
-    }
-
-    .opcao-check::after {
-      content: '';
-      display: none;
-    }
-
-    .opcao-item.selected .opcao-check::after {
-      content: '✓';
-      display: block;
-      font-weight: 700;
-    }
+    .opcao-item.selected .opcao-check { background: var(--gold); border-color: var(--gold); }
+    .opcao-check::after { content: ''; display: none; }
+    .opcao-item.selected .opcao-check::after { content: '✓'; display: block; font-weight: 700; }
 
     .opcao-text { flex: 1; }
+    .opcao-nome { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .opcao-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
 
-    .opcao-nome {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .opcao-desc {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-      line-height: 1.4;
-    }
-
-    .opcao-extra {
-      margin-top: 10px;
-      display: none;
-    }
-
+    .opcao-extra { margin-top: 10px; display: none; }
     .opcao-item.selected .opcao-extra { display: block; }
 
     .opcao-extra textarea {
@@ -333,17 +296,11 @@
       transition: border-color 0.2s;
     }
 
-    .opcao-extra textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
-
+    .opcao-extra textarea:focus { outline: none; border-color: var(--gold); }
     .opcao-extra textarea::placeholder { color: var(--text-dim); }
 
-    /* DIVIDER */
     .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
-    /* INFO BOX */
     .info-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -374,7 +331,6 @@
     .info-item:last-child { margin-bottom: 0; }
     .info-item i { color: var(--gold); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
 
-    /* SUBMIT */
     .btn-submit {
       width: 100%;
       background: var(--gold);
@@ -400,7 +356,6 @@
 
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* SUCCESS */
     .success-card {
       display: none;
       background: var(--surface);
@@ -454,7 +409,6 @@
       line-height: 1.6;
     }
 
-    /* LOADING */
     #loading {
       display: none;
       position: fixed;
@@ -479,7 +433,6 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* TOAST */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -502,7 +455,6 @@
     .toast.error { border-color: #c0392b; color: #e74c3c; }
     .toast.ok { border-color: var(--success); color: #4caf82; }
 
-    /* FOOTER */
     .footer {
       border-top: 1px solid var(--border);
       padding: 24px 20px;
@@ -531,7 +483,6 @@
 
     .footer-link i { color: var(--gold); font-size: 0.7rem; }
 
-    /* FLATPICKR */
     .flatpickr-calendar {
       background: var(--surface2) !important;
       border: 1px solid var(--border) !important;
@@ -647,11 +598,9 @@
     <div id="timeSlots"></div>
     <input type="hidden" id="horario" required>
 
-    <!-- OPÇÕES ESPECIAIS -->
     <div style="margin-top:20px">
       <div class="opcoes-label"><i class="fas fa-star"></i> Ocasião especial</div>
 
-      <!-- Grávida -->
       <div class="opcao-item" id="opcao-gravida" onclick="toggleOpcao('gravida')">
         <div class="opcao-row">
           <div class="opcao-check" id="check-gravida"></div>
@@ -662,25 +611,23 @@
         </div>
       </div>
 
-      <!-- Aniversário -->
-<div class="opcao-item" id="opcao-aniversario" onclick="toggleOpcao('aniversario')">
-    <div class="opcao-row">
-        <div class="opcao-check" id="check-aniversario"></div>
-        <div class="opcao-text">
+      <div class="opcao-item" id="opcao-aniversario" onclick="toggleOpcao('aniversario')">
+        <div class="opcao-row">
+          <div class="opcao-check" id="check-aniversario"></div>
+          <div class="opcao-text">
             <div class="opcao-nome">🎂 Aniversário</div>
             <div class="opcao-desc">Selecione se está a celebrar um aniversário</div>
+          </div>
         </div>
-    </div>
-    <div class="opcao-extra" id="extra-aniversario">
-        <div style="background:var(--surface2);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:12px 14px;margin-top:2px;font-size:0.78rem;color:var(--text-muted);line-height:1.6;">
+        <div class="opcao-extra" id="extra-aniversario">
+          <div style="background:var(--surface2);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:12px 14px;margin-top:2px;font-size:0.78rem;color:var(--text-muted);line-height:1.6;">
             <i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px"></i>
             Para garantir a organização e manutenção do serviço, informamos que a utilização de bolo de aniversário trazido do exterior implica um custo de serviço, referente à loiça, guardanapos e apoio prestado,
             <strong style="color:var(--gold)">quando não há consumo de sobremesas da casa ou a sobremesa é só o bolo.</strong>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
 
-      <!-- Alergias -->
       <div class="opcao-item" id="opcao-alergias" onclick="toggleOpcao('alergias')">
         <div class="opcao-row">
           <div class="opcao-check" id="check-alergias"></div>
@@ -745,14 +692,13 @@
   let configsGlobal = {};
   let horariosGlobal = {};
   let diasFechadosGlobal = [];
+  let flatpickrInstance = null;
 
-  // Opções seleccionadas
   const opcoesSeleccionadas = { gravida: false, aniversario: false, alergias: false };
 
   function toggleOpcao(id) {
     opcoesSeleccionadas[id] = !opcoesSeleccionadas[id];
-    const item = document.getElementById('opcao-' + id);
-    item.classList.toggle('selected', opcoesSeleccionadas[id]);
+    document.getElementById('opcao-' + id).classList.toggle('selected', opcoesSeleccionadas[id]);
   }
 
   function showToast(msg, type) {
@@ -767,84 +713,59 @@
     document.getElementById('btnSubmit').disabled = on;
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      await carregarDados();
-      inicializarCalendario();
-      gerarHorarios ();
-      document.getElementById('formReserva').addEventListener('submit', submeterReserva);
-    } catch(e) {
-      console.error(e);
-      showToast('Erro ao carregar. Recarregue a página.', 'error');
-    }
-  });
-
-  async function carregarDados() {
-    const [diasFechados, horarios, configs] = await Promise.all([
-      apiRequest('getDiasFechados'),
-      apiRequest('getHorarios'),
-      apiRequest('getConfigs')
-    ]);
-    diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
-    horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-23:00' };
-    configsGlobal = configs || {};
-    console.log('📅 Dias fechados:', diasFechadosGlobal);
-  }
-
-  // Normaliza string: minúsculas + sem acentos
   function normalizar(str) {
     return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   }
 
-  // Converte qualquer valor de data para yyyy-mm-dd
   function toISO(val) {
     if (!val) return '';
-    // Já está em formato ISO
-    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
-    // Formato dd/mm/yyyy
+    if (/^\d{4}-\d{2}-\d{2}$/.test(String(val))) return String(val);
     const m1 = String(val).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (m1) return m1[3] + '-' + m1[2].padStart(2,'0') + '-' + m1[1].padStart(2,'0');
-    // Date object ou timestamp
     try {
       const d = new Date(val);
-      if (!isNaN(d)) return d.toISOString().split('T')[0];
+      if (!isNaN(d)) {
+        const y = d.getUTCFullYear();
+        const m = String(d.getUTCMonth() + 1).padStart(2,'0');
+        const day = String(d.getUTCDate()).padStart(2,'0');
+        return y + '-' + m + '-' + day;
+      }
     } catch(e) {}
     return String(val).trim();
   }
 
+  function isDiaFechado(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2,'0');
+    const d = String(date.getDate()).padStart(2,'0');
+    const dateISO = y + '-' + m + '-' + d;
+    const dayName = normalizar(date.toLocaleDateString('pt-PT', { weekday: 'long' }));
+
+    for (let i = 0; i < diasFechadosGlobal.length; i++) {
+      const entrada = diasFechadosGlobal[i];
+      if (toISO(entrada) === dateISO) return true;
+      if (normalizar(entrada) === dayName) return true;
+    }
+    return false;
+  }
+
+  // ── CHAVE: inicializar DEPOIS dos dados carregarem ──
   function inicializarCalendario() {
-    flatpickr('#data', {
+    // Destruir instância anterior se existir
+    if (flatpickrInstance) {
+      flatpickrInstance.destroy();
+      flatpickrInstance = null;
+    }
+
+    flatpickrInstance = flatpickr('#data', {
       locale: 'pt',
       minDate: 'today',
       dateFormat: 'Y-m-d',
-      disable: [
-        function(date) {
-          // Data do calendário em ISO local
-          const y = date.getFullYear();
-          const m = String(date.getMonth() + 1).padStart(2, '0');
-          const d = String(date.getDate()).padStart(2, '0');
-          const dateISO = y + '-' + m + '-' + d;
-
-          // Nome do dia sem acentos
-          const dayName = normalizar(
-            date.toLocaleDateString('pt-PT', { weekday: 'long' })
-          );
-
-          for (let i = 0; i < diasFechadosGlobal.length; i++) {
-            const entrada = diasFechadosGlobal[i];
-            const entradaISO = toISO(entrada);
-            const entradaNorm = normalizar(entrada);
-
-            // Compara data específica
-            if (entradaISO === dateISO) return true;
-            // Compara nome do dia da semana
-            if (entradaNorm === dayName) return true;
-          }
-          return false;
-        }
-      ],
+      disable: [ isDiaFechado ],
       onChange: function() { gerarHorarios(); }
     });
+
+    console.log('📅 Calendário iniciado. Dias fechados:', diasFechadosGlobal);
   }
 
   function gerarHorarios() {
@@ -855,38 +776,34 @@
     const dataVal = document.getElementById('data').value;
 
     if (!dataVal) {
-        container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
-        return;
+      container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
+      return;
     }
 
-    const almocoSlots = horariosGlobal.almoco
-        ? gerarSlots(...horariosGlobal.almoco.split('-'))
-        : [];
-
-    const jantarSlots = horariosGlobal.jantar
-        ? gerarSlots(...horariosGlobal.jantar.split('-'))
-        : [];
+    const almocoSlots = horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : [];
+    const jantarSlots = horariosGlobal.jantar ? gerarSlots(...horariosGlobal.jantar.split('-')) : [];
 
     if (almocoSlots.length) {
-        const g = document.createElement('div');
-        g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
-        const grid = document.createElement('div');
-        grid.className = 'slots-grid';
-        almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
-        g.appendChild(grid);
-        container.appendChild(g);
+      const g = document.createElement('div');
+      g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
+      const grid = document.createElement('div');
+      grid.className = 'slots-grid';
+      almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
+      g.appendChild(grid);
+      container.appendChild(g);
     }
 
     if (jantarSlots.length) {
-        const g = document.createElement('div');
-        g.innerHTML = '<div class="slots-group-label">🌙 Jantar</div>';
-        const grid = document.createElement('div');
-        grid.className = 'slots-grid';
-        jantarSlots.forEach(h => grid.appendChild(criarSlot(h)));
-        g.appendChild(grid);
-        container.appendChild(g);
+      const g = document.createElement('div');
+      g.innerHTML = '<div class="slots-group-label">🌙 Jantar</div>';
+      const grid = document.createElement('div');
+      grid.className = 'slots-grid';
+      jantarSlots.forEach(h => grid.appendChild(criarSlot(h)));
+      g.appendChild(grid);
+      container.appendChild(g);
     }
-}
+  }
+
   function gerarSlots(inicio, fim) {
     const slots = [];
     let [h, m] = inicio.split(':').map(Number);
@@ -932,8 +849,6 @@
     const tel = document.getElementById('telemovel').value.replace(/\D/g,'');
     if (tel.length < 9) { showToast('Telemóvel inválido.', 'error'); return; }
 
-    const obs = construirObs();
-
     const dados = {
       nome:      document.getElementById('nome').value.trim(),
       email:     document.getElementById('email').value.trim(),
@@ -941,7 +856,7 @@
       data:      document.getElementById('data').value,
       pax:       parseInt(document.getElementById('pax').value),
       horario:   horario,
-      obs:       obs
+      obs:       construirObs()
     };
 
     try {
@@ -953,7 +868,6 @@
         document.getElementById('cData').textContent = formatarData(dados.data);
         document.getElementById('cHora').textContent = dados.horario;
         document.getElementById('cPax').textContent = dados.pax + (dados.pax === 1 ? ' pessoa' : ' pessoas');
-
         document.getElementById('successCard').classList.add('show');
         document.getElementById('formReserva').style.display = 'none';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -973,6 +887,32 @@
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
   }
+
+  // ── INIT: dados primeiro, calendário depois ──
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const [diasFechados, horarios, configs] = await Promise.all([
+        apiRequest('getDiasFechados'),
+        apiRequest('getHorarios'),
+        apiRequest('getConfigs')
+      ]);
+
+      diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
+      horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-23:00' };
+      configsGlobal = configs || {};
+
+      console.log('📅 Dias fechados recebidos:', diasFechadosGlobal);
+
+      // Só inicializa o calendário DEPOIS de ter os dados
+      inicializarCalendario();
+      gerarHorarios();
+
+      document.getElementById('formReserva').addEventListener('submit', submeterReserva);
+    } catch(e) {
+      console.error('Erro ao carregar dados:', e);
+      showToast('Erro ao carregar. Recarregue a página.', 'error');
+    }
+  });
 </script>
 
 </body>
