@@ -100,10 +100,6 @@
             margin-bottom: 1rem;
         }
 
-        .upload-text {
-            margin-bottom: 1rem;
-        }
-
         .upload-text p {
             margin: 0.5rem 0;
         }
@@ -142,7 +138,6 @@
             border-radius: 10px;
             padding: 1.5rem;
             border: 2px solid var(--accent);
-            position: relative;
         }
 
         .result-item {
@@ -244,40 +239,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        .qr-preview {
-            max-width: 300px;
-            margin: 1rem auto;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid var(--accent);
-        }
-
-        .qr-preview img {
-            width: 100%;
-            display: block;
-        }
-
-        .copy-button {
-            background: var(--info);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .copy-button:hover {
-            background: #2980b9;
-        }
-
-        .copy-button.copied {
-            background: var(--success);
-        }
-
         .empty-state {
             text-align: center;
             padding: 2rem;
@@ -301,6 +262,62 @@
             color: var(--accent);
         }
 
+        /* MODAL SCANNER */
+        .scanner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .scanner-modal.active {
+            display: flex;
+        }
+
+        .scanner-modal video {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .scanner-modal canvas {
+            display: none;
+        }
+
+        .scanner-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .scanner-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .results-grid {
                 grid-template-columns: 1fr;
@@ -308,6 +325,10 @@
 
             .section {
                 padding: 1rem;
+            }
+
+            table {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -325,7 +346,7 @@
     <!-- INFO -->
     <div class="info-box">
         <strong>💡 Como Funciona:</strong>
-        Carrega uma imagem da fatura com QR code. O sistema irá ler o código e extrair o NIF e o Valor automaticamente.
+        Escaneia com a câmara OU carrega uma imagem da fatura com QR code. O sistema irá ler o código e extrair o NIF e o Valor automaticamente.
     </div>
 
     <!-- MENSAGENS -->
@@ -341,12 +362,13 @@
             <div class="upload-icon">📸</div>
             <div class="upload-text">
                 <p><strong>Clica ou arrasta uma imagem aqui</strong></p>
-                <p style="font-size: 0.9rem; color: #999;">Formatos: JPG, PNG, PDF</p>
+                <p style="font-size: 0.9rem; color: #999;">Formatos: JPG, PNG</p>
             </div>
-            <button class="btn-primary">Selecionar Imagem</button>
+            <button class="btn-primary" onclick="startScan()">📷 Usar Câmara</button>
+            <button class="btn-primary" style="margin-left: 0.5rem;">Selecionar Imagem</button>
         </div>
 
-        <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+        <input type="file" id="fileInput" class="file-input" accept="image/jpeg,image/png" onchange="handleFileSelect(event)">
     </div>
 
     <!-- PROCESSING -->
@@ -370,14 +392,24 @@
     </div>
 </div>
 
+<!-- MODAL SCANNER -->
+<div class="scanner-modal" id="scannerModal">
+    <video id="video" playsinline autoplay muted></video>
+    <canvas id="canvas"></canvas>
+    <button class="scanner-close" onclick="stopScanner()">✕</button>
+    <div class="scanner-info">
+        📱 Aponta a câmara para o QR code da fatura
+    </div>
+</div>
+
 <!-- LIBS -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="config.js"></script>
 
 <script>
 console.log('🔍 Leitor de QR Code para Faturas - Iniciando...');
 
 let scanHistory = JSON.parse(localStorage.getItem('qr_scan_history') || '[]');
+let scannerActive = false;
 
 // ========== DRAG & DROP ==========
 function handleDragOver(e) {
@@ -394,7 +426,6 @@ function handleDrop(e) {
     document.getElementById('uploadArea').classList.remove('dragover');
     const files = e.dataTransfer.files;
     if (files.length > 0) {
-        document.getElementById('fileInput').files = files;
         handleFileSelect({ target: { files } });
     }
 }
@@ -404,6 +435,8 @@ function handleFileSelect(e) {
     const file = e.target.files[0];
     if (!file) return;
 
+    console.log('📁 Arquivo selecionado:', file.name);
+
     document.getElementById('processingSection').style.display = 'block';
     document.getElementById('resultsSection').style.display = 'none';
 
@@ -411,6 +444,7 @@ function handleFileSelect(e) {
     reader.onload = function(event) {
         const img = new Image();
         img.onload = function() {
+            console.log('🖼️ Imagem carregada');
             processImage(img);
         };
         img.onerror = function() {
@@ -424,6 +458,8 @@ function handleFileSelect(e) {
 
 // ========== PROCESSAR IMAGEM ==========
 function processImage(img) {
+    console.log('⚙️ Processando imagem...');
+    
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
@@ -432,6 +468,8 @@ function processImage(img) {
     ctx.drawImage(img, 0, 0);
 
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    
+    console.log('🔎 Procurando QR code...');
     const code = jsQR(imageData.data, imageData.width, imageData.height);
 
     setTimeout(() => {
@@ -446,17 +484,85 @@ function processImage(img) {
     }, 1500);
 }
 
-// ========== PARSE QR DATA ==========
-function parseQRData(qrRawData, imageSource) {
-    console.log('📍 Dados brutos do QR:', qrRawData);
+// ========== INICIAR SCANNER COM CÂMARA ==========
+function startScan() {
+    const video = document.getElementById('video');
+    const modal = document.getElementById('scannerModal');
+    
+    console.log('🎥 Iniciando câmara...');
+    
+    navigator.mediaDevices.getUserMedia({
+        video: { 
+            facingMode: 'environment',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        },
+        audio: false
+    }).then(stream => {
+        console.log('✅ Câmara ativada');
+        video.srcObject = stream;
+        modal.classList.add('active');
+        scannerActive = true;
+        
+        setTimeout(() => {
+            scanQRLoop();
+        }, 500);
+    }).catch(err => {
+        console.error('❌ Erro ao acessar câmara:', err);
+        showError('Câmara não disponível. Por favor, carregar uma imagem.');
+        
+        setTimeout(() => {
+            document.getElementById('fileInput').click();
+        }, 500);
+    });
+}
 
-    // Tentar diferentes formatos de QR code
+// ========== LOOP DE SCANNING ==========
+function scanQRLoop() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    if (!scannerActive) return;
+    
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        
+        if (code) {
+            console.log('✅ QR Code encontrado via câmara:', code.data);
+            stopScanner();
+            parseQRData(code.data);
+            return;
+        }
+    }
+    
+    requestAnimationFrame(scanQRLoop);
+}
+
+// ========== PARAR SCANNER ==========
+function stopScanner() {
+    scannerActive = false;
+    const video = document.getElementById('video');
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    document.getElementById('scannerModal').classList.remove('active');
+}
+
+// ========== PARSE QR DATA ==========
+function parseQRData(qrRawData) {
+    console.log('📍 Analisando dados:', qrRawData);
+
     let nif = null;
     let valor = null;
     let data = new Date().toISOString().split('T')[0];
-    let rawData = qrRawData;
 
-    // Formato 1: NIF|VALOR|DATA (esperado)
+    // Formato 1: NIF|VALOR|DATA
     if (qrRawData.includes('|')) {
         const parts = qrRawData.split('|');
         nif = parts[0].trim();
@@ -465,11 +571,11 @@ function parseQRData(qrRawData, imageSource) {
             data = parts[2].trim();
         }
     }
-    // Formato 2: Apenas um número (tentar extrair valor)
+    // Formato 2: Apenas um número
     else if (!isNaN(qrRawData)) {
         valor = parseFloat(qrRawData);
     }
-    // Formato 3: QR com NIF no início
+    // Formato 3: NIF no início
     else if (/^\d{9}/.test(qrRawData)) {
         nif = qrRawData.substring(0, 9);
         const restante = qrRawData.substring(9);
@@ -478,7 +584,7 @@ function parseQRData(qrRawData, imageSource) {
             valor = parseFloat(valorMatch[1]);
         }
     }
-    // Formato 4: Buscar padrão de valor (ex: 25.50 ou 2550)
+    // Formato 4: Buscar padrão
     else {
         const valorMatch = qrRawData.match(/(\d+\.?\d*)/);
         if (valorMatch) {
@@ -502,16 +608,15 @@ function parseQRData(qrRawData, imageSource) {
         valor = null;
     }
 
-    // Mostrar resultado
     if (nif || valor) {
-        displayResults(nif, valor, data, rawData, imageSource);
+        displayResults(nif, valor, data);
     } else {
-        showError('❌ Não foi possível extrair NIF e Valor do QR code. Tenta com outra imagem.');
+        showError('❌ Não foi possível extrair NIF e Valor do QR code.');
     }
 }
 
 // ========== DISPLAY RESULTS ==========
-function displayResults(nif, valor, data, rawData, imageSource) {
+function displayResults(nif, valor, data) {
     const container = document.getElementById('resultsContainer');
     const timestamp = new Date().toLocaleString('pt-PT');
 
@@ -542,7 +647,6 @@ function displayResults(nif, valor, data, rawData, imageSource) {
         </div>
     `;
 
-    // Status badge
     let statusClass = 'status-warning';
     let statusText = '⚠️ Dados Incompletos';
 
@@ -553,25 +657,22 @@ function displayResults(nif, valor, data, rawData, imageSource) {
 
     html += `<div class="result-card" style="grid-column: 1 / -1;"><div class="status-badge ${statusClass}">${statusText}</div></div>`;
 
-    // Se houver dados válidos, adicionar opção de copiar
     if (nif && valor) {
         const qrFormatted = nif + '|' + valor.toFixed(2) + '|' + data;
         html += `<div class="result-card" style="grid-column: 1 / -1;">
             <div style="text-align: center;">
                 <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.8rem;">Formato para cliente:</p>
                 <input type="text" value="${qrFormatted}" style="width: 100%; padding: 0.6rem; background: #1a1a1a; border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-family: monospace; text-align: center;" readonly>
-                <button class="copy-button" onclick="copyToClipboard('${qrFormatted}')">📋 Copiar Formato</button>
+                <button class="btn-primary" style="width: 100%; margin-top: 0.8rem;" onclick="copyToClipboard('${qrFormatted}')">📋 Copiar Formato</button>
             </div>
         </div>`;
 
-        // Guardar no histórico
         saveToHistory(nif, valor, data, timestamp);
     }
 
     container.innerHTML = html;
     document.getElementById('resultsSection').style.display = 'block';
 
-    // Mostrar histórico se existir
     if (scanHistory.length > 0) {
         loadHistory();
     }
@@ -584,10 +685,8 @@ function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         const btn = event.target;
         btn.textContent = '✓ Copiado!';
-        btn.classList.add('copied');
         setTimeout(() => {
             btn.textContent = '📋 Copiar Formato';
-            btn.classList.remove('copied');
         }, 2000);
     });
 }
@@ -603,7 +702,7 @@ function saveToHistory(nif, valor, data, timestamp) {
     };
 
     scanHistory.unshift(entry);
-    if (scanHistory.length > 50) scanHistory.pop(); // Manter últimos 50
+    if (scanHistory.length > 50) scanHistory.pop();
 
     localStorage.setItem('qr_scan_history', JSON.stringify(scanHistory));
 }
