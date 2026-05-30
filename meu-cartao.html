@@ -851,26 +851,18 @@ function generateQRCode() {
     qrContainer.innerHTML = '';
     
     // Formato: NIF|NOME para escanear no restaurante
-    const qrData = currentUser.nif;
-    
-    QRCode.toCanvas(
-        document.createElement('canvas'),
-        qrData,
-        {
-            errorCorrectionLevel: 'H',
-            type: 'image/png',
-            width: 200,
-            margin: 1,
-            color: { dark: '#1a1a1a', light: '#ffffff' }
-        },
-        function(error, canvas) {
-            if (error) {
-                console.error('Erro ao gerar QR:', error);
-            } else {
-                qrContainer.appendChild(canvas);
-            }
-        }
-    );
+    try {
+    new QRCode(document.getElementById('qrCode'), {
+        text: currentUser.nif,
+        width: 150,
+        height: 150,
+        colorDark: '#1a1a1a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+} catch (err) {
+    console.error('Erro ao gerar QR code:', err);
+    document.getElementById('qrCode').innerHTML = '<p style="color: #999;">Erro ao gerar QR code</p>';
 }
 
 // ========== INICIAR SCANNER ==========
