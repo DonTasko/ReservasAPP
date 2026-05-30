@@ -771,7 +771,7 @@
     try {
       await carregarDados();
       inicializarCalendario();
-      ();
+      gerarHorarios ();
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
     } catch(e) {
       console.error(e);
