@@ -734,7 +734,7 @@ function doLogin() {
     }
     
     // Chamar Apps Script para validar cliente
-    apiRequest('obterClienteDados', { nif }, CONFIG.SCRIPT_RESERVAS)
+    apiRequest('obterClienteDados', { nif })
         .then(response => {
             if (!response.success) {
                 showError('Cliente não encontrado. Regista-te primeiro!');
