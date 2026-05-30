@@ -956,6 +956,11 @@ function processScan() {
 
 // ========== PROCESSAR QR DA FATURA ==========
 function processInvoiceQR(qrData) {
+    console.log('📍 QR Raw:', qrData);
+    
+    // Remover símbolo € se existir
+    qrData = qrData.replace('€', '').trim();
+    
     // Formato esperado: NIF|VALOR|DATA ou apenas VALOR
     let nif, amount, date;
     
@@ -966,10 +971,24 @@ function processInvoiceQR(qrData) {
         amount = parseFloat(parts[1].trim());
         date = parts.length > 2 ? parts[2].trim() : new Date().toISOString().split('T')[0];
     } else if (parts.length === 1) {
-        amount = parseFloat(parts[0].trim());
-        nif = null;
-        date = new Date().toISOString().split('T')[0];
+        // Se for apenas um número, é o valor
+        const num = parseFloat(parts[0].trim());
+        if (!isNaN(num) && num > 0) {
+            amount = num;
+            nif = null;
+            date = new Date().toISOString().split('T')[0];
+        } else {
+            // Tentar extrair número do meio do texto
+            const match = parts[0].match(/(\d+\.?\d*)/);
+            if (match) {
+                amount = parseFloat(match[1]);
+                nif = null;
+                date = new Date().toISOString().split('T')[0];
+            }
+        }
     }
+    
+    console.log('✅ Parsed:', { nif, amount, date });
     
     // Validar NIF se presente
     if (nif && nif !== currentUser.nif) {
@@ -984,17 +1003,16 @@ function processInvoiceQR(qrData) {
     
     // Enviar para Apps Script processar
     apiRequest('processarQRFatura', { 
-    nif: currentUser.nif, 
-    valor: amount, 
-    data: date 
-})
+        nif: currentUser.nif, 
+        valor: amount, 
+        data: date 
+    })
         .then(response => {
             if (!response.success) {
                 showError('❌ Erro: ' + response.message);
                 return;
             }
             
-            // Atualizar dados locais com resposta do servidor
             currentUser.points += response.pontos || 0;
             currentUser.cashback += response.cashback || 0;
             currentUser.seals = (currentUser.seals + 1) % 11;
@@ -1006,10 +1024,8 @@ function processInvoiceQR(qrData) {
                 cashback: response.cashback
             });
             
-            // Guardar sessão
             localStorage.setItem('session_nif', currentUser.nif);
             
-            // Atualizar UI
             updateStats();
             updateSeals();
             updateTransactions();
