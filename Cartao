@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Cartão | Don Tasko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4a574;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f5f5f0;
+            --card-bg: #2a2a2a;
+            --text-light: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* ========== LOGIN SCREEN ========== */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        .login-card.hidden {
+            display: none;
+        }
+
+        .logo-login {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-login h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-login p {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #1a1a1a;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(212, 165, 116, 0.3);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .toggle-register {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .toggle-register a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .message {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--danger);
+            color: #ff7675;
+        }
+
+        .success-message {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid var(--success);
+            color: #81c784;
+        }
+
+        /* ========== DASHBOARD SCREEN ========== */
+        .dashboard-screen {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .dashboard-screen.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a2a2a 100%);
+            padding: 1.5rem 1rem;
+            border-bottom: 2px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-nif {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .dashboard-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* ========== CARTÃO DIGITAL ========== */
+        .card-section {
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3);
+        }
+
+        .card-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-chip {
+            width: 50px;
+            height: 40px;
+            background: rgba(26, 26, 26, 0.2);
+            border-radius: 8px;
+            border: 2px solid #1a1a1a;
+        }
+
+        .card-customer-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-nif {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-qr {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .card-qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-qr-code img,
+        .card-qr-code canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .card-qr-label {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        /* ========== STATS ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ========== SELOS ========== */
+        .seals-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+            margin-bottom: 2rem;
+        }
+
+        .seals-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .seals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 1rem;
+        }
+
+        .seal {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            box-shadow: 0 4px 10px rgba(212, 165, 116, 0.2);
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .seal.empty {
+            background: #1a1a1a;
+            border: 2px dashed #333;
+            opacity: 0.5;
+            color: #666;
+        }
+
+        /* ========== SCAN SECTION ========== */
+        .scan-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .scan-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .scan-text {
+            color: #999;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-scan {
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-scan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .scan-input {
+            display: none;
+        }
+
+        /* ========== TRANSAÇÕES ========== */
+        .transactions-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+        }
+
+        .transactions-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .transaction {
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--accent);
+        }
+
+        .transaction-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .transaction-info p {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .transaction-right {
+            text-align: right;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .transaction-points {
+            font-size: 0.85rem;
+            color: var(--success);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        /* ========== MODAL SCANNER ========== */
+        .scanner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .scanner-modal.active {
+            display: flex;
+        }
+
+        .scanner-modal video {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 10px;
+        }
+
+        .scanner-modal canvas {
+            display: none;
+        }
+
+        .scanner-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .card-section {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .seals-grid {
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            }
+
+            .header-content {
+                gap: 1rem;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 1rem;
+            color: #999;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== LOGIN SCREEN ========== -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="logo-login">
+            <h1>Don Tasko</h1>
+            <p>Cartão de Fidelização</p>
+        </div>
+
+        <div id="errorMessage" class="message error-message"></div>
+        <div id="successMessage" class="message success-message"></div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+            <h3 style="margin-bottom: 1.5rem; text-align: center; font-size: 1.1rem;">Entrar</h3>
+            <div class="form-group">
+                <label>NIF</label>
+                <input type="text" id="nifLogin" placeholder="123456789" maxlength="9" inputmode="numeric">
+            </div>
+            <div class="form-group">
+                <label>Telemóvel</label>
+                <input type="tel" id="telLogin" placeholder="912345678" maxlength="9" inputmode="numeric">
+            </div>
+            <button class="btn-login" onclick="doLogin()">Entrar</button>
+            <div class="toggle-register">
+                Não tem conta? <a onclick="toggleForm()">Registar-se</a>
+            </div>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" style="display: none;">
+            <h3 style="margin-bottom: 1.5rem; text-align: center; font-size: 1.1rem;">Registar</h3>
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="nameRegister" placeholder="João Silva">
+            </div>
+            <div class="form-group">
+                <label>NIF</label>
+                <input type="text" id="nifRegister" placeholder="123456789" maxlength="9" inputmode="numeric">
+            </div>
+            <div class="form-group">
+                <label>Telemóvel</label>
+                <input type="tel" id="telRegister" placeholder="912345678" maxlength="9" inputmode="numeric">
+            </div>
+            <button class="btn-login" onclick="doRegister()">Registar</button>
+            <div class="toggle-register">
+                Já tem conta? <a onclick="toggleForm()">Entrar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== DASHBOARD SCREEN ========== -->
+<div class="dashboard-screen" id="dashboardScreen">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-logo">Don Tasko</div>
+            <div class="header-user">
+                <div class="user-info">
+                    <div class="user-name" id="headerName">Nome</div>
+                    <div class="user-nif" id="headerNIF">NIF</div>
+                </div>
+                <button class="btn-logout" onclick="doLogout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- CARTÃO DIGITAL -->
+        <div class="card-section">
+            <div class="card-content">
+                <div class="card-header">
+                    <div class="card-logo">Don Tasko</div>
+                    <div class="card-chip"></div>
+                </div>
+                <div class="card-customer-name" id="cardName">Nome</div>
+                <div class="card-nif" id="cardNIF">NIF: 123456789</div>
+                <div class="card-qr">
+                    <div class="card-qr-code" id="qrCode"></div>
+                    <div class="card-qr-label">Escaneia para registar consumo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESTATÍSTICAS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-label">Cashback Disponível</div>
+                <div class="stat-value" id="statCashback">0,00 €</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-label">Pontos Totais</div>
+                <div class="stat-value" id="statPoints">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Visitas</div>
+                <div class="stat-value" id="statVisits">0</div>
+            </div>
+        </div>
+
+        <!-- SELOS -->
+        <div class="seals-section">
+            <div class="seals-title">🏆 Selos (10 = Recompensa)</div>
+            <div class="seals-grid" id="sealsContainer"></div>
+        </div>
+
+        <!-- SCANNER QR -->
+        <div class="scan-section">
+            <div class="scan-title">📱 Registar Consumo</div>
+            <p class="scan-text">Escaneia o QR code da fatura ou carrega com uma imagem</p>
+            <button class="btn-scan" onclick="startScan()">📷 Escanear QR Code</button>
+            <input type="file" id="scanInput" class="scan-input" accept="image/*" onchange="processScan()">
+            <div style="margin-top: 1rem; font-size: 0.85rem; color: #999;">
+                ou <a onclick="document.getElementById('scanInput').click()" style="color: var(--accent); cursor: pointer; text-decoration: underline;">seleciona uma imagem</a>
+            </div>
+        </div>
+
+        <!-- TRANSAÇÕES -->
+        <div class="transactions-section">
+            <div class="transactions-title">📋 Histórico de Consumos</div>
+            <div id="transactionsContainer" class="empty-state">Nenhum consumo registado ainda</div>
+        </div>
+    </div>
+</div>
+
+<!-- SCANNER MODAL -->
+<div class="scanner-modal" id="scannerModal">
+    <video id="video" playsinline></video>
+    <canvas id="canvas"></canvas>
+    <button class="scanner-close" onclick="stopScanner()">✕</button>
+</div>
+
+<!-- LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="config.js"></script>
+
+<script>
+console.log('🎟️ Sistema de Fidelização Don Tasko iniciando...');
+
+let currentUser = null;
+let scannerActive = false;
+
+// ========== LOGIN ==========
+function doLogin() {
+    const nif = document.getElementById('nifLogin').value.trim();
+    const tel = document.getElementById('telLogin').value.trim();
+    
+    if (!nif || !tel) {
+        showError('Por favor, preenche NIF e Telemóvel');
+        return;
+    }
+    
+    if (nif.length !== 9 || tel.length !== 9) {
+        showError('NIF e Telemóvel devem ter 9 dígitos');
+        return;
+    }
+    
+    // Chamar Apps Script para validar cliente
+    apiRequest('obterClienteDados', { nif }, CONFIG.SCRIPT_RESERVAS)
+        .then(response => {
+            if (!response.success) {
+                showError('Cliente não encontrado. Regista-te primeiro!');
+                return;
+            }
+            
+            const clienteData = response.cliente;
+            if (clienteData.telemovel !== tel) {
+                showError('Telemóvel incorreto');
+                return;
+            }
+            
+            // Guardar sessão
+            currentUser = {
+                nif: clienteData.nif,
+                tel: clienteData.telemovel,
+                name: clienteData.nome,
+                points: clienteData.pontos || 0,
+                cashback: clienteData.cashback || 0,
+                seals: clienteData.selos || 0,
+                transactions: response.transacoes || []
+            };
+            
+            localStorage.setItem('session_nif', nif);
+            showDashboard();
+        })
+        .catch(error => {
+            console.error('Erro ao fazer login:', error);
+            showError('Erro de conexão. Tenta novamente.');
+        });
+}
+
+// ========== REGISTAR ==========
+function doRegister() {
+    const name = document.getElementById('nameRegister').value.trim();
+    const nif = document.getElementById('nifRegister').value.trim();
+    const tel = document.getElementById('telRegister').value.trim();
+    
+    if (!name || !nif || !tel) {
+        showError('Por favor, preenche todos os campos');
+        return;
+    }
+    
+    if (nif.length !== 9 || tel.length !== 9) {
+        showError('NIF e Telemóvel devem ter 9 dígitos');
+        return;
+    }
+    
+    // Chamar Apps Script para registar
+    apiRequest('registarCliente', { nif, nome: name, telemovel: tel }, CONFIG.SCRIPT_RESERVAS)
+        .then(response => {
+            if (!response.success) {
+                showError('Erro: ' + (response.message || 'Não foi possível registar'));
+                return;
+            }
+            
+            currentUser = {
+                nif: nif,
+                tel: tel,
+                name: name,
+                points: 0,
+                cashback: 0,
+                seals: 0,
+                transactions: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('session_nif', nif);
+            showSuccess('✅ Conta criada com sucesso!');
+            
+            setTimeout(() => {
+                toggleForm();
+                document.getElementById('nifLogin').value = nif;
+                document.getElementById('telLogin').value = tel;
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Erro ao registar:', error);
+            showError('Erro de conexão. Tenta novamente.');
+        });
+}
+
+// ========== TOGGLE FORM ==========
+function toggleForm() {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+    registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
+    
+    clearMessages();
+}
+
+// ========== MOSTRAR DASHBOARD ==========
+function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboardScreen').classList.add('active');
+    
+    document.getElementById('headerName').textContent = currentUser.name;
+    document.getElementById('headerNIF').textContent = 'NIF: ' + currentUser.nif;
+    
+    document.getElementById('cardName').textContent = currentUser.name;
+    document.getElementById('cardNIF').textContent = 'NIF: ' + currentUser.nif;
+    
+    generateQRCode();
+    updateStats();
+    updateSeals();
+    updateTransactions();
+}
+
+// ========== GERAR QR CODE ==========
+function generateQRCode() {
+    const qrContainer = document.getElementById('qrCode');
+    qrContainer.innerHTML = '';
+    
+    // Formato: NIF|NOME para escanear no restaurante
+    const qrData = currentUser.nif;
+    
+    QRCode.toCanvas(
+        document.createElement('canvas'),
+        qrData,
+        {
+            errorCorrectionLevel: 'H',
+            type: 'image/png',
+            width: 200,
+            margin: 1,
+            color: { dark: '#1a1a1a', light: '#ffffff' }
+        },
+        function(error, canvas) {
+            if (error) {
+                console.error('Erro ao gerar QR:', error);
+            } else {
+                qrContainer.appendChild(canvas);
+            }
+        }
+    );
+}
+
+// ========== INICIAR SCANNER ==========
+function startScan() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const modal = document.getElementById('scannerModal');
+    
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+    }).then(stream => {
+        video.srcObject = stream;
+        modal.classList.add('active');
+        scannerActive = true;
+        scanQRLoop();
+    }).catch(err => {
+        console.error('Erro ao acessar câmara:', err);
+        // Fallback para upload de imagem
+        document.getElementById('scanInput').click();
+    });
+}
+
+// ========== LOOP DE SCANNING ==========
+function scanQRLoop() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    if (!scannerActive) return;
+    
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        
+        if (code) {
+            console.log('✅ QR Code encontrado:', code.data);
+            stopScanner();
+            processInvoiceQR(code.data);
+            return;
+        }
+    }
+    
+    requestAnimationFrame(scanQRLoop);
+}
+
+// ========== PARAR SCANNER ==========
+function stopScanner() {
+    scannerActive = false;
+    const video = document.getElementById('video');
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    document.getElementById('scannerModal').classList.remove('active');
+}
+
+// ========== PROCESSAR IMAGEM ==========
+function processScan() {
+    const file = document.getElementById('scanInput').files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+            
+            if (code) {
+                console.log('✅ QR Code encontrado na imagem:', code.data);
+                processInvoiceQR(code.data);
+            } else {
+                showError('Nenhum QR code encontrado na imagem');
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    
+    document.getElementById('scanInput').value = '';
+}
+
+// ========== PROCESSAR QR DA FATURA ==========
+function processInvoiceQR(qrData) {
+    // Formato esperado: NIF|VALOR|DATA ou apenas VALOR
+    let nif, amount, date;
+    
+    const parts = qrData.split('|');
+    
+    if (parts.length >= 2) {
+        nif = parts[0].trim();
+        amount = parseFloat(parts[1].trim());
+        date = parts.length > 2 ? parts[2].trim() : new Date().toISOString().split('T')[0];
+    } else if (parts.length === 1) {
+        amount = parseFloat(parts[0].trim());
+        nif = null;
+        date = new Date().toISOString().split('T')[0];
+    }
+    
+    // Validar NIF se presente
+    if (nif && nif !== currentUser.nif) {
+        showError('❌ Este QR code é de outro cliente (NIF: ' + nif + ')');
+        return;
+    }
+    
+    if (isNaN(amount) || amount <= 0) {
+        showError('❌ Valor inválido no QR code');
+        return;
+    }
+    
+    // Enviar para Apps Script processar
+    apiRequest('processarQRFatura', { 
+        nif: currentUser.nif, 
+        valor: amount, 
+        data: date 
+    }, CONFIG.SCRIPT_RESERVAS)
+        .then(response => {
+            if (!response.success) {
+                showError('❌ Erro: ' + response.message);
+                return;
+            }
+            
+            // Atualizar dados locais com resposta do servidor
+            currentUser.points += response.pontos || 0;
+            currentUser.cashback += response.cashback || 0;
+            currentUser.seals = (currentUser.seals + 1) % 11;
+            
+            currentUser.transactions.push({
+                date: date,
+                amount: amount,
+                points: response.pontos,
+                cashback: response.cashback
+            });
+            
+            // Guardar sessão
+            localStorage.setItem('session_nif', currentUser.nif);
+            
+            // Atualizar UI
+            updateStats();
+            updateSeals();
+            updateTransactions();
+            
+            let msg = `✅ Consumo de €${amount.toFixed(2)} registado!\n+${response.pontos} pontos • +€${response.cashback.toFixed(2)} cashback`;
+            if (response.recompensaDesbloqueada) {
+                msg += '\n🎁 Recompensa desbloqueada!';
+            }
+            
+            showSuccess(msg);
+        })
+        .catch(error => {
+            console.error('Erro ao processar QR:', error);
+            showError('❌ Erro de conexão. Tenta novamente.');
+        });
+}
+
+// ========== ATUALIZAR STATS ==========
+function updateStats() {
+    document.getElementById('statCashback').textContent = currentUser.cashback.toFixed(2) + ' €';
+    document.getElementById('statPoints').textContent = currentUser.points;
+    document.getElementById('statVisits').textContent = currentUser.transactions.length;
+}
+
+// ========== ATUALIZAR SELOS ==========
+function updateSeals() {
+    const container = document.getElementById('sealsContainer');
+    container.innerHTML = '';
+    
+    for (let i = 0; i < 10; i++) {
+        const seal = document.createElement('div');
+        seal.className = 'seal' + (i < currentUser.seals ? '' : ' empty');
+        seal.textContent = i < currentUser.seals ? '✓' : '';
+        container.appendChild(seal);
+    }
+}
+
+// ========== ATUALIZAR TRANSAÇÕES ==========
+function updateTransactions() {
+    const container = document.getElementById('transactionsContainer');
+    
+    if (currentUser.transactions.length === 0) {
+        container.innerHTML = '<div class="empty-state">Nenhum consumo registado ainda</div>';
+        return;
+    }
+    
+    const sorted = [...currentUser.transactions].reverse();
+    container.innerHTML = sorted.map(t => `
+        <div class="transaction">
+            <div class="transaction-info">
+                <h4>${formatDate(t.date)}</h4>
+                <p>Consumo realizado</p>
+            </div>
+            <div class="transaction-right">
+                <div class="transaction-amount">+€${t.amount.toFixed(2)}</div>
+                <div class="transaction-points">+${t.points} pts</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ========== LOGOUT ==========
+function doLogout() {
+    currentUser = null;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboardScreen').classList.remove('active');
+    document.getElementById('nifLogin').value = '';
+    document.getElementById('telLogin').value = '';
+    document.getElementById('nameRegister').value = '';
+    document.getElementById('nifRegister').value = '';
+    document.getElementById('telRegister').value = '';
+    clearMessages();
+}
+
+// ========== MENSAGENS ==========
+function showError(msg) {
+    const el = document.getElementById('errorMessage');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 5000);
+}
+
+function showSuccess(msg) {
+    const el = document.getElementById('successMessage');
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.style.whiteSpace = 'pre-wrap';
+    setTimeout(() => el.style.display = 'none', 5000);
+}
+
+function clearMessages() {
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+}
+
+// ========== UTILS ==========
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+console.log('✅ Sistema de Fidelização carregado');
+</script>
+
+</body>
+</html>
