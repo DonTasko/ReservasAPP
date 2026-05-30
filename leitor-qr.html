@@ -321,7 +321,7 @@
         ✅ Apenas QR codes do Don Tasko (NIF: 516763482)<br>
         ✅ Não permite leituras duplicadas<br>
         ✅ Valor mínimo: €0.50 | Máximo: €500<br>
-        ⚙️ Usando ZXing para melhor detecção
+        ⚙️ Processamento avançado de imagem
     </div>
 
     <!-- MENSAGENS -->
@@ -372,11 +372,11 @@
     </div>
 </div>
 
-<!-- LIBS - ZXing para melhor detecção de QR -->
-<script async src="https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/esm5/index.min.js"></script>
+<!-- jsQR Library -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-console.log('🔍 Leitor de QR v3.0 - Usando ZXing');
+console.log('🔍 Leitor de QR v4.0 - Processamento Avançado');
 
 // ========== CONFIGURAÇÕES ==========
 const RESTAURANT_NIF = '516763482';
@@ -459,7 +459,7 @@ function handleFileSelect(e) {
         
         img.onload = function() {
             addDebug(`🖼️ Imagem: ${img.width}x${img.height}`);
-            processImageWithZXing(img);
+            processImage(img);
         };
         
         img.onerror = function() {
@@ -480,31 +480,75 @@ function handleFileSelect(e) {
     reader.readAsDataURL(file);
 }
 
-// ========== PROCESSAR COM ZXING ==========
-async function processImageWithZXing(img) {
+// ========== PROCESSAR IMAGEM COM MÚLTIPLAS ESTRATÉGIAS ==========
+function processImage(img) {
+    addDebug('⚙️ Iniciando processamento...');
+    
     try {
-        addDebug('⚙️ Tentando ZXing...');
-        
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         ctx.drawImage(img, 0, 0);
 
-        // Usar ZXing para ler QR
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const codeReader = new ZXing.BrowserQRCodeReader();
+        let code = null;
+        let attempts = 0;
 
-        // Tentar ler com ZXing
-        try {
-            const result = await codeReader.decodeFromImageData(imageData);
-            addDebug(`✅ ZXing encontrou: ${result.getText()}`);
-            parseQRData(result.getText());
-        } catch (err) {
-            addDebug(`⚠️ ZXing falhou, tentando jsQR...`);
-            // Fallback para processamento manual
-            processImageManual(img);
+        // Estratégia 1: Processamento normal
+        addDebug('Tentativa 1: Processamento normal');
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        code = jsQR(imageData.data, imageData.width, imageData.height);
+        attempts++;
+
+        if (!code) {
+            // Estratégia 2: Aumentar brilho
+            addDebug('Tentativa 2: Aumentar brilho');
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            imageData = enhanceBrightness(imageData, 1.5);
+            code = jsQR(imageData.data, imageData.width, imageData.height);
+            attempts++;
         }
+
+        if (!code) {
+            // Estratégia 3: Aumentar contraste
+            addDebug('Tentativa 3: Aumentar contraste');
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            imageData = enhanceContrast(imageData, 1.5);
+            code = jsQR(imageData.data, imageData.width, imageData.height);
+            attempts++;
+        }
+
+        if (!code) {
+            // Estratégia 4: Threshold agressivo
+            addDebug('Tentativa 4: Threshold agressivo');
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            imageData = applyThreshold(imageData, 128);
+            code = jsQR(imageData.data, imageData.width, imageData.height);
+            attempts++;
+        }
+
+        if (!code) {
+            // Estratégia 5: Inverte cores
+            addDebug('Tentativa 5: Inverter cores');
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            imageData = invertColors(imageData);
+            code = jsQR(imageData.data, imageData.width, imageData.height);
+            attempts++;
+        }
+
+        addDebug(`📊 Tentativas: ${attempts} | Resultado: ${code ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+
+        setTimeout(() => {
+            document.getElementById('processingSection').style.display = 'none';
+
+            if (code && code.data) {
+                addDebug(`✅ QR encontrado: ${code.data}`);
+                parseQRData(code.data);
+            } else {
+                addDebug('❌ Nenhum QR detectado');
+                showError('❌ Nenhum QR code detectado. Tenta com uma imagem mais nítida.');
+            }
+        }, 1000);
     } catch (error) {
         addDebug(`❌ Erro: ${error.message}`);
         showError('❌ Erro ao processar');
@@ -512,60 +556,47 @@ async function processImageWithZXing(img) {
     }
 }
 
-// ========== FALLBACK - Processamento Manual ==========
-function processImageManual(img) {
-    try {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0);
-
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        
-        // Melhorar imagem
-        imageData = enhanceImage(imageData);
-
-        // Tentar jsQR
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-        setTimeout(() => {
-            document.getElementById('processingSection').style.display = 'none';
-
-            if (code && code.data) {
-                addDebug(`✅ jsQR encontrou: ${code.data}`);
-                parseQRData(code.data);
-            } else {
-                addDebug('❌ Nenhum QR detectado');
-                showError('❌ Nenhum QR code detectado na imagem');
-            }
-        }, 500);
-    } catch (error) {
-        addDebug(`❌ Erro manual: ${error.message}`);
-        showError('❌ Erro ao processar');
-        document.getElementById('processingSection').style.display = 'none';
+// ========== FUNÇÕES DE PROCESSAMENTO DE IMAGEM ==========
+function enhanceBrightness(imageData, factor) {
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.min(255, data[i] * factor);      // R
+        data[i + 1] = Math.min(255, data[i + 1] * factor); // G
+        data[i + 2] = Math.min(255, data[i + 2] * factor); // B
     }
+    return imageData;
 }
 
-// ========== MELHORAR IMAGEM ==========
-function enhanceImage(imageData) {
+function enhanceContrast(imageData, factor) {
     const data = imageData.data;
-    
+    const intercept = 128 * (1 - factor);
     for (let i = 0; i < data.length; i += 4) {
-        // Aumentar contraste
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        
-        const gray = (r + g + b) / 3;
-        const value = gray > 128 ? 255 : 0;
-        
+        data[i] = Math.min(255, Math.max(0, data[i] * factor + intercept));
+        data[i + 1] = Math.min(255, Math.max(0, data[i + 1] * factor + intercept));
+        data[i + 2] = Math.min(255, Math.max(0, data[i + 2] * factor + intercept));
+    }
+    return imageData;
+}
+
+function applyThreshold(imageData, threshold) {
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        const value = gray > threshold ? 255 : 0;
         data[i] = value;
         data[i + 1] = value;
         data[i + 2] = value;
     }
-    
+    return imageData;
+}
+
+function invertColors(imageData) {
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = 255 - data[i];      // R
+        data[i + 1] = 255 - data[i + 1]; // G
+        data[i + 2] = 255 - data[i + 2]; // B
+    }
     return imageData;
 }
 
@@ -774,11 +805,8 @@ function showSuccess(msg) {
     setTimeout(() => el.style.display = 'none', 5000);
 }
 
-addDebug('✅ Sistema pronto (v3.0 - ZXing)');
+addDebug('✅ Sistema pronto (v4.0 - 5 estratégias de processamento)');
 </script>
-
-<!-- jsQR como fallback -->
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 </body>
 </html>
