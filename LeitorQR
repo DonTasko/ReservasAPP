@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor de QR - Faturas | Don Tasko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4a574;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f5f5f0;
+            --card-bg: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a2a2a 100%);
+            padding: 1.5rem 1rem;
+            border-bottom: 2px solid var(--accent);
+            text-align: center;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #999;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .upload-area {
+            border: 2px dashed #444;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #1a1a1a;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(212, 165, 116, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent);
+            background: rgba(212, 165, 116, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            margin-bottom: 1rem;
+        }
+
+        .upload-text p {
+            margin: 0.5rem 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .result-card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 2px solid var(--accent);
+            position: relative;
+        }
+
+        .result-item {
+            margin-bottom: 1rem;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .result-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .result-value.text {
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+
+        .status-success {
+            background: rgba(39, 174, 96, 0.2);
+            color: #81c784;
+            border: 1px solid #27ae60;
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff7675;
+            border: 1px solid var(--danger);
+        }
+
+        .status-warning {
+            background: rgba(243, 156, 18, 0.2);
+            color: #ffd700;
+            border: 1px solid #f39c12;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--danger);
+            color: #ff7675;
+        }
+
+        .success-message {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid var(--success);
+            color: #81c784;
+        }
+
+        .info-message {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid #3498db;
+            color: #64b5f6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #333;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .qr-preview {
+            max-width: 300px;
+            margin: 1rem auto;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--accent);
+        }
+
+        .qr-preview img {
+            width: 100%;
+            display: block;
+        }
+
+        .copy-button {
+            background: var(--info);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: #2980b9;
+        }
+
+        .copy-button.copied {
+            background: var(--success);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .info-box {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid #3498db;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #64b5f6;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo">Don Tasko</div>
+        <div class="subtitle">Extrator de QR Code - Faturas</div>
+    </div>
+</header>
+
+<div class="container">
+    <!-- INFO -->
+    <div class="info-box">
+        <strong>💡 Como Funciona:</strong>
+        Carrega uma imagem da fatura com QR code. O sistema irá ler o código e extrair o NIF e o Valor automaticamente.
+    </div>
+
+    <!-- MENSAGENS -->
+    <div id="errorMessage" class="message error-message"></div>
+    <div id="successMessage" class="message success-message"></div>
+    <div id="infoMessage" class="message info-message"></div>
+
+    <!-- UPLOAD SECTION -->
+    <div class="section">
+        <h2 class="section-title">📷 Carregar Fatura</h2>
+
+        <div class="upload-area" id="uploadArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">
+                <p><strong>Clica ou arrasta uma imagem aqui</strong></p>
+                <p style="font-size: 0.9rem; color: #999;">Formatos: JPG, PNG, PDF</p>
+            </div>
+            <button class="btn-primary">Selecionar Imagem</button>
+        </div>
+
+        <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+    </div>
+
+    <!-- PROCESSING -->
+    <div class="section" id="processingSection" style="display: none;">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Processando imagem e lendo QR code...</p>
+        </div>
+    </div>
+
+    <!-- RESULTADOS SECTION -->
+    <div class="section" id="resultsSection" style="display: none;">
+        <h2 class="section-title">✅ Dados Extraídos</h2>
+        <div class="results-grid" id="resultsContainer"></div>
+    </div>
+
+    <!-- HISTÓRICO SECTION -->
+    <div class="section" id="historySection" style="display: none;">
+        <h2 class="section-title">📋 Histórico de Leituras</h2>
+        <div id="historyContainer"></div>
+    </div>
+</div>
+
+<!-- LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="config.js"></script>
+
+<script>
+console.log('🔍 Leitor de QR Code para Faturas - Iniciando...');
+
+let scanHistory = JSON.parse(localStorage.getItem('qr_scan_history') || '[]');
+
+// ========== DRAG & DROP ==========
+function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('uploadArea').classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+    document.getElementById('uploadArea').classList.remove('dragover');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('uploadArea').classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        document.getElementById('fileInput').files = files;
+        handleFileSelect({ target: { files } });
+    }
+}
+
+// ========== FILE HANDLING ==========
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    document.getElementById('processingSection').style.display = 'block';
+    document.getElementById('resultsSection').style.display = 'none';
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            processImage(img);
+        };
+        img.onerror = function() {
+            showError('❌ Erro ao carregar a imagem. Tenta com outro arquivo.');
+            document.getElementById('processingSection').style.display = 'none';
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// ========== PROCESSAR IMAGEM ==========
+function processImage(img) {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+    setTimeout(() => {
+        document.getElementById('processingSection').style.display = 'none';
+
+        if (code) {
+            console.log('✅ QR Code encontrado:', code.data);
+            parseQRData(code.data, img.src);
+        } else {
+            showError('❌ Nenhum QR code encontrado na imagem. Tenta com outra foto mais clara.');
+        }
+    }, 1500);
+}
+
+// ========== PARSE QR DATA ==========
+function parseQRData(qrRawData, imageSource) {
+    console.log('📍 Dados brutos do QR:', qrRawData);
+
+    // Tentar diferentes formatos de QR code
+    let nif = null;
+    let valor = null;
+    let data = new Date().toISOString().split('T')[0];
+    let rawData = qrRawData;
+
+    // Formato 1: NIF|VALOR|DATA (esperado)
+    if (qrRawData.includes('|')) {
+        const parts = qrRawData.split('|');
+        nif = parts[0].trim();
+        valor = parseFloat(parts[1].trim());
+        if (parts.length > 2) {
+            data = parts[2].trim();
+        }
+    }
+    // Formato 2: Apenas um número (tentar extrair valor)
+    else if (!isNaN(qrRawData)) {
+        valor = parseFloat(qrRawData);
+    }
+    // Formato 3: QR com NIF no início
+    else if (/^\d{9}/.test(qrRawData)) {
+        nif = qrRawData.substring(0, 9);
+        const restante = qrRawData.substring(9);
+        const valorMatch = restante.match(/(\d+\.?\d*)/);
+        if (valorMatch) {
+            valor = parseFloat(valorMatch[1]);
+        }
+    }
+    // Formato 4: Buscar padrão de valor (ex: 25.50 ou 2550)
+    else {
+        const valorMatch = qrRawData.match(/(\d+\.?\d*)/);
+        if (valorMatch) {
+            valor = parseFloat(valorMatch[1]);
+        }
+
+        const nifMatch = qrRawData.match(/\d{9}/);
+        if (nifMatch) {
+            nif = nifMatch[0];
+        }
+    }
+
+    // Validações
+    if (!nif || nif.length !== 9 || isNaN(nif)) {
+        showError('⚠️ NIF não encontrado ou inválido no QR code');
+        nif = null;
+    }
+
+    if (!valor || valor <= 0) {
+        showError('⚠️ Valor não encontrado ou inválido no QR code');
+        valor = null;
+    }
+
+    // Mostrar resultado
+    if (nif || valor) {
+        displayResults(nif, valor, data, rawData, imageSource);
+    } else {
+        showError('❌ Não foi possível extrair NIF e Valor do QR code. Tenta com outra imagem.');
+    }
+}
+
+// ========== DISPLAY RESULTS ==========
+function displayResults(nif, valor, data, rawData, imageSource) {
+    const container = document.getElementById('resultsContainer');
+    const timestamp = new Date().toLocaleString('pt-PT');
+
+    let html = `
+        <div class="result-card">
+            <div class="result-item">
+                <div class="result-label">🔢 NIF Cliente</div>
+                <div class="result-value ${nif ? 'text' : ''}" style="${!nif ? 'color: #999;' : ''}">${nif || 'Não encontrado'}</div>
+            </div>
+        </div>
+
+        <div class="result-card">
+            <div class="result-item">
+                <div class="result-label">💰 Valor da Fatura</div>
+                <div class="result-value" style="${!valor ? 'color: #999;' : ''}">${valor ? '€' + valor.toFixed(2) : 'Não encontrado'}</div>
+            </div>
+        </div>
+
+        <div class="result-card">
+            <div class="result-item">
+                <div class="result-label">📅 Data</div>
+                <div class="result-value text">${data}</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">🕐 Hora de Leitura</div>
+                <div class="result-value text" style="font-size: 0.9rem;">${timestamp}</div>
+            </div>
+        </div>
+    `;
+
+    // Status badge
+    let statusClass = 'status-warning';
+    let statusText = '⚠️ Dados Incompletos';
+
+    if (nif && valor) {
+        statusClass = 'status-success';
+        statusText = '✅ Dados Válidos';
+    }
+
+    html += `<div class="result-card" style="grid-column: 1 / -1;"><div class="status-badge ${statusClass}">${statusText}</div></div>`;
+
+    // Se houver dados válidos, adicionar opção de copiar
+    if (nif && valor) {
+        const qrFormatted = nif + '|' + valor.toFixed(2) + '|' + data;
+        html += `<div class="result-card" style="grid-column: 1 / -1;">
+            <div style="text-align: center;">
+                <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.8rem;">Formato para cliente:</p>
+                <input type="text" value="${qrFormatted}" style="width: 100%; padding: 0.6rem; background: #1a1a1a; border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-family: monospace; text-align: center;" readonly>
+                <button class="copy-button" onclick="copyToClipboard('${qrFormatted}')">📋 Copiar Formato</button>
+            </div>
+        </div>`;
+
+        // Guardar no histórico
+        saveToHistory(nif, valor, data, timestamp);
+    }
+
+    container.innerHTML = html;
+    document.getElementById('resultsSection').style.display = 'block';
+
+    // Mostrar histórico se existir
+    if (scanHistory.length > 0) {
+        loadHistory();
+    }
+
+    showSuccess('✅ QR code processado com sucesso!');
+}
+
+// ========== COPY TO CLIPBOARD ==========
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        btn.textContent = '✓ Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = '📋 Copiar Formato';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+
+// ========== HISTÓRICO ==========
+function saveToHistory(nif, valor, data, timestamp) {
+    const entry = {
+        nif,
+        valor,
+        data,
+        timestamp,
+        id: Date.now()
+    };
+
+    scanHistory.unshift(entry);
+    if (scanHistory.length > 50) scanHistory.pop(); // Manter últimos 50
+
+    localStorage.setItem('qr_scan_history', JSON.stringify(scanHistory));
+}
+
+function loadHistory() {
+    const container = document.getElementById('historyContainer');
+
+    if (scanHistory.length === 0) {
+        container.innerHTML = '<div class="empty-state">Nenhuma leitura anterior</div>';
+        document.getElementById('historySection').style.display = 'none';
+        return;
+    }
+
+    let html = `
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background: #1a1a1a; border-bottom: 2px solid var(--accent);">
+                <tr>
+                    <th style="padding: 0.8rem; text-align: left; color: var(--accent);">NIF</th>
+                    <th style="padding: 0.8rem; text-align: left; color: var(--accent);">Valor</th>
+                    <th style="padding: 0.8rem; text-align: left; color: var(--accent);">Data</th>
+                    <th style="padding: 0.8rem; text-align: left; color: var(--accent);">Hora Leitura</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    scanHistory.slice(0, 10).forEach(entry => {
+        html += `
+            <tr style="border-bottom: 1px solid #333;">
+                <td style="padding: 0.8rem;">${entry.nif || '-'}</td>
+                <td style="padding: 0.8rem;">€${entry.valor ? entry.valor.toFixed(2) : '-'}</td>
+                <td style="padding: 0.8rem;">${entry.data}</td>
+                <td style="padding: 0.8rem; font-size: 0.85rem; color: #999;">${entry.timestamp}</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+
+    container.innerHTML = html;
+    document.getElementById('historySection').style.display = 'block';
+}
+
+// ========== MENSAGENS ==========
+function showError(msg) {
+    const el = document.getElementById('errorMessage');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 5000);
+}
+
+function showSuccess(msg) {
+    const el = document.getElementById('successMessage');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 5000);
+}
+
+console.log('✅ Leitor de QR code carregado');
+</script>
+
+</body>
+</html>
