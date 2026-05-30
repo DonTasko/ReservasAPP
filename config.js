@@ -4,7 +4,7 @@
  */
 
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby8FgChxl1LA5A_H1qzvBgmalJk_shojdsE1aHROArxGidFcTry8QiWgWxpdg7RVbuC/exec',
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzrjj0dE0bxrpTapH7XB5ldZRFpc09jJbWXMAVdZlwQshqUGqo-xfvd0wkq4Q_oFv41/exec',
   APP_NAME: 'Don Tasko',
   VERSION: '7.0',
   DEBUG: true,
