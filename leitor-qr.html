@@ -181,12 +181,6 @@
             border: 1px solid #27ae60;
         }
 
-        .status-error {
-            background: rgba(231, 76, 60, 0.2);
-            color: #ff7675;
-            border: 1px solid var(--danger);
-        }
-
         .message {
             padding: 1rem;
             border-radius: 8px;
@@ -216,12 +210,6 @@
             background: rgba(39, 174, 96, 0.2);
             border: 1px solid var(--success);
             color: #81c784;
-        }
-
-        .info-message {
-            background: rgba(52, 152, 219, 0.2);
-            border: 1px solid #3498db;
-            color: #64b5f6;
         }
 
         .loading {
@@ -263,69 +251,19 @@
             color: var(--accent);
         }
 
-        /* MODAL SCANNER */
-        .scanner-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #000;
-            z-index: 1000;
-        }
-
-        .scanner-modal.active {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .scanner-content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .scanner-modal video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .scanner-modal canvas {
-            display: none;
-        }
-
-        .scanner-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 2rem;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        .scanner-info {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 1rem;
+        .debug-box {
+            background: #0a0a0a;
+            border: 2px solid #666;
             border-radius: 8px;
-            font-size: 0.9rem;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #81c784;
+            line-height: 1.8;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
 
         table {
@@ -383,13 +321,12 @@
         ✅ Apenas QR codes do Don Tasko (NIF: 516763482)<br>
         ✅ Não permite leituras duplicadas<br>
         ✅ Valor mínimo: €0.50 | Máximo: €500<br>
-        ✅ Histórico seguro de leituras
+        ⚙️ Usando ZXing para melhor detecção
     </div>
 
     <!-- MENSAGENS -->
     <div id="errorMessage" class="message error-message"></div>
     <div id="successMessage" class="message success-message"></div>
-    <div id="infoMessage" class="message info-message"></div>
 
     <!-- UPLOAD SECTION -->
     <div class="section">
@@ -401,7 +338,6 @@
                 <p><strong>Clica ou arrasta uma imagem aqui</strong></p>
                 <p style="font-size: 0.9rem; color: #999;">Formatos: JPG, PNG</p>
             </div>
-            <button class="btn-primary" onclick="startScan()">📷 Usar Câmara</button>
             <button class="btn-primary" onclick="document.getElementById('fileInput').click()">📁 Selecionar Imagem</button>
         </div>
 
@@ -412,7 +348,7 @@
     <div class="section" id="processingSection" style="display: none;">
         <div class="loading">
             <div class="spinner"></div>
-            <p>Processando imagem e lendo QR code...</p>
+            <p>Processando imagem...</p>
         </div>
     </div>
 
@@ -428,45 +364,39 @@
         <div id="historyContainer"></div>
     </div>
 
-    <!-- DEBUG PANEL (Mobile) -->
+    <!-- DEBUG PANEL -->
     <div class="section" style="background: #1a1a1a; border: 2px solid #666;">
         <h2 class="section-title" style="color: #999; font-size: 1rem;">🐛 Debug Info</h2>
-        <div id="debugPanel" style="background: #0a0a0a; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; color: #81c784; line-height: 1.8; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">
-            Aguardando ação...
-        </div>
+        <div id="debugPanel" class="debug-box">Aguardando ação...</div>
         <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="clearDebugPanel()">Limpar Debug</button>
     </div>
 </div>
 
-<!-- MODAL SCANNER -->
-<div class="scanner-modal" id="scannerModal">
-    <div class="scanner-content">
-        <video id="video" playsinline autoplay muted style="width: 100%; height: 100%; object-fit: cover;"></video>
-        <canvas id="canvas"></canvas>
-        <button class="scanner-close" onclick="stopScanner()">✕</button>
-        <div class="scanner-info">
-            📱 Aponta a câmara para o QR code da fatura
-        </div>
-    </div>
-</div>
-
-<!-- LIBS -->
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<!-- LIBS - ZXing para melhor detecção de QR -->
+<script async src="https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/esm5/index.min.js"></script>
 
 <script>
-console.log('🔍 Leitor de QR Code - Iniciando v2.0');
+console.log('🔍 Leitor de QR v3.0 - Usando ZXing');
 
-// ========== DEBUG VISUAL ==========
+// ========== CONFIGURAÇÕES ==========
+const RESTAURANT_NIF = '516763482';
+const SECURITY_CONFIG = {
+    allowDuplicates: false,
+    validateRestaurantNIF: true,
+    minValue: 0.50,
+    maxValue: 500
+};
+
+let scanHistory = JSON.parse(localStorage.getItem('qr_scan_history') || '[]');
+let processedQRCodes = JSON.parse(localStorage.getItem('processed_qr_codes') || '{}');
 let debugLog = [];
 
+// ========== DEBUG ==========
 function addDebug(msg) {
     const timestamp = new Date().toLocaleTimeString('pt-PT');
     const logEntry = `[${timestamp}] ${msg}`;
     debugLog.push(logEntry);
-    
-    // Manter apenas últimas 20 linhas
     if (debugLog.length > 20) debugLog.shift();
-    
     updateDebugPanel();
     console.log(msg);
 }
@@ -483,19 +413,6 @@ function clearDebugPanel() {
     debugLog = [];
     updateDebugPanel();
 }
-
-// ========== CONFIGURAÇÕES DE SEGURANÇA ==========
-const RESTAURANT_NIF = '516763482';  // NIF DO DON TASKO
-const SECURITY_CONFIG = {
-    allowDuplicates: false,
-    validateRestaurantNIF: true,
-    minValue: 0.50,
-    maxValue: 500
-};
-
-let scanHistory = JSON.parse(localStorage.getItem('qr_scan_history') || '[]');
-let processedQRCodes = JSON.parse(localStorage.getItem('processed_qr_codes') || '{}');
-let scannerActive = false;
 
 // ========== DRAG & DROP ==========
 function handleDragOver(e) {
@@ -528,8 +445,7 @@ function handleFileSelect(e) {
     addDebug(`📁 Arquivo: ${file.name}`);
 
     if (!file.type.startsWith('image/')) {
-        showError('❌ Por favor, seleciona uma imagem válida (JPG ou PNG)');
-        addDebug('❌ Tipo de arquivo inválido: ' + file.type);
+        showError('❌ Por favor, seleciona uma imagem válida');
         return;
     }
 
@@ -538,17 +454,17 @@ function handleFileSelect(e) {
 
     const reader = new FileReader();
     reader.onload = function(event) {
-        addDebug('📖 FileReader completo');
+        addDebug('📖 Arquivo lido');
         const img = new Image();
         
         img.onload = function() {
-            addDebug(`🖼️ Imagem carregada: ${img.width}x${img.height}`);
-            processImage(img);
+            addDebug(`🖼️ Imagem: ${img.width}x${img.height}`);
+            processImageWithZXing(img);
         };
         
         img.onerror = function() {
-            addDebug('❌ Erro ao carregar imagem');
-            showError('❌ Erro ao carregar a imagem. Tenta com outro arquivo.');
+            addDebug('❌ Erro ao carregar');
+            showError('❌ Erro ao carregar a imagem');
             document.getElementById('processingSection').style.display = 'none';
         };
         
@@ -556,7 +472,7 @@ function handleFileSelect(e) {
     };
     
     reader.onerror = function() {
-        addDebug('❌ Erro ao ler arquivo');
+        addDebug('❌ Erro ao ler');
         showError('❌ Erro ao ler o arquivo');
         document.getElementById('processingSection').style.display = 'none';
     };
@@ -564,185 +480,97 @@ function handleFileSelect(e) {
     reader.readAsDataURL(file);
 }
 
-// ========== PROCESSAR IMAGEM ==========
-function processImage(img) {
-    addDebug(`⚙️ Processando: ${img.width}x${img.height}`);
-    
+// ========== PROCESSAR COM ZXING ==========
+async function processImageWithZXing(img) {
+    try {
+        addDebug('⚙️ Tentando ZXing...');
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        // Usar ZXing para ler QR
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const codeReader = new ZXing.BrowserQRCodeReader();
+
+        // Tentar ler com ZXing
+        try {
+            const result = await codeReader.decodeFromImageData(imageData);
+            addDebug(`✅ ZXing encontrou: ${result.getText()}`);
+            parseQRData(result.getText());
+        } catch (err) {
+            addDebug(`⚠️ ZXing falhou, tentando jsQR...`);
+            // Fallback para processamento manual
+            processImageManual(img);
+        }
+    } catch (error) {
+        addDebug(`❌ Erro: ${error.message}`);
+        showError('❌ Erro ao processar');
+        document.getElementById('processingSection').style.display = 'none';
+    }
+}
+
+// ========== FALLBACK - Processamento Manual ==========
+function processImageManual(img) {
     try {
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
 
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        if (!ctx) {
-            addDebug('❌ Não consegui obter contexto 2D');
-            showError('❌ Erro ao processar imagem');
-            document.getElementById('processingSection').style.display = 'none';
-            return;
-        }
-
         ctx.drawImage(img, 0, 0);
-        addDebug('✅ Imagem desenhada');
 
         let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        addDebug(`✅ ImageData: ${imageData.width}x${imageData.height}`);
         
-        // Melhorar brilho e contraste
-        addDebug('🔧 Ajustando brightness/contrast...');
+        // Melhorar imagem
         imageData = enhanceImage(imageData);
-        
-        addDebug('🔎 Analisando QR...');
-        let code = jsQR(imageData.data, imageData.width, imageData.height);
 
-        // Se não encontrar, tentar com mais intensidade
-        if (!code) {
-            addDebug('⚠️ QR não detectado, tentando com mais contraste...');
-            imageData = enhanceImage(imageData, true);
-            code = jsQR(imageData.data, imageData.width, imageData.height);
-        }
-
-        addDebug(`📊 Resultado: ${code ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+        // Tentar jsQR
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
 
         setTimeout(() => {
             document.getElementById('processingSection').style.display = 'none';
 
             if (code && code.data) {
-                addDebug(`✅ QR: ${code.data}`);
-                parseQRData(code.data, img.src);
+                addDebug(`✅ jsQR encontrou: ${code.data}`);
+                parseQRData(code.data);
             } else {
-                addDebug('❌ Sem QR code detectado');
-                showError('❌ Nenhum QR code encontrado. Certifica-te que:\n1. A imagem contém um QR code\n2. A imagem é nítida\n3. O QR não está muito escuro ou desfocado');
+                addDebug('❌ Nenhum QR detectado');
+                showError('❌ Nenhum QR code detectado na imagem');
             }
         }, 500);
     } catch (error) {
-        addDebug(`❌ Erro: ${error.message}`);
-        showError('❌ Erro ao processar: ' + error.message);
+        addDebug(`❌ Erro manual: ${error.message}`);
+        showError('❌ Erro ao processar');
         document.getElementById('processingSection').style.display = 'none';
     }
 }
 
-// Função para melhorar brilho e contraste
-function enhanceImage(imageData, aggressive = false) {
+// ========== MELHORAR IMAGEM ==========
+function enhanceImage(imageData) {
     const data = imageData.data;
-    const factor = aggressive ? 1.8 : 1.5;
     
     for (let i = 0; i < data.length; i += 4) {
-        // Aumentar brilho
-        data[i] = Math.min(255, data[i] * factor);      // R
-        data[i + 1] = Math.min(255, data[i + 1] * factor); // G
-        data[i + 2] = Math.min(255, data[i + 2] * factor); // B
+        // Aumentar contraste
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
         
-        // Converter para escala de cinza para melhor detecção
-        const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        const gray = (r + g + b) / 3;
+        const value = gray > 128 ? 255 : 0;
         
-        // Aplicar threshold (0 ou 255)
-        const threshold = aggressive ? 100 : 128;
-        const value = gray > threshold ? 255 : 0;
-        
-        data[i] = value;      // R
-        data[i + 1] = value;  // G
-        data[i + 2] = value;  // B
+        data[i] = value;
+        data[i + 1] = value;
+        data[i + 2] = value;
     }
     
     return imageData;
 }
 
-// ========== INICIAR SCANNER COM CÂMARA ==========
-function startScan() {
-    addDebug('🎥 Iniciando câmara...');
-    const video = document.getElementById('video');
-    const modal = document.getElementById('scannerModal');
-    
-    const constraints = {
-        video: {
-            facingMode: 'environment'
-        },
-        audio: false
-    };
-
-    navigator.mediaDevices.getUserMedia(constraints)
-        .then(stream => {
-            addDebug('✅ Stream obtido');
-            video.srcObject = stream;
-            video.setAttribute('playsinline', 'true');
-            
-            modal.classList.add('active');
-            scannerActive = true;
-
-            video.onplay = () => {
-                addDebug('📹 Vídeo a reproduzir');
-                setTimeout(() => {
-                    scanQRLoop();
-                }, 300);
-            };
-
-            video.play().catch(err => {
-                addDebug(`❌ Play error: ${err.message}`);
-            });
-        })
-        .catch(err => {
-            addDebug(`❌ Câmara error: ${err.name}`);
-            stopScanner();
-            showError('❌ Câmara não disponível. Carrega uma imagem em seu lugar.');
-            
-            setTimeout(() => {
-                document.getElementById('fileInput').click();
-            }, 500);
-        });
-}
-
-// ========== LOOP DE SCANNING ==========
-function scanQRLoop() {
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    
-    if (!scannerActive) {
-        addDebug('Scanning parou');
-        return;
-    }
-    
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        try {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-            
-            if (code && code.data) {
-                addDebug(`✅ QR: ${code.data}`);
-                scannerActive = false;
-                stopScanner();
-                parseQRData(code.data);
-                return;
-            }
-        } catch (err) {
-            addDebug(`⚠️ Error: ${err.message}`);
-        }
-    }
-    
-    requestAnimationFrame(scanQRLoop);
-}
-
-// ========== PARAR SCANNER ==========
-function stopScanner() {
-    addDebug('🛑 Parando scanner');
-    scannerActive = false;
-    const video = document.getElementById('video');
-    if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => {
-            addDebug(`Parando ${track.kind}`);
-            track.stop();
-        });
-    }
-    document.getElementById('scannerModal').classList.remove('active');
-}
-
-// ========== VALIDAÇÃO DE SEGURANÇA ==========
-function validateQRSecurity(nif, valor, data, rawData) {
+// ========== VALIDAR SEGURANÇA ==========
+function validateQRSecurity(nif, valor, data) {
     const validations = {
         nif_valid: false,
         valor_valid: false,
@@ -752,42 +580,35 @@ function validateQRSecurity(nif, valor, data, rawData) {
     };
 
     if (!nif || nif.length !== 9 || isNaN(nif)) {
-        validations.messages.push('❌ NIF inválido ou não encontrado');
+        validations.messages.push('❌ NIF inválido');
     } else {
         validations.nif_valid = true;
     }
 
     if (!valor || valor <= 0 || isNaN(valor)) {
-        validations.messages.push('❌ Valor inválido ou não encontrado');
+        validations.messages.push('❌ Valor inválido');
     } else if (valor < SECURITY_CONFIG.minValue) {
-        validations.messages.push(`❌ Valor muito baixo (mínimo: €${SECURITY_CONFIG.minValue})`);
+        validations.messages.push(`❌ Valor muito baixo`);
     } else if (valor > SECURITY_CONFIG.maxValue) {
-        validations.messages.push(`❌ Valor muito alto (máximo: €${SECURITY_CONFIG.maxValue})`);
+        validations.messages.push(`❌ Valor muito alto`);
     } else {
         validations.valor_valid = true;
     }
 
     if (SECURITY_CONFIG.validateRestaurantNIF && nif) {
-        const isDonTaskoInvoice = nif === RESTAURANT_NIF;
-        
-        if (isDonTaskoInvoice) {
+        if (nif === RESTAURANT_NIF) {
             validations.restaurant_match = true;
             addDebug(`✅ Fatura Don Tasko`);
         } else {
-            validations.messages.push(`❌ NIF não pertence ao Don Tasko (esperado: ${RESTAURANT_NIF}, recebido: ${nif})`);
-            addDebug(`❌ NIF inválido: ${nif}`);
+            validations.messages.push(`❌ NIF não é do Don Tasko`);
+            addDebug(`❌ NIF diferente: ${nif}`);
         }
     }
 
     if (!SECURITY_CONFIG.allowDuplicates) {
         const qrHash = `${nif}|${valor}|${data}`;
-        
         if (processedQRCodes[qrHash]) {
-            const lastScan = new Date(processedQRCodes[qrHash].timestamp);
-            const timeDiff = Date.now() - lastScan.getTime();
-            const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
-            
-            validations.messages.push(`❌ Este QR já foi processado há ${hoursDiff} horas`);
+            validations.messages.push(`❌ QR já processado`);
         } else {
             validations.not_duplicate = true;
         }
@@ -811,34 +632,22 @@ function parseQRData(qrRawData) {
         if (parts.length > 2) {
             data = parts[2].trim();
         }
-        addDebug('✅ Formato: NIF|VALOR|DATA');
     } else if (!isNaN(qrRawData)) {
         valor = parseFloat(qrRawData);
-        addDebug('⚠️ Formato: apenas valor');
     } else if (/^\d{9}/.test(qrRawData)) {
         nif = qrRawData.substring(0, 9);
-        const restante = qrRawData.substring(9);
-        const valorMatch = restante.match(/(\d+\.?\d*)/);
-        if (valorMatch) {
-            valor = parseFloat(valorMatch[1]);
-        }
-        addDebug('⚠️ Formato: NIF no início');
+        const valorMatch = qrRawData.substring(9).match(/(\d+\.?\d*)/);
+        if (valorMatch) valor = parseFloat(valorMatch[1]);
     } else {
         const valorMatch = qrRawData.match(/(\d+\.?\d*)/);
-        if (valorMatch) {
-            valor = parseFloat(valorMatch[1]);
-        }
+        if (valorMatch) valor = parseFloat(valorMatch[1]);
         const nifMatch = qrRawData.match(/\d{9}/);
-        if (nifMatch) {
-            nif = nifMatch[0];
-        }
-        addDebug('⚠️ Formato: padrão buscado');
+        if (nifMatch) nif = nifMatch[0];
     }
 
-    addDebug(`NIF: ${nif || 'não encontrado'}`);
-    addDebug(`Valor: €${valor || 'não encontrado'}`);
+    addDebug(`NIF: ${nif || '?'} | Valor: €${valor || '?'}`);
 
-    const security = validateQRSecurity(nif, valor, data, qrRawData);
+    const security = validateQRSecurity(nif, valor, data);
 
     if (security.messages.length > 0) {
         security.messages.forEach(msg => {
@@ -849,44 +658,35 @@ function parseQRData(qrRawData) {
 
     if (security.nif_valid && security.valor_valid && security.restaurant_match && security.not_duplicate) {
         addDebug('🟢 ACEITO');
-        displayResults(nif, valor, data, qrRawData);
+        displayResults(nif, valor, data);
     } else {
         addDebug('🔴 REJEITADO');
-        if (!security.restaurant_match) {
-            showError('❌ QR não pertence ao Don Tasko!');
-        } else if (!security.not_duplicate) {
-            showError('❌ QR já foi processado!');
-        }
     }
 }
 
 // ========== DISPLAY RESULTS ==========
-function displayResults(nif, valor, data, qrRawData) {
-    addDebug(`💾 Guardando QR: ${nif}|${valor}|${data}`);
-    
+function displayResults(nif, valor, data) {
     const container = document.getElementById('resultsContainer');
     const timestamp = new Date().toLocaleString('pt-PT');
 
     const qrHash = `${nif}|${valor}|${data}`;
     processedQRCodes[qrHash] = {
         nif, valor, data,
-        timestamp: new Date().toISOString(),
-        rawData: qrRawData
+        timestamp: new Date().toISOString()
     };
     localStorage.setItem('processed_qr_codes', JSON.stringify(processedQRCodes));
-    addDebug(`✅ QR guardado`);
 
     let html = `
         <div class="result-card">
             <div class="result-item">
-                <div class="result-label">🔢 NIF Cliente</div>
+                <div class="result-label">🔢 NIF</div>
                 <div class="result-value text">${nif}</div>
             </div>
         </div>
 
         <div class="result-card">
             <div class="result-item">
-                <div class="result-label">💰 Valor da Fatura</div>
+                <div class="result-label">💰 Valor</div>
                 <div class="result-value">€${valor.toFixed(2)}</div>
             </div>
         </div>
@@ -896,27 +696,15 @@ function displayResults(nif, valor, data, qrRawData) {
                 <div class="result-label">📅 Data</div>
                 <div class="result-value text">${data}</div>
             </div>
-            <div class="result-item">
-                <div class="result-label">🕐 Hora</div>
-                <div class="result-value text" style="font-size: 0.9rem;">${timestamp}</div>
-            </div>
         </div>
 
         <div class="result-card" style="grid-column: 1 / -1; border-color: #81c784; background: rgba(39, 174, 96, 0.1);">
-            <div class="status-badge status-success">✅ ACEITO - Validado</div>
-            <div style="margin-top: 0.8rem; font-size: 0.85rem; color: #81c784; line-height: 1.6;">
-                <p>✓ NIF validado</p>
-                <p>✓ Valor correto</p>
-                <p>✓ Primeira leitura</p>
-            </div>
+            <div class="status-badge status-success">✅ ACEITO</div>
         </div>
 
         <div class="result-card" style="grid-column: 1 / -1;">
-            <div style="text-align: center;">
-                <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.8rem;">Formato para cliente:</p>
-                <input type="text" value="${nif}|${valor.toFixed(2)}|${data}" style="width: 100%; padding: 0.6rem; background: #1a1a1a; border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-family: monospace; text-align: center;" readonly>
-                <button class="btn-primary" style="width: 100%; margin-top: 0.8rem;" onclick="copyToClipboard('${nif}|${valor.toFixed(2)}|${data}')">📋 Copiar</button>
-            </div>
+            <input type="text" value="${nif}|${valor.toFixed(2)}|${data}" style="width: 100%; padding: 0.6rem; background: #1a1a1a; border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-family: monospace; text-align: center;" readonly>
+            <button class="btn-primary" style="width: 100%; margin-top: 0.8rem;" onclick="copyToClipboard('${nif}|${valor.toFixed(2)}|${data}')">📋 Copiar</button>
         </div>
     `;
 
@@ -925,10 +713,10 @@ function displayResults(nif, valor, data, qrRawData) {
 
     saveToHistory(nif, valor, data, timestamp);
     loadHistory();
-    showSuccess('✅ QR validado com sucesso!');
+    showSuccess('✅ QR validado!');
 }
 
-// ========== COPY TO CLIPBOARD ==========
+// ========== COPY ==========
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         const btn = event.target;
@@ -954,7 +742,7 @@ function loadHistory() {
     }
 
     let html = `<table><thead><tr>
-        <th>NIF</th><th>Valor</th><th>Data</th><th>Hora Leitura</th>
+        <th>NIF</th><th>Valor</th><th>Data</th><th>Hora</th>
     </tr></thead><tbody>`;
 
     scanHistory.slice(0, 10).forEach(entry => {
@@ -962,7 +750,7 @@ function loadHistory() {
             <td>${entry.nif}</td>
             <td>€${entry.valor.toFixed(2)}</td>
             <td>${entry.data}</td>
-            <td style="font-size: 0.85rem; color: #999;">${new Date(entry.timestamp).toLocaleString('pt-PT')}</td>
+            <td style="font-size: 0.85rem;">${new Date(entry.timestamp).toLocaleTimeString('pt-PT')}</td>
         </tr>`;
     });
 
@@ -986,9 +774,11 @@ function showSuccess(msg) {
     setTimeout(() => el.style.display = 'none', 5000);
 }
 
-console.log('✅ Leitor de QR Code v2.0 carregado');
-addDebug('✅ Sistema pronto');
+addDebug('✅ Sistema pronto (v3.0 - ZXing)');
 </script>
+
+<!-- jsQR como fallback -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 </body>
 </html>
