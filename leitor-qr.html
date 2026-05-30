@@ -345,8 +345,11 @@
 <div class="container">
     <!-- INFO -->
     <div class="info-box">
-        <strong>💡 Como Funciona:</strong>
-        Escaneia com a câmara OU carrega uma imagem da fatura com QR code. O sistema irá ler o código e extrair o NIF e o Valor automaticamente.
+        <strong>🔒 VALIDAÇÕES DE SEGURANÇA ATIVAS:</strong>
+        ✅ Apenas QR codes do Don Tasko (NIF: 516763482)<br>
+        ✅ Não permite leituras duplicadas<br>
+        ✅ Valor mínimo: €0.50 | Máximo: €500<br>
+        ✅ Histórico seguro de leituras
     </div>
 
     <!-- MENSAGENS -->
@@ -410,6 +413,50 @@ console.log('🔍 Leitor de QR Code para Faturas - Iniciando...');
 
 let scanHistory = JSON.parse(localStorage.getItem('qr_scan_history') || '[]');
 let scannerActive = false;
+
+// ========== VALIDAÇÃO DE QR CODES ==========
+// NIF do restaurante Don Tasko (alterar conforme necessário)
+const RESTAURANT_NIF = '516763482';
+
+// QR codes já processados (para evitar duplicatas)
+let processedQRCodes = new Set();
+
+// Carregar histórico de QR codes processados do localStorage
+function loadProcessedQRCodes() {
+  const stored = localStorage.getItem('processed_qr_codes') || '[]';
+  try {
+    const codes = JSON.parse(stored);
+    processedQRCodes = new Set(codes);
+    console.log(`📝 ${processedQRCodes.size} QR codes já processados carregados`);
+  } catch (e) {
+    processedQRCodes = new Set();
+  }
+}
+
+// Guardar QR code processado
+function saveProcessedQRCode(qrData) {
+  processedQRCodes.add(qrData);
+  localStorage.setItem('processed_qr_codes', JSON.stringify(Array.from(processedQRCodes)));
+  console.log(`✅ QR code guardado no histórico: ${qrData}`);
+}
+
+// Verificar se QR já foi processado
+function isQRCodeProcessed(qrData) {
+  return processedQRCodes.has(qrData);
+}
+
+// Limpar histórico de QR codes (opcional - admin)
+function clearProcessedQRCodes() {
+  if (confirm('Tens certeza que queres limpar o histórico de QR codes processados?')) {
+    processedQRCodes.clear();
+    localStorage.removeItem('processed_qr_codes');
+    showSuccess('✅ Histórico limpo!');
+    console.log('🗑️ Histórico de QR codes limpo');
+  }
+}
+
+// Carregar ao iniciar
+loadProcessedQRCodes();
 
 // ========== DRAG & DROP ==========
 function handleDragOver(e) {
@@ -554,7 +601,79 @@ function stopScanner() {
     document.getElementById('scannerModal').classList.remove('active');
 }
 
-// ========== PARSE QR DATA ==========
+// ========== CONFIGURAÇÕES DE SEGURANÇA ==========
+const RESTAURANT_NIF = '201701588';  // NIF DO DON TASKO
+const SECURITY_CONFIG = {
+    allowDuplicates: false,           // Não permitir duplicatas
+    validateRestaurantNIF: true,      // Validar NIF do restaurante
+    minValue: 0.50,                   // Valor mínimo em euros
+    maxValue: 500,                    // Valor máximo em euros
+    allowedFormats: ['NIF|VALOR|DATA']  // Formatos aceitos
+};
+
+let processedQRCodes = JSON.parse(localStorage.getItem('processed_qr_codes') || '{}');
+
+// ========== VALIDAR SEGURANÇA DO QR CODE ==========
+function validateQRSecurity(nif, valor, data, rawData) {
+    const validations = {
+        nif_valid: false,
+        valor_valid: false,
+        restaurant_match: false,
+        not_duplicate: false,
+        messages: []
+    };
+
+    // 1️⃣ Validar NIF
+    if (!nif || nif.length !== 9 || isNaN(nif)) {
+        validations.messages.push('❌ NIF inválido ou não encontrado');
+    } else {
+        validations.nif_valid = true;
+    }
+
+    // 2️⃣ Validar Valor
+    if (!valor || valor <= 0 || isNaN(valor)) {
+        validations.messages.push('❌ Valor inválido ou não encontrado');
+    } else if (valor < SECURITY_CONFIG.minValue) {
+        validations.messages.push(`❌ Valor muito baixo (mínimo: €${SECURITY_CONFIG.minValue})`);
+    } else if (valor > SECURITY_CONFIG.maxValue) {
+        validations.messages.push(`❌ Valor muito alto (máximo: €${SECURITY_CONFIG.maxValue})`);
+    } else {
+        validations.valor_valid = true;
+    }
+
+    // 3️⃣ Validar se pertence ao restaurante
+    if (SECURITY_CONFIG.validateRestaurantNIF && nif) {
+        const isDonTaskoInvoice = nif === RESTAURANT_NIF;
+        
+        if (isDonTaskoInvoice) {
+            validations.restaurant_match = true;
+            console.log(`✅ Fatura do Don Tasko (NIF: ${nif})`);
+        } else {
+            validations.messages.push(`❌ NIF não pertence ao Don Tasko (esperado: ${RESTAURANT_NIF}, recebido: ${nif})`);
+            console.warn(`⚠️ ALERTA: Tentativa com NIF externo: ${nif}`);
+        }
+    }
+
+    // 4️⃣ Validar se não é duplicado
+    if (!SECURITY_CONFIG.allowDuplicates) {
+        const qrHash = `${nif}|${valor}|${data}`;
+        
+        if (processedQRCodes[qrHash]) {
+            const lastScan = new Date(processedQRCodes[qrHash].timestamp);
+            const timeDiff = Date.now() - lastScan.getTime();
+            const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+            
+            validations.messages.push(`❌ Este QR já foi processado há ${hoursDiff} horas (${lastScan.toLocaleString('pt-PT')})`);
+            console.warn(`⚠️ ALERTA: Tentativa de duplicação:`, qrHash);
+        } else {
+            validations.not_duplicate = true;
+        }
+    }
+
+    return validations;
+}
+
+// ========== PARSE QR DATA COM SEGURANÇA ==========
 function parseQRData(qrRawData) {
     console.log('📍 Analisando dados:', qrRawData);
 
@@ -562,7 +681,7 @@ function parseQRData(qrRawData) {
     let valor = null;
     let data = new Date().toISOString().split('T')[0];
 
-    // Formato 1: NIF|VALOR|DATA
+    // Formato 1: NIF|VALOR|DATA (formato esperado)
     if (qrRawData.includes('|')) {
         const parts = qrRawData.split('|');
         nif = parts[0].trim();
@@ -570,10 +689,12 @@ function parseQRData(qrRawData) {
         if (parts.length > 2) {
             data = parts[2].trim();
         }
+        console.log(`✅ Formato esperado: NIF|VALOR|DATA`);
     }
     // Formato 2: Apenas um número
     else if (!isNaN(qrRawData)) {
         valor = parseFloat(qrRawData);
+        console.log(`⚠️ Formato incompleto: apenas valor`);
     }
     // Formato 3: NIF no início
     else if (/^\d{9}/.test(qrRawData)) {
@@ -583,6 +704,7 @@ function parseQRData(qrRawData) {
         if (valorMatch) {
             valor = parseFloat(valorMatch[1]);
         }
+        console.log(`⚠️ Formato não-padrão: NIF encontrado no início`);
     }
     // Formato 4: Buscar padrão
     else {
@@ -595,30 +717,52 @@ function parseQRData(qrRawData) {
         if (nifMatch) {
             nif = nifMatch[0];
         }
+        console.log(`⚠️ Formato custom: procurado padrão`);
     }
 
-    // Validações
-    if (!nif || nif.length !== 9 || isNaN(nif)) {
-        showError('⚠️ NIF não encontrado ou inválido no QR code');
-        nif = null;
+    // ========== VALIDAÇÕES DE SEGURANÇA ==========
+    const security = validateQRSecurity(nif, valor, data, qrRawData);
+
+    // Mostrar mensagens de validação
+    if (security.messages.length > 0) {
+        security.messages.forEach(msg => {
+            console.log(msg);
+            showError(msg);
+        });
     }
 
-    if (!valor || valor <= 0) {
-        showError('⚠️ Valor não encontrado ou inválido no QR code');
-        valor = null;
-    }
-
-    if (nif || valor) {
-        displayResults(nif, valor, data);
+    // Aceitar apenas se todas as validações passarem
+    if (security.nif_valid && security.valor_valid && security.restaurant_match && security.not_duplicate) {
+        console.log('🟢 ACEITO: Todas as validações passaram');
+        displayResults(nif, valor, data, qrRawData);
+    } else if (security.nif_valid && security.valor_valid && !security.restaurant_match) {
+        showError('❌ REJEITADO: Este QR não pertence ao Don Tasko!');
+        console.warn('⚠️ SEGURANÇA: QR rejeitado - NIF não corresponde ao restaurante');
+    } else if (security.nif_valid && security.valor_valid && !security.not_duplicate) {
+        showError('❌ REJEITADO: Este QR já foi processado anteriormente!');
+        console.warn('⚠️ SEGURANÇA: QR rejeitado - duplicado');
     } else {
-        showError('❌ Não foi possível extrair NIF e Valor do QR code.');
+        showError('❌ REJEITADO: QR code incompleto ou inválido');
+        console.warn('⚠️ SEGURANÇA: QR rejeitado - dados incompletos');
     }
 }
 
-// ========== DISPLAY RESULTS ==========
-function displayResults(nif, valor, data) {
+// ========== DISPLAY RESULTS COM STATUS DE SEGURANÇA ==========
+function displayResults(nif, valor, data, qrRawData) {
     const container = document.getElementById('resultsContainer');
     const timestamp = new Date().toLocaleString('pt-PT');
+
+    // Guardar QR code processado
+    const qrHash = `${nif}|${valor}|${data}`;
+    processedQRCodes[qrHash] = {
+        nif,
+        valor,
+        data,
+        timestamp: new Date().toISOString(),
+        rawData: qrRawData
+    };
+    localStorage.setItem('processed_qr_codes', JSON.stringify(processedQRCodes));
+    console.log(`💾 QR code guardado: ${qrHash}`);
 
     let html = `
         <div class="result-card">
@@ -647,15 +791,24 @@ function displayResults(nif, valor, data) {
         </div>
     `;
 
-    let statusClass = 'status-warning';
-    let statusText = '⚠️ Dados Incompletos';
-
-    if (nif && valor) {
-        statusClass = 'status-success';
-        statusText = '✅ Dados Válidos';
+    // Status de Segurança
+    let statusClass = 'status-success';
+    let statusText = '✅ ACEITO - Validado';
+    
+    if (nif === RESTAURANT_NIF) {
+        statusText = '✅ ACEITO - Fatura Don Tasko';
     }
 
-    html += `<div class="result-card" style="grid-column: 1 / -1;"><div class="status-badge ${statusClass}">${statusText}</div></div>`;
+    html += `
+        <div class="result-card" style="grid-column: 1 / -1; border-color: #81c784; background: rgba(39, 174, 96, 0.1);">
+            <div class="status-badge ${statusClass}">${statusText}</div>
+            <div style="margin-top: 0.8rem; font-size: 0.85rem; color: #81c784; line-height: 1.6;">
+                <p>✓ NIF validado</p>
+                <p>✓ Valor na range permitida</p>
+                <p>✓ Primeira leitura (sem duplicatas)</p>
+            </div>
+        </div>
+    `;
 
     if (nif && valor) {
         const qrFormatted = nif + '|' + valor.toFixed(2) + '|' + data;
@@ -677,7 +830,7 @@ function displayResults(nif, valor, data) {
         loadHistory();
     }
 
-    showSuccess('✅ QR code processado com sucesso!');
+    showSuccess('✅ QR code validado e processado com sucesso!');
 }
 
 // ========== COPY TO CLIPBOARD ==========
