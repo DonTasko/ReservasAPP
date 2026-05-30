@@ -2,19 +2,9 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leitor de QR - Faturas | Don Tasko</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Leitor de QR - Don Tasko</title>
     <style>
-        :root {
-            --primary: #1a1a1a;
-            --accent: #d4a574;
-            --success: #27ae60;
-            --danger: #e74c3c;
-            --light: #f5f5f0;
-            --card-bg: #2a2a2a;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -23,215 +13,159 @@
 
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            background: #0f0f0f;
             color: #e0e0e0;
-            min-height: 100vh;
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary) 0%, #2a2a2a 100%);
-            padding: 1.5rem 1rem;
-            border-bottom: 2px solid var(--accent);
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-bottom: 2px solid #d4a574;
             text-align: center;
-        }
-
-        .header-content {
-            max-width: 900px;
-            margin: 0 auto;
         }
 
         .logo {
-            font-family: 'Cormorant Garamond', serif;
             font-size: 1.5rem;
-            color: var(--accent);
+            color: #d4a574;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            font-size: 0.85rem;
-            color: #999;
-            letter-spacing: 1px;
         }
 
         .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            max-width: 100%;
+            padding: 1rem;
         }
 
         .section {
-            background: var(--card-bg);
+            background: #2a2a2a;
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.5rem;
             border: 1px solid #333;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .section-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--accent);
-        }
-
-        .upload-area {
-            border: 2px dashed #444;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #1a1a1a;
-        }
-
-        .upload-area:hover {
-            border-color: var(--accent);
-            background: rgba(212, 165, 116, 0.05);
-        }
-
-        .upload-area.dragover {
-            border-color: var(--accent);
-            background: rgba(212, 165, 116, 0.1);
-        }
-
-        .upload-icon {
-            font-size: 3rem;
+            font-size: 1.3rem;
+            color: #d4a574;
             margin-bottom: 1rem;
         }
 
-        .upload-text p {
-            margin: 0.5rem 0;
+        /* CAMERA VIEW */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 1;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
-            color: #1a1a1a;
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #d4a574;
+            box-shadow: inset 0 0 40px rgba(212, 165, 116, 0.2);
+            pointer-events: none;
+        }
+
+        .camera-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            border: 3px dashed #d4a574;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #d4a574;
+            animation: scan 2s infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 50%; }
+            100% { top: 100%; }
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.8rem 1rem;
             border: none;
-            padding: 0.8rem 2rem;
             border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.85rem;
             transition: all 0.3s ease;
-            display: inline-block;
-            margin-top: 1rem;
-            margin-right: 0.5rem;
         }
 
-        .btn-primary:hover {
+        .btn-camera {
+            background: #d4a574;
+            color: #1a1a1a;
+        }
+
+        .btn-camera:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
         }
 
+        .btn-camera.active {
+            background: #27ae60;
+        }
+
+        .btn-upload {
+            background: transparent;
+            color: #d4a574;
+            border: 2px solid #d4a574;
+        }
+
+        .btn-upload:hover {
+            background: rgba(212, 165, 116, 0.1);
+        }
+
+        .btn-stop {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #c0392b;
+        }
+
         .file-input {
             display: none;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .result-card {
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 1.5rem;
-            border: 2px solid var(--accent);
-        }
-
-        .result-item {
-            margin-bottom: 1rem;
-        }
-
-        .result-label {
-            font-size: 0.8rem;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.3rem;
-        }
-
-        .result-value {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .result-value.text {
-            font-size: 1rem;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-top: 1rem;
-        }
-
-        .status-success {
-            background: rgba(39, 174, 96, 0.2);
-            color: #81c784;
-            border: 1px solid #27ae60;
-        }
-
-        .message {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: none;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .error-message {
-            background: rgba(231, 76, 60, 0.2);
-            border: 1px solid var(--danger);
-            color: #ff7675;
-        }
-
-        .success-message {
-            background: rgba(39, 174, 96, 0.2);
-            border: 1px solid var(--success);
-            color: #81c784;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #999;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid #333;
-            border-top: 3px solid var(--accent);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .info-box {
@@ -239,68 +173,101 @@
             border: 1px solid #3498db;
             border-radius: 8px;
             padding: 1rem;
-            margin-bottom: 1.5rem;
             color: #64b5f6;
             font-size: 0.9rem;
-            line-height: 1.6;
+            margin-bottom: 1rem;
         }
 
-        .info-box strong {
-            display: block;
+        .status {
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #ff7675;
+        }
+
+        .status-success {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid #27ae60;
+            color: #81c784;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-item {
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #d4a574;
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
             margin-bottom: 0.5rem;
-            color: var(--accent);
         }
 
-        .debug-box {
+        .result-value {
+            font-size: 1.5rem;
+            color: #d4a574;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .debug-panel {
             background: #0a0a0a;
             border: 2px solid #666;
             border-radius: 8px;
             padding: 1rem;
             font-family: monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #81c784;
-            line-height: 1.8;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
             white-space: pre-wrap;
             word-break: break-all;
+            line-height: 1.5;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .hidden {
+            display: none !important;
         }
 
-        thead {
-            background: #1a1a1a;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        th {
-            padding: 0.8rem;
-            text-align: left;
-            color: var(--accent);
-        }
-
-        td {
-            padding: 0.8rem;
-            border-bottom: 1px solid #333;
-        }
-
-        @media (max-width: 768px) {
-            .results-grid {
+        @media (max-width: 600px) {
+            .result-grid {
                 grid-template-columns: 1fr;
             }
 
-            .section {
-                padding: 1rem;
-            }
-
-            .btn-primary {
-                display: block;
-                width: 100%;
-                margin-top: 0.8rem;
-                margin-right: 0;
+            .camera-container {
+                height: 70vh;
             }
         }
     </style>
@@ -308,95 +275,90 @@
 <body>
 
 <header>
-    <div class="header-content">
-        <div class="logo">Don Tasko</div>
-        <div class="subtitle">Extrator de QR Code - Faturas</div>
-    </div>
+    <div class="logo">🍷 Don Tasko - Leitor QR</div>
 </header>
 
 <div class="container">
-    <!-- INFO -->
     <div class="info-box">
-        <strong>🔒 VALIDAÇÕES DE SEGURANÇA ATIVAS:</strong>
-        ✅ Apenas QR codes do Don Tasko (NIF: 516763482)<br>
-        ✅ Não permite leituras duplicadas<br>
-        ✅ Valor mínimo: €0.50 | Máximo: €500<br>
-        ⚙️ Processamento avançado de imagem
+        <strong>📱 Escaneia o QR code da fatura com a câmara</strong><br>
+        ✅ Aponta a câmara para o QR code<br>
+        ✅ Sistema detecta automaticamente<br>
+        ✅ Dados validados em tempo real
     </div>
 
-    <!-- MENSAGENS -->
-    <div id="errorMessage" class="message error-message"></div>
-    <div id="successMessage" class="message success-message"></div>
+    <div id="errorStatus" class="status status-error"></div>
+    <div id="successStatus" class="status status-success"></div>
 
-    <!-- UPLOAD SECTION -->
+    <!-- CAMERA VIEW -->
     <div class="section">
-        <h2 class="section-title">📷 Carregar Fatura</h2>
-
-        <div class="upload-area" id="uploadArea" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">
-                <p><strong>Clica ou arrasta uma imagem aqui</strong></p>
-                <p style="font-size: 0.9rem; color: #999;">Formatos: JPG, PNG</p>
+        <h2 class="section-title">📷 Câmara</h2>
+        
+        <div class="camera-container" id="cameraContainer" style="display: none;">
+            <video id="video" playsinline autoplay muted></video>
+            <canvas id="canvas"></canvas>
+            <div class="camera-overlay">
+                <div class="camera-frame">
+                    <div class="scanning-line"></div>
+                </div>
             </div>
-            <button class="btn-primary" onclick="document.getElementById('fileInput').click()">📁 Selecionar Imagem</button>
         </div>
 
-        <input type="file" id="fileInput" class="file-input" accept="image/jpeg,image/png,image/webp" onchange="handleFileSelect(event)">
-    </div>
-
-    <!-- PROCESSING -->
-    <div class="section" id="processingSection" style="display: none;">
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Processando imagem...</p>
+        <div class="btn-group">
+            <button class="btn btn-camera" id="btnCamera" onclick="startCamera()">📷 Abrir Câmara</button>
+            <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">📁 Foto</button>
+            <button class="btn btn-stop hidden" id="btnStop" onclick="stopCamera()">🛑 Parar</button>
         </div>
+
+        <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="processUploadedFile(event)">
     </div>
 
-    <!-- RESULTADOS SECTION -->
-    <div class="section" id="resultsSection" style="display: none;">
-        <h2 class="section-title">✅ Dados Extraídos</h2>
-        <div class="results-grid" id="resultsContainer"></div>
+    <!-- RESULTADOS -->
+    <div class="section results" id="resultsSection">
+        <h2 class="section-title">✅ QR Detectado</h2>
+        <div class="result-grid">
+            <div class="result-item">
+                <div class="result-label">🔢 NIF</div>
+                <div class="result-value" id="resultNIF">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">💰 Valor</div>
+                <div class="result-value" id="resultValor">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">📅 Data</div>
+                <div class="result-value" id="resultData" style="font-size: 1rem;">-</div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">✓ Status</div>
+                <div class="result-value" style="color: #81c784; font-size: 1rem;">ACEITO</div>
+            </div>
+        </div>
+        <button class="btn btn-camera" style="width: 100%;" onclick="copyAndReset()">📋 Copiar Dados</button>
     </div>
 
-    <!-- HISTÓRICO SECTION -->
-    <div class="section" id="historySection" style="display: none;">
-        <h2 class="section-title">📋 Histórico de Leituras</h2>
-        <div id="historyContainer"></div>
-    </div>
-
-    <!-- DEBUG PANEL -->
-    <div class="section" style="background: #1a1a1a; border: 2px solid #666;">
-        <h2 class="section-title" style="color: #999; font-size: 1rem;">🐛 Debug Info</h2>
-        <div id="debugPanel" class="debug-box">Aguardando ação...</div>
-        <button class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="clearDebugPanel()">Limpar Debug</button>
+    <!-- DEBUG -->
+    <div class="section">
+        <h2 class="section-title">🐛 Debug</h2>
+        <div class="debug-panel" id="debugPanel">Sistema iniciado...</div>
+        <button class="btn btn-upload" style="width: 100%; margin-top: 1rem;" onclick="clearDebug()">Limpar</button>
     </div>
 </div>
 
-<!-- jsQR Library -->
+<!-- jsQR -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-console.log('🔍 Leitor de QR v4.0 - Processamento Avançado');
+console.log('🎥 QR Scanner v5.0 - Live Camera');
 
-// ========== CONFIGURAÇÕES ==========
 const RESTAURANT_NIF = '516763482';
-const SECURITY_CONFIG = {
-    allowDuplicates: false,
-    validateRestaurantNIF: true,
-    minValue: 0.50,
-    maxValue: 500
-};
-
-let scanHistory = JSON.parse(localStorage.getItem('qr_scan_history') || '[]');
-let processedQRCodes = JSON.parse(localStorage.getItem('processed_qr_codes') || '{}');
+let isScanning = false;
 let debugLog = [];
 
-// ========== DEBUG ==========
-function addDebug(msg) {
-    const timestamp = new Date().toLocaleTimeString('pt-PT');
-    const logEntry = `[${timestamp}] ${msg}`;
-    debugLog.push(logEntry);
-    if (debugLog.length > 20) debugLog.shift();
+function log(msg) {
+    const time = new Date().toLocaleTimeString('pt-PT');
+    const line = `[${time}] ${msg}`;
+    debugLog.push(line);
+    if (debugLog.length > 15) debugLog.shift();
     updateDebugPanel();
     console.log(msg);
 }
@@ -409,266 +371,197 @@ function updateDebugPanel() {
     }
 }
 
-function clearDebugPanel() {
+function clearDebug() {
     debugLog = [];
     updateDebugPanel();
 }
 
-// ========== DRAG & DROP ==========
-function handleDragOver(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    document.getElementById('uploadArea').classList.add('dragover');
+function showError(msg) {
+    const el = document.getElementById('errorStatus');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
 }
 
-function handleDragLeave(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    document.getElementById('uploadArea').classList.remove('dragover');
+function showSuccess(msg) {
+    const el = document.getElementById('successStatus');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
 }
 
-function handleDrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    document.getElementById('uploadArea').classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        handleFileSelect({ target: { files } });
+// ========== CAMERA ==========
+function startCamera() {
+    log('🎥 Iniciando câmara...');
+    
+    const video = document.getElementById('video');
+    const container = document.getElementById('cameraContainer');
+    const btnCamera = document.getElementById('btnCamera');
+    const btnStop = document.getElementById('btnStop');
+
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: 'environment',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        },
+        audio: false
+    }).then(stream => {
+        log('✅ Câmara ativada');
+        video.srcObject = stream;
+        container.style.display = 'block';
+        btnCamera.classList.add('hidden');
+        btnStop.classList.remove('hidden');
+        isScanning = true;
+
+        video.onloadedmetadata = () => {
+            log('📹 Vídeo pronto');
+            scanFrame();
+        };
+
+        video.play().catch(err => {
+            log(`❌ Play error: ${err.message}`);
+        });
+    }).catch(err => {
+        log(`❌ Câmara error: ${err.name}`);
+        showError('❌ Câmara não disponível');
+    });
+}
+
+function stopCamera() {
+    log('🛑 Parando câmara');
+    const video = document.getElementById('video');
+    const container = document.getElementById('cameraContainer');
+    const btnCamera = document.getElementById('btnCamera');
+    const btnStop = document.getElementById('btnStop');
+
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
     }
+
+    isScanning = false;
+    container.style.display = 'none';
+    btnCamera.classList.remove('hidden');
+    btnStop.classList.add('hidden');
 }
 
-// ========== FILE HANDLING ==========
-function handleFileSelect(e) {
+function scanFrame() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!isScanning) return;
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+
+        try {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code && code.data) {
+                log(`✅ QR: ${code.data}`);
+                processQRData(code.data);
+                isScanning = false;
+                return;
+            }
+        } catch (err) {
+            // Silencioso
+        }
+    }
+
+    requestAnimationFrame(scanFrame);
+}
+
+// ========== UPLOAD FILE ==========
+function processUploadedFile(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    addDebug(`📁 Arquivo: ${file.name}`);
-
-    if (!file.type.startsWith('image/')) {
-        showError('❌ Por favor, seleciona uma imagem válida');
-        return;
-    }
-
-    document.getElementById('processingSection').style.display = 'block';
-    document.getElementById('resultsSection').style.display = 'none';
+    log(`📁 Arquivo: ${file.name}`);
 
     const reader = new FileReader();
-    reader.onload = function(event) {
-        addDebug('📖 Arquivo lido');
+    reader.onload = (event) => {
         const img = new Image();
-        
-        img.onload = function() {
-            addDebug(`🖼️ Imagem: ${img.width}x${img.height}`);
-            processImage(img);
+        img.onload = () => {
+            log(`🖼️ Processando: ${img.width}x${img.height}`);
+            processUploadedImage(img);
         };
-        
-        img.onerror = function() {
-            addDebug('❌ Erro ao carregar');
-            showError('❌ Erro ao carregar a imagem');
-            document.getElementById('processingSection').style.display = 'none';
+        img.onerror = () => {
+            log('❌ Erro ao carregar imagem');
+            showError('❌ Erro ao carregar imagem');
         };
-        
         img.src = event.target.result;
     };
-    
-    reader.onerror = function() {
-        addDebug('❌ Erro ao ler');
-        showError('❌ Erro ao ler o arquivo');
-        document.getElementById('processingSection').style.display = 'none';
-    };
-    
     reader.readAsDataURL(file);
 }
 
-// ========== PROCESSAR IMAGEM COM MÚLTIPLAS ESTRATÉGIAS ==========
-function processImage(img) {
-    addDebug('⚙️ Iniciando processamento...');
-    
-    try {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0);
+function processUploadedImage(img) {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0);
 
-        let code = null;
-        let attempts = 0;
+    // Tentar 3 estratégias
+    let code = null;
 
-        // Estratégia 1: Processamento normal
-        addDebug('Tentativa 1: Processamento normal');
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        log(`Tentativa ${attempt}...`);
         let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        code = jsQR(imageData.data, imageData.width, imageData.height);
-        attempts++;
 
-        if (!code) {
-            // Estratégia 2: Aumentar brilho
-            addDebug('Tentativa 2: Aumentar brilho');
-            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            imageData = enhanceBrightness(imageData, 1.5);
-            code = jsQR(imageData.data, imageData.width, imageData.height);
-            attempts++;
-        }
-
-        if (!code) {
-            // Estratégia 3: Aumentar contraste
-            addDebug('Tentativa 3: Aumentar contraste');
-            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            imageData = enhanceContrast(imageData, 1.5);
-            code = jsQR(imageData.data, imageData.width, imageData.height);
-            attempts++;
-        }
-
-        if (!code) {
-            // Estratégia 4: Threshold agressivo
-            addDebug('Tentativa 4: Threshold agressivo');
-            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            imageData = applyThreshold(imageData, 128);
-            code = jsQR(imageData.data, imageData.width, imageData.height);
-            attempts++;
-        }
-
-        if (!code) {
-            // Estratégia 5: Inverte cores
-            addDebug('Tentativa 5: Inverter cores');
-            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            imageData = invertColors(imageData);
-            code = jsQR(imageData.data, imageData.width, imageData.height);
-            attempts++;
-        }
-
-        addDebug(`📊 Tentativas: ${attempts} | Resultado: ${code ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
-
-        setTimeout(() => {
-            document.getElementById('processingSection').style.display = 'none';
-
-            if (code && code.data) {
-                addDebug(`✅ QR encontrado: ${code.data}`);
-                parseQRData(code.data);
-            } else {
-                addDebug('❌ Nenhum QR detectado');
-                showError('❌ Nenhum QR code detectado. Tenta com uma imagem mais nítida.');
+        if (attempt === 2) {
+            // Aumentar contraste
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                const val = gray > 128 ? 255 : 0;
+                data[i] = val;
+                data[i + 1] = val;
+                data[i + 2] = val;
             }
-        }, 1000);
-    } catch (error) {
-        addDebug(`❌ Erro: ${error.message}`);
-        showError('❌ Erro ao processar');
-        document.getElementById('processingSection').style.display = 'none';
-    }
-}
-
-// ========== FUNÇÕES DE PROCESSAMENTO DE IMAGEM ==========
-function enhanceBrightness(imageData, factor) {
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, data[i] * factor);      // R
-        data[i + 1] = Math.min(255, data[i + 1] * factor); // G
-        data[i + 2] = Math.min(255, data[i + 2] * factor); // B
-    }
-    return imageData;
-}
-
-function enhanceContrast(imageData, factor) {
-    const data = imageData.data;
-    const intercept = 128 * (1 - factor);
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, Math.max(0, data[i] * factor + intercept));
-        data[i + 1] = Math.min(255, Math.max(0, data[i + 1] * factor + intercept));
-        data[i + 2] = Math.min(255, Math.max(0, data[i + 2] * factor + intercept));
-    }
-    return imageData;
-}
-
-function applyThreshold(imageData, threshold) {
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        const value = gray > threshold ? 255 : 0;
-        data[i] = value;
-        data[i + 1] = value;
-        data[i + 2] = value;
-    }
-    return imageData;
-}
-
-function invertColors(imageData) {
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] = 255 - data[i];      // R
-        data[i + 1] = 255 - data[i + 1]; // G
-        data[i + 2] = 255 - data[i + 2]; // B
-    }
-    return imageData;
-}
-
-// ========== VALIDAR SEGURANÇA ==========
-function validateQRSecurity(nif, valor, data) {
-    const validations = {
-        nif_valid: false,
-        valor_valid: false,
-        restaurant_match: false,
-        not_duplicate: false,
-        messages: []
-    };
-
-    if (!nif || nif.length !== 9 || isNaN(nif)) {
-        validations.messages.push('❌ NIF inválido');
-    } else {
-        validations.nif_valid = true;
-    }
-
-    if (!valor || valor <= 0 || isNaN(valor)) {
-        validations.messages.push('❌ Valor inválido');
-    } else if (valor < SECURITY_CONFIG.minValue) {
-        validations.messages.push(`❌ Valor muito baixo`);
-    } else if (valor > SECURITY_CONFIG.maxValue) {
-        validations.messages.push(`❌ Valor muito alto`);
-    } else {
-        validations.valor_valid = true;
-    }
-
-    if (SECURITY_CONFIG.validateRestaurantNIF && nif) {
-        if (nif === RESTAURANT_NIF) {
-            validations.restaurant_match = true;
-            addDebug(`✅ Fatura Don Tasko`);
-        } else {
-            validations.messages.push(`❌ NIF não é do Don Tasko`);
-            addDebug(`❌ NIF diferente: ${nif}`);
+        } else if (attempt === 3) {
+            // Inverter cores
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];
+                data[i + 1] = 255 - data[i + 1];
+                data[i + 2] = 255 - data[i + 2];
+            }
         }
+
+        code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code) break;
     }
 
-    if (!SECURITY_CONFIG.allowDuplicates) {
-        const qrHash = `${nif}|${valor}|${data}`;
-        if (processedQRCodes[qrHash]) {
-            validations.messages.push(`❌ QR já processado`);
-        } else {
-            validations.not_duplicate = true;
-        }
+    if (code && code.data) {
+        log(`✅ QR encontrado: ${code.data}`);
+        processQRData(code.data);
+    } else {
+        log('❌ Nenhum QR detectado');
+        showError('❌ QR não detectado. Tira uma foto mais nítida');
     }
-
-    return validations;
 }
 
-// ========== PARSE QR DATA ==========
-function parseQRData(qrRawData) {
-    addDebug(`📍 QR raw: ${qrRawData}`);
+// ========== PARSE QR ==========
+function processQRData(qrRawData) {
+    log(`📍 Analisando: ${qrRawData}`);
 
-    let nif = null;
-    let valor = null;
-    let data = new Date().toISOString().split('T')[0];
+    let nif = null, valor = null, data = new Date().toISOString().split('T')[0];
 
     if (qrRawData.includes('|')) {
         const parts = qrRawData.split('|');
         nif = parts[0].trim();
         valor = parseFloat(parts[1].trim());
-        if (parts.length > 2) {
-            data = parts[2].trim();
-        }
+        if (parts.length > 2) data = parts[2].trim();
     } else if (!isNaN(qrRawData)) {
         valor = parseFloat(qrRawData);
     } else if (/^\d{9}/.test(qrRawData)) {
         nif = qrRawData.substring(0, 9);
-        const valorMatch = qrRawData.substring(9).match(/(\d+\.?\d*)/);
-        if (valorMatch) valor = parseFloat(valorMatch[1]);
+        const match = qrRawData.substring(9).match(/(\d+\.?\d*)/);
+        if (match) valor = parseFloat(match[1]);
     } else {
         const valorMatch = qrRawData.match(/(\d+\.?\d*)/);
         if (valorMatch) valor = parseFloat(valorMatch[1]);
@@ -676,136 +569,54 @@ function parseQRData(qrRawData) {
         if (nifMatch) nif = nifMatch[0];
     }
 
-    addDebug(`NIF: ${nif || '?'} | Valor: €${valor || '?'}`);
+    log(`NIF: ${nif} | Valor: €${valor}`);
 
-    const security = validateQRSecurity(nif, valor, data);
-
-    if (security.messages.length > 0) {
-        security.messages.forEach(msg => {
-            addDebug(msg);
-            showError(msg);
-        });
-    }
-
-    if (security.nif_valid && security.valor_valid && security.restaurant_match && security.not_duplicate) {
-        addDebug('🟢 ACEITO');
-        displayResults(nif, valor, data);
-    } else {
-        addDebug('🔴 REJEITADO');
-    }
-}
-
-// ========== DISPLAY RESULTS ==========
-function displayResults(nif, valor, data) {
-    const container = document.getElementById('resultsContainer');
-    const timestamp = new Date().toLocaleString('pt-PT');
-
-    const qrHash = `${nif}|${valor}|${data}`;
-    processedQRCodes[qrHash] = {
-        nif, valor, data,
-        timestamp: new Date().toISOString()
-    };
-    localStorage.setItem('processed_qr_codes', JSON.stringify(processedQRCodes));
-
-    let html = `
-        <div class="result-card">
-            <div class="result-item">
-                <div class="result-label">🔢 NIF</div>
-                <div class="result-value text">${nif}</div>
-            </div>
-        </div>
-
-        <div class="result-card">
-            <div class="result-item">
-                <div class="result-label">💰 Valor</div>
-                <div class="result-value">€${valor.toFixed(2)}</div>
-            </div>
-        </div>
-
-        <div class="result-card">
-            <div class="result-item">
-                <div class="result-label">📅 Data</div>
-                <div class="result-value text">${data}</div>
-            </div>
-        </div>
-
-        <div class="result-card" style="grid-column: 1 / -1; border-color: #81c784; background: rgba(39, 174, 96, 0.1);">
-            <div class="status-badge status-success">✅ ACEITO</div>
-        </div>
-
-        <div class="result-card" style="grid-column: 1 / -1;">
-            <input type="text" value="${nif}|${valor.toFixed(2)}|${data}" style="width: 100%; padding: 0.6rem; background: #1a1a1a; border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-family: monospace; text-align: center;" readonly>
-            <button class="btn-primary" style="width: 100%; margin-top: 0.8rem;" onclick="copyToClipboard('${nif}|${valor.toFixed(2)}|${data}')">📋 Copiar</button>
-        </div>
-    `;
-
-    container.innerHTML = html;
-    document.getElementById('resultsSection').style.display = 'block';
-
-    saveToHistory(nif, valor, data, timestamp);
-    loadHistory();
-    showSuccess('✅ QR validado!');
-}
-
-// ========== COPY ==========
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = event.target;
-        btn.textContent = '✓ Copiado!';
-        setTimeout(() => { btn.textContent = '📋 Copiar'; }, 2000);
-    });
-}
-
-// ========== HISTÓRICO ==========
-function saveToHistory(nif, valor, data, timestamp) {
-    const entry = { nif, valor, data, timestamp, id: Date.now() };
-    scanHistory.unshift(entry);
-    if (scanHistory.length > 50) scanHistory.pop();
-    localStorage.setItem('qr_scan_history', JSON.stringify(scanHistory));
-}
-
-function loadHistory() {
-    const container = document.getElementById('historyContainer');
-
-    if (scanHistory.length === 0) {
-        document.getElementById('historySection').style.display = 'none';
+    // Validar
+    if (!nif || nif.length !== 9) {
+        log('❌ NIF inválido');
+        showError('❌ NIF inválido no QR');
         return;
     }
 
-    let html = `<table><thead><tr>
-        <th>NIF</th><th>Valor</th><th>Data</th><th>Hora</th>
-    </tr></thead><tbody>`;
+    if (!valor || valor <= 0 || valor > 500) {
+        log('❌ Valor inválido');
+        showError('❌ Valor inválido');
+        return;
+    }
 
-    scanHistory.slice(0, 10).forEach(entry => {
-        html += `<tr>
-            <td>${entry.nif}</td>
-            <td>€${entry.valor.toFixed(2)}</td>
-            <td>${entry.data}</td>
-            <td style="font-size: 0.85rem;">${new Date(entry.timestamp).toLocaleTimeString('pt-PT')}</td>
-        </tr>`;
-    });
+    if (nif !== RESTAURANT_NIF) {
+        log(`❌ NIF errado: ${nif}`);
+        showError(`❌ NIF não é do Don Tasko`);
+        return;
+    }
 
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-    document.getElementById('historySection').style.display = 'block';
+    log('✅ VÁLIDO!');
+    showSuccess('✅ QR Válido!');
+    displayResults(nif, valor, data);
 }
 
-// ========== MENSAGENS ==========
-function showError(msg) {
-    const el = document.getElementById('errorMessage');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 5000);
+function displayResults(nif, valor, data) {
+    document.getElementById('resultNIF').textContent = nif;
+    document.getElementById('resultValor').textContent = `€${valor.toFixed(2)}`;
+    document.getElementById('resultData').textContent = data;
+    document.getElementById('resultsSection').style.display = 'block';
+    
+    window.lastQRData = `${nif}|${valor.toFixed(2)}|${data}`;
 }
 
-function showSuccess(msg) {
-    const el = document.getElementById('successMessage');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 5000);
+function copyAndReset() {
+    if (window.lastQRData) {
+        navigator.clipboard.writeText(window.lastQRData).then(() => {
+            showSuccess('✅ Dados copiados!');
+            setTimeout(() => {
+                document.getElementById('resultsSection').style.display = 'none';
+                window.location.reload();
+            }, 1500);
+        });
+    }
 }
 
-addDebug('✅ Sistema pronto (v4.0 - 5 estratégias de processamento)');
+log('✅ Sistema pronto (v5.0)');
 </script>
 
 </body>
