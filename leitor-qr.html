@@ -584,11 +584,22 @@ function processImage(img) {
         ctx.drawImage(img, 0, 0);
         addDebug('✅ Imagem desenhada');
 
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         addDebug(`✅ ImageData: ${imageData.width}x${imageData.height}`);
         
+        // Melhorar brilho e contraste
+        addDebug('🔧 Ajustando brightness/contrast...');
+        imageData = enhanceImage(imageData);
+        
         addDebug('🔎 Analisando QR...');
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        let code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        // Se não encontrar, tentar com mais intensidade
+        if (!code) {
+            addDebug('⚠️ QR não detectado, tentando com mais contraste...');
+            imageData = enhanceImage(imageData, true);
+            code = jsQR(imageData.data, imageData.width, imageData.height);
+        }
 
         addDebug(`📊 Resultado: ${code ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
 
@@ -600,7 +611,7 @@ function processImage(img) {
                 parseQRData(code.data, img.src);
             } else {
                 addDebug('❌ Sem QR code detectado');
-                showError('❌ Nenhum QR code encontrado. Certifica-te que a imagem é nítida.');
+                showError('❌ Nenhum QR code encontrado. Certifica-te que:\n1. A imagem contém um QR code\n2. A imagem é nítida\n3. O QR não está muito escuro ou desfocado');
             }
         }, 500);
     } catch (error) {
@@ -608,6 +619,32 @@ function processImage(img) {
         showError('❌ Erro ao processar: ' + error.message);
         document.getElementById('processingSection').style.display = 'none';
     }
+}
+
+// Função para melhorar brilho e contraste
+function enhanceImage(imageData, aggressive = false) {
+    const data = imageData.data;
+    const factor = aggressive ? 1.8 : 1.5;
+    
+    for (let i = 0; i < data.length; i += 4) {
+        // Aumentar brilho
+        data[i] = Math.min(255, data[i] * factor);      // R
+        data[i + 1] = Math.min(255, data[i + 1] * factor); // G
+        data[i + 2] = Math.min(255, data[i + 2] * factor); // B
+        
+        // Converter para escala de cinza para melhor detecção
+        const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        
+        // Aplicar threshold (0 ou 255)
+        const threshold = aggressive ? 100 : 128;
+        const value = gray > threshold ? 255 : 0;
+        
+        data[i] = value;      // R
+        data[i + 1] = value;  // G
+        data[i + 2] = value;  // B
+    }
+    
+    return imageData;
 }
 
 // ========== INICIAR SCANNER COM CÂMARA ==========
@@ -825,6 +862,8 @@ function parseQRData(qrRawData) {
 
 // ========== DISPLAY RESULTS ==========
 function displayResults(nif, valor, data, qrRawData) {
+    addDebug(`💾 Guardando QR: ${nif}|${valor}|${data}`);
+    
     const container = document.getElementById('resultsContainer');
     const timestamp = new Date().toLocaleString('pt-PT');
 
@@ -835,7 +874,7 @@ function displayResults(nif, valor, data, qrRawData) {
         rawData: qrRawData
     };
     localStorage.setItem('processed_qr_codes', JSON.stringify(processedQRCodes));
-    console.log(`💾 QR guardado: ${qrHash}`);
+    addDebug(`✅ QR guardado`);
 
     let html = `
         <div class="result-card">
@@ -948,6 +987,7 @@ function showSuccess(msg) {
 }
 
 console.log('✅ Leitor de QR Code v2.0 carregado');
+addDebug('✅ Sistema pronto');
 </script>
 
 </body>
