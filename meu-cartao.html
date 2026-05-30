@@ -784,7 +784,7 @@ function doRegister() {
     }
     
     // Chamar Apps Script para registar
-    apiRequest('registarCliente', { nif, nome: name, telemovel: tel }, CONFIG.SCRIPT_RESERVAS)
+    apiRequest('registarCliente', { nif, nome: name, telemovel: tel })
         .then(response => {
             if (!response.success) {
                 showError('Erro: ' + (response.message || 'Não foi possível registar'));
@@ -992,10 +992,10 @@ function processInvoiceQR(qrData) {
     
     // Enviar para Apps Script processar
     apiRequest('processarQRFatura', { 
-        nif: currentUser.nif, 
-        valor: amount, 
-        data: date 
-    }, CONFIG.SCRIPT_RESERVAS)
+    nif: currentUser.nif, 
+    valor: amount, 
+    data: date 
+})
         .then(response => {
             if (!response.success) {
                 showError('❌ Erro: ' + response.message);
