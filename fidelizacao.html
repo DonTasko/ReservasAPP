@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fidelização - Don Tasko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4a574;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f5f5f0;
+            --card-bg: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a2a2a 100%);
+            padding: 2rem 1rem;
+            border-bottom: 3px solid var(--accent);
+            text-align: center;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 0.95rem;
+            color: #999;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .module-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 300px;
+        }
+
+        .module-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.2);
+        }
+
+        .module-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 0.8rem;
+        }
+
+        .module-desc {
+            color: #999;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .module-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .module-features li {
+            color: #81c784;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .module-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .module-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+            width: 100%;
+            text-align: center;
+        }
+
+        .module-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        .admin-section {
+            background: rgba(212, 165, 116, 0.05);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .admin-section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #444;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .admin-card:hover {
+            border-color: var(--accent);
+            background: rgba(212, 165, 116, 0.05);
+        }
+
+        .admin-card a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            display: block;
+            margin-top: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #666;
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(39, 174, 96, 0.2);
+            color: #81c784;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo">🍷 Don Tasko</div>
+        <div class="tagline">Sistema de Fidelização</div>
+    </div>
+</header>
+
+<div class="container">
+    <h1 class="section-title">Bem-vindo ao Sistema de Fidelização</h1>
+
+    <!-- MÓDULOS CLIENTE -->
+    <div class="modules-grid">
+        <!-- Cartão de Fidelização -->
+        <a href="meu-cartao.html" class="module-card">
+            <div>
+                <div class="module-icon">🎟️</div>
+                <div class="module-title">Meu Cartão</div>
+                <p class="module-desc">Acede ao teu cartão digital de fidelização</p>
+                <ul class="module-features">
+                    <li>Login/Registo</li>
+                    <li>Ver pontos e cashback</li>
+                    <li>Histórico de consumos</li>
+                    <li>Selos para recompensas</li>
+                </ul>
+            </div>
+            <button class="module-btn">Aceder ao Cartão →</button>
+        </a>
+
+        <!-- Leitor de QR -->
+        <a href="leitor-qr.html" class="module-card">
+            <div>
+                <div class="module-icon">📱</div>
+                <div class="module-title">Escanear QR</div>
+                <p class="module-desc">Escaneia faturas para ganhar pontos</p>
+                <ul class="module-features">
+                    <li>Upload de fotos</li>
+                    <li>Detecção de QR code</li>
+                    <li>Leitura automática</li>
+                    <li>Histórico de leituras</li>
+                </ul>
+            </div>
+            <button class="module-btn">Escanear Fatura →</button>
+        </a>
+
+        <!-- Admin Panel -->
+        <a href="admin-fidelizacao.html" class="module-card">
+            <div>
+                <div class="badge">👨‍💼 Admin</div>
+                <div class="module-icon">⚙️</div>
+                <div class="module-title">Painel Admin</div>
+                <p class="module-desc">Gestão completa do sistema</p>
+                <ul class="module-features">
+                    <li>Dashboard com stats</li>
+                    <li>Gestão de clientes</li>
+                    <li>Transações</li>
+                    <li>Recompensas</li>
+                </ul>
+            </div>
+            <button class="module-btn">Aceder Admin →</button>
+        </a>
+    </div>
+
+    <!-- ADMIN SECTION -->
+    <div class="admin-section">
+        <h2>⚙️ Ferramentas Administrativas</h2>
+        <div class="admin-grid">
+            <div class="admin-card">
+                <div style="font-size: 2rem;">📊</div>
+                <p>Dashboard</p>
+                <a href="admin-fidelizacao.html#overview">Ver Dashboard</a>
+            </div>
+            <div class="admin-card">
+                <div style="font-size: 2rem;">💳</div>
+                <p>Clientes</p>
+                <a href="admin-fidelizacao.html#clientes">Gestão</a>
+            </div>
+            <div class="admin-card">
+                <div style="font-size: 2rem;">💰</div>
+                <p>Transações</p>
+                <a href="admin-fidelizacao.html#transacoes">Ver Todas</a>
+            </div>
+            <div class="admin-card">
+                <div style="font-size: 2rem;">🎁</div>
+                <p>Recompensas</p>
+                <a href="admin-fidelizacao.html#recompensas">Gerir</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <p>🍷 Don Tasko © 2025 | Sistema de Fidelização v1.0</p>
+    <p style="font-size: 0.85rem; margin-top: 1rem; color: #555;">
+        Desenvolvido com ❤️ para o Don Tasko
+    </p>
+</footer>
+
+</body>
+</html>
