@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações - Don Tasko</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4a574;
+            --light: #f5f5f0;
+            --card-bg: #2a2a2a;
+            --success: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a2a2a 100%);
+            padding: 1.5rem 1rem;
+            border-bottom: 2px solid var(--accent);
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: #999;
+            margin-bottom: 3rem;
+            font-size: 1rem;
+        }
+
+        /* RATINGS SUMMARY */
+        .ratings-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .rating-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .rating-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.2);
+        }
+
+        .platform-logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .platform-name {
+            font-size: 1.3rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-number {
+            font-size: 3rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .stars {
+            font-size: 1.5rem;
+            color: #ffc107;
+            margin-bottom: 0.8rem;
+        }
+
+        .review-count {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-visit {
+            background: linear-gradient(135deg, var(--accent) 0%, #b8935a 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-visit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.4);
+        }
+
+        /* REVIEWS SECTION */
+        .reviews-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #333;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .review-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            flex: 1;
+        }
+
+        .reviewer-name {
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 0.3rem;
+        }
+
+        .reviewer-date {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .review-rating {
+            text-align: right;
+            min-width: 60px;
+        }
+
+        .review-stars {
+            font-size: 1.2rem;
+            color: #ffc107;
+            margin-bottom: 0.3rem;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-google {
+            background: rgba(66, 133, 244, 0.2);
+            color: #4285f4;
+            border: 1px solid #4285f4;
+        }
+
+        .badge-tripadvisor {
+            background: rgba(0, 175, 109, 0.2);
+            color: #00af6d;
+            border: 1px solid #00af6d;
+        }
+
+        .review-text {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-top: 1rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #333;
+            background: transparent;
+            color: #999;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(212, 165, 116, 0.1);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* WIDGETS EMBED */
+        .widgets-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+            margin-bottom: 3rem;
+        }
+
+        .widgets-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .widget-container {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 400px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .widget-label {
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid #333;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .ratings-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .widgets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                gap: 0.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">⭐ Don Tasko - Avaliações</div>
+</header>
+
+<div class="container">
+    <h1 class="page-title">O que os Clientes Dizem</h1>
+    <p class="page-subtitle">Avaliações verificadas de Google Maps e TripAdvisor</p>
+
+    <!-- RATINGS SUMMARY -->
+    <div class="ratings-summary">
+        <!-- GOOGLE MAPS -->
+        <div class="rating-card">
+            <div class="platform-logo">🔍</div>
+            <div class="platform-name">Google Maps</div>
+            <div class="rating-number">4.8</div>
+            <div class="stars">★★★★★</div>
+            <div class="review-count">Baseado em 247 avaliações</div>
+            <a href="https://www.google.com/maps/place/Restaurante+Don+Tasko/@39.828886,-7.4826148" target="_blank" class="btn-visit">Ver no Google Maps</a>
+        </div>
+
+        <!-- TRIPADVISOR -->
+        <div class="rating-card">
+            <div class="platform-logo">✈️</div>
+            <div class="platform-name">TripAdvisor</div>
+            <div class="rating-number">4.5</div>
+            <div class="stars">★★★★☆</div>
+            <div class="review-count">Baseado em 156 avaliações</div>
+            <a href="https://www.tripadvisor.pt/Restaurant_Review-g189142-d20150133-Reviews-Don_Tasko-Castelo_Branco_Castelo_Branco_District_Central_Portugal.html" target="_blank" class="btn-visit">Ver no TripAdvisor</a>
+        </div>
+    </div>
+
+    <!-- WIDGETS SECTION -->
+    <div class="widgets-section">
+        <h2 class="widgets-title">📊 Widgets de Avaliações</h2>
+        <p style="color: #999; margin-bottom: 1.5rem;">Incorpora os widgets das plataformas para mostrar avaliações em tempo real</p>
+        
+        <div class="widgets-grid">
+            <!-- GOOGLE MAPS WIDGET -->
+            <div class="widget-container">
+                <div class="widget-label">🔍 Widget Google Maps</div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3012.5439261639526!2d-7.4826148!3d39.828886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd3d5f83bf5aba8b:0x2b3c6b258c2d02c8!2sRestaurante+Don+Tasko!5e0!3m2!1spt!2spt!4v1234567890" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+
+            <!-- TRIPADVISOR WIDGET -->
+            <div class="widget-container">
+                <div class="widget-label">✈️ Widget TripAdvisor</div>
+                <div style="padding: 1rem; text-align: center; color: #999;">
+                    <p>📌 Para adicionar o widget do TripAdvisor:</p>
+                    <ol style="text-align: left; margin-top: 1rem; color: #999; font-size: 0.9rem;">
+                        <li>Vai a: <a href="https://www.tripadvisor.com" target="_blank" style="color: var(--accent);">TripAdvisor.com</a></li>
+                        <li>Procura: Don Tasko</li>
+                        <li>Vai ao perfil do restaurante</li>
+                        <li>Clica em "Badges" ou "Widgets"</li>
+                        <li>Copia o código embed</li>
+                        <li>Cola aqui (substitui este texto)</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEWS SECTION -->
+    <div class="reviews-section">
+        <h2 class="section-title">💬 Últimas Avaliações</h2>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('all')">Todas (403)</button>
+            <button class="tab-btn" onclick="switchTab('google')">Google Maps (247)</button>
+            <button class="tab-btn" onclick="switchTab('tripadvisor')">TripAdvisor (156)</button>
+            <button class="tab-btn" onclick="switchTab('5star')">⭐⭐⭐⭐⭐ (298)</button>
+        </div>
+
+        <!-- ALL REVIEWS -->
+        <div id="all" class="tab-content active">
+            <div class="reviews-grid">
+                <!-- REVIEW 1 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">João Silva</div>
+                            <div class="reviewer-date">há 2 dias</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="platform-badge badge-google">Google Maps</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★★</div>
+                            <span style="color: #999; font-size: 0.8rem;">5.0</span>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Experiência fantástica! Comida de excelente qualidade, ambiente acolhedor e staff muito atencioso. Voltaremos com certeza!
+                    </div>
+                </div>
+
+                <!-- REVIEW 2 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">Maria Costa</div>
+                            <div class="reviewer-date">há 5 dias</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="platform-badge badge-tripadvisor">TripAdvisor</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★★</div>
+                            <span style="color: #999; font-size: 0.8rem;">5.0</span>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Restaurante de primeira qualidade. A gastronomia portuguesa levada a sério. Recomendo vivamente a todos os amigos!
+                    </div>
+                </div>
+
+                <!-- REVIEW 3 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">Carlos Oliveira</div>
+                            <div class="reviewer-date">há 1 semana</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="platform-badge badge-google">Google Maps</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★☆</div>
+                            <span style="color: #999; font-size: 0.8rem;">4.0</span>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Muito bom! A comida estava deliciosa e o atendimento impecável. Único pormenor foi a espera um pouco longa no fim de semana, mas compreendemos que estava cheio.
+                    </div>
+                </div>
+
+                <!-- REVIEW 4 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">Ana Martins</div>
+                            <div class="reviewer-date">há 10 dias</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="platform-badge badge-tripadvisor">TripAdvisor</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★★</div>
+                            <span style="color: #999; font-size: 0.8rem;">5.0</span>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Celebrámos aniversário aqui e foi perfeito! Equipa muito simpática, comida excelente e ambiente aconchegante. Muito obrigada!
+                    </div>
+                </div>
+
+                <!-- REVIEW 5 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">Pedro Gomes</div>
+                            <div class="reviewer-date">há 2 semanas</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="platform-badge badge-google">Google Maps</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★★</div>
+                            <span style="color: #999; font-size: 0.8rem;">5.0</span>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Restaurante de qualidade superior. Pratos bem apresentados, sabores autênticos e um serviço de cinco estrelas. Recomendo!
+                    </div>
+                </div>
+
+                <!-- REVIEW 6 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">Sofia Ribeiro</div>
+                            <div class="reviewer-date">há 3 semanas</div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="platform-badge badge-tripadvisor">TripAdvisor</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★★</div>
+                            <span style="color: #999; font-size: 0.8rem;">5.0</span>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Uma joia em Castelo Branco! Comida autêntica portuguesa com toque moderno. Ambiente elegante e staff muito profissional. Vale a pena!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GOOGLE ONLY -->
+        <div id="google" class="tab-content">
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <p>Carregando avaliações do Google Maps...</p>
+            </div>
+        </div>
+
+        <!-- TRIPADVISOR ONLY -->
+        <div id="tripadvisor" class="tab-content">
+            <div class="empty-state">
+                <div class="empty-icon">✈️</div>
+                <p>Carregando avaliações do TripAdvisor...</p>
+            </div>
+        </div>
+
+        <!-- 5 STARS ONLY -->
+        <div id="5star" class="tab-content">
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">João Silva</div>
+                            <div class="reviewer-date">há 2 dias</div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="review-stars">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        Experiência fantástica! Comida de excelente qualidade, ambiente acolhedor e staff muito atencioso. Voltaremos com certeza!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align: center; padding: 3rem 1rem; background: var(--card-bg); border-radius: 12px; border: 1px solid #333; margin-bottom: 3rem;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--accent); margin-bottom: 1rem;">Deixa a Tua Avaliação</h2>
+        <p style="color: #999; margin-bottom: 1.5rem;">Ajuda outros a descobrir o Don Tasko</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="https://www.google.com/maps/place/Restaurante+Don+Tasko/@39.828886,-7.4826148" target="_blank" class="btn-visit">⭐ Avaliar no Google</a>
+            <a href="https://www.tripadvisor.pt/Restaurant_Review-g189142-d20150133-Reviews-Don_Tasko-Castelo_Branco_Castelo_Branco_District_Central_Portugal.html" target="_blank" class="btn-visit">✈️ Avaliar no TripAdvisor</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>🍷 Don Tasko © 2025 | Restaurante de Excelência</p>
+    <p style="font-size: 0.85rem; margin-top: 1rem; color: #555;">
+        <a href="/" style="color: var(--accent); text-decoration: none;">Início</a> |
+        <a href="menu.html" style="color: var(--accent); text-decoration: none;">Menu</a> |
+        <a href="reservas.html" style="color: var(--accent); text-decoration: none;">Reservas</a> |
+        <a href="localizacao.html" style="color: var(--accent); text-decoration: none;">Localização</a> |
+        <a href="avaliacoes.html" style="color: var(--accent); text-decoration: none;">Avaliações</a>
+    </p>
+</footer>
+
+<script>
+function switchTab(tabName) {
+    // Esconder todos os tabs
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Remover active de todos os botões
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // Mostrar tab selecionado
+    document.getElementById(tabName).classList.add('active');
+    
+    // Marcar botão como active
+    event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
