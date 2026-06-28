@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Don Tasko — Vouchers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;400i&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ember: #8B2A0E;
+    --ember-dark: #6B1F09;
+    --ember-light: #F5E6E1;
+    --brass: #A0763A;
+    --brass-light: #FAF3E8;
+    --stone: #F7F4F0;
+    --ink: #1C1A18;
+    --ink-soft: #4A4540;
+    --ink-muted: #8A8278;
+    --white: #FFFFFF;
+    --border: rgba(0,0,0,0.09);
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--stone);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--ink);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    background: var(--ember);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 1.35rem;
+  }
+
+  .logo-sub {
+    color: var(--brass);
+    font-size: 0.68rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: -2px;
+  }
+
+  .hero {
+    background: var(--ink);
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 110%, rgba(139,42,14,0.3) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(160,118,58,0.2);
+    color: var(--brass);
+    border: 1px solid rgba(160,118,58,0.35);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    color: white;
+    line-height: 1.18;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .hero h1 em {
+    color: var(--brass);
+    font-style: italic;
+  }
+
+  .hero p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.75;
+  }
+
+  main {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.35rem;
+  }
+
+  .card-sub {
+    font-size: 0.84rem;
+    color: var(--ink-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.55;
+  }
+
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+  }
+
+  .step.active { color: var(--ink); font-weight: 500; }
+  .step.done { color: #2D7A4F; }
+
+  .step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .step-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 36px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"],
+  input[type="tel"] {
+    width: 100%;
+    padding: 0.72rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--ink);
+    background: white;
+    transition: border-color 0.15s;
+    margin-bottom: 1rem;
+    -webkit-appearance: none;
+  }
+
+  input:focus { outline: none; border-color: var(--ember); }
+  input::placeholder { color: var(--ink-muted); }
+
+  .code-input {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .code-input::placeholder { font-weight: 400; letter-spacing: 0.04em; }
+
+  .btn {
+    width: 100%;
+    padding: 0.82rem 1rem;
+    background: var(--ember);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .btn:hover { background: var(--ember-dark); }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { background: var(--ink-muted); cursor: not-allowed; transform: none; }
+
+  .state-box {
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    display: none;
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  .state-box.show { display: flex; }
+
+  .state-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+
+  .state-box.error { background: var(--ember-light); border: 1px solid rgba(139,42,14,0.18); }
+  .state-box.error .state-icon { background: var(--ember); color: white; }
+  .state-box.error .state-title { color: var(--ember-dark); }
+
+  .state-box.success { background: #EAF4EE; border: 1px solid rgba(45,122,79,0.22); }
+  .state-box.success .state-icon { background: #2D7A4F; color: white; }
+  .state-box.success .state-title { color: #1E5C39; }
+
+  .state-box.info { background: var(--brass-light); border: 1px solid rgba(160,118,58,0.25); }
+  .state-box.info .state-icon { background: var(--brass); color: white; }
+  .state-box.info .state-title { color: #7A5A28; }
+
+  .state-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .state-text { font-size: 0.83rem; color: var(--ink-soft); line-height: 1.5; }
+
+  .voucher-prize {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    padding: 0.2rem 0;
+  }
+
+  #details-section { display: none; }
+
+  .spinner {
+    width: 17px;
+    height: 17px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .how-card {
+    background: var(--ink);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    color: white;
+  }
+
+  .how-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 1.25rem;
+  }
+
+  .how-step {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    margin-bottom: 0.95rem;
+  }
+
+  .how-step:last-child { margin-bottom: 0; }
+
+  .how-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: var(--brass);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .how-text {
+    font-size: 0.86rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .how-text strong { color: white; font-weight: 500; }
+
+  .config-notice {
+    background: #FFF8E1;
+    border: 1px solid #F9A825;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.79rem;
+    color: #6D4C0A;
+    margin-bottom: 1.25rem;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .config-notice.show { display: block; }
+  .config-notice code {
+    background: rgba(0,0,0,0.07);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 1.1rem 1rem; }
+    .hero { padding: 2rem 1.25rem 3rem; }
+    main { padding: 1.75rem 1rem 3rem; }
+    .card { padding: 1.5rem 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">D</div>
+  <div>
+    <div class="logo-text">Don Tasko</div>
+    <span class="logo-sub">Experiência Gastronómica</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">Oferta exclusiva</div>
+  <h1>Tens um código<br><em>de oferta?</em></h1>
+  <p>Partilhamos códigos nas nossas redes sociais. O primeiro a resgatar fica com o prémio — introduz o teu código aqui.</p>
+</div>
+
+<main>
+
+  <div id="config-warning" class="config-notice">
+    <strong>Configuração pendente:</strong> Define o URL do Google Apps Script na variável
+    <code>APPS_SCRIPT_URL</code> no final desta página.
+  </div>
+
+  <div class="card" id="step1-card">
+    <div class="steps">
+      <div class="step active" id="step1-ind">
+        <div class="step-num">1</div>
+        Código
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step2-ind">
+        <div class="step-num">2</div>
+        Os teus dados
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step3-ind">
+        <div class="step-num">3</div>
+        Confirmação
+      </div>
+    </div>
+
+    <div class="card-title">Introduz o teu código</div>
+    <div class="card-sub">Copia o código exatamente como aparece nas nossas redes sociais.</div>
+
+    <label for="voucher-code">Código do voucher</label>
+    <input
+      type="text"
+      id="voucher-code"
+      class="code-input"
+      placeholder="ex: DT2024A"
+      maxlength="20"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+    >
+
+    <button class="btn" id="btn-check" onclick="checkCode()">
+      <span id="check-label">Verificar código</span>
+    </button>
+
+    <div id="code-state" class="state-box">
+      <div class="state-icon" id="code-icon"></div>
+      <div>
+        <div class="state-title" id="code-title"></div>
+        <div class="state-text" id="code-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="details-section">
+    <div class="card-title">Os teus dados</div>
+    <div class="card-sub">O prémio fica registado em teu nome. Apresenta o número de telefone no Don Tasko.</div>
+
+    <div id="prize-preview" class="state-box info show">
+      <div class="state-icon">🎁</div>
+      <div>
+        <div class="state-title">A tua oferta</div>
+        <div class="voucher-prize" id="prize-label"></div>
+      </div>
+    </div>
+
+    <div style="height: 1.25rem;"></div>
+
+    <label for="client-name">Nome completo</label>
+    <input type="text" id="client-name" placeholder="O teu nome">
+
+    <label for="client-phone">Número de telemóvel</label>
+    <input type="tel" id="client-phone" placeholder="9XX XXX XXX" maxlength="15">
+
+    <button class="btn" id="btn-claim" onclick="claimVoucher()">
+      <span id="claim-label">Confirmar e guardar oferta</span>
+    </button>
+
+    <div id="claim-state" class="state-box">
+      <div class="state-icon" id="claim-icon"></div>
+      <div>
+        <div class="state-title" id="claim-title"></div>
+        <div class="state-text" id="claim-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="how-card">
+    <div class="how-title">Como funciona</div>
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <div class="how-text"><strong>Segue-nos nas redes sociais</strong> e presta atenção aos posts com códigos de voucher.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <div class="how-text"><strong>Copia o código</strong> e introduz-o aqui antes de mais ninguém — cada código só pode ser usado uma vez.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <div class="how-text"><strong>Apresenta o número de telefone</strong> no Don Tasko para resgatar a tua oferta.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  &copy; 2024 Don Tasko · Cada código só pode ser usado uma vez
+</footer>
+
+<script>
+  const APPS_SCRIPT_URL = '';
+
+  let validatedCode = '';
+  let validatedPrize = '';
+
+  function showConfigWarning() {
+    if (!APPS_SCRIPT_URL) {
+      document.getElementById('config-warning').classList.add('show');
+    }
+  }
+
+  function setLoading(btnId, labelId, isLoading, text) {
+    const btn = document.getElementById(btnId);
+    const label = document.getElementById(labelId);
+    if (isLoading) {
+      btn.disabled = true;
+      label.innerHTML = '<div class="spinner"></div>';
+    } else {
+      btn.disabled = false;
+      label.textContent = text;
+    }
+  }
+
+  function showState(containerId, iconId, titleId, msgId, type, icon, title, msg) {
+    const box = document.getElementById(containerId);
+    box.className = 'state-box show ' + type;
+    document.getElementById(iconId).textContent = icon;
+    document.getElementById(titleId).textContent = title;
+    document.getElementById(msgId).textContent = msg;
+  }
+
+  function hideState(containerId) {
+    document.getElementById(containerId).className = 'state-box';
+  }
+
+  async function checkCode() {
+    const raw = document.getElementById('voucher-code').value.trim().toUpperCase();
+
+    if (!raw) {
+      showState('code-state','code-icon','code-title','code-msg',
+        'error','!','Campo vazio','Introduz um código antes de verificar.');
+      return;
+    }
+
+    if (!APPS_SCRIPT_URL) {
+      showState('code-state','code-icon','code-title','code-msg',
+        'error','!','Configuração em falta','O Apps Script URL ainda não foi configurado. Ver aviso no topo da página.');
+      return;
+    }
+
+    setLoading('btn-check', 'check-label', true);
+    hideState('code-state');
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?action=check&code=' + encodeURIComponent(raw));
+      const data = await res.json();
+
+      if (data.status === 'available') {
+        validatedCode = raw;
+        validatedPrize = data.prize || 'Oferta especial';
+
+        showState('code-state','code-icon','code-title','code-msg',
+          'success','✓','Código válido!','Preenche os teus dados abaixo para garantir a oferta.');
+
+        document.getElementById('prize-label').textContent = validatedPrize;
+        document.getElementById('details-section').style.display = 'block';
+        document.getElementById('details-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        document.getElementById('step1-ind').classList.remove('active');
+        document.getElementById('step1-ind').classList.add('done');
+        document.getElementById('step2-ind').classList.add('active');
+
+      } else if (data.status === 'used') {
+        showState('code-state','code-icon','code-title','code-msg',
+          'error','✗','Código já utilizado','Este código já foi resgatado. Fica atento ao próximo nas nossas redes!');
+      } else {
+        showState('code-state','code-icon','code-title','code-msg',
+          'error','✗','Código inválido','Este código não existe. Verifica se o copiaste corretamente.');
+      }
+    } catch (e) {
+      showState('code-state','code-icon','code-title','code-msg',
+        'error','!','Erro de ligação','Não foi possível verificar. Tenta novamente.');
+    }
+
+    setLoading('btn-check', 'check-label', false, 'Verificar código');
+  }
+
+  async function claimVoucher() {
+    const name = document.getElementById('client-name').value.trim();
+    const phone = document.getElementById('client-phone').value.trim();
+
+    if (!name) {
+      showState('claim-state','claim-icon','claim-title','claim-msg',
+        'error','!','Nome em falta','Introduz o teu nome completo.');
+      return;
+    }
+
+    if (!phone || phone.replace(/\D/g,'').length < 9) {
+      showState('claim-state','claim-icon','claim-title','claim-msg',
+        'error','!','Telefone inválido','Introduz um número de telemóvel válido.');
+      return;
+    }
+
+    setLoading('btn-claim', 'claim-label', true);
+    hideState('claim-state');
+
+    try {
+      const params = new URLSearchParams({ action: 'claim', code: validatedCode, name: name, phone: phone });
+      const res = await fetch(APPS_SCRIPT_URL + '?' + params.toString());
+      const data = await res.json();
+
+      if (data.status === 'claimed') {
+        document.getElementById('step1-card').style.display = 'none';
+        document.getElementById('details-section').style.display = 'none';
+
+        const successCard = document.createElement('div');
+        successCard.className = 'card';
+        successCard.style.textAlign = 'center';
+        successCard.innerHTML = `
+          <div style="width:56px;height:56px;background:#EAF4EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.5rem;">✓</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:0.5rem;color:var(--ink);">Oferta garantida</div>
+          <div style="font-size:0.86rem;color:var(--ink-muted);line-height:1.65;margin-bottom:1.4rem;">
+            Olá <strong style="color:var(--ink)">${escapeHtml(name)}</strong>, o teu voucher foi registado com sucesso.
+          </div>
+          <div style="background:var(--brass-light);border:1px solid rgba(160,118,58,0.25);border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;">
+            <div style="font-size:0.68rem;font-weight:600;color:var(--brass);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.4rem;">A tua oferta</div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--ink);">${escapeHtml(validatedPrize)}</div>
+          </div>
+          <div style="font-size:0.82rem;color:var(--ink-muted);line-height:1.6;">
+            Apresenta o número <strong style="color:var(--ink)">${escapeHtml(phone)}</strong><br>no Don Tasko para resgatar.
+          </div>
+        `;
+
+        document.querySelector('main').insertBefore(successCard, document.querySelector('.how-card'));
+        successCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        document.getElementById('step2-ind').classList.remove('active');
+        document.getElementById('step2-ind').classList.add('done');
+        document.getElementById('step3-ind').classList.add('active');
+
+      } else if (data.status === 'already_used') {
+        showState('claim-state','claim-icon','claim-title','claim-msg',
+          'error','✗','Demasiado tarde','Alguém foi mais rápido. O código foi resgatado enquanto preenchias os dados.');
+      } else {
+        showState('claim-state','claim-icon','claim-title','claim-msg',
+          'error','!','Erro','Não foi possível guardar o voucher. Tenta novamente.');
+      }
+    } catch (e) {
+      showState('claim-state','claim-icon','claim-title','claim-msg',
+        'error','!','Erro de ligação','Verifica a tua ligação e tenta novamente.');
+    }
+
+    setLoading('btn-claim', 'claim-label', false, 'Confirmar e guardar oferta');
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    showConfigWarning();
+    document.getElementById('voucher-code').addEventListener('keydown', e => { if (e.key === 'Enter') checkCode(); });
+    document.getElementById('client-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('client-phone').focus(); });
+    document.getElementById('client-phone').addEventListener('keydown', e => { if (e.key === 'Enter') claimVoucher(); });
+  });
+</script>
+
+</body>
+</html>
