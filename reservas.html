@@ -4,499 +4,148 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reservas — Don Tasko</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
   <style>
     :root {
-      --gold: #c9a84c;
-      --gold-light: #e8c96a;
-      --gold-dim: rgba(201,168,76,0.12);
-      --dark: #0f0e0c;
-      --surface: #1a1815;
-      --surface2: #242018;
-      --border: #2e2b22;
-      --text: #f0ead6;
-      --text-muted: #8a8070;
-      --text-dim: #504a3e;
-      --success: #2e7d52;
-      --success-dim: rgba(46,125,82,0.15);
+      --gold: #c9a84c; --gold-light: #e8c96a; --gold-dim: rgba(201,168,76,0.12);
+      --dark: #0f0e0c; --surface: #1a1815; --surface2: #242018; --border: #2e2b22;
+      --text: #f0ead6; --text-muted: #8a8070; --text-dim: #504a3e;
+      --success: #2e7d52; --success-dim: rgba(46,125,82,0.15);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .hero {
-      position: relative;
-      height: 220px;
-      overflow: hidden;
-      display: flex;
-      align-items: flex-end;
-    }
-
-    .hero-img {
-      position: absolute;
-      inset: 0;
-      background: url('https://dontasko.pt/img1.png') center/cover no-repeat;
-      filter: brightness(0.35);
-    }
-
-    .hero-img::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 30%, var(--dark) 100%);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      padding: 0 20px 28px;
-      width: 100%;
-    }
-
-    .hero-brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--gold);
-      letter-spacing: 3px;
-      line-height: 1;
-      display: block;
-    }
-
-    .hero-tagline {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    .hero-meta {
-      display: flex;
-      gap: 16px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .hero-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
+    .hero { position: relative; height: 220px; overflow: hidden; display: flex; align-items: flex-end; }
+    .hero-img { position: absolute; inset: 0; background: url('https://dontasko.pt/img1.png') center/cover no-repeat; filter: brightness(0.35); }
+    .hero-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, var(--dark) 100%); }
+    .hero-content { position: relative; z-index: 2; padding: 0 20px 28px; width: 100%; }
+    .hero-brand { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--gold); letter-spacing: 3px; line-height: 1; display: block; }
+    .hero-tagline { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+    .hero-meta { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+    .hero-meta-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-muted); }
     .hero-meta-item i { color: var(--gold); font-size: 0.7rem; }
 
-    .main {
-      padding: 0 16px 40px;
+    /* HORÁRIOS BANNER */
+    .horarios-banner {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+    }
+    .horarios-banner-inner {
       max-width: 520px;
       margin: 0 auto;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center;
     }
-
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text);
-      margin: 28px 0 6px;
-      line-height: 1.2;
-    }
-
-    .section-sub {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .field { margin-bottom: 16px; }
-
-    .field label {
+    .horario-item {
       display: flex;
       align-items: center;
-      gap: 7px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      gap: 8px;
+      font-size: 0.8rem;
+    }
+    .horario-label {
       color: var(--text-muted);
-      margin-bottom: 7px;
-    }
-
-    .field label i { color: var(--gold); font-size: 0.7rem; width: 14px; }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 13px 16px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-family: 'DM Sans', sans-serif;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
-    }
-
-    .field input::placeholder,
-    .field textarea::placeholder { color: var(--text-dim); }
-    .field select option { background: var(--surface2); }
-    .field textarea { resize: none; height: 80px; }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .slots-label {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .slots-label i { color: var(--gold); font-size: 0.7rem; }
-
-    .slots-group-label {
       font-size: 0.7rem;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--text-dim);
       font-weight: 600;
-      margin-bottom: 6px;
     }
-
-    .slots-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .slot {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 11px 6px;
-      text-align: center;
-      font-size: 0.85rem;
+    .horario-value {
+      color: var(--gold);
       font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: 'DM Sans', sans-serif;
+    }
+    .horario-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
     }
 
+    .main { padding: 0 16px 40px; max-width: 520px; margin: 0 auto; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 28px 0 6px; }
+    .section-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; }
+
+    .field { margin-bottom: 16px; }
+    .field label { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+    .field label i { color: var(--gold); font-size: 0.7rem; width: 14px; }
+    .field input, .field select, .field textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 13px 16px; border-radius: 10px; font-size: 0.95rem; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; -webkit-appearance: none; appearance: none; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
+    .field select option { background: var(--surface2); }
+    .field textarea { resize: none; height: 80px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .slots-label { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+    .slots-label i { color: var(--gold); font-size: 0.7rem; }
+    .slots-group-label { font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; }
+    .slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+    .slot { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px 6px; text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
     .slot:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .slot.active { background: var(--gold); border-color: var(--gold); color: var(--dark); font-weight: 700; box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
 
-    .slot.active {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: var(--dark);
-      font-weight: 700;
-      box-shadow: 0 4px 14px rgba(201,168,76,0.3);
-    }
-
-    .opcoes-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
+    .opcoes-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
     .opcoes-label i { color: var(--gold); font-size: 0.7rem; }
-
-    .opcao-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      user-select: none;
-    }
-
+    .opcao-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s, background 0.2s; user-select: none; }
     .opcao-item:hover { border-color: var(--gold); }
     .opcao-item.selected { border-color: var(--gold); background: var(--gold-dim); }
-
     .opcao-row { display: flex; align-items: center; gap: 12px; }
-
-    .opcao-check {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border);
-      border-radius: 5px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-      font-size: 0.7rem;
-      color: var(--dark);
-    }
-
+    .opcao-check { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-size: 0.7rem; color: var(--dark); }
     .opcao-item.selected .opcao-check { background: var(--gold); border-color: var(--gold); }
     .opcao-check::after { content: ''; display: none; }
     .opcao-item.selected .opcao-check::after { content: '✓'; display: block; font-weight: 700; }
-
     .opcao-text { flex: 1; }
     .opcao-nome { font-size: 0.9rem; font-weight: 600; color: var(--text); }
     .opcao-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
-
     .opcao-extra { margin-top: 10px; display: none; }
     .opcao-item.selected .opcao-extra { display: block; }
-
-    .opcao-extra textarea {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-family: 'DM Sans', sans-serif;
-      resize: none;
-      height: 70px;
-      transition: border-color 0.2s;
-    }
-
+    .opcao-extra textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; font-family: 'DM Sans', sans-serif; resize: none; height: 70px; }
     .opcao-extra textarea:focus { outline: none; border-color: var(--gold); }
     .opcao-extra textarea::placeholder { color: var(--text-dim); }
 
     .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
-    .info-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-    }
-
-    .info-box-title {
-      font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 7px;
-      line-height: 1.5;
-    }
-
+    .info-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
+    .info-box-title { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
+    .info-item { display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 7px; line-height: 1.5; }
     .info-item:last-child { margin-bottom: 0; }
     .info-item i { color: var(--gold); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
 
-    .btn-submit {
-      width: 100%;
-      background: var(--gold);
-      color: var(--dark);
-      border: none;
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(201,168,76,0.25);
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      background: var(--gold-light);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(201,168,76,0.35);
-    }
-
+    .btn-submit { width: 100%; background: var(--gold); color: var(--dark); border: none; border-radius: 10px; padding: 16px; font-size: 0.9rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s, transform 0.15s; box-shadow: 0 4px 20px rgba(201,168,76,0.25); }
+    .btn-submit:hover:not(:disabled) { background: var(--gold-light); transform: translateY(-2px); }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .success-card {
-      display: none;
-      background: var(--surface);
-      border: 1px solid rgba(46,125,82,0.4);
-      border-radius: 14px;
-      padding: 28px 20px;
-      text-align: center;
-      margin-top: 8px;
-    }
-
+    .success-card { display: none; background: var(--surface); border: 1px solid rgba(46,125,82,0.4); border-radius: 14px; padding: 28px 20px; text-align: center; margin-top: 8px; }
     .success-card.show { display: block; }
-
-    .success-icon {
-      width: 60px;
-      height: 60px;
-      background: var(--success-dim);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 1.6rem;
-      color: #4caf82;
-    }
-
-    .success-card h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .success-detail {
-      background: var(--surface2);
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-
+    .success-icon { width: 60px; height: 60px; background: var(--success-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.6rem; color: #4caf82; }
+    .success-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--text); margin-bottom: 16px; }
+    .success-detail { background: var(--surface2); border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
     .success-detail .key { color: var(--text-muted); font-size: 0.75rem; }
     .success-detail .val { font-weight: 600; color: var(--text); }
+    .success-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 16px; line-height: 1.6; }
 
-    .success-note {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 16px;
-      line-height: 1.6;
-    }
-
-    #loading {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      backdrop-filter: blur(6px);
-    }
-
+    #loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(6px); }
     #loading.show { display: flex; }
-
-    .spinner {
-      width: 44px;
-      height: 44px;
-      border: 3px solid rgba(201,168,76,0.2);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
+    .spinner { width: 44px; height: 44px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      z-index: 9998;
-      opacity: 0;
-      transition: all 0.3s;
-      white-space: nowrap;
-      max-width: 90vw;
-    }
-
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 0.85rem; font-weight: 600; z-index: 9998; opacity: 0; transition: all 0.3s; white-space: nowrap; max-width: 90vw; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .toast.error { border-color: #c0392b; color: #e74c3c; }
     .toast.ok { border-color: var(--success); color: #4caf82; }
 
-    .footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 20px;
-      text-align: center;
-    }
-
-    .footer-brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--gold);
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-    }
-
+    .footer { border-top: 1px solid var(--border); padding: 24px 20px; text-align: center; }
+    .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 12px; }
     .footer-links { display: flex; flex-direction: column; gap: 8px; }
-
-    .footer-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-
+    .footer-link { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; }
     .footer-link i { color: var(--gold); font-size: 0.7rem; }
 
-    .flatpickr-calendar {
-      background: var(--surface2) !important;
-      border: 1px solid var(--border) !important;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5) !important;
-      border-radius: 12px !important;
-    }
-
-    .flatpickr-day.selected,
-    .flatpickr-day.selected:hover {
-      background: var(--gold) !important;
-      border-color: var(--gold) !important;
-      color: var(--dark) !important;
-    }
-
+    .flatpickr-calendar { background: var(--surface2) !important; border: 1px solid var(--border) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.5) !important; border-radius: 12px !important; }
+    .flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--dark) !important; }
     .flatpickr-day:hover { background: var(--gold-dim) !important; }
     .flatpickr-months, .flatpickr-weekdays { background: var(--surface2) !important; }
     .flatpickr-current-month, .flatpickr-weekday, .flatpickr-day { color: var(--text) !important; }
@@ -504,7 +153,6 @@
     span.flatpickr-weekday { color: var(--gold) !important; }
     .flatpickr-prev-month svg, .flatpickr-next-month svg { fill: var(--gold) !important; }
   </style>
-
   <script src="config.js"></script>
 </head>
 <body>
@@ -515,55 +163,55 @@
     <span class="hero-brand">DON TASKO</span>
     <div class="hero-tagline">Castelo Branco · Reserva de Mesa</div>
     <div class="hero-meta">
-      <div class="hero-meta-item">
-        <i class="fas fa-clock"></i>
-        <span>Almoço 12h–15h · Jantar 19h30–23h</span>
-      </div>
-      <div class="hero-meta-item">
-        <i class="fas fa-phone"></i>
-        <span>925 504 212</span>
-      </div>
+      <div class="hero-meta-item"><i class="fas fa-phone"></i><span>925 504 212</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HORÁRIOS DO RESTAURANTE -->
+<div class="horarios-banner">
+  <div class="horarios-banner-inner">
+    <div class="horario-item">
+      <span class="horario-label">🌞 Abertura almoço</span>
+      <span class="horario-value">12:00</span>
+    </div>
+    <div class="horario-sep"></div>
+    <div class="horario-item">
+      <span class="horario-label">Fecho almoço</span>
+      <span class="horario-value">15:00</span>
+    </div>
+    <div class="horario-sep"></div>
+    <div class="horario-item">
+      <span class="horario-label">🌙 Abertura jantar</span>
+      <span class="horario-value">20:00</span>
+    </div>
+    <div class="horario-sep"></div>
+    <div class="horario-item">
+      <span class="horario-label">Fecho jantar</span>
+      <span class="horario-value">23:30</span>
     </div>
   </div>
 </div>
 
 <div class="main">
-
   <div class="section-title">Reserve a sua mesa</div>
   <div class="section-sub">Preencha os dados abaixo para confirmar a sua reserva</div>
 
   <div id="successCard" class="success-card">
     <div class="success-icon">✓</div>
     <h3>Reserva Confirmada!</h3>
-    <div class="success-detail">
-      <span class="key">Nome</span>
-      <span class="val" id="cNome"></span>
-    </div>
-    <div class="success-detail">
-      <span class="key">Data</span>
-      <span class="val" id="cData"></span>
-    </div>
-    <div class="success-detail">
-      <span class="key">Horário</span>
-      <span class="val" id="cHora"></span>
-    </div>
-    <div class="success-detail">
-      <span class="key">Pessoas</span>
-      <span class="val" id="cPax"></span>
-    </div>
-    <div class="success-note">
-      <i class="fas fa-envelope" style="color:var(--gold)"></i>
-      Receberá a confirmação por email. Se não receber, verifique a pasta de SPAM.
-    </div>
+    <div class="success-detail"><span class="key">Nome</span><span class="val" id="cNome"></span></div>
+    <div class="success-detail"><span class="key">Data</span><span class="val" id="cData"></span></div>
+    <div class="success-detail"><span class="key">Horário</span><span class="val" id="cHora"></span></div>
+    <div class="success-detail"><span class="key">Pessoas</span><span class="val" id="cPax"></span></div>
+    <div class="success-note"><i class="fas fa-envelope" style="color:var(--gold)"></i> Receberá a confirmação por email. Se não receber, verifique a pasta de SPAM.</div>
   </div>
 
   <form id="formReserva">
-
     <div class="field">
       <label><i class="fas fa-user"></i> Nome Completo</label>
       <input type="text" id="nome" required placeholder="O seu nome">
     </div>
-
     <div class="field-row">
       <div class="field">
         <label><i class="fas fa-envelope"></i> Email</label>
@@ -574,7 +222,6 @@
         <input type="tel" id="telemovel" required placeholder="9XXXXXXXX" pattern="[0-9]{9,}">
       </div>
     </div>
-
     <div class="field-row">
       <div class="field">
         <label><i class="fas fa-calendar"></i> Data</label>
@@ -594,7 +241,7 @@
       </div>
     </div>
 
-    <div class="slots-label"><i class="fas fa-clock"></i> Horário</div>
+    <div class="slots-label"><i class="fas fa-clock"></i> Horário de reserva</div>
     <div id="timeSlots"></div>
     <input type="hidden" id="horario" required>
 
@@ -646,39 +293,21 @@
 
     <div class="info-box">
       <div class="info-box-title">Informações</div>
-      <div class="info-item">
-        <i class="fas fa-circle"></i>
-        Tolerância de atraso: <strong style="color:var(--text);margin-left:4px">10 minutos</strong>
-      </div>
-      <div class="info-item">
-        <i class="fas fa-circle"></i>
-        Cancelamentos: ligue para <strong style="color:var(--text);margin-left:4px">925 504 212</strong>
-      </div>
-      <div class="info-item">
-        <i class="fas fa-circle"></i>
-        Encerrado segunda, terça e quarta-feira
-      </div>
+      <div class="info-item"><i class="fas fa-circle"></i> Tolerância de atraso: <strong style="color:var(--text);margin-left:4px">10 minutos</strong></div>
+      <div class="info-item"><i class="fas fa-circle"></i> Cancelamentos: ligue para <strong style="color:var(--text);margin-left:4px">925 504 212</strong></div>
+      <div class="info-item"><i class="fas fa-circle"></i> Encerrado segunda, terça e quarta-feira</div>
     </div>
 
-    <button type="submit" class="btn-submit" id="btnSubmit">
-      Confirmar Reserva
-    </button>
-
+    <button type="submit" class="btn-submit" id="btnSubmit">Confirmar Reserva</button>
   </form>
 </div>
 
 <div class="footer">
   <div class="footer-brand">DON TASKO</div>
   <div class="footer-links">
-    <a href="tel:+351925504212" class="footer-link">
-      <i class="fas fa-phone"></i> +351 925 504 212
-    </a>
-    <a href="mailto:dontasko.geral@gmail.com" class="footer-link">
-      <i class="fas fa-envelope"></i> dontasko.geral@gmail.com
-    </a>
-    <div class="footer-link">
-      <i class="fas fa-map-marker-alt"></i> Castelo Branco, Portugal
-    </div>
+    <a href="tel:+351925504212" class="footer-link"><i class="fas fa-phone"></i> +351 925 504 212</a>
+    <a href="mailto:dontasko.geral@gmail.com" class="footer-link"><i class="fas fa-envelope"></i> dontasko.geral@gmail.com</a>
+    <div class="footer-link"><i class="fas fa-map-marker-alt"></i> Castelo Branco, Portugal</div>
   </div>
 </div>
 
@@ -693,7 +322,6 @@
   let horariosGlobal = {};
   let diasFechadosGlobal = [];
   let flatpickrInstance = null;
-
   const opcoesSeleccionadas = { gravida: false, aniversario: false, alergias: false };
 
   function toggleOpcao(id) {
@@ -705,7 +333,7 @@
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.className = 'toast ' + (type || 'ok') + ' show';
-    setTimeout(() => t.classList.remove('show'), 3500);
+    setTimeout(() => t.classList.remove('show'), 4000);
   }
 
   function setLoading(on) {
@@ -724,23 +352,17 @@
     if (m1) return m1[3] + '-' + m1[2].padStart(2,'0') + '-' + m1[1].padStart(2,'0');
     try {
       const d = new Date(val);
-      if (!isNaN(d)) {
-        const y = d.getUTCFullYear();
-        const m = String(d.getUTCMonth() + 1).padStart(2,'0');
-        const day = String(d.getUTCDate()).padStart(2,'0');
-        return y + '-' + m + '-' + day;
-      }
+      if (!isNaN(d)) return d.getUTCFullYear() + '-' + String(d.getUTCMonth()+1).padStart(2,'0') + '-' + String(d.getUTCDate()).padStart(2,'0');
     } catch(e) {}
     return String(val).trim();
   }
 
   function isDiaFechado(date) {
     const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2,'0');
+    const m = String(date.getMonth()+1).padStart(2,'0');
     const d = String(date.getDate()).padStart(2,'0');
     const dateISO = y + '-' + m + '-' + d;
     const dayName = normalizar(date.toLocaleDateString('pt-PT', { weekday: 'long' }));
-
     for (let i = 0; i < diasFechadosGlobal.length; i++) {
       const entrada = diasFechadosGlobal[i];
       if (toISO(entrada) === dateISO) return true;
@@ -749,43 +371,35 @@
     return false;
   }
 
-  // ── CHAVE: inicializar DEPOIS dos dados carregarem ──
   function inicializarCalendario() {
-    // Destruir instância anterior se existir
-    if (flatpickrInstance) {
-      flatpickrInstance.destroy();
-      flatpickrInstance = null;
-    }
-
+    if (flatpickrInstance) { flatpickrInstance.destroy(); flatpickrInstance = null; }
     flatpickrInstance = flatpickr('#data', {
       locale: 'pt',
       minDate: 'today',
       dateFormat: 'Y-m-d',
-      disable: [ isDiaFechado ],
+      disable: [isDiaFechado],
       onChange: function() { gerarHorarios(); }
     });
-
-    console.log('📅 Calendário iniciado. Dias fechados:', diasFechadosGlobal);
   }
 
   function gerarHorarios() {
     const container = document.getElementById('timeSlots');
     container.innerHTML = '';
     document.getElementById('horario').value = '';
-
     const dataVal = document.getElementById('data').value;
-
     if (!dataVal) {
       container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
       return;
     }
 
+    // Almoço: slots normais da sheet
     const almocoSlots = horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : [];
-    const jantarSlots = horariosGlobal.jantar ? gerarSlots(...horariosGlobal.jantar.split('-')) : [];
+    // Jantar: slots de reserva 20:00-20:30 (fixos)
+    const jantarSlots = ['20:00', '20:30'];
 
     if (almocoSlots.length) {
       const g = document.createElement('div');
-      g.innerHTML = '<div class="slots-group-label">🌞 Almoço</div>';
+      g.innerHTML = '<div class="slots-group-label">🌞 Almoço · Reservas 12h–15h</div>';
       const grid = document.createElement('div');
       grid.className = 'slots-grid';
       almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
@@ -793,15 +407,13 @@
       container.appendChild(g);
     }
 
-    if (jantarSlots.length) {
-      const g = document.createElement('div');
-      g.innerHTML = '<div class="slots-group-label">🌙 Jantar</div>';
-      const grid = document.createElement('div');
-      grid.className = 'slots-grid';
-      jantarSlots.forEach(h => grid.appendChild(criarSlot(h)));
-      g.appendChild(grid);
-      container.appendChild(g);
-    }
+    const gJ = document.createElement('div');
+    gJ.innerHTML = '<div class="slots-group-label">🌙 Jantar · Reservas 20h–20h30 · Restaurante aberto até 23h30</div>';
+    const gridJ = document.createElement('div');
+    gridJ.className = 'slots-grid';
+    jantarSlots.forEach(h => gridJ.appendChild(criarSlot(h)));
+    gJ.appendChild(gridJ);
+    container.appendChild(gJ);
   }
 
   function gerarSlots(inicio, fim) {
@@ -842,27 +454,22 @@
 
   async function submeterReserva(e) {
     e.preventDefault();
-
     const horario = document.getElementById('horario').value;
     if (!horario) { showToast('Por favor selecione um horário.', 'error'); return; }
-
     const tel = document.getElementById('telemovel').value.replace(/\D/g,'');
     if (tel.length < 9) { showToast('Telemóvel inválido.', 'error'); return; }
-
     const dados = {
-      nome:      document.getElementById('nome').value.trim(),
-      email:     document.getElementById('email').value.trim(),
+      nome: document.getElementById('nome').value.trim(),
+      email: document.getElementById('email').value.trim(),
       telemovel: tel,
-      data:      document.getElementById('data').value,
-      pax:       parseInt(document.getElementById('pax').value),
-      horario:   horario,
-      obs:       construirObs()
+      data: document.getElementById('data').value,
+      pax: parseInt(document.getElementById('pax').value),
+      horario: horario,
+      obs: construirObs()
     };
-
     try {
       setLoading(true);
       const res = await apiRequest('reservaSite', dados);
-
       if (res.status === 'success') {
         document.getElementById('cNome').textContent = dados.nome;
         document.getElementById('cData').textContent = formatarData(dados.data);
@@ -888,7 +495,6 @@
     });
   }
 
-  // ── INIT: dados primeiro, calendário depois ──
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const [diasFechados, horarios, configs] = await Promise.all([
@@ -896,24 +502,18 @@
         apiRequest('getHorarios'),
         apiRequest('getConfigs')
       ]);
-
       diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
-      horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '19:30-23:00' };
+      horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '20:00-20:30' };
       configsGlobal = configs || {};
-
-      console.log('📅 Dias fechados recebidos:', diasFechadosGlobal);
-
-      // Só inicializa o calendário DEPOIS de ter os dados
+      console.log('📅 Dias fechados:', diasFechadosGlobal);
       inicializarCalendario();
       gerarHorarios();
-
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
     } catch(e) {
-      console.error('Erro ao carregar dados:', e);
+      console.error(e);
       showToast('Erro ao carregar. Recarregue a página.', 'error');
     }
   });
 </script>
-
 </body>
 </html>
