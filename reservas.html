@@ -19,6 +19,7 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
+    /* HERO */
     .hero { position: relative; height: 220px; overflow: hidden; display: flex; align-items: flex-end; }
     .hero-img { position: absolute; inset: 0; background: url('https://dontasko.pt/img1.png') center/cover no-repeat; filter: brightness(0.35); }
     .hero-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 30%, var(--dark) 100%); }
@@ -30,46 +31,19 @@
     .hero-meta-item i { color: var(--gold); font-size: 0.7rem; }
 
     /* HORÁRIOS BANNER */
-    .horarios-banner {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
-    }
-    .horarios-banner-inner {
-      max-width: 520px;
-      margin: 0 auto;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .horario-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-    }
-    .horario-label {
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .horario-value {
-      color: var(--gold);
-      font-weight: 600;
-    }
-    .horario-sep {
-      width: 1px;
-      height: 20px;
-      background: var(--border);
-    }
+    .horarios-banner { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; }
+    .horarios-banner-inner { max-width: 520px; margin: 0 auto; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    .horario-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; }
+    .horario-label { color: var(--text-muted); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+    .horario-value { color: var(--gold); font-weight: 600; }
+    .horario-sep { width: 1px; height: 18px; background: var(--border); }
 
+    /* MAIN */
     .main { padding: 0 16px 40px; max-width: 520px; margin: 0 auto; }
     .section-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 28px 0 6px; }
     .section-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; }
 
+    /* FIELDS */
     .field { margin-bottom: 16px; }
     .field label { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
     .field label i { color: var(--gold); font-size: 0.7rem; width: 14px; }
@@ -79,7 +53,9 @@
     .field select option { background: var(--surface2); }
     .field textarea { resize: none; height: 80px; }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-note { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
 
+    /* SLOTS */
     .slots-label { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
     .slots-label i { color: var(--gold); font-size: 0.7rem; }
     .slots-group-label { font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); font-weight: 600; margin-bottom: 6px; }
@@ -88,6 +64,7 @@
     .slot:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
     .slot.active { background: var(--gold); border-color: var(--gold); color: var(--dark); font-weight: 700; box-shadow: 0 4px 14px rgba(201,168,76,0.3); }
 
+    /* OPÇÕES */
     .opcoes-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
     .opcoes-label i { color: var(--gold); font-size: 0.7rem; }
     .opcao-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s, background 0.2s; user-select: none; }
@@ -107,18 +84,27 @@
     .opcao-extra textarea:focus { outline: none; border-color: var(--gold); }
     .opcao-extra textarea::placeholder { color: var(--text-dim); }
 
+    /* RGPD */
+    .rgpd-check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+    .rgpd-check input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: var(--gold); cursor: pointer; }
+    .rgpd-check label { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; cursor: pointer; }
+    .rgpd-check a { color: var(--gold); text-decoration: underline; }
+
     .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
+    /* INFO BOX */
     .info-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
     .info-box-title { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
     .info-item { display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 7px; line-height: 1.5; }
     .info-item:last-child { margin-bottom: 0; }
     .info-item i { color: var(--gold); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
 
+    /* SUBMIT */
     .btn-submit { width: 100%; background: var(--gold); color: var(--dark); border: none; border-radius: 10px; padding: 16px; font-size: 0.9rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s, transform 0.15s; box-shadow: 0 4px 20px rgba(201,168,76,0.25); }
     .btn-submit:hover:not(:disabled) { background: var(--gold-light); transform: translateY(-2px); }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* SUCCESS */
     .success-card { display: none; background: var(--surface); border: 1px solid rgba(46,125,82,0.4); border-radius: 14px; padding: 28px 20px; text-align: center; margin-top: 8px; }
     .success-card.show { display: block; }
     .success-icon { width: 60px; height: 60px; background: var(--success-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.6rem; color: #4caf82; }
@@ -128,22 +114,64 @@
     .success-detail .val { font-weight: 600; color: var(--text); }
     .success-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 16px; line-height: 1.6; }
 
+    /* LOADING */
     #loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(6px); }
     #loading.show { display: flex; }
     .spinner { width: 44px; height: 44px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* TOAST */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 0.85rem; font-weight: 600; z-index: 9998; opacity: 0; transition: all 0.3s; white-space: nowrap; max-width: 90vw; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .toast.error { border-color: #c0392b; color: #e74c3c; }
     .toast.ok { border-color: var(--success); color: #4caf82; }
 
-    .footer { border-top: 1px solid var(--border); padding: 24px 20px; text-align: center; }
-    .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 12px; }
-    .footer-links { display: flex; flex-direction: column; gap: 8px; }
-    .footer-link { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; }
-    .footer-link i { color: var(--gold); font-size: 0.7rem; }
+    /* COOKIES BANNER */
+    .cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface2); border-top: 1px solid var(--border); padding: 16px 20px; z-index: 8888; display: none; }
+    .cookie-banner.show { display: block; }
+    .cookie-inner { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .cookie-text { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+    .cookie-text a { color: var(--gold); text-decoration: underline; }
+    .cookie-btns { display: flex; gap: 10px; }
+    .cookie-btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.78rem; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .cookie-btn.aceitar { background: var(--gold); color: var(--dark); }
+    .cookie-btn.aceitar:hover { background: var(--gold-light); }
+    .cookie-btn.recusar { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .cookie-btn.recusar:hover { border-color: var(--text-muted); color: var(--text); }
 
+    /* FOOTER */
+    .footer { border-top: 1px solid var(--border); padding: 28px 20px 20px; }
+    .footer-inner { max-width: 520px; margin: 0 auto; }
+    .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 16px; text-align: center; }
+    .footer-empresa { font-size: 0.75rem; color: var(--text-muted); line-height: 1.8; text-align: center; margin-bottom: 16px; }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; align-items: center; margin-bottom: 20px; }
+    .footer-link { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; }
+    .footer-link i { color: var(--gold); font-size: 0.7rem; }
+    .footer-legal { display: flex; flex-direction: column; gap: 8px; align-items: center; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    /* LIVRO RECLAMAÇÕES */
+    .livro-rec { display: flex; align-items: center; gap: 10px; text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; transition: border-color 0.2s; }
+    .livro-rec:hover { border-color: var(--gold); }
+    .livro-rec-img { width: 40px; height: auto; }
+    .livro-rec-text { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+    .livro-rec-text strong { color: var(--text); display: block; font-size: 0.78rem; }
+
+    .footer-copy { font-size: 0.7rem; color: var(--text-dim); text-align: center; }
+    .footer-policy-links { display: flex; gap: 16px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+    .footer-policy-links a { font-size: 0.7rem; color: var(--text-dim); text-decoration: underline; }
+
+    /* MODAL PRIVACIDADE */
+    .modal-priv { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+    .modal-priv.show { display: flex; }
+    .modal-priv-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 24px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; }
+    .modal-priv-box h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold); margin-bottom: 16px; }
+    .modal-priv-box p, .modal-priv-box li { font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
+    .modal-priv-box ul { padding-left: 18px; margin-bottom: 10px; }
+    .modal-priv-box h4 { font-size: 0.85rem; color: var(--text); margin: 16px 0 6px; font-weight: 700; }
+    .modal-priv-close { width: 100%; margin-top: 20px; padding: 12px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; transition: all 0.2s; }
+    .modal-priv-close:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* FLATPICKR */
     .flatpickr-calendar { background: var(--surface2) !important; border: 1px solid var(--border) !important; box-shadow: 0 8px 40px rgba(0,0,0,0.5) !important; border-radius: 12px !important; }
     .flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--dark) !important; }
     .flatpickr-day:hover { background: var(--gold-dim) !important; }
@@ -157,46 +185,35 @@
 </head>
 <body>
 
+<!-- HERO -->
 <div class="hero">
   <div class="hero-img"></div>
   <div class="hero-content">
     <span class="hero-brand">DON TASKO</span>
     <div class="hero-tagline">Castelo Branco · Reserva de Mesa</div>
     <div class="hero-meta">
-      <div class="hero-meta-item"><i class="fas fa-phone"></i><span>925 504 212</span></div>
+      <div class="hero-meta-item"><i class="fas fa-phone"></i><span>925 504 212 <span style="font-size:0.65rem;opacity:0.7">(Chamada para rede móvel nacional)</span></span></div>
     </div>
   </div>
 </div>
 
-<!-- HORÁRIOS DO RESTAURANTE -->
+<!-- HORÁRIOS -->
 <div class="horarios-banner">
   <div class="horarios-banner-inner">
-    <div class="horario-item">
-      <span class="horario-label">🌞 Abertura almoço</span>
-      <span class="horario-value">12:00</span>
-    </div>
+    <div class="horario-item"><span class="horario-label">🌞 Almoço</span><span class="horario-value">12h00–15h00</span></div>
     <div class="horario-sep"></div>
-    <div class="horario-item">
-      <span class="horario-label">Fecho almoço</span>
-      <span class="horario-value">15:00</span>
-    </div>
+    <div class="horario-item"><span class="horario-label">🌙 Jantar</span><span class="horario-value">20h00–23h30</span></div>
     <div class="horario-sep"></div>
-    <div class="horario-item">
-      <span class="horario-label">🌙 Abertura jantar</span>
-      <span class="horario-value">20:00</span>
-    </div>
-    <div class="horario-sep"></div>
-    <div class="horario-item">
-      <span class="horario-label">Fecho jantar</span>
-      <span class="horario-value">23:30</span>
-    </div>
+    <div class="horario-item"><span class="horario-label">Fecho</span><span class="horario-value">2ª, 3ª e 4ª feira</span></div>
   </div>
 </div>
 
+<!-- FORM -->
 <div class="main">
   <div class="section-title">Reserve a sua mesa</div>
   <div class="section-sub">Preencha os dados abaixo para confirmar a sua reserva</div>
 
+  <!-- SUCCESS -->
   <div id="successCard" class="success-card">
     <div class="success-icon">✓</div>
     <h3>Reserva Confirmada!</h3>
@@ -204,7 +221,7 @@
     <div class="success-detail"><span class="key">Data</span><span class="val" id="cData"></span></div>
     <div class="success-detail"><span class="key">Horário</span><span class="val" id="cHora"></span></div>
     <div class="success-detail"><span class="key">Pessoas</span><span class="val" id="cPax"></span></div>
-    <div class="success-note"><i class="fas fa-envelope" style="color:var(--gold)"></i> Receberá a confirmação por email. Se não receber, verifique a pasta de SPAM.</div>
+    <div class="success-note"><i class="fas fa-envelope" style="color:var(--gold)"></i> Receberá confirmação por email. Se não receber, verifique a pasta de SPAM.</div>
   </div>
 
   <form id="formReserva">
@@ -212,6 +229,7 @@
       <label><i class="fas fa-user"></i> Nome Completo</label>
       <input type="text" id="nome" required placeholder="O seu nome">
     </div>
+
     <div class="field-row">
       <div class="field">
         <label><i class="fas fa-envelope"></i> Email</label>
@@ -220,8 +238,10 @@
       <div class="field">
         <label><i class="fas fa-phone"></i> Telemóvel</label>
         <input type="tel" id="telemovel" required placeholder="9XXXXXXXX" pattern="[0-9]{9,}">
+        <div class="field-note">Chamada para rede móvel nacional</div>
       </div>
     </div>
+
     <div class="field-row">
       <div class="field">
         <label><i class="fas fa-calendar"></i> Data</label>
@@ -245,12 +265,13 @@
     <div id="timeSlots"></div>
     <input type="hidden" id="horario" required>
 
+    <!-- OPÇÕES ESPECIAIS -->
     <div style="margin-top:20px">
       <div class="opcoes-label"><i class="fas fa-star"></i> Ocasião especial</div>
 
       <div class="opcao-item" id="opcao-gravida" onclick="toggleOpcao('gravida')">
         <div class="opcao-row">
-          <div class="opcao-check" id="check-gravida"></div>
+          <div class="opcao-check"></div>
           <div class="opcao-text">
             <div class="opcao-nome">🤰 Grávida</div>
             <div class="opcao-desc">Informaremos a cozinha para cuidados especiais</div>
@@ -260,13 +281,13 @@
 
       <div class="opcao-item" id="opcao-aniversario" onclick="toggleOpcao('aniversario')">
         <div class="opcao-row">
-          <div class="opcao-check" id="check-aniversario"></div>
+          <div class="opcao-check"></div>
           <div class="opcao-text">
             <div class="opcao-nome">🎂 Aniversário</div>
             <div class="opcao-desc">Selecione se está a celebrar um aniversário</div>
           </div>
         </div>
-        <div class="opcao-extra" id="extra-aniversario">
+        <div class="opcao-extra">
           <div style="background:var(--surface2);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:12px 14px;margin-top:2px;font-size:0.78rem;color:var(--text-muted);line-height:1.6;">
             <i class="fas fa-info-circle" style="color:var(--gold);margin-right:6px"></i>
             Para garantir a organização e manutenção do serviço, informamos que a utilização de bolo de aniversário trazido do exterior implica um custo de serviço, referente à loiça, guardanapos e apoio prestado,
@@ -277,13 +298,13 @@
 
       <div class="opcao-item" id="opcao-alergias" onclick="toggleOpcao('alergias')">
         <div class="opcao-row">
-          <div class="opcao-check" id="check-alergias"></div>
+          <div class="opcao-check"></div>
           <div class="opcao-text">
             <div class="opcao-nome">⚠️ Alergias alimentares</div>
             <div class="opcao-desc">Indique a que é alérgico para informarmos a cozinha</div>
           </div>
         </div>
-        <div class="opcao-extra" id="extra-alergias">
+        <div class="opcao-extra">
           <textarea id="texto-alergias" placeholder="Ex: amendoim, glúten, marisco..." onclick="event.stopPropagation()"></textarea>
         </div>
       </div>
@@ -291,10 +312,20 @@
 
     <div class="divider"></div>
 
+    <!-- RGPD -->
+    <div class="rgpd-check">
+      <input type="checkbox" id="aceitaRGPD" required>
+      <label for="aceitaRGPD">
+        Autorizo o tratamento dos meus dados pessoais para efeitos de gestão desta reserva, de acordo com a nossa
+        <a href="#" onclick="abrirPrivacidade(event)">Política de Privacidade</a>.
+        Os seus dados não serão partilhados com terceiros e serão eliminados após 12 meses.
+      </label>
+    </div>
+
     <div class="info-box">
       <div class="info-box-title">Informações</div>
       <div class="info-item"><i class="fas fa-circle"></i> Tolerância de atraso: <strong style="color:var(--text);margin-left:4px">10 minutos</strong></div>
-      <div class="info-item"><i class="fas fa-circle"></i> Cancelamentos: ligue para <strong style="color:var(--text);margin-left:4px">925 504 212</strong></div>
+      <div class="info-item"><i class="fas fa-circle"></i> Cancelamentos: ligue para <strong style="color:var(--text);margin-left:4px">925 504 212</strong> (Chamada para rede móvel nacional)</div>
       <div class="info-item"><i class="fas fa-circle"></i> Encerrado segunda, terça e quarta-feira</div>
     </div>
 
@@ -302,12 +333,108 @@
   </form>
 </div>
 
+<!-- FOOTER -->
 <div class="footer">
-  <div class="footer-brand">DON TASKO</div>
-  <div class="footer-links">
-    <a href="tel:+351925504212" class="footer-link"><i class="fas fa-phone"></i> +351 925 504 212</a>
-    <a href="mailto:dontasko.geral@gmail.com" class="footer-link"><i class="fas fa-envelope"></i> dontasko.geral@gmail.com</a>
-    <div class="footer-link"><i class="fas fa-map-marker-alt"></i> Castelo Branco, Portugal</div>
+  <div class="footer-inner">
+    <div class="footer-brand">DON TASKO</div>
+
+    <div class="footer-empresa">
+      <strong style="color:var(--text)">Maria Helena V. Fernandes Afonso, Lda</strong><br>
+      NIF: 516 763 482<br>
+      Avenida de Espanha, Lote 7, R/C Esq. · Castelo Branco<br>
+      📞 <a href="tel:+351925504212" style="color:var(--text-muted);text-decoration:none">+351 925 504 212</a>
+      <span style="font-size:0.65rem;opacity:0.6"> (Chamada para rede móvel nacional)</span><br>
+      ✉️ <a href="mailto:dontasko.geral@gmail.com" style="color:var(--text-muted);text-decoration:none">dontasko.geral@gmail.com</a>
+    </div>
+
+    <div class="footer-links">
+      <a href="tel:+351925504212" class="footer-link"><i class="fas fa-phone"></i> +351 925 504 212</a>
+      <a href="mailto:dontasko.geral@gmail.com" class="footer-link"><i class="fas fa-envelope"></i> dontasko.geral@gmail.com</a>
+      <div class="footer-link"><i class="fas fa-map-marker-alt"></i> Av. de Espanha, Lote 7, R/C Esq., Castelo Branco</div>
+    </div>
+
+    <div class="footer-legal">
+      <!-- LIVRO DE RECLAMAÇÕES -->
+      <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener noreferrer" class="livro-rec">
+        <svg class="livro-rec-img" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="60" rx="6" fill="#c0392b"/>
+          <rect x="6" y="8" width="68" height="44" rx="4" fill="#e74c3c"/>
+          <rect x="12" y="14" width="56" height="32" rx="2" fill="white"/>
+          <text x="40" y="28" font-family="Arial" font-size="7" font-weight="bold" fill="#c0392b" text-anchor="middle">LIVRO DE</text>
+          <text x="40" y="37" font-family="Arial" font-size="7" font-weight="bold" fill="#c0392b" text-anchor="middle">RECLAMAÇÕES</text>
+          <text x="40" y="44" font-family="Arial" font-size="5" fill="#888" text-anchor="middle">ELECTRÓNICO</text>
+        </svg>
+        <div class="livro-rec-text">
+          <strong>Livro de Reclamações</strong>
+          Reclamações electrónicas disponíveis em livroreclamacoes.pt
+        </div>
+      </a>
+
+      <div class="footer-policy-links">
+        <a href="#" onclick="abrirPrivacidade(event)">Política de Privacidade</a>
+        <a href="#" onclick="abrirCookies(event)">Política de Cookies</a>
+      </div>
+
+      <div class="footer-copy">
+        © 2024 Don Tasko · Maria Helena V. Fernandes Afonso, Lda · NIF 516 763 482<br>
+        Todos os direitos reservados
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRIVACIDADE -->
+<div class="modal-priv" id="modalPrivacidade" onclick="fecharModalPriv(event)">
+  <div class="modal-priv-box">
+    <h3>Política de Privacidade</h3>
+    <h4>Responsável pelo Tratamento</h4>
+    <p>Maria Helena V. Fernandes Afonso, Lda · NIF 516 763 482 · Avenida de Espanha, Lote 7, R/C Esq., Castelo Branco · dontasko.geral@gmail.com</p>
+    <h4>Dados Recolhidos</h4>
+    <p>Para efeitos de gestão de reservas, recolhemos: nome completo, endereço de email e número de telemóvel.</p>
+    <h4>Finalidade e Base Legal</h4>
+    <p>Os dados são tratados exclusivamente para gestão da reserva (execução de contrato — Art. 6.º, n.º 1, al. b) do RGPD) e envio de confirmação por email.</p>
+    <h4>Conservação</h4>
+    <p>Os dados são conservados durante 12 meses após a data da reserva, findo o qual são eliminados.</p>
+    <h4>Partilha com Terceiros</h4>
+    <p>Os seus dados não são partilhados com terceiros para fins comerciais. São utilizados os serviços Google (Gmail, Google Sheets, Google Calendar) para processamento operacional, sujeitos à política de privacidade da Google.</p>
+    <h4>Direitos do Titular</h4>
+    <p>Tem direito de acesso, rectificação, apagamento, portabilidade e oposição ao tratamento dos seus dados. Para exercer estes direitos contacte: dontasko.geral@gmail.com</p>
+    <h4>Reclamações</h4>
+    <p>Tem o direito de apresentar reclamação à autoridade de controlo nacional: Comissão Nacional de Protecção de Dados (CNPD) — www.cnpd.pt</p>
+    <button class="modal-priv-close" onclick="document.getElementById('modalPrivacidade').classList.remove('show')">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL COOKIES -->
+<div class="modal-priv" id="modalCookies" onclick="fecharModalCookies(event)">
+  <div class="modal-priv-box">
+    <h3>Política de Cookies</h3>
+    <h4>O que são cookies?</h4>
+    <p>Cookies são pequenos ficheiros guardados no seu dispositivo que permitem melhorar a experiência de navegação.</p>
+    <h4>Cookies utilizados neste site</h4>
+    <ul>
+      <li><strong>Cookies de funcionamento</strong> — necessários para o funcionamento do calendário de reservas (Flatpickr). Não requerem consentimento.</li>
+      <li><strong>Cookies de terceiros</strong> — Google Fonts e Font Awesome carregam fontes e ícones externamente. Podem guardar cookies de sessão anónimos.</li>
+      <li><strong>Cookie de consentimento</strong> — guardamos localmente a sua escolha relativa a cookies (não é enviado para servidores).</li>
+    </ul>
+    <h4>Não utilizamos</h4>
+    <p>Não utilizamos cookies de rastreamento, publicidade ou analítica de terceiros.</p>
+    <h4>Gerir preferências</h4>
+    <p>Pode gerir ou eliminar cookies nas definições do seu browser. A recusa de cookies de funcionamento pode afectar o funcionamento do formulário de reservas.</p>
+    <button class="modal-priv-close" onclick="document.getElementById('modalCookies').classList.remove('show')">Fechar</button>
+  </div>
+</div>
+
+<!-- COOKIE BANNER -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-inner">
+    <div class="cookie-text">
+      Este site utiliza cookies essenciais para o funcionamento do formulário de reservas e cookies de terceiros para carregamento de fontes (Google Fonts). Consulte a nossa <a href="#" onclick="abrirCookies(event)">Política de Cookies</a>.
+    </div>
+    <div class="cookie-btns">
+      <button class="cookie-btn aceitar" onclick="aceitarCookies()">Aceitar</button>
+      <button class="cookie-btn recusar" onclick="recusarCookies()">Só essenciais</button>
+    </div>
   </div>
 </div>
 
@@ -324,6 +451,44 @@
   let flatpickrInstance = null;
   const opcoesSeleccionadas = { gravida: false, aniversario: false, alergias: false };
 
+  // ── COOKIES ──
+  function verificarConsentimentoCookies() {
+    const consent = localStorage.getItem('dt_cookie_consent');
+    if (!consent) document.getElementById('cookieBanner').classList.add('show');
+  }
+
+  function aceitarCookies() {
+    localStorage.setItem('dt_cookie_consent', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('show');
+  }
+
+  function recusarCookies() {
+    localStorage.setItem('dt_cookie_consent', 'essential');
+    document.getElementById('cookieBanner').classList.remove('show');
+  }
+
+  // ── MODAIS ──
+  function abrirPrivacidade(e) {
+    e.preventDefault();
+    document.getElementById('modalPrivacidade').classList.add('show');
+  }
+
+  function abrirCookies(e) {
+    e.preventDefault();
+    document.getElementById('modalCookies').classList.add('show');
+  }
+
+  function fecharModalPriv(e) {
+    if (e.target === document.getElementById('modalPrivacidade'))
+      document.getElementById('modalPrivacidade').classList.remove('show');
+  }
+
+  function fecharModalCookies(e) {
+    if (e.target === document.getElementById('modalCookies'))
+      document.getElementById('modalCookies').classList.remove('show');
+  }
+
+  // ── OPÇÕES ──
   function toggleOpcao(id) {
     opcoesSeleccionadas[id] = !opcoesSeleccionadas[id];
     document.getElementById('opcao-' + id).classList.toggle('selected', opcoesSeleccionadas[id]);
@@ -391,10 +556,7 @@
       container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
       return;
     }
-
-    // Almoço: slots normais da sheet
     const almocoSlots = horariosGlobal.almoco ? gerarSlots(...horariosGlobal.almoco.split('-')) : [];
-    // Jantar: slots de reserva 20:00-20:30 (fixos)
     const jantarSlots = ['20:00', '20:30'];
 
     if (almocoSlots.length) {
@@ -422,8 +584,7 @@
     const [hF, mF] = fim.split(':').map(Number);
     while (h < hF || (h === hF && m < mF)) {
       slots.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
-      m += 30;
-      if (m >= 60) { m = 0; h++; }
+      m += 30; if (m >= 60) { m = 0; h++; }
     }
     return slots;
   }
@@ -454,6 +615,10 @@
 
   async function submeterReserva(e) {
     e.preventDefault();
+    if (!document.getElementById('aceitaRGPD').checked) {
+      showToast('Deve aceitar a Política de Privacidade para continuar.', 'error');
+      return;
+    }
     const horario = document.getElementById('horario').value;
     if (!horario) { showToast('Por favor selecione um horário.', 'error'); return; }
     const tel = document.getElementById('telemovel').value.replace(/\D/g,'');
@@ -496,6 +661,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
+    verificarConsentimentoCookies();
     try {
       const [diasFechados, horarios, configs] = await Promise.all([
         apiRequest('getDiasFechados'),
@@ -505,7 +671,6 @@
       diasFechadosGlobal = Array.isArray(diasFechados) ? diasFechados : [];
       horariosGlobal = horarios || { almoco: '12:00-15:00', jantar: '20:00-20:30' };
       configsGlobal = configs || {};
-      console.log('📅 Dias fechados:', diasFechadosGlobal);
       inicializarCalendario();
       gerarHorarios();
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
