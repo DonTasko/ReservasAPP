@@ -178,26 +178,30 @@
     <span class="hero-brand">DON TASKO</span>
     <div class="hero-tagline">Castelo Branco · Reserva de Mesa</div>
     <div class="hero-meta">
-  <div class="hero-meta-item">
-    <i class="fas fa-map-marker-alt"></i>
-    <span>Castelo Branco</span>
+      <div class="hero-meta-item"><i class="fas fa-map-marker-alt"></i><span>Castelo Branco</span></div>
+    </div>
   </div>
-</div>
-     </div>
 </div>
 
 <!-- HORÁRIOS -->
 <div class="horarios-banner">
-  <div class="horarios-banner-inner" id="horariosBanner">
-    <div class="horario-item"><span class="horario-label">🌞 Almoço</span><span class="horario-value" id="hAlmoco">12h00–15h00</span></div>
+  <div class="horarios-banner-inner">
+    <div class="horario-item">
+      <span class="horario-label">🌞 Almoço</span>
+      <span class="horario-value" id="hAlmoco">12h00–15h00</span>
+      <span class="horario-cozinha">Cozinha até <span id="hCozinhaAlmoco">14h00</span></span>
+    </div>
     <div class="horario-sep"></div>
-    <div class="horario-item"><span class="horario-label">Cozinha almoço</span><span class="horario-value" id="hCozinhaAlmoco">até 14h00</span></div>
+    <div class="horario-item">
+      <span class="horario-label">🌙 Jantar</span>
+      <span class="horario-value" id="hJantar">20h00–23h30</span>
+      <span class="horario-cozinha">Cozinha até <span id="hCozinhaJantar">22h30</span></span>
+    </div>
     <div class="horario-sep"></div>
-    <div class="horario-item"><span class="horario-label">🌙 Jantar</span><span class="horario-value" id="hJantar">20h00–23h30</span></div>
-    <div class="horario-sep"></div>
-    <div class="horario-item"><span class="horario-label">Cozinha jantar</span><span class="horario-value" id="hCozinhaJantar">até 22h00</span></div>
-    <div class="horario-sep"></div>
-    <div class="horario-item"><span class="horario-label">Fecho</span><span class="horario-value">2ª, 3ª e 4ª feira</span></div>
+    <div class="horario-item">
+      <span class="horario-label">Fecho semanal</span>
+      <span class="horario-value">2ª, 3ª e 4ª feira</span>
+    </div>
   </div>
 </div>
 
@@ -220,7 +224,6 @@
       <label><i class="fas fa-user"></i> Nome Completo</label>
       <input type="text" id="nome" required placeholder="O seu nome">
     </div>
-
     <div class="field-row">
       <div class="field">
         <label><i class="fas fa-envelope"></i> Email</label>
@@ -231,7 +234,6 @@
         <input type="tel" id="telemovel" required placeholder="9XXXXXXXX" pattern="[0-9]{9,}">
       </div>
     </div>
-
     <div class="field-row">
       <div class="field">
         <label><i class="fas fa-calendar"></i> Data</label>
@@ -311,11 +313,11 @@
     </div>
 
     <div class="info-box">
-  <div class="info-box-title">Informações</div>
-  <div class="info-item"><i class="fas fa-circle"></i> Tolerância de atraso: <strong style="color:var(--text);margin-left:4px">10 minutos</strong></div>
-  <div class="info-item"><i class="fas fa-circle"></i> Cancelamentos: envie email para <strong style="color:var(--text);margin-left:4px">dontasko.geral@gmail.com</strong></div>
-  <div class="info-item"><i class="fas fa-circle"></i> Encerrado segunda, terça e quarta-feira</div>
-</div>
+      <div class="info-box-title">Informações</div>
+      <div class="info-item"><i class="fas fa-circle"></i> Tolerância de atraso: <strong style="color:var(--text);margin-left:4px">10 minutos</strong></div>
+      <div class="info-item"><i class="fas fa-circle"></i> Cancelamentos: envie email para <strong style="color:var(--text);margin-left:4px">dontasko.geral@gmail.com</strong></div>
+      <div class="info-item"><i class="fas fa-circle"></i> Encerrado segunda, terça e quarta-feira</div>
+    </div>
 
     <button type="submit" class="btn-submit" id="btnSubmit">Confirmar Reserva</button>
   </form>
@@ -330,9 +332,9 @@
       Avenida de Espanha, Lote 7, R/C Esq. · Castelo Branco
     </div>
     <div class="footer-links">
-  <a href="mailto:dontasko.geral@gmail.com" class="footer-link"><i class="fas fa-envelope"></i> dontasko.geral@gmail.com</a>
-  <div class="footer-link"><i class="fas fa-map-marker-alt"></i> Av. de Espanha, Lote 7, R/C Esq., Castelo Branco</div>
-</div>
+      <a href="mailto:dontasko.geral@gmail.com" class="footer-link"><i class="fas fa-envelope"></i> dontasko.geral@gmail.com</a>
+      <div class="footer-link"><i class="fas fa-map-marker-alt"></i> Av. de Espanha, Lote 7, R/C Esq., Castelo Branco</div>
+    </div>
     <div class="footer-legal">
       <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener noreferrer" class="livro-rec">
         <svg width="40" height="30" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
@@ -452,7 +454,6 @@
     document.getElementById('btnSubmit').disabled = on;
   }
 
-  // ── HELPERS ──
   function normalizar(str) {
     return String(str).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
   }
@@ -469,47 +470,43 @@
     return String(val).trim();
   }
 
-  // ── SUBTRAIR MINUTOS DE UMA HORA ──
+  // ── SUBTRAIR MINUTOS ──
   function subtrairMinutos(hora, mins) {
     if (!hora) return '';
     const [h, m] = hora.split(':').map(Number);
     const total = h * 60 + m - mins;
-    const hh = Math.floor(total / 60);
-    const mm = total % 60;
-    return String(hh).padStart(2,'0') + 'h' + String(mm).padStart(2,'0');
+    return String(Math.floor(total/60)).padStart(2,'0') + 'h' + String(total%60).padStart(2,'0');
   }
 
-  function fmtH(h) {
-    return h ? h.replace(':', 'h') : '';
-  }
+  function fmtH(h) { return h ? h.replace(':', 'h') : ''; }
 
-  // ── ACTUALIZAR BANNER COM HORÁRIOS DINÂMICOS ──
+  // ── BANNER COM HORÁRIOS DO RESTAURANTE ──
   function actualizarBannerHorarios() {
     if (!configReservas || !configReservas.dias) return;
-
-    // Usar quinta como referência (primeiro dia aberto disponível)
     const ref = configReservas.dias.quinta
       || configReservas.dias.sexta
       || configReservas.dias.sabado
       || configReservas.dias.domingo;
     if (!ref) return;
 
-    if (ref.almocoIni && ref.almocoFim) {
-      document.getElementById('hAlmoco').textContent = fmtH(ref.almocoIni) + '–' + fmtH(ref.almocoFim);
-      document.getElementById('hCozinhaAlmoco').textContent = subtrairMinutos(ref.almocoFim, 60);
-    }
-    if (ref.jantarIni && ref.jantarFim) {
-      document.getElementById('hJantar').textContent = fmtH(ref.jantarIni) + '–' + fmtH(ref.jantarFim);
-      document.getElementById('hCozinhaJantar').textContent = subtrairMinutos(ref.jantarFim, 60);
-    }
+    // Usar almocoRestIni/Fim para banner (horário restaurante)
+    // Compatibilidade com campos antigos almocoIni/Fim
+    const almocoIni = ref.almocoRestIni || ref.almocoIni || '12:00';
+    const almocoFim = ref.almocoRestFim || ref.almocoFim || '15:00';
+    const jantarIni = ref.jantarRestIni || ref.jantarIni || '20:00';
+    const jantarFim = ref.jantarRestFim || ref.jantarFim || '23:30';
+
+    document.getElementById('hAlmoco').textContent = fmtH(almocoIni) + '–' + fmtH(almocoFim);
+    document.getElementById('hCozinhaAlmoco').textContent = subtrairMinutos(almocoFim, 60);
+    document.getElementById('hJantar').textContent = fmtH(jantarIni) + '–' + fmtH(jantarFim);
+    document.getElementById('hCozinhaJantar').textContent = subtrairMinutos(jantarFim, 60);
   }
 
   // ── CONFIG DO DIA ──
   function getConfigDia(dataISO) {
     if (!configReservas || !configReservas.dias) return null;
     const date = new Date(dataISO + 'T12:00:00');
-    const key = DIAS_MAP[date.getDay()];
-    return configReservas.dias[key] || null;
+    return configReservas.dias[DIAS_MAP[date.getDay()]] || null;
   }
 
   // ── DIA FECHADO ──
@@ -519,19 +516,16 @@
     const d = String(date.getDate()).padStart(2,'0');
     const dateISO = y+'-'+m+'-'+d;
     const dayName = normalizar(date.toLocaleDateString('pt-PT',{weekday:'long'}));
-
     for (let i = 0; i < diasFechadosGlobal.length; i++) {
       const entrada = diasFechadosGlobal[i];
       if (toISO(entrada) === dateISO) return true;
       if (normalizar(entrada) === dayName) return true;
     }
-
     if (configReservas && configReservas.dias) {
       const key = DIAS_MAP[date.getDay()];
       const diaConf = configReservas.dias[key];
       if (diaConf && diaConf.aberto === 'NÃO') return true;
     }
-
     return false;
   }
 
@@ -567,12 +561,13 @@
 
     // Dia aberto mas sem reservas → aviso
     if (diaConf && diaConf.aberto === 'SIM' && diaConf.reservas === 'NÃO') {
+      const almocoIni = diaConf.almocoRestIni || diaConf.almocoIni || '';
+      const almocoFim = diaConf.almocoRestFim || diaConf.almocoFim || '';
+      const jantarIni = diaConf.jantarRestIni || diaConf.jantarIni || '';
+      const jantarFim = diaConf.jantarRestFim || diaConf.jantarFim || '';
       let horariosTexto = '';
-      if (diaConf.almocoIni && diaConf.almocoFim)
-        horariosTexto += '🌞 Almoço: ' + diaConf.almocoIni + '–' + diaConf.almocoFim;
-      if (diaConf.jantarIni && diaConf.jantarFim)
-        horariosTexto += (horariosTexto ? '  ·  ' : '') + '🌙 Jantar: ' + diaConf.jantarIni + '–' + diaConf.jantarFim;
-
+      if (almocoIni && almocoFim) horariosTexto += '🌞 Almoço: ' + almocoIni + '–' + almocoFim;
+      if (jantarIni && jantarFim) horariosTexto += (horariosTexto ? '  ·  ' : '') + '🌙 Jantar: ' + jantarIni + '–' + jantarFim;
       container.innerHTML = `
         <div class="aviso-sem-reservas">
           <div class="aviso-icon">🍽️</div>
@@ -580,8 +575,7 @@
           <p>Para este dia as reservas online estão desactivadas.<br>
           Recebemos clientes <strong>por ordem de chegada</strong> — venha até nós!</p>
           ${horariosTexto ? `<div class="aviso-horario">${horariosTexto}</div>` : ''}
-        </div>
-      `;
+        </div>`;
       btnSubmit.style.display = 'none';
       horarioHidden.removeAttribute('required');
       return;
@@ -590,17 +584,21 @@
     btnSubmit.style.display = 'block';
     horarioHidden.setAttribute('required','');
 
-    const almocoIni = (diaConf && diaConf.almocoIni) || '12:00';
-    const almocoFim = (diaConf && diaConf.almocoFim) || '15:00';
-    const almocoSlots = gerarSlots(almocoIni, almocoFim);
+    // Slots de almoço — usar almocoResIni/Fim (horário de reservas)
+    const almocoResIni = (diaConf && (diaConf.almocoResIni || diaConf.almocoIni)) || '12:00';
+    const almocoResFim = (diaConf && (diaConf.almocoResFim || diaConf.almocoFim)) || '14:00';
+    const almocoRestFim = (diaConf && (diaConf.almocoRestFim || diaConf.almocoFim)) || '15:00';
+    const almocoSlots = gerarSlots(almocoResIni, almocoResFim);
 
-    const jantarIni = (diaConf && diaConf.jantarIni) || '';
-    const jantarFim = (diaConf && diaConf.jantarFim) || '';
-    const jantarSlots = jantarIni && jantarFim ? ['20:00', '20:30'] : [];
+    // Slots de jantar — usar jantarResIni/Fim
+    const jantarResIni = (diaConf && (diaConf.jantarResIni || diaConf.jantarIni)) || '';
+    const jantarResFim = (diaConf && (diaConf.jantarResFim || diaConf.jantarFim)) || '';
+    const jantarRestFim = (diaConf && (diaConf.jantarRestFim || diaConf.jantarFim)) || '23:30';
+    const jantarSlots = jantarResIni && jantarResFim ? gerarSlots(jantarResIni, jantarResFim) : [];
 
     if (almocoSlots.length) {
       const g = document.createElement('div');
-      g.innerHTML = '<div class="slots-group-label">🌞 Almoço · Reservas ' + almocoIni + '–' + almocoFim + '</div>';
+      g.innerHTML = '<div class="slots-group-label">🌞 Almoço · Reservas ' + almocoResIni + '–' + almocoResFim + ' · Restaurante até ' + fmtH(almocoRestFim) + '</div>';
       const grid = document.createElement('div');
       grid.className = 'slots-grid';
       almocoSlots.forEach(h => grid.appendChild(criarSlot(h)));
@@ -610,7 +608,7 @@
 
     if (jantarSlots.length) {
       const g = document.createElement('div');
-      g.innerHTML = '<div class="slots-group-label">🌙 Jantar · Reservas 20h–20h30 · Restaurante aberto até ' + fmtH(jantarFim) + '</div>';
+      g.innerHTML = '<div class="slots-group-label">🌙 Jantar · Reservas ' + jantarResIni + '–' + jantarResFim + ' · Restaurante até ' + fmtH(jantarRestFim) + '</div>';
       const grid = document.createElement('div');
       grid.className = 'slots-grid';
       jantarSlots.forEach(h => grid.appendChild(criarSlot(h)));
@@ -669,7 +667,6 @@
     if (!horario) { showToast('Por favor selecione um horário.','error'); return; }
     const tel = document.getElementById('telemovel').value.replace(/\D/g,'');
     if (tel.length < 9) { showToast('Telemóvel inválido.','error'); return; }
-
     const dados = {
       nome:      document.getElementById('nome').value.trim(),
       email:     document.getElementById('email').value.trim(),
@@ -679,7 +676,6 @@
       horario:   horario,
       obs:       construirObs()
     };
-
     try {
       setLoading(true);
       const res = await apiRequest('reservaSite', dados);
@@ -714,14 +710,11 @@
         apiRequest('getConfigReservas'),
         apiRequest('getDiasFechados')
       ]);
-
       if (cfgRes && cfgRes.status === 'success' && cfgRes.config) {
         configReservas = cfgRes.config;
         actualizarBannerHorarios();
       }
-
       diasFechadosGlobal = Array.isArray(diasRes) ? diasRes : [];
-
       inicializarCalendario();
       gerarHorarios();
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
