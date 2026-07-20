@@ -458,7 +458,9 @@ async function guardarConfigs() {
     const cfg = recolherConfigs();
     const cfgStr = JSON.stringify(cfg);
 
-    const res = await apiRequest('setConfigReservas', { config: encodeURIComponent(cfgStr) });
+    // Passar o JSON directamente sem encodeURIComponent
+    // O apiRequest já trata da codificação via URLSearchParams
+    const res = await apiRequest('setConfigReservas', { config: cfgStr });
 
     if (res && res.status === 'success') {
       toast('✅ Configurações guardadas com sucesso!', 'ok');
@@ -472,7 +474,6 @@ async function guardarConfigs() {
     setLoading(false);
   }
 }
-
 function recolherConfigs() {
   const dias = {};
   DIAS_KEYS.forEach(k => {
