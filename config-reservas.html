@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuração Reservas — Don Tasko</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a84c; --gold-light: #e8c96a; --gold-dim: rgba(201,168,76,0.12);
+      --dark: #0f0e0c; --surface: #1a1815; --surface2: #242018; --border: #2e2b22;
+      --text: #f0ead6; --text-muted: #8a8070; --text-dim: #504a3e;
+      --success: #2e7d52; --success-dim: rgba(46,125,82,0.15);
+      --red: #c0392b; --red-dim: rgba(192,57,43,0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+
+    /* LOGIN */
+    #login-screen {
+      position: fixed; inset: 0; background: var(--dark);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .login-wrap { width: 360px; text-align: center; }
+    .login-logo { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 900; color: var(--gold); letter-spacing: 2px; margin-bottom: 6px; }
+    .login-sub { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 40px; }
+    .login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px; }
+    .login-box input { width: 100%; background: var(--dark); border: 1px solid var(--border); color: var(--text); padding: 13px 16px; border-radius: 9px; font-size: 15px; font-family: inherit; margin-bottom: 14px; transition: border-color 0.2s; }
+    .login-box input:focus { outline: none; border-color: var(--gold); }
+    .login-box button { width: 100%; background: var(--gold); color: var(--dark); border: none; padding: 14px; border-radius: 9px; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+    .login-box button:hover { background: var(--gold-light); }
+    .login-erro { color: #e74c3c; font-size: 12px; margin-top: 10px; display: none; }
+
+    /* APP */
+    #app { display: none; }
+
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-brand { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+    .topbar-right { display: flex; gap: 10px; }
+    .btn-top { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 7px 16px; border-radius: 7px; cursor: pointer; font-size: 12px; font-family: inherit; font-weight: 600; transition: all 0.2s; }
+    .btn-top:hover { border-color: var(--gold); color: var(--gold); }
+
+    .main { padding: 28px; max-width: 1100px; margin: 0 auto; }
+
+    /* SECTION */
+    .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 24px; }
+    .section-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* LOTAÇÃO */
+    .lotacao-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .lotacao-field { display: flex; flex-direction: column; gap: 6px; }
+    .lotacao-field label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    .lotacao-field input { background: var(--dark); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 15px; font-family: inherit; width: 120px; text-align: center; }
+    .lotacao-field input:focus { outline: none; border-color: var(--gold); }
+
+    /* DIAS */
+    .dias-table { width: 100%; border-collapse: collapse; }
+    .dias-table th { text-align: left; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .dias-table td { padding: 10px; border-bottom: 1px solid rgba(46,43,34,0.5); vertical-align: middle; }
+    .dias-table tr:last-child td { border-bottom: none; }
+    .dias-table tr:hover td { background: var(--surface2); }
+
+    .dia-nome { font-weight: 600; font-size: 14px; color: var(--text); }
+
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--border); border-radius: 12px; transition: 0.2s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: var(--text-muted); border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .toggle-slider { background: var(--success); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: white; }
+    .toggle-label { font-size: 12px; color: var(--text-muted); }
+
+    .toggle.gold input:checked + .toggle-slider { background: var(--gold); }
+
+    .hora-input { background: var(--dark); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 7px; font-size: 13px; font-family: inherit; width: 80px; text-align: center; }
+    .hora-input:focus { outline: none; border-color: var(--gold); }
+    .hora-input:disabled { opacity: 0.3; cursor: not-allowed; }
+    .hora-sep { color: var(--text-dim); font-size: 12px; margin: 0 4px; }
+
+    .horario-group { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .horario-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+
+    /* DIAS FECHO */
+    .fecho-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .fecho-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+    .fecho-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--red); flex-shrink: 0; cursor: pointer; }
+    .fecho-item label { font-size: 13px; color: var(--text); cursor: pointer; }
+
+    .datas-especificas { margin-top: 16px; }
+    .datas-especificas-title { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; }
+    .datas-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; min-height: 32px; }
+    .data-tag { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.3); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #e74c3c; display: flex; align-items: center; gap: 6px; }
+    .data-tag button { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+    .add-data-row { display: flex; gap: 8px; align-items: center; }
+    .add-data-row input[type="date"] { background: var(--dark); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 7px; font-size: 13px; font-family: inherit; }
+    .add-data-row input[type="date"]:focus { outline: none; border-color: var(--gold); }
+    .btn-add-data { background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.3); color: var(--gold); padding: 8px 14px; border-radius: 7px; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.2s; }
+    .btn-add-data:hover { background: var(--gold); color: var(--dark); }
+
+    /* SAVE */
+    .btn-save { background: var(--gold); color: var(--dark); border: none; padding: 14px 32px; border-radius: 9px; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 16px rgba(201,168,76,0.25); }
+    .btn-save:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; transition: all 0.3s; white-space: nowrap; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.ok { border-color: var(--success); color: #4caf82; }
+    .toast.erro { border-color: var(--red); color: #e74c3c; }
+
+    /* LOADING */
+    #loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9998; justify-content: center; align-items: center; }
+    #loading.show { display: flex; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 700px) {
+      .main { padding: 16px; }
+      .dias-table { font-size: 12px; }
+      .hora-input { width: 68px; }
+      .fecho-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-logo">DON TASKO</div>
+    <div class="login-sub">Configuração de Reservas</div>
+    <div class="login-box">
+      <input type="password" id="passInput" placeholder="Palavra-passe" autocomplete="current-password">
+      <button onclick="verificarPass()">Entrar</button>
+      <div class="login-erro" id="loginErro">⚠️ Palavra-passe incorreta</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">DON TASKO · Configuração</div>
+    <div class="topbar-right">
+      <button class="btn-top" onclick="carregarConfigs()">🔄 Recarregar</button>
+      <a href="admin.html"><button class="btn-top">← Painel</button></a>
+      <button class="btn-top" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- LOTAÇÃO -->
+    <div class="section">
+      <div class="section-title">Lotação & Limites</div>
+      <div class="lotacao-row">
+        <div class="lotacao-field">
+          <label>Lugares totais</label>
+          <input type="number" id="lotacaoMax" min="1" max="200" value="34">
+        </div>
+        <div class="lotacao-field">
+          <label>Máx. por reserva</label>
+          <input type="number" id="maxConvidados" min="1" max="50" value="6">
+        </div>
+      </div>
+    </div>
+
+    <!-- HORÁRIOS POR DIA -->
+    <div class="section">
+      <div class="section-title">Horários e Reservas por Dia</div>
+      <div style="overflow-x:auto">
+        <table class="dias-table">
+          <thead>
+            <tr>
+              <th>Dia</th>
+              <th>Aberto</th>
+              <th>Reservas online</th>
+              <th>🌞 Almoço início</th>
+              <th>🌞 Almoço fim</th>
+              <th>🌙 Jantar início</th>
+              <th>🌙 Jantar fim</th>
+            </tr>
+          </thead>
+          <tbody id="diasBody">
+            <!-- gerado por JS -->
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text-dim)">
+        💡 Se "Reservas online" estiver desactivado mas o dia estiver aberto, o cliente verá um aviso a informar que não há reservas e que o atendimento é por ordem de chegada.
+      </div>
+    </div>
+
+    <!-- DIAS DE FECHO -->
+    <div class="section">
+      <div class="section-title">Dias de Fecho Semanal</div>
+      <div class="fecho-grid" id="fechoSemanal">
+        <!-- gerado por JS -->
+      </div>
+
+      <div class="datas-especificas">
+        <div class="datas-especificas-title">Datas específicas de fecho</div>
+        <div class="datas-list" id="datasFechoList"></div>
+        <div class="add-data-row">
+          <input type="date" id="novaDataFecho">
+          <button class="btn-add-data" onclick="adicionarDataFecho()">+ Adicionar data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUARDAR -->
+    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:8px">
+      <button class="btn-save" id="btnSave" onclick="guardarConfigs()">💾 Guardar Configurações</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="loading"><div class="spinner"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  URL: 'https://script.google.com/macros/s/AKfycbyhbzKM9rK9VeuOrOIiO_2zFA6ZZP0Kwb345o-CAecduLycSBbJFX6NEoWGnDWn-2bO/exec',
+  PASS: 'Tasko123'
+};
+
+const DIAS_SEMANA = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado','Domingo'];
+const DIAS_KEYS   = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+
+let datasFechoEspecificas = [];
+
+// ── LOGIN ──
+function verificarPass() {
+  if (document.getElementById('passInput').value === CONFIG.PASS) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    iniciar();
+  } else {
+    const el = document.getElementById('loginErro');
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  }
+}
+
+document.getElementById('passInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') verificarPass();
+});
+
+function logout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('passInput').value = '';
+}
+
+// ── TOAST ──
+function toast(msg, tipo) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (tipo || 'ok') + ' show';
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function setLoading(on) {
+  document.getElementById('loading').classList.toggle('show', on);
+  document.getElementById('btnSave').disabled = on;
+}
+
+// ── JSONP ──
+let _jc = 0;
+function apiRequest(action, data) {
+  data = data || {};
+  return new Promise((resolve, reject) => {
+    const cb = '_cfg_' + (++_jc);
+    const params = new URLSearchParams(Object.assign({ action, callback: cb }, data));
+    const timeout = setTimeout(() => { delete window[cb]; reject(new Error('Timeout')); }, 30000);
+    window[cb] = r => { clearTimeout(timeout); delete window[cb]; const s = document.getElementById('_s_'+cb); if(s) s.remove(); resolve(r); };
+    const s = document.createElement('script');
+    s.id = '_s_' + cb;
+    s.src = CONFIG.URL + '?' + params.toString();
+    s.onerror = () => { clearTimeout(timeout); delete window[cb]; reject(new Error('Erro de rede')); };
+    document.head.appendChild(s);
+  });
+}
+
+// ── INIT ──
+function iniciar() {
+  renderizarDias();
+  renderizarFechoSemanal();
+  carregarConfigs();
+}
+
+// ── RENDERIZAR TABELA DE DIAS ──
+function renderizarDias() {
+  const tbody = document.getElementById('diasBody');
+  tbody.innerHTML = DIAS_SEMANA.map((dia, i) => {
+    const k = DIAS_KEYS[i];
+    return `
+      <tr>
+        <td><span class="dia-nome">${dia}</span></td>
+        <td>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="aberto_${k}" checked onchange="toggleDia('${k}')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </td>
+        <td>
+          <div class="toggle-wrap">
+            <label class="toggle gold">
+              <input type="checkbox" id="reservas_${k}" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </td>
+        <td>
+          <div class="horario-group">
+            <input type="time" class="hora-input" id="almoco_ini_${k}" value="12:00">
+          </div>
+        </td>
+        <td>
+          <input type="time" class="hora-input" id="almoco_fim_${k}" value="15:00">
+        </td>
+        <td>
+          <input type="time" class="hora-input" id="jantar_ini_${k}" value="20:00">
+        </td>
+        <td>
+          <input type="time" class="hora-input" id="jantar_fim_${k}" value="23:30">
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function toggleDia(k) {
+  const aberto = document.getElementById('aberto_' + k).checked;
+  ['almoco_ini_','almoco_fim_','jantar_ini_','jantar_fim_'].forEach(p => {
+    const el = document.getElementById(p + k);
+    if (el) el.disabled = !aberto;
+  });
+  const res = document.getElementById('reservas_' + k);
+  if (res) res.disabled = !aberto;
+}
+
+// ── FECHO SEMANAL ──
+function renderizarFechoSemanal() {
+  const el = document.getElementById('fechoSemanal');
+  el.innerHTML = DIAS_SEMANA.map((dia, i) => {
+    const k = DIAS_KEYS[i];
+    return `
+      <div class="fecho-item">
+        <input type="checkbox" id="fecho_${k}">
+        <label for="fecho_${k}">${dia}</label>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── DATAS ESPECÍFICAS ──
+function renderizarDatasFecho() {
+  const el = document.getElementById('datasFechoList');
+  if (datasFechoEspecificas.length === 0) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--text-dim)">Nenhuma data específica adicionada</span>';
+    return;
+  }
+  el.innerHTML = datasFechoEspecificas.map(d => `
+    <div class="data-tag">
+      ${formatarDataDisplay(d)}
+      <button onclick="removerDataFecho('${d}')" title="Remover">×</button>
+    </div>
+  `).join('');
+}
+
+function formatarDataDisplay(iso) {
+  const [y, m, d] = iso.split('-');
+  return d + '/' + m + '/' + y;
+}
+
+function adicionarDataFecho() {
+  const input = document.getElementById('novaDataFecho');
+  const val = input.value;
+  if (!val) { toast('Selecione uma data.', 'erro'); return; }
+  if (datasFechoEspecificas.includes(val)) { toast('Data já adicionada.', 'erro'); return; }
+  datasFechoEspecificas.push(val);
+  datasFechoEspecificas.sort();
+  input.value = '';
+  renderizarDatasFecho();
+}
+
+function removerDataFecho(data) {
+  datasFechoEspecificas = datasFechoEspecificas.filter(d => d !== data);
+  renderizarDatasFecho();
+}
+
+// ── CARREGAR CONFIGS DA SHEET ──
+async function carregarConfigs() {
+  setLoading(true);
+  try {
+    const res = await apiRequest('getConfigReservas');
+    if (res && res.status === 'success') {
+      aplicarConfigs(res.config);
+      toast('Configurações carregadas', 'ok');
+    } else {
+      toast('A usar valores predefinidos', 'ok');
+    }
+  } catch(e) {
+    console.error(e);
+    toast('Erro ao carregar — a usar valores predefinidos', 'erro');
+  } finally {
+    setLoading(false);
+  }
+}
+
+function aplicarConfigs(cfg) {
+  if (!cfg) return;
+
+  // Lotação
+  if (cfg.lotacaoMax) document.getElementById('lotacaoMax').value = cfg.lotacaoMax;
+  if (cfg.maxConvidados) document.getElementById('maxConvidados').value = cfg.maxConvidados;
+
+  // Dias
+  DIAS_KEYS.forEach(k => {
+    const d = cfg.dias && cfg.dias[k];
+    if (!d) return;
+    document.getElementById('aberto_' + k).checked = d.aberto === 'SIM';
+    document.getElementById('reservas_' + k).checked = d.reservas === 'SIM';
+    if (d.almocoIni) document.getElementById('almoco_ini_' + k).value = d.almocoIni;
+    if (d.almocoFim) document.getElementById('almoco_fim_' + k).value = d.almocoFim;
+    if (d.jantarIni) document.getElementById('jantar_ini_' + k).value = d.jantarIni;
+    if (d.jantarFim) document.getElementById('jantar_fim_' + k).value = d.jantarFim;
+    toggleDia(k);
+  });
+
+  // Fecho semanal
+  if (cfg.fechoSemanal) {
+    DIAS_KEYS.forEach(k => {
+      const el = document.getElementById('fecho_' + k);
+      if (el) el.checked = cfg.fechoSemanal.includes(k);
+    });
+  }
+
+  // Datas específicas
+  datasFechoEspecificas = cfg.datasFecho || [];
+  renderizarDatasFecho();
+}
+
+// ── GUARDAR CONFIGS NA SHEET ──
+async function guardarConfigs() {
+  setLoading(true);
+  try {
+    const cfg = recolherConfigs();
+    const cfgStr = JSON.stringify(cfg);
+
+    const res = await apiRequest('setConfigReservas', { config: encodeURIComponent(cfgStr) });
+
+    if (res && res.status === 'success') {
+      toast('✅ Configurações guardadas com sucesso!', 'ok');
+    } else {
+      toast('Erro ao guardar: ' + (res && res.message ? res.message : 'desconhecido'), 'erro');
+    }
+  } catch(e) {
+    console.error(e);
+    toast('Erro de ligação ao servidor.', 'erro');
+  } finally {
+    setLoading(false);
+  }
+}
+
+function recolherConfigs() {
+  const dias = {};
+  DIAS_KEYS.forEach(k => {
+    dias[k] = {
+      aberto:    document.getElementById('aberto_' + k).checked ? 'SIM' : 'NÃO',
+      reservas:  document.getElementById('reservas_' + k).checked ? 'SIM' : 'NÃO',
+      almocoIni: document.getElementById('almoco_ini_' + k).value || '',
+      almocoFim: document.getElementById('almoco_fim_' + k).value || '',
+      jantarIni: document.getElementById('jantar_ini_' + k).value || '',
+      jantarFim: document.getElementById('jantar_fim_' + k).value || ''
+    };
+  });
+
+  const fechoSemanal = DIAS_KEYS.filter(k => {
+    const el = document.getElementById('fecho_' + k);
+    return el && el.checked;
+  });
+
+  return {
+    lotacaoMax:    parseInt(document.getElementById('lotacaoMax').value) || 34,
+    maxConvidados: parseInt(document.getElementById('maxConvidados').value) || 6,
+    dias,
+    fechoSemanal,
+    datasFecho: datasFechoEspecificas
+  };
+}
+</script>
+</body>
+</html>
