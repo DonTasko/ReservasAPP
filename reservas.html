@@ -191,7 +191,7 @@
   <div class="horarios-banner-inner" id="horariosBanner">
     <div class="horario-item"><span class="horario-label">🌞 Almoço</span><span class="horario-value" id="hAlmoco">12h00–15h00</span></div>
     <div class="horario-sep"></div>
-    <div class="horario-item"><span class="horario-label">Cozinha almoço</span><span class="horario-value" id="hCozinhaAlmoco">até 14h30</span></div>
+    <div class="horario-item"><span class="horario-label">Cozinha almoço</span><span class="horario-value" id="hCozinhaAlmoco">até 14h00</span></div>
     <div class="horario-sep"></div>
     <div class="horario-item"><span class="horario-label">🌙 Jantar</span><span class="horario-value" id="hJantar">20h00–23h30</span></div>
     <div class="horario-sep"></div>
@@ -496,7 +496,7 @@
 
     if (ref.almocoIni && ref.almocoFim) {
       document.getElementById('hAlmoco').textContent = fmtH(ref.almocoIni) + '–' + fmtH(ref.almocoFim);
-      document.getElementById('hCozinhaAlmoco').textContent = subtrairMinutos(ref.almocoFim, 30);
+      document.getElementById('hCozinhaAlmoco').textContent = subtrairMinutos(ref.almocoFim, 60);
     }
     if (ref.jantarIni && ref.jantarFim) {
       document.getElementById('hJantar').textContent = fmtH(ref.jantarIni) + '–' + fmtH(ref.jantarFim);
