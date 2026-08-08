@@ -7,417 +7,84 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #1a1a1a;
-  --accent: #d4a574;
-  --light: #f5f5f0;
-  --secondary: #5a4a3a;
-  --card: #2a2a2a;
+  --primary: #1a1a1a; --accent: #d4a574; --light: #f5f5f0;
+  --secondary: #5a4a3a; --card: #2a2a2a;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Montserrat', sans-serif; background: var(--primary); color: var(--light); min-height: 100vh; }
 
-body {
-  font-family: 'Montserrat', sans-serif;
-  background: var(--primary);
-  color: var(--light);
-  min-height: 100vh;
-}
-
-header {
-  position: sticky;
-  top: 0;
-  background: var(--primary);
-  border-bottom: 1px solid var(--accent);
-  z-index: 100;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-}
-
-.header-content {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--light);
-  letter-spacing: 2px;
-}
-
+header { position: sticky; top: 0; background: var(--primary); border-bottom: 1px solid var(--accent); z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+.header-content { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--light); letter-spacing: 2px; }
 .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-
-.nav-links a {
-  color: var(--light);
-  text-decoration: none;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: color 0.3s ease;
-}
-
+.nav-links a { color: var(--light); text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; transition: color 0.3s ease; }
 .nav-links a:hover { color: var(--accent); }
 
-.wrapper {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
+.wrapper { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+.page-title { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; text-align: center; margin-bottom: 1rem; letter-spacing: 3px; }
+.page-subtitle { text-align: center; color: var(--accent); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; }
 
-.page-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  text-align: center;
-  margin-bottom: 1rem;
-  letter-spacing: 3px;
-}
-
-.page-subtitle {
-  text-align: center;
-  color: var(--accent);
-  font-size: 1rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 2rem;
-}
-
-/* ========== FILTROS ========== */
-.filtros-container {
-  background: #222;
-  border: 1px solid #333;
-  border-radius: 14px;
-  padding: 1.2rem 1rem;
-  margin-bottom: 2rem;
-}
-
-.filtros-titulo {
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.7rem;
-}
-
-.filtros-row {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-}
-
+.filtros-container { background: #222; border: 1px solid #333; border-radius: 14px; padding: 1.2rem 1rem; margin-bottom: 2rem; }
+.filtros-titulo { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 0.7rem; }
+.filtros-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
 .filtros-row:last-child { margin-bottom: 0; }
+.filtro-separator { height: 1px; background: #333; margin: 0.8rem 0; }
+.filtro-btn { background: transparent; border: 1px solid #444; color: #999; padding: 0.35rem 0.9rem; border-radius: 20px; cursor: pointer; font-size: 0.78rem; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease; letter-spacing: 0.5px; }
+.filtro-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filtro-btn.active { background: var(--accent); border-color: var(--accent); color: var(--primary); font-weight: 600; }
 
-.filtro-separator {
-  height: 1px;
-  background: #333;
-  margin: 0.8rem 0;
-}
-
-.filtro-btn {
-  background: transparent;
-  border: 1px solid #444;
-  color: #999;
-  padding: 0.35rem 0.9rem;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.78rem;
-  font-family: 'Montserrat', sans-serif;
-  transition: all 0.2s ease;
-  letter-spacing: 0.5px;
-}
-
-.filtro-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.filtro-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: var(--accent);
-  font-size: 1.2rem;
-}
+.loading { text-align: center; padding: 3rem; color: var(--accent); font-size: 1.2rem; }
 
 .category { margin-bottom: 3rem; }
-
-.category h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
-  font-weight: 400;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 2px solid var(--accent);
-  cursor: pointer;
-  transition: color 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
+.category h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 400; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--accent); cursor: pointer; transition: color 0.3s ease; display: flex; justify-content: space-between; align-items: center; }
 .category h2:hover { color: var(--accent); }
 .category h2::after { content: '▼'; font-size: 1rem; transition: transform 0.3s ease; }
 .category h2.collapsed::after { transform: rotate(-90deg); }
-
 .items { display: grid; gap: 0.9rem; }
 .items.hidden { display: none; }
 
-/* ========== CARD DO ITEM ========== */
-.item {
-  background: var(--card);
-  border-radius: 10px;
-  padding: 1rem;
-  transition: all 0.3s ease;
-  border: 1px solid #333;
-  position: relative;
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-}
+.item { background: var(--card); border-radius: 10px; padding: 1rem; transition: all 0.3s ease; border: 1px solid #333; position: relative; display: flex; gap: 1rem; align-items: flex-start; }
+.item:hover { background: #333; border-color: var(--accent); box-shadow: 0 4px 16px rgba(212,165,116,0.15); }
 
-.item:hover {
-  background: #333;
-  border-color: var(--accent);
-  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.15);
-}
+.item-image-wrapper { flex-shrink: 0; width: 65px; height: 65px; border-radius: 6px; overflow: hidden; background: #1a1a1a; border: 1px solid #444; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+.item-image-wrapper:hover { border-color: var(--accent); box-shadow: 0 3px 10px rgba(212,165,116,0.25); }
+.item-image { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; }
+.item-image:hover { transform: scale(1.15); }
+.item-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #555; font-size: 1.8rem; background: #222; }
 
-/* ========== IMAGEM PEQUENA ========== */
-.item-image-wrapper {
-  flex-shrink: 0;
-  width: 65px;
-  height: 65px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #1a1a1a;
-  border: 1px solid #444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
+.item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.item-header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
+.item-name { font-weight: 500; font-size: 1rem; letter-spacing: 0.3px; color: var(--light); }
+.item.esgotado .item-name { color: #888; text-decoration: line-through; }
 
-.item-image-wrapper:hover {
-  border-color: var(--accent);
-  box-shadow: 0 3px 10px rgba(212, 165, 116, 0.25);
-}
+.price-wrapper { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; white-space: nowrap; }
+.old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
+.promo-price { color: #f39c12; font-weight: 700; font-size: 1.05rem; }
+.regular-price { font-weight: 600; color: var(--accent); font-size: 1rem; }
+.item.esgotado .regular-price, .item.esgotado .promo-price { color: #888; }
+.desc { font-size: 0.85rem; color: #aaa; line-height: 1.4; }
 
-.item-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  cursor: pointer;
-  display: block;
-}
-
-.item-image:hover {
-  transform: scale(1.15);
-}
-
-.item-image-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
-  font-size: 1.8rem;
-  background: #222;
-}
-
-/* ========== INFORMAÇÕES DO ITEM ========== */
-.item-info { 
-  flex: 1; 
-  min-width: 0; 
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.item-name { 
-  font-weight: 500; 
-  font-size: 1rem; 
-  letter-spacing: 0.3px;
-  color: var(--light);
-}
-
-.item.esgotado .item-name {
-  color: #888;
-  text-decoration: line-through;
-}
-
-/* ========== PREÇO ========== */
-.price-wrapper { 
-  display: flex; 
-  align-items: baseline; 
-  gap: 0.6rem; 
-  flex-wrap: wrap;
-  white-space: nowrap;
-}
-
-.old-price { 
-  text-decoration: line-through; 
-  color: #999; 
-  font-size: 0.9rem; 
-}
-
-.promo-price { 
-  color: #f39c12;
-  font-weight: 700; 
-  font-size: 1.05rem;
-}
-
-.regular-price { 
-  font-weight: 600; 
-  color: var(--accent); 
-  font-size: 1rem;
-}
-
-.item.esgotado .regular-price,
-.item.esgotado .promo-price {
-  color: #888;
-}
-
-.desc { 
-  font-size: 0.85rem; 
-  color: #aaa; 
-  line-height: 1.4;
-}
-
-/* ========== BADGE ESGOTADO ========== */
-.badge-rotura {
-  position: absolute; 
-  top: 8px; 
-  right: 8px;
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  color: white; 
-  padding: 4px 10px; 
-  border-radius: 12px;
-  font-size: 0.7rem; 
-  font-weight: 600; 
-  text-transform: uppercase;
-  letter-spacing: 0.5px; 
-  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
-  animation: pulse 2s infinite;
-}
-
+.badge-rotura { position: absolute; top: 8px; right: 8px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(231,76,60,0.4); animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+.item.esgotado { opacity: 0.65; }
 
-.item.esgotado { 
-  opacity: 0.65; 
-}
+.sem-resultados { text-align: center; padding: 3rem; color: #666; font-size: 1rem; display: none; }
 
-/* ========== SEM RESULTADOS ========== */
-.sem-resultados {
-  text-align: center; 
-  padding: 3rem; 
-  color: #666;
-  font-size: 1rem; 
-  display: none;
-}
-
-/* ========== MODAL DE IMAGEM ========== */
-.image-modal {
-  display: none; 
-  position: fixed;
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%;
-  background: rgba(0,0,0,0.95); 
-  z-index: 1000;
-  justify-content: center; 
-  align-items: center; 
-  cursor: pointer;
-  animation: fadeIn 0.3s ease;
-}
-
+.image-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; cursor: pointer; animation: fadeIn 0.3s ease; }
 .image-modal.active { display: flex; }
+.image-modal img { max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); cursor: default; }
+.image-modal .close-btn { position: absolute; top: 30px; right: 30px; font-size: 3rem; color: white; cursor: pointer; background: rgba(0,0,0,0.5); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; border: none; padding: 0; }
+.image-modal .close-btn:hover { background: var(--accent); transform: rotate(90deg); color: #1a1a1a; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.image-modal img {
-  max-width: 90%; 
-  max-height: 90%;
-  border-radius: 10px; 
-  box-shadow: 0 10px 50px rgba(0,0,0,0.8); 
-  cursor: default;
-}
-
-.image-modal .close-btn {
-  position: absolute; 
-  top: 30px; 
-  right: 30px;
-  font-size: 3rem; 
-  color: white; 
-  cursor: pointer;
-  background: rgba(0,0,0,0.5); 
-  width: 50px; 
-  height: 50px;
-  border-radius: 50%; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  transition: all 0.3s ease;
-  border: none;
-  padding: 0;
-}
-
-.image-modal .close-btn:hover { 
-  background: var(--accent); 
-  transform: rotate(90deg);
-  color: #1a1a1a;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .header-content { flex-direction: column; gap: 1rem; }
   .nav-links { flex-direction: column; gap: 1rem; }
   .page-title { font-size: 2rem; }
-  
-  .item {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .item-image-wrapper {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .item-header {
-    justify-content: center;
-  }
-  
-  .image-modal .close-btn { 
-    top: 10px; 
-    right: 10px; 
-    width: 40px; 
-    height: 40px; 
-    font-size: 2rem; 
-  }
+  .item { flex-direction: column; align-items: center; text-align: center; }
+  .item-image-wrapper { width: 100px; height: 100px; }
+  .item-header { justify-content: center; }
+  .image-modal .close-btn { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 2rem; }
 }
 </style>
 </head>
@@ -438,7 +105,6 @@ header {
   <h1 class="page-title">Carta de Vinhos</h1>
   <p class="page-subtitle">Seleção Premium</p>
 
-  <!-- Filtros -->
   <div class="filtros-container" id="filtrosContainer" style="display:none;">
     <p class="filtros-titulo">Tipo</p>
     <div class="filtros-row" id="filtrosTipo"></div>
@@ -472,40 +138,41 @@ const REGIOES_CONHECIDAS = [
 function parsearCategoria(categoria) {
   let regiao = null;
   let tipo = categoria;
-
   for (const r of REGIOES_CONHECIDAS) {
     const regex = new RegExp('\\b' + r + '\\b', 'i');
     if (regex.test(categoria)) {
-      regiao = r === 'Dao' ? 'Dão' : r === 'Setubal' ? 'Setúbal' : r === 'Verde' || r === 'Verdes' ? 'Minho' : r;
+      regiao = r === 'Dao' ? 'Dão' : r === 'Setubal' ? 'Setúbal' : (r === 'Verde' || r === 'Verdes') ? 'Minho' : r;
       tipo = categoria.replace(regex, '').replace(/\s+/g, ' ').trim();
       break;
     }
   }
-
-  return {
-    tipo: tipo || categoria,
-    regiao: regiao || 'Outras'
-  };
+  return { tipo: tipo || categoria, regiao: regiao || 'Outras' };
 }
 
 async function loadMenu() {
   try {
     console.log('📡 Carregando bebidas...');
     const itens = await apiRequest('getBebidas');
-    
-    if (!Array.isArray(itens)) {
-      throw new Error(itens.message || 'Erro ao carregar bebidas');
-    }
+    if (!Array.isArray(itens)) throw new Error(itens.message || 'Erro ao carregar bebidas');
 
-    todosItens = itens.filter(item => item.Categoria && item.Nome);
-    console.log(`✅ ${todosItens.length} bebidas carregadas`);
+    // ✅ Nova estrutura: campos em minúsculas vindos do Code.gs actualizado
+    // Suporta tanto o formato novo (rotura, categoria, nome, preco)
+    // como o formato antigo (Rotura, Categoria, Nome, Preço) para compatibilidade
+    todosItens = itens.filter(item => {
+      const nome = item.nome || item.Nome || '';
+      const cat  = item.categoria || item.Categoria || '';
+      return nome && cat;
+    });
 
-    const tipos = new Set();
+    console.log('✅ ' + todosItens.length + ' bebidas carregadas');
+
+    const tipos   = new Set();
     const regioes = new Set();
 
     todosItens.forEach(item => {
-      const { tipo, regiao } = parsearCategoria(item.Categoria);
-      item._tipo = tipo;
+      const cat = item.categoria || item.Categoria || '';
+      const { tipo, regiao } = parsearCategoria(cat);
+      item._tipo   = tipo;
       item._regiao = regiao;
       tipos.add(tipo);
       regioes.add(regiao);
@@ -519,16 +186,15 @@ async function loadMenu() {
     console.error('❌ Erro:', error);
     document.getElementById('menu').innerHTML = `
       <div style="text-align:center; color:#e74c3c; padding:3rem;">
-        <h3>Erro ao carregar bebidas</h3>
+        <h3>Erro ao carregar o menu</h3>
         <p>${error.message}</p>
         <button onclick="location.reload()" style="margin-top:2rem; padding:0.8rem 1.5rem; background:var(--accent); color:#1a1a1a; border:none; border-radius:8px; cursor:pointer; font-weight:600;">🔄 Tentar novamente</button>
-      </div>
-    `;
+      </div>`;
   }
 }
 
 function construirFiltros(tipos, regioes) {
-  const cTipo = document.getElementById('filtrosTipo');
+  const cTipo   = document.getElementById('filtrosTipo');
   const cRegiao = document.getElementById('filtrosRegiao');
 
   const btnTodos = criarBtn('Todos', true, () => setFiltroTipo('Todos', btnTodos));
@@ -574,22 +240,21 @@ function renderMenu() {
   container.className = '';
 
   const itensFiltrados = todosItens.filter(item => {
-    const tipoOk = filtroTipoAtivo === 'Todos' || item._tipo === filtroTipoAtivo;
-    const regiaoOk = filtroRegiaoAtivo === 'Todas' || item._regiao === filtroRegiaoAtivo;
+    const tipoOk   = filtroTipoAtivo   === 'Todos'  || item._tipo   === filtroTipoAtivo;
+    const regiaoOk = filtroRegiaoAtivo === 'Todas'  || item._regiao === filtroRegiaoAtivo;
     return tipoOk && regiaoOk;
   });
 
   const semResultados = document.getElementById('semResultados');
-  if (itensFiltrados.length === 0) { 
-    semResultados.style.display = 'block'; 
-    return; 
-  }
+  if (itensFiltrados.length === 0) { semResultados.style.display = 'block'; return; }
   semResultados.style.display = 'none';
 
+  // Agrupar por categoria
   const menu = {};
   itensFiltrados.forEach(item => {
-    if (!menu[item.Categoria]) menu[item.Categoria] = [];
-    menu[item.Categoria].push(item);
+    const cat = item.categoria || item.Categoria || '';
+    if (!menu[cat]) menu[cat] = [];
+    menu[cat].push(item);
   });
 
   Object.keys(menu).forEach(cat => {
@@ -597,38 +262,42 @@ function renderMenu() {
     section.className = 'category';
 
     const h2 = document.createElement('h2');
-    h2.textContent = `${cat} (${menu[cat].length})`;
+    h2.textContent = cat + ' (' + menu[cat].length + ')';
+
     const itemsDiv = document.createElement('div');
     itemsDiv.className = 'items';
 
-    h2.onclick = () => { 
-      itemsDiv.classList.toggle('hidden'); 
-      h2.classList.toggle('collapsed'); 
+    h2.onclick = () => {
+      itemsDiv.classList.toggle('hidden');
+      h2.classList.toggle('collapsed');
     };
 
     menu[cat].forEach(item => {
-      const esgotado = item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase());
-      const img = item.Link_Imagem || item.Imagem || '';
-      const obs = item.Observações || item.Observacoes || '';
-      const preco = parseFloat(item['Preço']) || 0;
-      const promoPrice = item['_promoPrice'] ? parseFloat(item['_promoPrice']) : null;
-      const hasPromo = promoPrice && !isNaN(promoPrice) && promoPrice > 0;
+      // ✅ ROTURA: lê campo novo (rotura boolean) ou campo antigo (Rotura string)
+      const emRotura = item.rotura === true
+        || (item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase()));
 
+      const nome   = item.nome   || item.Nome   || '';
+      const preco  = item.preco  || parseFloat(item['Preço']) || 0;
+      const obs    = item.observacoes || item.Observações || item.Observacoes || '';
+      const img    = item.imagem || item.Link_Imagem || item.Imagem || '';
+      const promo  = item._promoPrice || null;
+
+      const hasPromo = promo && !isNaN(promo) && promo > 0;
       const priceHtml = hasPromo
-        ? `<div class="price-wrapper"><span class="old-price">${preco.toFixed(2)} €</span><span class="promo-price">${promoPrice.toFixed(2)} €</span></div>`
+        ? `<div class="price-wrapper"><span class="old-price">${preco.toFixed(2)} €</span><span class="promo-price">${promo.toFixed(2)} €</span></div>`
         : `<div class="price-wrapper"><span class="regular-price">${preco.toFixed(2)} €</span></div>`;
 
       const div = document.createElement('div');
-      div.className = 'item' + (esgotado ? ' esgotado' : '');
+      div.className = 'item' + (emRotura ? ' esgotado' : '');
 
-      let html = esgotado ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
-      html += img 
-        ? `<div class="item-image-wrapper"><img src="${img}" alt="${item.Nome}" class="item-image" onclick="openImageModal('${img}', '${item.Nome.replace(/'/g, "\\'")}')"></div>`
+      let html = emRotura ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
+      html += img
+        ? `<div class="item-image-wrapper"><img src="${img}" alt="${nome.replace(/"/g,'&quot;')}" class="item-image" onclick="openImageModal('${img.replace(/'/g,"\\'")}', '${nome.replace(/'/g,"\\'")}')"></div>`
         : `<div class="item-image-wrapper"><div class="item-image-placeholder">🍷</div></div>`;
-      
       html += `<div class="item-info">
         <div class="item-header">
-          <div class="item-name">${item.Nome}</div>
+          <div class="item-name">${nome}</div>
           ${priceHtml}
         </div>
         ${obs ? `<div class="desc">${obs}</div>` : ''}
@@ -657,12 +326,8 @@ function closeImageModal() {
   document.body.style.overflow = 'auto';
 }
 
-document.addEventListener('keydown', e => { 
-  if (e.key === 'Escape') closeImageModal(); 
-});
-
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImageModal(); });
 window.addEventListener('DOMContentLoaded', loadMenu);
 </script>
-
 </body>
 </html>
