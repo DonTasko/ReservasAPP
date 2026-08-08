@@ -46,16 +46,61 @@ header { position: sticky; top: 0; background: var(--primary); border-bottom: 1p
 .item { background: var(--card); border-radius: 10px; padding: 1rem; transition: all 0.3s ease; border: 1px solid #333; position: relative; display: flex; gap: 1rem; align-items: flex-start; }
 .item:hover { background: #333; border-color: var(--accent); box-shadow: 0 4px 16px rgba(212,165,116,0.15); }
 
-.item-image-wrapper { flex-shrink: 0; width: 65px; height: 65px; border-radius: 6px; overflow: hidden; background: #1a1a1a; border: 1px solid #444; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+/* IMAGEM COM VIVINO OVERLAY */
+.item-image-wrapper {
+  flex-shrink: 0; width: 65px; height: 65px; border-radius: 6px;
+  overflow: hidden; background: #1a1a1a; border: 1px solid #444;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s ease; position: relative;
+}
 .item-image-wrapper:hover { border-color: var(--accent); box-shadow: 0 3px 10px rgba(212,165,116,0.25); }
-.item-image { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; }
+.item-image { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; transition: transform 0.3s ease; }
 .item-image:hover { transform: scale(1.15); }
 .item-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #555; font-size: 1.8rem; background: #222; }
 
+/* BADGE VIVINO EM CIMA DA FOTO */
+.vivino-badge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+  padding: 4px 3px 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  text-decoration: none;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.vivino-badge:hover { background: linear-gradient(to top, rgba(154,16,66,0.9) 0%, rgba(154,16,66,0.3) 100%); }
+.vivino-score {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+.vivino-star { font-size: 0.65rem; color: #f1c40f; line-height: 1; }
+.vivino-logo-dot { width: 6px; height: 6px; background: #9a1042; border-radius: 50%; flex-shrink: 0; }
+
+/* ITEM INFO */
 .item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.4rem; }
 .item-header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
 .item-name { font-weight: 500; font-size: 1rem; letter-spacing: 0.3px; color: var(--light); }
 .item.esgotado .item-name { color: #888; text-decoration: line-through; }
+
+/* LINK VIVINO NO NOME */
+.vivino-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.72rem; color: #9a1042; text-decoration: none;
+  background: rgba(154,16,66,0.12); border: 1px solid rgba(154,16,66,0.3);
+  padding: 2px 7px; border-radius: 10px; font-weight: 600;
+  transition: all 0.2s; margin-top: 2px; width: fit-content;
+}
+.vivino-link:hover { background: rgba(154,16,66,0.25); border-color: #9a1042; color: #c0185a; }
+.vivino-link-dot { width: 5px; height: 5px; background: #9a1042; border-radius: 50%; }
 
 .price-wrapper { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; white-space: nowrap; }
 .old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
@@ -84,6 +129,7 @@ header { position: sticky; top: 0; background: var(--primary); border-bottom: 1p
   .item { flex-direction: column; align-items: center; text-align: center; }
   .item-image-wrapper { width: 100px; height: 100px; }
   .item-header { justify-content: center; }
+  .vivino-link { margin: 0 auto; }
   .image-modal .close-btn { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 2rem; }
 }
 </style>
@@ -124,8 +170,6 @@ header { position: sticky; top: 0; background: var(--primary); border-bottom: 1p
 
 <script src="config.js"></script>
 <script>
-console.log('🍷 Bebidas Don Tasko iniciando...');
-
 let todosItens = [];
 let filtroTipoAtivo = 'Todos';
 let filtroRegiaoAtivo = 'Todas';
@@ -136,8 +180,7 @@ const REGIOES_CONHECIDAS = [
 ];
 
 function parsearCategoria(categoria) {
-  let regiao = null;
-  let tipo = categoria;
+  let regiao = null, tipo = categoria;
   for (const r of REGIOES_CONHECIDAS) {
     const regex = new RegExp('\\b' + r + '\\b', 'i');
     if (regex.test(categoria)) {
@@ -151,28 +194,16 @@ function parsearCategoria(categoria) {
 
 async function loadMenu() {
   try {
-    console.log('📡 Carregando bebidas...');
     const itens = await apiRequest('getBebidas');
     if (!Array.isArray(itens)) throw new Error(itens.message || 'Erro ao carregar bebidas');
 
-    // ✅ Nova estrutura: campos em minúsculas vindos do Code.gs actualizado
-    // Suporta tanto o formato novo (rotura, categoria, nome, preco)
-    // como o formato antigo (Rotura, Categoria, Nome, Preço) para compatibilidade
-    todosItens = itens.filter(item => {
-      const nome = item.nome || item.Nome || '';
-      const cat  = item.categoria || item.Categoria || '';
-      return nome && cat;
-    });
+    todosItens = itens.filter(item => (item.nome || item.Nome) && (item.categoria || item.Categoria));
 
-    console.log('✅ ' + todosItens.length + ' bebidas carregadas');
-
-    const tipos   = new Set();
-    const regioes = new Set();
-
+    const tipos = new Set(), regioes = new Set();
     todosItens.forEach(item => {
       const cat = item.categoria || item.Categoria || '';
       const { tipo, regiao } = parsearCategoria(cat);
-      item._tipo   = tipo;
+      item._tipo = tipo;
       item._regiao = regiao;
       tipos.add(tipo);
       regioes.add(regiao);
@@ -181,35 +212,24 @@ async function loadMenu() {
     construirFiltros([...tipos].sort(), [...regioes].sort());
     renderMenu();
     document.getElementById('filtrosContainer').style.display = 'block';
-
   } catch (error) {
-    console.error('❌ Erro:', error);
     document.getElementById('menu').innerHTML = `
-      <div style="text-align:center; color:#e74c3c; padding:3rem;">
-        <h3>Erro ao carregar o menu</h3>
-        <p>${error.message}</p>
-        <button onclick="location.reload()" style="margin-top:2rem; padding:0.8rem 1.5rem; background:var(--accent); color:#1a1a1a; border:none; border-radius:8px; cursor:pointer; font-weight:600;">🔄 Tentar novamente</button>
+      <div style="text-align:center;color:#e74c3c;padding:3rem;">
+        <h3>Erro ao carregar o menu</h3><p>${error.message}</p>
+        <button onclick="location.reload()" style="margin-top:2rem;padding:0.8rem 1.5rem;background:var(--accent);color:#1a1a1a;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🔄 Tentar novamente</button>
       </div>`;
   }
 }
 
 function construirFiltros(tipos, regioes) {
-  const cTipo   = document.getElementById('filtrosTipo');
+  const cTipo = document.getElementById('filtrosTipo');
   const cRegiao = document.getElementById('filtrosRegiao');
-
   const btnTodos = criarBtn('Todos', true, () => setFiltroTipo('Todos', btnTodos));
   cTipo.appendChild(btnTodos);
-  tipos.forEach(tipo => {
-    const btn = criarBtn(tipo, false, () => setFiltroTipo(tipo, btn));
-    cTipo.appendChild(btn);
-  });
-
+  tipos.forEach(t => { const b = criarBtn(t, false, () => setFiltroTipo(t, b)); cTipo.appendChild(b); });
   const btnTodas = criarBtn('Todas', true, () => setFiltroRegiao('Todas', btnTodas));
   cRegiao.appendChild(btnTodas);
-  regioes.forEach(regiao => {
-    const btn = criarBtn(regiao, false, () => setFiltroRegiao(regiao, btn));
-    cRegiao.appendChild(btn);
-  });
+  regioes.forEach(r => { const b = criarBtn(r, false, () => setFiltroRegiao(r, b)); cRegiao.appendChild(b); });
 }
 
 function criarBtn(label, ativo, onClick) {
@@ -220,17 +240,17 @@ function criarBtn(label, ativo, onClick) {
   return btn;
 }
 
-function setFiltroTipo(valor, btnClicado) {
+function setFiltroTipo(valor, btn) {
   filtroTipoAtivo = valor;
   document.querySelectorAll('#filtrosTipo .filtro-btn').forEach(b => b.classList.remove('active'));
-  btnClicado.classList.add('active');
+  btn.classList.add('active');
   renderMenu();
 }
 
-function setFiltroRegiao(valor, btnClicado) {
+function setFiltroRegiao(valor, btn) {
   filtroRegiaoAtivo = valor;
   document.querySelectorAll('#filtrosRegiao .filtro-btn').forEach(b => b.classList.remove('active'));
-  btnClicado.classList.add('active');
+  btn.classList.add('active');
   renderMenu();
 }
 
@@ -239,17 +259,15 @@ function renderMenu() {
   container.innerHTML = '';
   container.className = '';
 
-  const itensFiltrados = todosItens.filter(item => {
-    const tipoOk   = filtroTipoAtivo   === 'Todos'  || item._tipo   === filtroTipoAtivo;
-    const regiaoOk = filtroRegiaoAtivo === 'Todas'  || item._regiao === filtroRegiaoAtivo;
-    return tipoOk && regiaoOk;
-  });
+  const itensFiltrados = todosItens.filter(item =>
+    (filtroTipoAtivo === 'Todos' || item._tipo === filtroTipoAtivo) &&
+    (filtroRegiaoAtivo === 'Todas' || item._regiao === filtroRegiaoAtivo)
+  );
 
   const semResultados = document.getElementById('semResultados');
-  if (itensFiltrados.length === 0) { semResultados.style.display = 'block'; return; }
+  if (!itensFiltrados.length) { semResultados.style.display = 'block'; return; }
   semResultados.style.display = 'none';
 
-  // Agrupar por categoria
   const menu = {};
   itensFiltrados.forEach(item => {
     const cat = item.categoria || item.Categoria || '';
@@ -266,41 +284,74 @@ function renderMenu() {
 
     const itemsDiv = document.createElement('div');
     itemsDiv.className = 'items';
-
-    h2.onclick = () => {
-      itemsDiv.classList.toggle('hidden');
-      h2.classList.toggle('collapsed');
-    };
+    h2.onclick = () => { itemsDiv.classList.toggle('hidden'); h2.classList.toggle('collapsed'); };
 
     menu[cat].forEach(item => {
-      // ✅ ROTURA: lê campo novo (rotura boolean) ou campo antigo (Rotura string)
-      const emRotura = item.rotura === true
-        || (item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase()));
-
-      const nome   = item.nome   || item.Nome   || '';
-      const preco  = item.preco  || parseFloat(item['Preço']) || 0;
-      const obs    = item.observacoes || item.Observações || item.Observacoes || '';
-      const img    = item.imagem || item.Link_Imagem || item.Imagem || '';
-      const promo  = item._promoPrice || null;
+      const emRotura   = item.rotura === true || (item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase()));
+      const nome       = item.nome   || item.Nome   || '';
+      const preco      = item.preco  || parseFloat(item['Preço']) || 0;
+      const obs        = item.observacoes || item.Observações || item.Observacoes || '';
+      const img        = item.imagem || item.Link_Imagem || item.Imagem || '';
+      const promo      = item._promoPrice || null;
+      const pontuacao  = item.pontuacao  ? parseFloat(item.pontuacao)  : null;
+      const linkVivino = item.linkVivino || '';
 
       const hasPromo = promo && !isNaN(promo) && promo > 0;
       const priceHtml = hasPromo
         ? `<div class="price-wrapper"><span class="old-price">${preco.toFixed(2)} €</span><span class="promo-price">${promo.toFixed(2)} €</span></div>`
         : `<div class="price-wrapper"><span class="regular-price">${preco.toFixed(2)} €</span></div>`;
 
+      // Badge Vivino em cima da foto
+      const vivinoBadgeHtml = (pontuacao && linkVivino)
+        ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-badge" onclick="event.stopPropagation()" title="Ver no Vivino">
+            <span class="vivino-logo-dot"></span>
+            <span class="vivino-star">★</span>
+            <span class="vivino-score">${pontuacao.toFixed(1)}</span>
+           </a>`
+        : (pontuacao
+          ? `<div class="vivino-badge" title="Pontuação Vivino">
+              <span class="vivino-star">★</span>
+              <span class="vivino-score">${pontuacao.toFixed(1)}</span>
+             </div>`
+          : '');
+
+      // Link Vivino junto ao nome (quando não há pontuação mas há link)
+      const vivinoLinkHtml = (!pontuacao && linkVivino)
+        ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-link" onclick="event.stopPropagation()">
+            <span class="vivino-logo-dot"></span> Ver no Vivino
+           </a>`
+        : (pontuacao && linkVivino
+          ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-link" onclick="event.stopPropagation()">
+              <span class="vivino-logo-dot"></span> Ver no Vivino
+             </a>`
+          : '');
+
       const div = document.createElement('div');
       div.className = 'item' + (emRotura ? ' esgotado' : '');
 
       let html = emRotura ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
-      html += img
-        ? `<div class="item-image-wrapper"><img src="${img}" alt="${nome.replace(/"/g,'&quot;')}" class="item-image" onclick="openImageModal('${img.replace(/'/g,"\\'")}', '${nome.replace(/'/g,"\\'")}')"></div>`
-        : `<div class="item-image-wrapper"><div class="item-image-placeholder">🍷</div></div>`;
+
+      // Imagem com badge Vivino sobreposto
+      if (img) {
+        html += `<div class="item-image-wrapper">
+          <img src="${img}" alt="${nome.replace(/"/g,'&quot;')}" class="item-image"
+            onclick="openImageModal('${img.replace(/'/g,"\\'")}', '${nome.replace(/'/g,"\\'")}')">
+          ${vivinoBadgeHtml}
+        </div>`;
+      } else {
+        html += `<div class="item-image-wrapper">
+          <div class="item-image-placeholder">🍷</div>
+          ${vivinoBadgeHtml}
+        </div>`;
+      }
+
       html += `<div class="item-info">
         <div class="item-header">
           <div class="item-name">${nome}</div>
           ${priceHtml}
         </div>
         ${obs ? `<div class="desc">${obs}</div>` : ''}
+        ${vivinoLinkHtml}
       </div>`;
 
       div.innerHTML = html;
