@@ -46,59 +46,23 @@ header { position: sticky; top: 0; background: var(--primary); border-bottom: 1p
 .item { background: var(--card); border-radius: 10px; padding: 1rem; transition: all 0.3s ease; border: 1px solid #333; position: relative; display: flex; gap: 1rem; align-items: flex-start; }
 .item:hover { background: #333; border-color: var(--accent); box-shadow: 0 4px 16px rgba(212,165,116,0.15); }
 
-/* IMAGEM COM VIVINO OVERLAY */
-.item-image-wrapper {
-  flex-shrink: 0; width: 65px; height: 65px; border-radius: 6px;
-  overflow: hidden; background: #1a1a1a; border: 1px solid #444;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s ease; position: relative;
-}
+.item-image-wrapper { flex-shrink: 0; width: 65px; height: 65px; border-radius: 6px; overflow: hidden; background: #1a1a1a; border: 1px solid #444; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative; }
 .item-image-wrapper:hover { border-color: var(--accent); box-shadow: 0 3px 10px rgba(212,165,116,0.25); }
 .item-image { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; transition: transform 0.3s ease; }
 .item-image:hover { transform: scale(1.15); }
 .item-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #555; font-size: 1.8rem; background: #222; }
 
-/* BADGE VIVINO EM CIMA DA FOTO */
-.vivino-badge {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
-  padding: 4px 3px 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  text-decoration: none;
-  transition: background 0.2s;
-  cursor: pointer;
-}
+.vivino-badge { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%); padding: 4px 3px 3px; display: flex; align-items: center; justify-content: center; gap: 2px; text-decoration: none; transition: background 0.2s; cursor: pointer; }
 .vivino-badge:hover { background: linear-gradient(to top, rgba(154,16,66,0.9) 0%, rgba(154,16,66,0.3) 100%); }
-.vivino-score {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.3px;
-  line-height: 1;
-}
+.vivino-score { font-size: 0.72rem; font-weight: 700; color: #fff; letter-spacing: 0.3px; line-height: 1; }
 .vivino-star { font-size: 0.65rem; color: #f1c40f; line-height: 1; }
 .vivino-logo-dot { width: 6px; height: 6px; background: #9a1042; border-radius: 50%; flex-shrink: 0; }
 
-/* ITEM INFO */
 .item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.4rem; }
 .item-header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; }
 .item-name { font-weight: 500; font-size: 1rem; letter-spacing: 0.3px; color: var(--light); }
-.item.esgotado .item-name { color: #888; text-decoration: line-through; }
 
-/* LINK VIVINO NO NOME */
-.vivino-link {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 0.72rem; color: #9a1042; text-decoration: none;
-  background: rgba(154,16,66,0.12); border: 1px solid rgba(154,16,66,0.3);
-  padding: 2px 7px; border-radius: 10px; font-weight: 600;
-  transition: all 0.2s; margin-top: 2px; width: fit-content;
-}
+.vivino-link { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; color: #9a1042; text-decoration: none; background: rgba(154,16,66,0.12); border: 1px solid rgba(154,16,66,0.3); padding: 2px 7px; border-radius: 10px; font-weight: 600; transition: all 0.2s; margin-top: 2px; width: fit-content; }
 .vivino-link:hover { background: rgba(154,16,66,0.25); border-color: #9a1042; color: #c0185a; }
 .vivino-link-dot { width: 5px; height: 5px; background: #9a1042; border-radius: 50%; }
 
@@ -106,12 +70,7 @@ header { position: sticky; top: 0; background: var(--primary); border-bottom: 1p
 .old-price { text-decoration: line-through; color: #999; font-size: 0.9rem; }
 .promo-price { color: #f39c12; font-weight: 700; font-size: 1.05rem; }
 .regular-price { font-weight: 600; color: var(--accent); font-size: 1rem; }
-.item.esgotado .regular-price, .item.esgotado .promo-price { color: #888; }
 .desc { font-size: 0.85rem; color: #aaa; line-height: 1.4; }
-
-.badge-rotura { position: absolute; top: 8px; right: 8px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(231,76,60,0.4); animation: pulse 2s infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
-.item.esgotado { opacity: 0.65; }
 
 .sem-resultados { text-align: center; padding: 3rem; color: #666; font-size: 1rem; display: none; }
 
@@ -192,12 +151,22 @@ function parsearCategoria(categoria) {
   return { tipo: tipo || categoria, regiao: regiao || 'Outras' };
 }
 
+function emRotura(item) {
+  return item.rotura === true
+    || (item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase()));
+}
+
 async function loadMenu() {
   try {
     const itens = await apiRequest('getBebidas');
     if (!Array.isArray(itens)) throw new Error(itens.message || 'Erro ao carregar bebidas');
 
-    todosItens = itens.filter(item => (item.nome || item.Nome) && (item.categoria || item.Categoria));
+    // ✅ Ocultar itens em rotura — não aparecem no menu público
+    todosItens = itens.filter(item =>
+      (item.nome || item.Nome) &&
+      (item.categoria || item.Categoria) &&
+      !emRotura(item)
+    );
 
     const tipos = new Set(), regioes = new Set();
     todosItens.forEach(item => {
@@ -287,13 +256,12 @@ function renderMenu() {
     h2.onclick = () => { itemsDiv.classList.toggle('hidden'); h2.classList.toggle('collapsed'); };
 
     menu[cat].forEach(item => {
-      const emRotura   = item.rotura === true || (item.Rotura && ['X','TRUE','SIM'].includes(item.Rotura.toString().toUpperCase()));
       const nome       = item.nome   || item.Nome   || '';
       const preco      = item.preco  || parseFloat(item['Preço']) || 0;
       const obs        = item.observacoes || item.Observações || item.Observacoes || '';
       const img        = item.imagem || item.Link_Imagem || item.Imagem || '';
       const promo      = item._promoPrice || null;
-      const pontuacao  = item.pontuacao  ? parseFloat(item.pontuacao)  : null;
+      const pontuacao  = item.pontuacao ? parseFloat(item.pontuacao) : null;
       const linkVivino = item.linkVivino || '';
 
       const hasPromo = promo && !isNaN(promo) && promo > 0;
@@ -302,48 +270,39 @@ function renderMenu() {
         : `<div class="price-wrapper"><span class="regular-price">${preco.toFixed(2)} €</span></div>`;
 
       // Badge Vivino em cima da foto
-      const vivinoBadgeHtml = (pontuacao && linkVivino)
-        ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-badge" onclick="event.stopPropagation()" title="Ver no Vivino">
-            <span class="vivino-logo-dot"></span>
-            <span class="vivino-star">★</span>
-            <span class="vivino-score">${pontuacao.toFixed(1)}</span>
-           </a>`
-        : (pontuacao
-          ? `<div class="vivino-badge" title="Pontuação Vivino">
+      const vivinoBadgeHtml = pontuacao
+        ? (linkVivino
+          ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-badge" onclick="event.stopPropagation()" title="Ver no Vivino">
+              <span class="vivino-logo-dot"></span>
               <span class="vivino-star">★</span>
               <span class="vivino-score">${pontuacao.toFixed(1)}</span>
-             </div>`
-          : '');
-
-      // Link Vivino junto ao nome (quando não há pontuação mas há link)
-      const vivinoLinkHtml = (!pontuacao && linkVivino)
-        ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-link" onclick="event.stopPropagation()">
-            <span class="vivino-logo-dot"></span> Ver no Vivino
-           </a>`
-        : (pontuacao && linkVivino
-          ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-link" onclick="event.stopPropagation()">
-              <span class="vivino-logo-dot"></span> Ver no Vivino
              </a>`
-          : '');
+          : `<div class="vivino-badge" title="Pontuação Vivino">
+              <span class="vivino-star">★</span>
+              <span class="vivino-score">${pontuacao.toFixed(1)}</span>
+             </div>`)
+        : '';
+
+      // Link Vivino junto ao nome
+      const vivinoLinkHtml = linkVivino
+        ? `<a href="${linkVivino}" target="_blank" rel="noopener" class="vivino-link" onclick="event.stopPropagation()">
+            <span class="vivino-link-dot"></span> Ver no Vivino
+           </a>`
+        : '';
 
       const div = document.createElement('div');
-      div.className = 'item' + (emRotura ? ' esgotado' : '');
+      div.className = 'item';
 
-      let html = emRotura ? '<div class="badge-rotura">🔴 Esgotado</div>' : '';
-
-      // Imagem com badge Vivino sobreposto
-      if (img) {
-        html += `<div class="item-image-wrapper">
-          <img src="${img}" alt="${nome.replace(/"/g,'&quot;')}" class="item-image"
-            onclick="openImageModal('${img.replace(/'/g,"\\'")}', '${nome.replace(/'/g,"\\'")}')">
-          ${vivinoBadgeHtml}
-        </div>`;
-      } else {
-        html += `<div class="item-image-wrapper">
-          <div class="item-image-placeholder">🍷</div>
-          ${vivinoBadgeHtml}
-        </div>`;
-      }
+      let html = img
+        ? `<div class="item-image-wrapper">
+            <img src="${img}" alt="${nome.replace(/"/g,'&quot;')}" class="item-image"
+              onclick="openImageModal('${img.replace(/'/g,"\\'")}', '${nome.replace(/'/g,"\\'")}')">
+            ${vivinoBadgeHtml}
+           </div>`
+        : `<div class="item-image-wrapper">
+            <div class="item-image-placeholder">🍷</div>
+            ${vivinoBadgeHtml}
+           </div>`;
 
       html += `<div class="item-info">
         <div class="item-header">
