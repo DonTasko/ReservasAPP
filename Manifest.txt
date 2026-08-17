@@ -1,5 +1,5 @@
 {
-  "name": "Despesas — Don Tasko",
+  "name": "Despesas —  Don Tasko",
   "short_name": "Despesas",
   "description": "Gestão de despesas e faturas com scanner QR Code AT",
   "start_url": "/FAT.html",
