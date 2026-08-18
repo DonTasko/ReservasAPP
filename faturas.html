@@ -309,19 +309,34 @@ function lerImagem(event) {
   reader.onload = function(e) {
     preview.src = e.target.result;
     preview.onload = function() {
-      // Tentar ler QR code da imagem
       const canvas = document.getElementById('canvas');
-      // Usar dimensões reais da imagem para melhor leitura
-      canvas.width  = preview.naturalWidth;
-      canvas.height = preview.naturalHeight;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(preview, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      
+      // Tentar em diferentes tamanhos
+      const tamanhos = [
+        { w: preview.naturalWidth,     h: preview.naturalHeight },
+        { w: preview.naturalWidth * 2, h: preview.naturalHeight * 2 },
+        { w: 1024, h: 1024 },
+        { w: 512,  h: 512 }
+      ];
 
-      // Tentar com e sem inversão
-      let code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-      if (!code) code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'onlyInvert' });
-      if (!code) code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+      let code = null;
+
+      for (const t of tamanhos) {
+        canvas.width  = t.w;
+        canvas.height = t.h;
+        ctx.drawImage(preview, 0, 0, t.w, t.h);
+        let imageData = ctx.getImageData(0, 0, t.w, t.h);
+
+        // Tentativa 1 — imagem original
+        code = jsQR(imageData.data, t.w, t.h, { inversionAttempts: 'attemptBoth' });
+        if (code) break;
+
+        // Tentativa 2 — aumentar contraste
+        imageData = aumentarContraste(ctx, t.w, t.h);
+        code = jsQR(imageData.data, t.w, t.h, { inversionAttempts: 'attemptBoth' });
+        if (code) break;
+      }
 
       if (code) {
         status.className = 'img-status ok';
@@ -329,15 +344,27 @@ function lerImagem(event) {
         processarQR(code.data);
       } else {
         status.className = 'img-status error';
-        status.textContent = '❌ QR code não detectado. Tente uma imagem mais nítida ou com melhor contraste.';
+        status.textContent = '❌ QR code não detectado. Tente aproximar mais ou tirar screenshot directamente do PDF.';
       }
     };
   };
   reader.readAsDataURL(file);
-  // Limpar input para permitir seleccionar o mesmo ficheiro novamente
   event.target.value = '';
 }
 
+function aumentarContraste(ctx, w, h) {
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    // Converter para escala de cinzento
+    const avg = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+    // Threshold — preto ou branco
+    const val = avg > 128 ? 255 : 0;
+    data[i] = data[i+1] = data[i+2] = val;
+  }
+  ctx.putImageData(imageData, 0, 0);
+  return ctx.getImageData(0, 0, w, h);
+}
 // ── PROCESSAR QR AT ──
 function processarQR(texto) {
   document.getElementById('qrResultado').classList.add('show');
