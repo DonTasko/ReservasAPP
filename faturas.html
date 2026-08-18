@@ -25,7 +25,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
 .main { max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
 
-/* TABS */
 .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
 .tab { flex: 1; padding: 10px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; text-align: center; transition: all 0.2s; }
 .tab.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
@@ -38,40 +37,49 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 #video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .scanner-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 .scanner-frame { width: 65%; aspect-ratio: 1; border: 3px solid var(--gold); border-radius: 12px; box-shadow: 0 0 0 2000px rgba(0,0,0,0.5); position: relative; }
-.scanner-frame::before, .scanner-frame::after { content: ''; position: absolute; width: 20px; height: 20px; border-color: var(--gold-light); border-style: solid; }
-.scanner-frame::before { top: -3px; left: -3px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-.scanner-frame::after { bottom: -3px; right: -3px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
 .scanner-line { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); animation: scan 2s linear infinite; }
 @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 .scanner-hint { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); }
 
-.btn-scanner { width: 100%; padding: 14px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
-.btn-start { background: var(--gold); color: var(--dark); }
-.btn-start:hover { background: var(--gold-light); }
-.btn-stop { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.4); color: #e74c3c; }
+/* BOTÕES SCANNER */
+.scanner-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.scanner-btns.single { grid-template-columns: 1fr; }
+.btn-scanner { width: 100%; padding: 13px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+.btn-start  { background: var(--gold); color: var(--dark); }
+.btn-start:hover  { background: var(--gold-light); }
+.btn-upload { background: var(--blue-dim); border: 1px solid rgba(41,128,185,0.4); color: #3498db; }
+.btn-upload:hover { background: rgba(41,128,185,0.2); }
+.btn-stop   { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.4); color: #e74c3c; }
+
+/* PREVIEW IMAGEM */
+.img-preview-wrap { position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); margin-bottom: 16px; display: none; }
+.img-preview-wrap.show { display: block; }
+#imgPreview { width: 100%; max-height: 300px; object-fit: contain; display: block; }
+.img-status { padding: 10px 14px; font-size: 12px; text-align: center; }
+.img-status.ok    { color: #4caf82; }
+.img-status.error { color: #e74c3c; }
+.img-status.wait  { color: var(--text-muted); }
 
 .qr-resultado { background: var(--success-dim); border: 1px solid rgba(46,125,82,0.4); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; display: none; }
 .qr-resultado.show { display: block; }
 .qr-resultado-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #4caf82; font-weight: 700; margin-bottom: 6px; }
 .qr-resultado-text { font-size: 12px; color: var(--text-muted); word-break: break-all; }
 
-/* FORM */
 .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
 .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
-.field input, .field select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 9px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
-.field input:focus, .field select:focus { outline: none; border-color: var(--gold); }
+.field input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 9px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
+.field input:focus { outline: none; border-color: var(--gold); }
 .field input::placeholder { color: var(--text-dim); }
 .field input.auto { border-color: rgba(46,125,82,0.5); background: rgba(46,125,82,0.05); }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 
 .btn-guardar { width: 100%; background: var(--gold); color: var(--dark); border: none; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 8px; }
 .btn-guardar:hover { background: var(--gold-light); }
 .btn-guardar:disabled { opacity: 0.4; cursor: not-allowed; }
-
 .btn-limpar { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 8px; }
 .btn-limpar:hover { border-color: var(--red); color: #e74c3c; }
 
@@ -90,14 +98,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 .fatura-ivas { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
 .iva-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; font-size: 11px; color: var(--text-muted); }
 
-.empty-msg { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
-
 .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
 .stat-val { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); line-height: 1; }
 .stat-lbl { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; }
 
-/* MODAL DETALHE */
+.empty-msg { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
+
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 500; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
 .modal-overlay.show { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
@@ -110,14 +117,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 .btn-apagar { flex: 1; background: var(--red-dim); border: 1px solid rgba(192,57,43,0.4); color: #e74c3c; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
 .btn-fechar { flex: 1; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 11px; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; }
 
-/* TOAST / LOADING */
-#loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; justify-content: center; align-items: center; }
+#loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; justify-content: center; align-items: center; flex-direction: column; gap: 12px; }
 #loading.show { display: flex; }
 .spinner { width: 44px; height: 44px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.loading-msg { font-size: 13px; color: var(--text-muted); }
 @keyframes spin { to { transform: rotate(360deg); } }
 .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transition: all 0.3s; white-space: nowrap; max-width: 90vw; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.toast.ok { border-color: var(--success); color: #4caf82; }
+.toast.ok    { border-color: var(--success); color: #4caf82; }
 .toast.error { border-color: var(--red); color: #e74c3c; }
 </style>
 <script src="config.js"></script>
@@ -140,19 +147,32 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
   <!-- SCANNER -->
   <div class="panel active" id="panel-scanner">
+
+    <!-- Câmara em tempo real -->
     <div class="scanner-wrap" id="scannerWrap" style="display:none">
       <video id="video" autoplay playsinline muted></video>
       <canvas id="canvas" style="display:none"></canvas>
       <div class="scanner-overlay">
-        <div class="scanner-frame">
-          <div class="scanner-line"></div>
-        </div>
+        <div class="scanner-frame"><div class="scanner-line"></div></div>
       </div>
       <div class="scanner-hint">Aponte para o QR code da fatura</div>
     </div>
 
-    <button class="btn-scanner btn-start" id="btnIniciarScanner" onclick="iniciarScanner()">📷 Abrir Câmara</button>
-    <button class="btn-scanner btn-stop" id="btnPararScanner" onclick="pararScanner()" style="display:none">⏹ Parar Câmara</button>
+    <!-- Preview imagem upload -->
+    <div class="img-preview-wrap" id="imgPreviewWrap">
+      <img id="imgPreview" src="" alt="">
+      <div class="img-status wait" id="imgStatus">A processar QR code...</div>
+    </div>
+
+    <!-- Botões -->
+    <div class="scanner-btns" id="btnsIniciar">
+      <button class="btn-scanner btn-start" onclick="iniciarScanner()">📷 Câmara</button>
+      <button class="btn-scanner btn-upload" onclick="document.getElementById('inputImagem').click()">🖼️ Imagem / Screenshot</button>
+    </div>
+    <div class="scanner-btns single" id="btnParar" style="display:none">
+      <button class="btn-scanner btn-stop" onclick="pararScanner()">⏹ Parar Câmara</button>
+    </div>
+    <input type="file" id="inputImagem" accept="image/*" style="display:none" onchange="lerImagem(event)">
 
     <div class="qr-resultado" id="qrResultado">
       <div class="qr-resultado-title">✅ QR Code detectado</div>
@@ -162,49 +182,25 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
     <div class="section-title">Dados da Fatura</div>
 
     <div class="field-row">
-      <div class="field">
-        <label>Data *</label>
-        <input type="date" id="fData">
-      </div>
-      <div class="field">
-        <label>Nº Fatura *</label>
-        <input type="text" id="fNumero" placeholder="FT 2024/123">
-      </div>
+      <div class="field"><label>Data *</label><input type="date" id="fData"></div>
+      <div class="field"><label>Nº Fatura *</label><input type="text" id="fNumero" placeholder="FT 2024/123"></div>
     </div>
-    <div class="field">
-      <label>NIF Fornecedor</label>
-      <input type="text" id="fNif" placeholder="123456789">
-    </div>
-    <div class="field">
-      <label>Fornecedor *</label>
-      <input type="text" id="fFornecedor" placeholder="Nome do fornecedor">
-    </div>
+    <div class="field"><label>NIF Fornecedor</label><input type="text" id="fNif" placeholder="123456789"></div>
+    <div class="field"><label>Fornecedor *</label><input type="text" id="fFornecedor" placeholder="Nome do fornecedor"></div>
     <div class="field-row-3">
-      <div class="field">
-        <label>Base Trib. (€)</label>
-        <input type="number" id="fBase" placeholder="0.00" step="0.01" min="0">
-      </div>
-      <div class="field">
-        <label>IVA (€)</label>
-        <input type="number" id="fIva" placeholder="0.00" step="0.01" min="0">
-      </div>
-      <div class="field">
-        <label>Total (€) *</label>
-        <input type="number" id="fTotal" placeholder="0.00" step="0.01" min="0">
-      </div>
+      <div class="field"><label>Base Trib. (€)</label><input type="number" id="fBase" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field"><label>IVA (€)</label><input type="number" id="fIva" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field"><label>Total (€) *</label><input type="number" id="fTotal" placeholder="0.00" step="0.01" min="0"></div>
     </div>
-    <div class="field">
-      <label>Notas</label>
-      <input type="text" id="fNotas" placeholder="Observações opcionais">
-    </div>
+    <div class="field"><label>Notas</label><input type="text" id="fNotas" placeholder="Observações opcionais"></div>
 
-    <button class="btn-guardar" id="btnGuardar" onclick="guardarFatura()">💾 Registar Fatura</button>
+    <button class="btn-guardar" onclick="guardarFatura()">💾 Registar Fatura</button>
     <button class="btn-limpar" onclick="limparForm()">🗑️ Limpar</button>
   </div>
 
   <!-- LISTA -->
   <div class="panel" id="panel-lista">
-    <div class="stats-bar" id="statsBar">
+    <div class="stats-bar">
       <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Faturas</div></div>
       <div class="stat-card"><div class="stat-val" id="statValor">0 €</div><div class="stat-lbl">Total</div></div>
     </div>
@@ -218,30 +214,27 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
 <!-- MODAL DETALHE -->
 <div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
-  <div class="modal" id="modal">
+  <div class="modal">
     <div class="modal-title">🧾 Detalhe da Fatura</div>
     <div id="modalConteudo"></div>
     <div class="modal-btns">
-      <button class="btn-apagar" id="btnApagar" onclick="apagarFatura()">🗑️ Apagar</button>
+      <button class="btn-apagar" onclick="apagarFatura()">🗑️ Apagar</button>
       <button class="btn-fechar" onclick="fecharModalDireto()">Fechar</button>
     </div>
   </div>
 </div>
 
-<div id="loading"><div class="spinner"></div></div>
+<div id="loading"><div class="spinner"></div><div class="loading-msg" id="loadingMsg">A processar...</div></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script>
 let stream = null;
 let scanInterval = null;
-let tabActiva = 'scanner';
 let todasFaturas = [];
 let faturaSelId = null;
 
-// ── TABS ──
 function setTab(tab, btn) {
-  tabActiva = tab;
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
@@ -249,27 +242,30 @@ function setTab(tab, btn) {
   if (tab === 'lista') carregarLista();
 }
 
-// ── TOAST / LOADING ──
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast ' + (type || 'ok') + ' show';
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-function setLoading(on) { document.getElementById('loading').classList.toggle('show', on); }
 
-// ── SCANNER ──
+function setLoading(on, msg) {
+  document.getElementById('loading').classList.toggle('show', on);
+  if (msg) document.getElementById('loadingMsg').textContent = msg;
+}
+
+// ── CÂMARA ──
 async function iniciarScanner() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 1280 } }
     });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
+    document.getElementById('video').srcObject = stream;
     document.getElementById('scannerWrap').style.display = 'block';
-    document.getElementById('btnIniciarScanner').style.display = 'none';
-    document.getElementById('btnPararScanner').style.display = 'block';
-    scanInterval = setInterval(lerQR, 300);
+    document.getElementById('imgPreviewWrap').classList.remove('show');
+    document.getElementById('btnsIniciar').style.display = 'none';
+    document.getElementById('btnParar').style.display = 'block';
+    scanInterval = setInterval(lerQRCamara, 300);
   } catch(e) {
     showToast('Erro ao aceder à câmara: ' + e.message, 'error');
   }
@@ -279,11 +275,11 @@ function pararScanner() {
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
   document.getElementById('scannerWrap').style.display = 'none';
-  document.getElementById('btnIniciarScanner').style.display = 'block';
-  document.getElementById('btnPararScanner').style.display = 'none';
+  document.getElementById('btnsIniciar').style.display = 'grid';
+  document.getElementById('btnParar').style.display = 'none';
 }
 
-function lerQR() {
+function lerQRCamara() {
   const video  = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
@@ -293,74 +289,106 @@ function lerQR() {
   ctx.drawImage(video, 0, 0);
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-  if (code) {
-    pararScanner();
-    processarQR(code.data);
-  }
+  if (code) { pararScanner(); processarQR(code.data); }
+}
+
+// ── UPLOAD IMAGEM / SCREENSHOT ──
+function lerImagem(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const wrap    = document.getElementById('imgPreviewWrap');
+  const preview = document.getElementById('imgPreview');
+  const status  = document.getElementById('imgStatus');
+
+  wrap.classList.add('show');
+  status.className = 'img-status wait';
+  status.textContent = 'A processar QR code...';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    preview.src = e.target.result;
+    preview.onload = function() {
+      // Tentar ler QR code da imagem
+      const canvas = document.getElementById('canvas');
+      // Usar dimensões reais da imagem para melhor leitura
+      canvas.width  = preview.naturalWidth;
+      canvas.height = preview.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(preview, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Tentar com e sem inversão
+      let code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+      if (!code) code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'onlyInvert' });
+      if (!code) code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+
+      if (code) {
+        status.className = 'img-status ok';
+        status.textContent = '✅ QR code detectado!';
+        processarQR(code.data);
+      } else {
+        status.className = 'img-status error';
+        status.textContent = '❌ QR code não detectado. Tente uma imagem mais nítida ou com melhor contraste.';
+      }
+    };
+  };
+  reader.readAsDataURL(file);
+  // Limpar input para permitir seleccionar o mesmo ficheiro novamente
+  event.target.value = '';
 }
 
 // ── PROCESSAR QR AT ──
-// Formato AT: A:NIF_EMITENTE*B:NIF_ADQUIRENTE*C:PAIS*D:TIPO*E:ESTADO*F:DATA*G:NUMERO*H:ATCUD*I1:BASE_ISENTA*...*N:IVA_TOTAL*O:TOTAL*...
 function processarQR(texto) {
   document.getElementById('qrResultado').classList.add('show');
-  document.getElementById('qrTexto').textContent = texto.substring(0, 100) + (texto.length > 100 ? '...' : '');
+  document.getElementById('qrTexto').textContent = texto.substring(0, 120) + (texto.length > 120 ? '...' : '');
 
   const campos = {};
   texto.split('*').forEach(par => {
     const idx = par.indexOf(':');
-    if (idx > 0) {
-      const chave = par.substring(0, idx);
-      const valor = par.substring(idx + 1);
-      campos[chave] = valor;
-    }
+    if (idx > 0) campos[par.substring(0, idx)] = par.substring(idx + 1);
   });
 
-  // NIF emitente
-  if (campos['A']) { document.getElementById('fNif').value = campos['A']; document.getElementById('fNif').classList.add('auto'); }
+  // NIF emitente (campo A)
+  if (campos['A']) { setAutoField('fNif', campos['A']); }
 
-  // Data (formato AAAAMMDD)
-  if (campos['F']) {
+  // Data (campo F — formato AAAAMMDD)
+  if (campos['F'] && campos['F'].length === 8) {
     const d = campos['F'];
-    if (d.length === 8) {
-      const dataISO = d.substring(0,4) + '-' + d.substring(4,6) + '-' + d.substring(6,8);
-      document.getElementById('fData').value = dataISO;
-      document.getElementById('fData').classList.add('auto');
-    }
+    setAutoField('fData', d.substring(0,4) + '-' + d.substring(4,6) + '-' + d.substring(6,8));
   }
 
-  // Número documento
-  if (campos['G']) { document.getElementById('fNumero').value = campos['G']; document.getElementById('fNumero').classList.add('auto'); }
+  // Número documento (campo G)
+  if (campos['G']) { setAutoField('fNumero', campos['G']); }
 
-  // Total IVA (campo N) — soma de todos os I*
-  let totalIva = 0;
-  ['I2','I3','I4','I5','I6','I7'].forEach(k => { if (campos[k]) totalIva += parseFloat(campos[k]) || 0; });
-  // Campos específicos de IVA: J, K, L, M (taxas diferentes)
-  // N = total IVA, O = total documento
-  if (campos['N']) {
-    document.getElementById('fIva').value = parseFloat(campos['N']).toFixed(2);
-    document.getElementById('fIva').classList.add('auto');
-  }
+  // Total IVA (campo N) e Total documento (campo O)
+  if (campos['N']) { setAutoField('fIva', parseFloat(campos['N']).toFixed(2)); }
   if (campos['O']) {
-    document.getElementById('fTotal').value = parseFloat(campos['O']).toFixed(2);
-    document.getElementById('fTotal').classList.add('auto');
-    // Base = Total - IVA
+    setAutoField('fTotal', parseFloat(campos['O']).toFixed(2));
     const total = parseFloat(campos['O']) || 0;
     const iva   = parseFloat(campos['N']) || 0;
-    document.getElementById('fBase').value = (total - iva).toFixed(2);
-    document.getElementById('fBase').classList.add('auto');
+    setAutoField('fBase', (total - iva).toFixed(2));
   }
 
-  showToast('QR code lido com sucesso!', 'ok');
+  showToast('✅ QR code lido — confirme o fornecedor', 'ok');
+  // Focar no campo fornecedor
+  setTimeout(() => document.getElementById('fFornecedor').focus(), 300);
 }
 
-// ── GUARDAR FATURA ──
+function setAutoField(id, valor) {
+  const el = document.getElementById(id);
+  el.value = valor;
+  el.classList.add('auto');
+}
+
+// ── GUARDAR ──
 async function guardarFatura() {
   const data       = document.getElementById('fData').value;
   const numero     = document.getElementById('fNumero').value.trim();
   const nif        = document.getElementById('fNif').value.trim();
   const fornecedor = document.getElementById('fFornecedor').value.trim();
-  const base       = parseFloat(document.getElementById('fBase').value) || 0;
-  const iva        = parseFloat(document.getElementById('fIva').value) || 0;
+  const base       = parseFloat(document.getElementById('fBase').value)  || 0;
+  const iva        = parseFloat(document.getElementById('fIva').value)   || 0;
   const total      = parseFloat(document.getElementById('fTotal').value) || 0;
   const notas      = document.getElementById('fNotas').value.trim();
 
@@ -370,7 +398,7 @@ async function guardarFatura() {
   if (!total)      { showToast('Total obrigatório', 'error'); return; }
 
   try {
-    setLoading(true);
+    setLoading(true, 'A guardar...');
     const res = await apiRequest('registarFatura', {
       data, numero, nif, fornecedor,
       base:  base.toFixed(2),
@@ -398,6 +426,8 @@ function limparForm() {
     el.classList.remove('auto');
   });
   document.getElementById('qrResultado').classList.remove('show');
+  document.getElementById('imgPreviewWrap').classList.remove('show');
+  document.getElementById('fData').value = new Date().toISOString().split('T')[0];
 }
 
 // ── LISTA ──
@@ -408,10 +438,9 @@ async function carregarLista() {
     if (res && Array.isArray(res.faturas)) {
       todasFaturas = res.faturas;
       filtrarLista();
-      // Stats
-      const total = todasFaturas.reduce((s, f) => s + (parseFloat(f.total) || 0), 0);
+      const totalVal = todasFaturas.reduce((s, f) => s + (parseFloat(f.total) || 0), 0);
       document.getElementById('statTotal').textContent = todasFaturas.length;
-      document.getElementById('statValor').textContent = total.toFixed(2).replace('.', ',') + ' €';
+      document.getElementById('statValor').textContent = totalVal.toFixed(2).replace('.', ',') + ' €';
     }
   } catch(e) {
     document.getElementById('listaFaturas').innerHTML = '<div class="empty-msg">Erro ao carregar</div>';
@@ -421,7 +450,10 @@ async function carregarLista() {
 function filtrarLista() {
   const texto = (document.getElementById('filtroTexto').value || '').toLowerCase();
   const filtradas = texto
-    ? todasFaturas.filter(f => (f.fornecedor||'').toLowerCase().includes(texto) || (f.numero||'').toLowerCase().includes(texto) || (f.nif||'').includes(texto))
+    ? todasFaturas.filter(f =>
+        (f.fornecedor||'').toLowerCase().includes(texto) ||
+        (f.numero||'').toLowerCase().includes(texto) ||
+        (f.nif||'').includes(texto))
     : todasFaturas;
 
   const el = document.getElementById('listaFaturas');
@@ -433,7 +465,7 @@ function filtrarLista() {
         <div class="fatura-numero">${f.numero || '—'}</div>
         <div class="fatura-total">${parseFloat(f.total||0).toFixed(2).replace('.',',')} €</div>
       </div>
-      <div class="fatura-fornecedor">${f.fornecedor || '—'} ${f.nif ? '· ' + f.nif : ''}</div>
+      <div class="fatura-fornecedor">${f.fornecedor || '—'}${f.nif ? ' · ' + f.nif : ''}</div>
       <div class="fatura-data">${formatarData(f.data)}</div>
       ${(f.base || f.iva) ? `<div class="fatura-ivas">
         ${f.base ? `<span class="iva-badge">Base: ${parseFloat(f.base).toFixed(2)} €</span>` : ''}
@@ -444,11 +476,10 @@ function filtrarLista() {
 
 function formatarData(iso) {
   if (!iso) return '—';
-  const [y, m, d] = iso.split('-');
-  return d + '/' + m + '/' + y;
+  const parts = iso.split('-');
+  return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : iso;
 }
 
-// ── MODAL DETALHE ──
 function abrirDetalhe(id) {
   const f = todasFaturas.find(f => f.id === id);
   if (!f) return;
@@ -462,7 +493,7 @@ function abrirDetalhe(id) {
     <div class="modal-row"><span class="modal-key">IVA</span><span class="modal-val">${parseFloat(f.iva||0).toFixed(2)} €</span></div>
     <div class="modal-row"><span class="modal-key">Total</span><span class="modal-val" style="color:var(--gold);font-weight:700">${parseFloat(f.total||0).toFixed(2)} €</span></div>
     ${f.notas ? `<div class="modal-row"><span class="modal-key">Notas</span><span class="modal-val">${f.notas}</span></div>` : ''}
-    <div class="modal-row"><span class="modal-key">Registado em</span><span class="modal-val">${f.dataRegisto ? new Date(f.dataRegisto).toLocaleString('pt-PT') : '—'}</span></div>`;
+    <div class="modal-row"><span class="modal-key">Registado</span><span class="modal-val">${f.dataRegisto ? new Date(f.dataRegisto).toLocaleString('pt-PT') : '—'}</span></div>`;
   document.getElementById('modalOverlay').classList.add('show');
 }
 
@@ -472,7 +503,7 @@ function fecharModalDireto() { document.getElementById('modalOverlay').classList
 async function apagarFatura() {
   if (!faturaSelId || !confirm('Apagar esta fatura?')) return;
   try {
-    setLoading(true);
+    setLoading(true, 'A apagar...');
     const res = await apiRequest('apagarFatura', { id: faturaSelId });
     if (res && res.status === 'success') {
       showToast('Fatura apagada', 'ok');
@@ -485,17 +516,12 @@ async function apagarFatura() {
   finally { setLoading(false); }
 }
 
-// ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
-  // Definir mês actual no filtro
   const agora = new Date();
   document.getElementById('filtroMes').value = agora.getFullYear() + '-' + String(agora.getMonth()+1).padStart(2,'0');
-  // Data de hoje no form
   document.getElementById('fData').value = agora.toISOString().split('T')[0];
 });
-
-// Parar câmara ao sair da página
-window.addEventListener('beforeunload', pararScanner);
+window.addEventListener('beforeunload', () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
 </script>
 </body>
 </html>
