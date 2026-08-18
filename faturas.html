@@ -282,16 +282,27 @@ function pararScanner() {
 function lerQRCamara() {
   const video  = document.getElementById('video');
   const canvas = document.getElementById('canvas');
+  
+  // Verificar se o vídeo tem dimensões válidas
   if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
+  if (video.videoWidth === 0 || video.videoHeight === 0) return;
+
   canvas.width  = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0);
+  
+  // Verificar se o canvas não está preto
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+  const data = imageData.data;
+  let somaBrilho = 0;
+  for (let i = 0; i < data.length; i += 40) somaBrilho += data[i];
+  const brilhoMedio = somaBrilho / (data.length / 40);
+  if (brilhoMedio < 5) return; // imagem preta — ignorar
+
+  const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' });
   if (code) { pararScanner(); processarQR(code.data); }
 }
-
 // ── UPLOAD IMAGEM / SCREENSHOT ──
 function lerImagem(event) {
   const file = event.target.files[0];
