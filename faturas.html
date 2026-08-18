@@ -265,7 +265,9 @@ async function iniciarScanner() {
     document.getElementById('imgPreviewWrap').classList.remove('show');
     document.getElementById('btnsIniciar').style.display = 'none';
     document.getElementById('btnParar').style.display = 'block';
-    scanInterval = setInterval(lerQRCamara, 300);
+    setTimeout(() => {
+  scanInterval = setInterval(lerQRCamara, 300);
+}, 1500);
   } catch(e) {
     showToast('Erro ao aceder à câmara: ' + e.message, 'error');
   }
