@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendário Faturas | Don Tasko</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c; --gold-light: #e8c96a; --gold-dim: rgba(201,168,76,0.12);
+  --dark: #0f0e0c; --surface: #1a1815; --surface2: #242018; --border: #2e2b22;
+  --text: #f0ead6; --text-muted: #8a8070; --text-dim: #504a3e;
+  --success: #2e7d52;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+
+.header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.header-brand { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; color: var(--gold); }
+.header-right { display: flex; gap: 8px; }
+.btn-top { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 12px; font-family: inherit; font-weight: 600; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-top:hover { border-color: var(--gold); color: var(--gold); }
+
+.main { max-width: 700px; margin: 0 auto; padding: 20px 16px 40px; }
+
+/* NAV MÊS */
+.mes-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; }
+.mes-titulo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); text-align: center; flex: 1; }
+.btn-nav { background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.btn-nav:hover { border-color: var(--gold); color: var(--gold); }
+
+/* STATS MÊS */
+.stats-mes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.stat-val { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.stat-lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 3px; }
+
+/* CALENDÁRIO */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-header { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--text-muted); padding: 6px 0; text-transform: uppercase; }
+.cal-dia { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 8px 6px; min-height: 64px; cursor: pointer; transition: all 0.2s; position: relative; }
+.cal-dia:hover { border-color: var(--gold); }
+.cal-dia.vazio { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
+.cal-dia.hoje { border-color: rgba(201,168,76,0.5); }
+.cal-dia.tem-faturas { border-color: rgba(46,125,82,0.4); background: rgba(46,125,82,0.05); }
+.cal-dia.tem-faturas:hover { border-color: var(--success); }
+.cal-dia-num { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+.cal-dia.hoje .cal-dia-num { color: var(--gold); font-weight: 700; }
+.cal-dia.tem-faturas .cal-dia-num { color: var(--text); }
+.cal-fat-count { font-size: 10px; font-weight: 700; color: #4caf82; line-height: 1.2; }
+.cal-fat-valor { font-size: 10px; color: var(--text-muted); line-height: 1.2; margin-top: 1px; }
+
+/* MODAL DIA */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 500; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 700px; max-height: 75vh; overflow-y: auto; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold); margin-bottom: 4px; }
+.modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+.fatura-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; margin-bottom: 8px; }
+.fatura-header { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.fatura-numero { font-size: 13px; font-weight: 700; }
+.fatura-total { font-size: 13px; font-weight: 700; color: var(--gold); }
+.fatura-fornecedor { font-size: 12px; color: var(--text-muted); }
+.fatura-detalhes { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+.modal-total { display: flex; justify-content: space-between; padding: 12px 14px; background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.3); border-radius: 9px; font-weight: 700; margin-top: 4px; }
+.btn-fechar { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 12px; border-radius: 9px; font-size: 13px; cursor: pointer; font-family: inherit; margin-top: 14px; }
+
+#loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; justify-content: center; align-items: center; }
+#loading.show { display: flex; }
+.spinner { width: 44px; height: 44px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">📅 CALENDÁRIO FATURAS</div>
+  <div class="header-right">
+    <a href="faturas.html" class="btn-top">🧾 Faturas</a>
+    <a href="admin.html" class="btn-top">← Admin</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="mes-nav">
+    <button class="btn-nav" onclick="mudarMes(-1)">‹</button>
+    <div class="mes-titulo" id="mesTitulo"></div>
+    <button class="btn-nav" onclick="mudarMes(1)">›</button>
+  </div>
+
+  <div class="stats-mes" id="statsMes">
+    <div class="stat-card"><div class="stat-val" id="statFaturas">0</div><div class="stat-lbl">Faturas</div></div>
+    <div class="stat-card"><div class="stat-val" id="statTotal">0 €</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-card"><div class="stat-val" id="statIva">0 €</div><div class="stat-lbl">IVA</div></div>
+  </div>
+
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+
+<!-- MODAL DIA -->
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+  <div class="modal">
+    <div class="modal-title" id="modalTitulo"></div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div id="modalConteudo"></div>
+    <button class="btn-fechar" onclick="fecharModalDireto()">Fechar</button>
+  </div>
+</div>
+
+<div id="loading"><div class="spinner"></div></div>
+
+<script>
+const MESES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DIAS_PT  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+let anoActual = new Date().getFullYear();
+let mesActual = new Date().getMonth();
+let faturasMes = [];
+
+function setLoading(on) { document.getElementById('loading').classList.toggle('show', on); }
+
+function mudarMes(delta) {
+  mesActual += delta;
+  if (mesActual < 0)  { mesActual = 11; anoActual--; }
+  if (mesActual > 11) { mesActual = 0;  anoActual++; }
+  carregarMes();
+}
+
+async function carregarMes() {
+  const mesStr = anoActual + '-' + String(mesActual + 1).padStart(2, '0');
+  document.getElementById('mesTitulo').textContent = MESES_PT[mesActual] + ' ' + anoActual;
+
+  try {
+    setLoading(true);
+    const res = await apiRequest('listarFaturas', { mes: mesStr });
+    faturasMes = (res && Array.isArray(res.faturas)) ? res.faturas : [];
+    renderCalendario();
+    renderStats();
+  } catch(e) {
+    faturasMes = [];
+    renderCalendario();
+  } finally {
+    setLoading(false);
+  }
+}
+
+function renderStats() {
+  const total = faturasMes.reduce((s, f) => s + (parseFloat(f.total) || 0), 0);
+  const iva   = faturasMes.reduce((s, f) => s + (parseFloat(f.iva)   || 0), 0);
+  document.getElementById('statFaturas').textContent = faturasMes.length;
+  document.getElementById('statTotal').textContent   = total.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('statIva').textContent     = iva.toFixed(2).replace('.', ',') + ' €';
+}
+
+function renderCalendario() {
+  const grid = document.getElementById('calGrid');
+  const hoje = new Date();
+
+  // Agrupar faturas por dia
+  const porDia = {};
+  faturasMes.forEach(f => {
+    const dia = (f.data || '').split('T')[0];
+    if (!porDia[dia]) porDia[dia] = { faturas: [], total: 0 };
+    porDia[dia].faturas.push(f);
+    porDia[dia].total += parseFloat(f.total) || 0;
+  });
+
+  // Cabeçalhos
+  let html = DIAS_PT.map(d => `<div class="cal-header">${d}</div>`).join('');
+
+  // Primeiro dia do mês
+  const primeiroDia = new Date(anoActual, mesActual, 1).getDay();
+  const diasNoMes   = new Date(anoActual, mesActual + 1, 0).getDate();
+
+  // Células vazias antes do dia 1
+  for (let i = 0; i < primeiroDia; i++) html += `<div class="cal-dia vazio"></div>`;
+
+  // Dias do mês
+  for (let d = 1; d <= diasNoMes; d++) {
+    const dataISO = anoActual + '-' + String(mesActual+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isHoje  = anoActual === hoje.getFullYear() && mesActual === hoje.getMonth() && d === hoje.getDate();
+    const dados   = porDia[dataISO];
+    const temFat  = dados && dados.faturas.length > 0;
+
+    html += `<div class="cal-dia${isHoje ? ' hoje' : ''}${temFat ? ' tem-faturas' : ''}"
+      onclick="${temFat ? `abrirDia('${dataISO}')` : ''}">
+      <div class="cal-dia-num">${d}</div>
+      ${temFat ? `
+        <div class="cal-fat-count">${dados.faturas.length} fat.</div>
+        <div class="cal-fat-valor">${dados.total.toFixed(2).replace('.',',')}€</div>` : ''}
+    </div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function abrirDia(dataISO) {
+  const dados = {};
+  faturasMes.forEach(f => {
+    const dia = (f.data || '').split('T')[0];
+    if (!dados[dia]) dados[dia] = [];
+    dados[dia].push(f);
+  });
+
+  const faturas = dados[dataISO] || [];
+  if (!faturas.length) return;
+
+  const [y, m, d] = dataISO.split('-');
+  document.getElementById('modalTitulo').textContent = d + ' de ' + MESES_PT[parseInt(m)-1] + ' ' + y;
+  document.getElementById('modalSub').textContent = faturas.length + (faturas.length === 1 ? ' fatura' : ' faturas');
+
+  const total = faturas.reduce((s, f) => s + (parseFloat(f.total) || 0), 0);
+
+  document.getElementById('modalConteudo').innerHTML =
+    faturas.map(f => `
+      <div class="fatura-item">
+        <div class="fatura-header">
+          <div class="fatura-numero">${f.numero || '—'}</div>
+          <div class="fatura-total">${parseFloat(f.total||0).toFixed(2).replace('.',',')} €</div>
+        </div>
+        <div class="fatura-fornecedor">${f.fornecedor || '—'}</div>
+        ${f.nif ? `<div class="fatura-detalhes">NIF: ${f.nif}</div>` : ''}
+        ${f.base || f.iva ? `<div class="fatura-detalhes">Base: ${parseFloat(f.base||0).toFixed(2)} € · IVA: ${parseFloat(f.iva||0).toFixed(2)} €</div>` : ''}
+      </div>`).join('') +
+    `<div class="modal-total">
+      <span>Total do dia</span>
+      <span style="color:var(--gold)">${total.toFixed(2).replace('.',',')} €</span>
+    </div>`;
+
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function fecharModal(e) { if (e.target === document.getElementById('modalOverlay')) fecharModalDireto(); }
+function fecharModalDireto() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+window.addEventListener('DOMContentLoaded', carregarMes);
+</script>
+</body>
+</html>
