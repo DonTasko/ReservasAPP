@@ -586,26 +586,13 @@ function fecharModalVendus() {
 async function confirmarVendus() {
   fecharModalVendus();
   const itens = recolherItens();
-  const notas = document.getElementById('notasGerais').value.trim();
+  const total = itens.reduce((s, i) => s + i.qty * i.preco, 0);
 
-  try {
-    setLoading(true, 'A criar rascunho no Vendus...');
-    const res = await apiRequest('criarRascunhoVendus', {
-      mesa:  mesaActiva,
-      itens: encodeURIComponent(JSON.stringify(itens)),
-      notas: notas
-    });
+  // Abrir POS do Vendus
+  window.open('https://maria-helena-valente-fernandes-afonso.vendus.pt/app/pos/', '_blank');
 
-    if (res && res.status === 'success') {
-      mostrarSucesso(itens, '🧾 Rascunho Criado no Vendus!', res);
-    } else {
-      showToast('Erro Vendus: ' + (res?.message || 'desconhecido'), 'error');
-    }
-  } catch(e) {
-    showToast('Erro de ligação ao Vendus.', 'error');
-  } finally {
-    setLoading(false);
-  }
+  // Mostrar resumo como referência
+  mostrarSucesso(itens, '🧾 Abrir Vendus e Faturar', null);
 }
 
 // ── SUCESSO ──
