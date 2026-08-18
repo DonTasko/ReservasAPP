@@ -606,16 +606,19 @@ function mostrarSucesso(itens, titulo, vendusRes) {
     `<div class="success-info-row"><span style="color:var(--gold);font-weight:700">Total</span><span style="color:var(--gold);font-weight:700">${total.toFixed(2)} €</span></div>`;
 
   const vendusEl = document.getElementById('successVendus');
-  if (vendusRes) {
-    vendusEl.style.display = 'block';
-    document.getElementById('successVendusNum').textContent = vendusRes.documentoNumero || 'Criado com sucesso';
-    if (vendusRes.documentoUrl) document.getElementById('successVendusLink').href = vendusRes.documentoUrl;
-    else document.getElementById('successVendusLink').href = 'https://www.vendus.pt';
-  } else {
-    vendusEl.style.display = 'none';
-  }
-
-  document.getElementById('successScreen').classList.add('show');
+if (vendusRes) {
+  vendusEl.style.display = 'block';
+  document.getElementById('successVendusNum').textContent = vendusRes.documentoNumero || 'Criado com sucesso';
+  if (vendusRes.documentoUrl) document.getElementById('successVendusLink').href = vendusRes.documentoUrl;
+  else document.getElementById('successVendusLink').href = 'https://www.vendus.pt';
+} else {
+  // Enviado para cozinha — mostrar botão para abrir Vendus
+  vendusEl.style.display = 'block';
+  vendusEl.innerHTML = `
+    <div class="success-vendus-title">Faturar no Vendus</div>
+    <button class="btn-ver-vendus" onclick="window.open('https://maria-helena-valente-fernandes-afonso.vendus.pt/app/pos/','_blank')" style="margin-top:8px">
+      🧾 Abrir Vendus →
+    </button>`;
 }
 
 // ── RESET ──
