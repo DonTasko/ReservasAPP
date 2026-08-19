@@ -562,6 +562,23 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('fData').value = agora.toISOString().split('T')[0];
 });
 window.addEventListener('beforeunload', () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
+  // ── AUTOCOMPLETE NIF → FORNECEDOR ──
+document.getElementById('fNif').addEventListener('blur', async function() {
+  const nif = this.value.trim();
+  if (nif.length < 9) return;
+  if (document.getElementById('fFornecedor').value.trim()) return; // já tem fornecedor
+
+  try {
+    const res = await apiRequest('listarFaturas', { mes: '' });
+    if (res && Array.isArray(res.faturas)) {
+      const encontrada = res.faturas.find(f => f.nif === nif);
+      if (encontrada && encontrada.fornecedor) {
+        document.getElementById('fFornecedor').value = encontrada.fornecedor;
+        document.getElementById('fFornecedor').classList.add('auto');
+      }
+    }
+  } catch(e) {}
+});
 </script>
 </body>
 </html>
