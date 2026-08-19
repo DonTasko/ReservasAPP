@@ -13,6 +13,7 @@
   --success: #2e7d52; --success-dim: rgba(46,125,82,0.15);
   --red: #c0392b; --red-dim: rgba(192,57,43,0.15);
   --blue: #2980b9; --blue-dim: rgba(41,128,185,0.12);
+  --purple: #8e44ad; --purple-dim: rgba(142,68,173,0.12);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
@@ -53,13 +54,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 .img-preview-wrap.show { display: block; }
 #imgPreview { width: 100%; max-height: 300px; object-fit: contain; display: block; }
 .img-status { padding: 10px 14px; font-size: 12px; text-align: center; }
-.img-status.ok    { color: #4caf82; }
-.img-status.error { color: #e74c3c; }
-.img-status.wait  { color: var(--text-muted); }
+.img-status.ok      { color: #4caf82; }
+.img-status.error   { color: #e74c3c; }
+.img-status.wait    { color: var(--text-muted); }
+.img-status.gemini  { color: #a855f7; }
 
 .qr-resultado { background: var(--success-dim); border: 1px solid rgba(46,125,82,0.4); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; display: none; }
 .qr-resultado.show { display: block; }
 .qr-resultado-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #4caf82; font-weight: 700; margin-bottom: 6px; }
+.qr-resultado.gemini-usado .qr-resultado-title { color: #a855f7; }
 .qr-resultado-text { font-size: 12px; color: var(--text-muted); word-break: break-all; }
 
 .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
@@ -120,8 +123,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
 .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transition: all 0.3s; white-space: nowrap; max-width: 90vw; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.toast.ok    { border-color: var(--success); color: #4caf82; }
-.toast.error { border-color: var(--red); color: #e74c3c; }
+.toast.ok     { border-color: var(--success); color: #4caf82; }
+.toast.error  { border-color: var(--red); color: #e74c3c; }
+.toast.gemini { border-color: #a855f7; color: #a855f7; }
 </style>
 <script src="config.js"></script>
 </head>
@@ -141,7 +145,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
     <button class="tab" onclick="setTab('lista', this)">📋 Lista</button>
   </div>
 
-  <!-- SCANNER -->
   <div class="panel active" id="panel-scanner">
 
     <div class="scanner-wrap" id="scannerWrap" style="display:none">
@@ -168,7 +171,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
     <input type="file" id="inputImagem" accept="image/*" style="display:none" onchange="lerImagem(event)">
 
     <div class="qr-resultado" id="qrResultado">
-      <div class="qr-resultado-title">✅ QR Code detectado</div>
+      <div class="qr-resultado-title" id="qrTitulo">✅ QR Code detectado</div>
       <div class="qr-resultado-text" id="qrTexto"></div>
     </div>
 
@@ -191,7 +194,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
     <button class="btn-limpar" onclick="limparForm()">🗑️ Limpar</button>
   </div>
 
-  <!-- LISTA -->
   <div class="panel" id="panel-lista">
     <div class="stats-bar">
       <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Faturas</div></div>
@@ -205,7 +207,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
   <div class="modal">
     <div class="modal-title">🧾 Detalhe da Fatura</div>
@@ -222,13 +223,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script>
-// ── VARIÁVEIS GLOBAIS ──
-let stream        = null;
-let scanInterval  = null;
-let todasFaturas  = [];
-let faturaSelId   = null;
+let stream       = null;
+let scanInterval = null;
+let todasFaturas = [];
+let faturaSelId  = null;
+let imagemBase64Atual = null; // guarda imagem para fallback Gemini
 
-// ── TABS ──
 function setTab(tab, btn) {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -237,12 +237,11 @@ function setTab(tab, btn) {
   if (tab === 'lista') carregarLista();
 }
 
-// ── UTILS ──
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast ' + (type || 'ok') + ' show';
-  setTimeout(() => t.classList.remove('show'), 3500);
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 function setLoading(on, msg) {
@@ -267,9 +266,7 @@ async function iniciarScanner() {
     document.getElementById('imgPreviewWrap').classList.remove('show');
     document.getElementById('btnsIniciar').style.display = 'none';
     document.getElementById('btnParar').style.display = 'block';
-    setTimeout(() => {
-      scanInterval = setInterval(lerQRCamara, 300);
-    }, 1500);
+    setTimeout(() => { scanInterval = setInterval(lerQRCamara, 300); }, 1500);
   } catch(e) {
     showToast('Erro ao aceder à câmara: ' + e.message, 'error');
   }
@@ -293,12 +290,11 @@ function lerQRCamara() {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0);
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  // Verificar se imagem não é preta
   let soma = 0;
   for (let i = 0; i < imageData.data.length; i += 40) soma += imageData.data[i];
   if (soma / (imageData.data.length / 40) < 5) return;
   const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' });
-  if (code) { pararScanner(); processarQR(code.data); }
+  if (code) { pararScanner(); processarQR(code.data, false); }
 }
 
 // ── UPLOAD IMAGEM ──
@@ -313,21 +309,21 @@ function lerImagem(event) {
   wrap.classList.add('show');
   status.className = 'img-status wait';
   status.textContent = 'A processar QR code...';
+  imagemBase64Atual = null;
 
   const reader = new FileReader();
   reader.onload = function(e) {
+    imagemBase64Atual = e.target.result; // guardar para fallback Gemini
     preview.src = e.target.result;
     preview.onload = function() {
       const canvas = document.getElementById('canvas');
       const ctx    = canvas.getContext('2d');
-
       const tamanhos = [
         { w: preview.naturalWidth,     h: preview.naturalHeight },
         { w: preview.naturalWidth * 2, h: preview.naturalHeight * 2 },
         { w: 1500, h: 1500 },
         { w: 800,  h: 800 }
       ];
-
       const modos = ['normal', 'aumentar_brilho', 'threshold_baixo', 'inverter'];
       let code = null;
 
@@ -336,13 +332,9 @@ function lerImagem(event) {
         canvas.width  = t.w;
         canvas.height = t.h;
         ctx.drawImage(preview, 0, 0, t.w, t.h);
-
-        // Sem processamento
         let imageData = ctx.getImageData(0, 0, t.w, t.h);
         code = jsQR(imageData.data, t.w, t.h, { inversionAttempts: 'attemptBoth' });
         if (code) break;
-
-        // Com processamento
         for (const modo of modos) {
           if (code) break;
           ctx.drawImage(preview, 0, 0, t.w, t.h);
@@ -354,10 +346,12 @@ function lerImagem(event) {
       if (code) {
         status.className = 'img-status ok';
         status.textContent = '✅ QR code detectado!';
-        processarQR(code.data);
+        processarQR(code.data, false);
       } else {
-        status.className = 'img-status error';
-        status.textContent = '❌ Não detectado. Tente uma foto mais nítida, com boa iluminação e sem sombras.';
+        // Fallback: tentar com Gemini
+        status.className = 'img-status gemini';
+        status.textContent = '🤖 A tentar com Gemini AI...';
+        tentarGemini();
       }
     };
   };
@@ -368,7 +362,6 @@ function lerImagem(event) {
 function processarImagem(ctx, w, h, modo) {
   const imageData = ctx.getImageData(0, 0, w, h);
   const d = imageData.data;
-
   for (let i = 0; i < d.length; i += 4) {
     let avg = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
     if (modo === 'aumentar_brilho') avg = Math.min(255, avg * 1.5);
@@ -382,9 +375,46 @@ function processarImagem(ctx, w, h, modo) {
   return ctx.getImageData(0, 0, w, h);
 }
 
+// ── GEMINI FALLBACK ──
+async function tentarGemini() {
+  const status = document.getElementById('imgStatus');
+  if (!imagemBase64Atual) {
+    status.className = 'img-status error';
+    status.textContent = '❌ Sem imagem para enviar ao Gemini.';
+    return;
+  }
+  try {
+    const res = await apiRequest('lerQRGemini', {
+      imagem: encodeURIComponent(imagemBase64Atual)
+    });
+    if (res && res.status === 'success' && res.texto) {
+      status.className = 'img-status ok';
+      status.textContent = '✅ QR lido pelo Gemini AI!';
+      processarQR(res.texto, true);
+    } else {
+      status.className = 'img-status error';
+      status.textContent = '❌ Não foi possível ler o QR code. Tente uma foto mais nítida.';
+    }
+  } catch(e) {
+    status.className = 'img-status error';
+    status.textContent = '❌ Erro ao contactar Gemini: ' + e.message;
+  }
+}
+
 // ── PROCESSAR QR AT ──
-function processarQR(texto) {
-  document.getElementById('qrResultado').classList.add('show');
+function processarQR(texto, viaGemini) {
+  const resultadoEl = document.getElementById('qrResultado');
+  const tituloEl    = document.getElementById('qrTitulo');
+  resultadoEl.classList.add('show');
+
+  if (viaGemini) {
+    resultadoEl.classList.add('gemini-usado');
+    tituloEl.textContent = '🤖 QR Code lido pelo Gemini AI';
+  } else {
+    resultadoEl.classList.remove('gemini-usado');
+    tituloEl.textContent = '✅ QR Code detectado';
+  }
+
   document.getElementById('qrTexto').textContent = texto.substring(0, 120) + (texto.length > 120 ? '...' : '');
 
   const campos = {};
@@ -401,8 +431,7 @@ function processarQR(texto) {
   }
 
   if (campos['G']) setAutoField('fNumero', campos['G']);
-
-  if (campos['N']) setAutoField('fIva', parseFloat(campos['N']).toFixed(2));
+  if (campos['N']) setAutoField('fIva',    parseFloat(campos['N']).toFixed(2));
 
   if (campos['O']) {
     setAutoField('fTotal', parseFloat(campos['O']).toFixed(2));
@@ -411,7 +440,7 @@ function processarQR(texto) {
     setAutoField('fBase', (total - iva).toFixed(2));
   }
 
-  showToast('✅ QR lido — confirme o fornecedor', 'ok');
+  showToast(viaGemini ? '🤖 Gemini leu o QR — confirme o fornecedor' : '✅ QR lido — confirme o fornecedor', viaGemini ? 'gemini' : 'ok');
   setTimeout(() => document.getElementById('fFornecedor').focus(), 300);
 }
 
@@ -459,9 +488,10 @@ function limparForm() {
     el.value = '';
     el.classList.remove('auto');
   });
-  document.getElementById('qrResultado').classList.remove('show');
+  document.getElementById('qrResultado').classList.remove('show', 'gemini-usado');
   document.getElementById('imgPreviewWrap').classList.remove('show');
   document.getElementById('fData').value = new Date().toISOString().split('T')[0];
+  imagemBase64Atual = null;
 }
 
 // ── LISTA ──
@@ -514,7 +544,6 @@ function formatarData(iso) {
   return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : iso;
 }
 
-// ── MODAL ──
 function abrirDetalhe(id) {
   const f = todasFaturas.find(f => f.id === id);
   if (!f) return;
@@ -551,7 +580,6 @@ async function apagarFatura() {
   finally { setLoading(false); }
 }
 
-// ── AUTOCOMPLETE NIF → FORNECEDOR ──
 document.addEventListener('DOMContentLoaded', () => {
   const agora = new Date();
   document.getElementById('filtroMes').value = agora.getFullYear() + '-' + String(agora.getMonth()+1).padStart(2,'0');
