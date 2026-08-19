@@ -32,7 +32,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 .panel { display: none; }
 .panel.active { display: block; }
 
-/* SCANNER */
 .scanner-wrap { position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 1; margin-bottom: 16px; }
 #video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .scanner-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
@@ -41,7 +40,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 .scanner-hint { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); }
 
-/* BOTÕES SCANNER */
 .scanner-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 .scanner-btns.single { grid-template-columns: 1fr; }
 .btn-scanner { width: 100%; padding: 13px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; }
@@ -51,8 +49,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 .btn-upload:hover { background: rgba(41,128,185,0.2); }
 .btn-stop   { background: var(--red-dim); border: 1px solid rgba(192,57,43,0.4); color: #e74c3c; }
 
-/* PREVIEW IMAGEM */
-.img-preview-wrap { position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); margin-bottom: 16px; display: none; }
+.img-preview-wrap { width: 100%; border-radius: 14px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); margin-bottom: 16px; display: none; }
 .img-preview-wrap.show { display: block; }
 #imgPreview { width: 100%; max-height: 300px; object-fit: contain; display: block; }
 .img-status { padding: 10px 14px; font-size: 12px; text-align: center; }
@@ -79,11 +76,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
 .btn-guardar { width: 100%; background: var(--gold); color: var(--dark); border: none; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 8px; }
 .btn-guardar:hover { background: var(--gold-light); }
-.btn-guardar:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-limpar { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 11px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 8px; }
 .btn-limpar:hover { border-color: var(--red); color: #e74c3c; }
 
-/* LISTA */
 .filtro-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .filtro-row input { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; }
 .filtro-row input:focus { outline: none; border-color: var(--gold); }
@@ -122,6 +117,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 .spinner { width: 44px; height: 44px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
 .loading-msg { font-size: 13px; color: var(--text-muted); }
 @keyframes spin { to { transform: rotate(360deg); } }
+
 .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 600; z-index: 400; opacity: 0; transition: all 0.3s; white-space: nowrap; max-width: 90vw; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast.ok    { border-color: var(--success); color: #4caf82; }
@@ -148,7 +144,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
   <!-- SCANNER -->
   <div class="panel active" id="panel-scanner">
 
-    <!-- Câmara em tempo real -->
     <div class="scanner-wrap" id="scannerWrap" style="display:none">
       <video id="video" autoplay playsinline muted></video>
       <canvas id="canvas" style="display:none"></canvas>
@@ -158,13 +153,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
       <div class="scanner-hint">Aponte para o QR code da fatura</div>
     </div>
 
-    <!-- Preview imagem upload -->
     <div class="img-preview-wrap" id="imgPreviewWrap">
       <img id="imgPreview" src="" alt="">
       <div class="img-status wait" id="imgStatus">A processar QR code...</div>
     </div>
 
-    <!-- Botões -->
     <div class="scanner-btns" id="btnsIniciar">
       <button class="btn-scanner btn-start" onclick="iniciarScanner()">📷 Câmara</button>
       <button class="btn-scanner btn-upload" onclick="document.getElementById('inputImagem').click()">🖼️ Imagem / Screenshot</button>
@@ -212,7 +205,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
   </div>
 </div>
 
-<!-- MODAL DETALHE -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
   <div class="modal">
     <div class="modal-title">🧾 Detalhe da Fatura</div>
@@ -229,11 +222,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script>
-let stream = null;
-let scanInterval = null;
-let todasFaturas = [];
-let faturaSelId = null;
+// ── VARIÁVEIS GLOBAIS ──
+let stream        = null;
+let scanInterval  = null;
+let todasFaturas  = [];
+let faturaSelId   = null;
 
+// ── TABS ──
 function setTab(tab, btn) {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -242,6 +237,7 @@ function setTab(tab, btn) {
   if (tab === 'lista') carregarLista();
 }
 
+// ── UTILS ──
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -252,6 +248,12 @@ function showToast(msg, type) {
 function setLoading(on, msg) {
   document.getElementById('loading').classList.toggle('show', on);
   if (msg) document.getElementById('loadingMsg').textContent = msg;
+}
+
+function setAutoField(id, valor) {
+  const el = document.getElementById(id);
+  el.value = valor;
+  el.classList.add('auto');
 }
 
 // ── CÂMARA ──
@@ -266,8 +268,8 @@ async function iniciarScanner() {
     document.getElementById('btnsIniciar').style.display = 'none';
     document.getElementById('btnParar').style.display = 'block';
     setTimeout(() => {
-  scanInterval = setInterval(lerQRCamara, 300);
-}, 1500);
+      scanInterval = setInterval(lerQRCamara, 300);
+    }, 1500);
   } catch(e) {
     showToast('Erro ao aceder à câmara: ' + e.message, 'error');
   }
@@ -284,43 +286,40 @@ function pararScanner() {
 function lerQRCamara() {
   const video  = document.getElementById('video');
   const canvas = document.getElementById('canvas');
-  
-  // Verificar se o vídeo tem dimensões válidas
   if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
   if (video.videoWidth === 0 || video.videoHeight === 0) return;
-
   canvas.width  = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0);
-  
-  // Verificar se o canvas não está preto
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-  let somaBrilho = 0;
-  for (let i = 0; i < data.length; i += 40) somaBrilho += data[i];
-  const brilhoMedio = somaBrilho / (data.length / 40);
-  if (brilhoMedio < 5) return; // imagem preta — ignorar
-
+  // Verificar se imagem não é preta
+  let soma = 0;
+  for (let i = 0; i < imageData.data.length; i += 40) soma += imageData.data[i];
+  if (soma / (imageData.data.length / 40) < 5) return;
   const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' });
   if (code) { pararScanner(); processarQR(code.data); }
 }
-// ── UPLOAD IMAGEM / SCREENSHOT ──
+
+// ── UPLOAD IMAGEM ──
 function lerImagem(event) {
   const file = event.target.files[0];
   if (!file) return;
+
   const wrap    = document.getElementById('imgPreviewWrap');
   const preview = document.getElementById('imgPreview');
   const status  = document.getElementById('imgStatus');
+
   wrap.classList.add('show');
   status.className = 'img-status wait';
   status.textContent = 'A processar QR code...';
+
   const reader = new FileReader();
   reader.onload = function(e) {
     preview.src = e.target.result;
     preview.onload = function() {
       const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
+      const ctx    = canvas.getContext('2d');
 
       const tamanhos = [
         { w: preview.naturalWidth,     h: preview.naturalHeight },
@@ -330,27 +329,26 @@ function lerImagem(event) {
       ];
 
       const modos = ['normal', 'aumentar_brilho', 'threshold_baixo', 'inverter'];
-
       let code = null;
 
       for (const t of tamanhos) {
+        if (code) break;
         canvas.width  = t.w;
         canvas.height = t.h;
         ctx.drawImage(preview, 0, 0, t.w, t.h);
 
-        // Tentativa sem processamento
+        // Sem processamento
         let imageData = ctx.getImageData(0, 0, t.w, t.h);
         code = jsQR(imageData.data, t.w, t.h, { inversionAttempts: 'attemptBoth' });
         if (code) break;
 
-        // Tentativas com processamento
+        // Com processamento
         for (const modo of modos) {
-          ctx.drawImage(preview, 0, 0, t.w, t.h);
-          imageData = aumentarContraste(ctx, t.w, t.h, modo);
-          code = jsQR(imageData.data, t.w, t.h, { inversionAttempts: 'attemptBoth' });
           if (code) break;
+          ctx.drawImage(preview, 0, 0, t.w, t.h);
+          imageData = processarImagem(ctx, t.w, t.h, modo);
+          code = jsQR(imageData.data, t.w, t.h, { inversionAttempts: 'attemptBoth' });
         }
-        if (code) break;
       }
 
       if (code) {
@@ -359,7 +357,7 @@ function lerImagem(event) {
         processarQR(code.data);
       } else {
         status.className = 'img-status error';
-        status.textContent = '❌ QR code não detectado. Tente uma foto mais nítida, sem sombras e com boa iluminação.';
+        status.textContent = '❌ Não detectado. Tente uma foto mais nítida, com boa iluminação e sem sombras.';
       }
     };
   };
@@ -367,68 +365,45 @@ function lerImagem(event) {
   event.target.value = '';
 }
 
-function aumentarContraste(ctx, w, h, modo) {
+function processarImagem(ctx, w, h, modo) {
   const imageData = ctx.getImageData(0, 0, w, h);
-  const data = imageData.data;
+  const d = imageData.data;
 
-  for (let i = 0; i < data.length; i += 4) {
-    let avg = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
-
-    if (modo === 'aumentar_brilho') {
-      avg = Math.min(255, avg * 1.5);
-    }
-
-    const threshold = modo === 'threshold_baixo' ? 180 : 128;
-    const val = avg > threshold ? 255 : 0;
-
-    if (modo === 'inverter') {
-      data[i] = data[i+1] = data[i+2] = 255 - val;
-    } else {
-      data[i] = data[i+1] = data[i+2] = val;
-    }
-    data[i+3] = 255;
+  for (let i = 0; i < d.length; i += 4) {
+    let avg = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+    if (modo === 'aumentar_brilho') avg = Math.min(255, avg * 1.5);
+    const thr = modo === 'threshold_baixo' ? 180 : 128;
+    let val = avg > thr ? 255 : 0;
+    if (modo === 'inverter') val = 255 - val;
+    d[i] = d[i+1] = d[i+2] = val;
+    d[i+3] = 255;
   }
   ctx.putImageData(imageData, 0, 0);
   return ctx.getImageData(0, 0, w, h);
 }
-function aumentarContraste(ctx, w, h, modo) {
-  const imageData = ctx.getImageData(0, 0, w, h);
-  const data = imageData.data;
-  
-  for (let i = 0; i < data.length; i += 4) {
-    let avg = 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
-    
-    if (modo === 'aumentar_brilho') {
-      // Aumentar brilho antes do threshold — ajuda em fotos escuras
-      avg = Math.min(255, avg * 1.5);
-    }
-    
-    const threshold = modo === 'threshold_baixo' ? 180 : 128;
-    const val = avg > threshold ? 255 : 0;
-    
-    if (modo === 'inverter') {
-      data[i] = data[i+1] = data[i+2] = 255 - val;
-    } else {
-      data[i] = data[i+1] = data[i+2] = val;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
-  return ctx.getImageData(0, 0, w, h);
-}
-  // NIF emitente (campo A)
-  if (campos['A']) { setAutoField('fNif', campos['A']); }
 
-  // Data (campo F — formato AAAAMMDD)
+// ── PROCESSAR QR AT ──
+function processarQR(texto) {
+  document.getElementById('qrResultado').classList.add('show');
+  document.getElementById('qrTexto').textContent = texto.substring(0, 120) + (texto.length > 120 ? '...' : '');
+
+  const campos = {};
+  texto.split('*').forEach(par => {
+    const idx = par.indexOf(':');
+    if (idx > 0) campos[par.substring(0, idx)] = par.substring(idx + 1);
+  });
+
+  if (campos['A']) setAutoField('fNif', campos['A']);
+
   if (campos['F'] && campos['F'].length === 8) {
     const d = campos['F'];
     setAutoField('fData', d.substring(0,4) + '-' + d.substring(4,6) + '-' + d.substring(6,8));
   }
 
-  // Número documento (campo G)
-  if (campos['G']) { setAutoField('fNumero', campos['G']); }
+  if (campos['G']) setAutoField('fNumero', campos['G']);
 
-  // Total IVA (campo N) e Total documento (campo O)
-  if (campos['N']) { setAutoField('fIva', parseFloat(campos['N']).toFixed(2)); }
+  if (campos['N']) setAutoField('fIva', parseFloat(campos['N']).toFixed(2));
+
   if (campos['O']) {
     setAutoField('fTotal', parseFloat(campos['O']).toFixed(2));
     const total = parseFloat(campos['O']) || 0;
@@ -436,15 +411,8 @@ function aumentarContraste(ctx, w, h, modo) {
     setAutoField('fBase', (total - iva).toFixed(2));
   }
 
-  showToast('✅ QR code lido — confirme o fornecedor', 'ok');
-  // Focar no campo fornecedor
+  showToast('✅ QR lido — confirme o fornecedor', 'ok');
   setTimeout(() => document.getElementById('fFornecedor').focus(), 300);
-}
-
-function setAutoField(id, valor) {
-  const el = document.getElementById(id);
-  el.value = valor;
-  el.classList.add('auto');
 }
 
 // ── GUARDAR ──
@@ -542,10 +510,11 @@ function filtrarLista() {
 
 function formatarData(iso) {
   if (!iso) return '—';
-  const parts = iso.split('-');
-  return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : iso;
+  const p = iso.split('-');
+  return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : iso;
 }
 
+// ── MODAL ──
 function abrirDetalhe(id) {
   const f = todasFaturas.find(f => f.id === id);
   if (!f) return;
@@ -582,28 +551,31 @@ async function apagarFatura() {
   finally { setLoading(false); }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+// ── AUTOCOMPLETE NIF → FORNECEDOR ──
+document.addEventListener('DOMContentLoaded', () => {
   const agora = new Date();
   document.getElementById('filtroMes').value = agora.getFullYear() + '-' + String(agora.getMonth()+1).padStart(2,'0');
   document.getElementById('fData').value = agora.toISOString().split('T')[0];
-});
-window.addEventListener('beforeunload', () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
-  // ── AUTOCOMPLETE NIF → FORNECEDOR ──
-document.getElementById('fNif').addEventListener('blur', async function() {
-  const nif = this.value.trim();
-  if (nif.length < 9) return;
-  if (document.getElementById('fFornecedor').value.trim()) return; // já tem fornecedor
 
-  try {
-    const res = await apiRequest('listarFaturas', { mes: '' });
-    if (res && Array.isArray(res.faturas)) {
-      const encontrada = res.faturas.find(f => f.nif === nif);
-      if (encontrada && encontrada.fornecedor) {
-        document.getElementById('fFornecedor').value = encontrada.fornecedor;
-        document.getElementById('fFornecedor').classList.add('auto');
+  document.getElementById('fNif').addEventListener('blur', async function() {
+    const nif = this.value.trim();
+    if (nif.length < 9) return;
+    if (document.getElementById('fFornecedor').value.trim()) return;
+    try {
+      const res = await apiRequest('listarFaturas', { mes: '' });
+      if (res && Array.isArray(res.faturas)) {
+        const encontrada = res.faturas.find(f => f.nif === nif);
+        if (encontrada && encontrada.fornecedor) {
+          document.getElementById('fFornecedor').value = encontrada.fornecedor;
+          document.getElementById('fFornecedor').classList.add('auto');
+        }
       }
-    }
-  } catch(e) {}
+    } catch(e) {}
+  });
+});
+
+window.addEventListener('beforeunload', () => {
+  if (stream) stream.getTracks().forEach(t => t.stop());
 });
 </script>
 </body>
