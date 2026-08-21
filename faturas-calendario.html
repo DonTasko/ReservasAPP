@@ -208,7 +208,7 @@ async function carregarMes() {
 function renderStats() {
   const totalFat    = faturasMes.reduce((s, f) => s + (parseFloat(f.total)  || 0), 0);
   const totalVendas = vendasMes.reduce((s, v)  => s + (parseFloat(v.vendas) || 0), 0);
-  const totalIva    = vendasMes.reduce((s, v)  => s + (parseFloat(v.iva)    || 0), 0);
+  const totalIva = vendasMes.reduce((s, v) => s + (parseFloat(v.ivaVendas) || 0), 0);
 
   document.getElementById('statFaturas').textContent   = faturasMes.length;
   document.getElementById('statTotalFat').textContent  = totalFat.toFixed(2).replace('.', ',') + ' €';
