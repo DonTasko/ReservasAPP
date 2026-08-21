@@ -307,20 +307,24 @@ function abrirDia(dataISO) {
 
   // Vendas
   if (venda) {
-    const vendaVal  = parseFloat(venda.vendas)      || 0;
-    const vendaIVA  = parseFloat(venda.iva)         || 0;
-    const vendacIVA = parseFloat(venda.vendasCIva)  || 0;
-    const custos    = parseFloat(venda.custos)      || 0;
-    const resultado = parseFloat(venda.resultado)   || 0;
+    const vendasCIva   = parseFloat(venda.vendasCIva)  || 0;
+    const vendasSIva   = parseFloat(venda.vendas)       || 0;
+    const ivaVendas    = parseFloat(venda.ivaVendas)    || 0;
+    const comprasBase  = parseFloat(venda.comprasBase)  || 0;
+    const comprasIva   = parseFloat(venda.comprasIva)   || 0;
+    const resultado    = parseFloat(venda.resultado)    || 0;
+    const ivaLiquido   = parseFloat(venda.ivaLiquido)   || 0;
     partes.push(`
       <div class="modal-section">
         <div class="modal-section-title vendas">📈 Vendas do Dia</div>
         <div class="venda-card">
-          <div class="venda-row"><span class="venda-key">Vendas c/IVA</span><span class="venda-val">${vendacIVA.toFixed(2).replace('.',',')} €</span></div>
-          <div class="venda-row"><span class="venda-key">Vendas s/IVA</span><span class="venda-val">${vendaVal.toFixed(2).replace('.',',')} €</span></div>
-          <div class="venda-row"><span class="venda-key">IVA</span><span class="venda-val">${vendaIVA.toFixed(2).replace('.',',')} €</span></div>
-          <div class="venda-row"><span class="venda-key">Custos</span><span class="venda-val">${custos.toFixed(2).replace('.',',')} €</span></div>
-          <div class="venda-row"><span class="venda-key">Resultado</span><span class="venda-val gold">${resultado.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">Vendas c/IVA</span><span class="venda-val">${vendasCIva.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">Vendas s/IVA</span><span class="venda-val">${vendasSIva.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">IVA das vendas</span><span class="venda-val">${ivaVendas.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">Compras s/IVA</span><span class="venda-val" style="color:#e74c3c">− ${comprasBase.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">IVA das compras</span><span class="venda-val" style="color:#e74c3c">− ${comprasIva.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">Resultado (s/IVA)</span><span class="venda-val gold">${resultado.toFixed(2).replace('.',',')} €</span></div>
+          <div class="venda-row"><span class="venda-key">IVA líquido a pagar</span><span class="venda-val gold">${ivaLiquido.toFixed(2).replace('.',',')} €</span></div>
         </div>
       </div>`);
   }
