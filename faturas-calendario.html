@@ -140,8 +140,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(-
   </div>
 
   <div class="stats-mes">
-    <div class="stat-card"><div class="stat-val" id="statFaturas">0</div><div class="stat-lbl">Faturas</div></div>
     <div class="stat-card"><div class="stat-val" id="statTotalFat">0 €</div><div class="stat-lbl">Total Faturas</div></div>
+    <div class="stat-card"><div class="stat-val" id="statIvaFat">0 €</div><div class="stat-lbl">IVA Faturas</div></div>
     <div class="stat-card"><div class="stat-val green" id="statVendas">0 €</div><div class="stat-lbl">Vendas s/IVA</div></div>
     <div class="stat-card"><div class="stat-val green" id="statIvaVendas">0 €</div><div class="stat-lbl">IVA Vendas</div></div>
   </div>
@@ -206,14 +206,15 @@ async function carregarMes() {
 }
 
 function renderStats() {
-  const totalFat    = faturasMes.reduce((s, f) => s + (parseFloat(f.total)  || 0), 0);
-  const totalVendas = vendasMes.reduce((s, v)  => s + (parseFloat(v.vendas) || 0), 0);
-  const totalIva = vendasMes.reduce((s, v) => s + (parseFloat(v.ivaVendas) || 0), 0);
+  const totalFat    = faturasMes.reduce((s, f) => s + (parseFloat(f.total)     || 0), 0);
+  const ivaFat      = faturasMes.reduce((s, f) => s + (parseFloat(f.iva)       || 0), 0);
+  const totalVendas = vendasMes.reduce((s, v)  => s + (parseFloat(v.vendas)    || 0), 0);
+  const ivaVendas   = vendasMes.reduce((s, v)  => s + (parseFloat(v.ivaVendas) || 0), 0);
 
-  document.getElementById('statFaturas').textContent   = faturasMes.length;
   document.getElementById('statTotalFat').textContent  = totalFat.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('statIvaFat').textContent    = ivaFat.toFixed(2).replace('.', ',') + ' €';
   document.getElementById('statVendas').textContent    = totalVendas.toFixed(2).replace('.', ',') + ' €';
-  document.getElementById('statIvaVendas').textContent = totalIva.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('statIvaVendas').textContent = ivaVendas.toFixed(2).replace('.', ',') + ' €';
 }
 
 function renderCalendario() {
