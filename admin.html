@@ -552,29 +552,69 @@ function atualizarStats() {
     document.getElementById('barJantar').style.width = Math.min(100, (paxJ/CONFIG.LOTACAO)*100) + '%';
 }
 
+// Substitui a função atribuirReservasAMesas no admin.html
+
 function atribuirReservasAMesas(reservas) {
-    const mesasLivres = MESAS.map(m => ({ ...m, reserva: null, juncao: [] }));
-    const reservasOrdenadas = [...reservas].sort((a,b) => b.pax - a.pax);
-    reservasOrdenadas.forEach(reserva => {
-        const pax = reserva.pax;
-        const candidatas = mesasLivres.filter(m => !m.reserva && m.cap >= pax).sort((a,b) => a.cap - b.cap);
-        if (candidatas.length > 0) { candidatas[0].reserva = reserva; return; }
-        const livresJ = mesasLivres.filter(m => !m.reserva && MESAS_JUNTAR.has(m.num)).sort((a,b) => b.cap - a.cap);
-        for (let i = 0; i < livresJ.length; i++) {
-            for (let j = i+1; j < livresJ.length; j++) {
-                if (livresJ[i].cap + livresJ[j].cap >= pax) {
-                    const m1 = livresJ[i], m2 = livresJ[j];
-                    mesasLivres.find(m => m.num === m1.num).reserva = reserva;
-                    mesasLivres.find(m => m.num === m1.num).juncao = [m2.num];
-                    mesasLivres.find(m => m.num === m2.num).reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: m1.num };
-                    return;
-                }
-            }
+  // Estado das mesas — todas livres no início
+  const estado = MESAS.map(m => ({ ...m, reserva: null, juncao: [] }));
+
+  // Ordenar reservas por pax descendente (maiores primeiro para melhor fit)
+  const reservasOrdenadas = [...reservas].sort((a, b) => b.pax - a.pax);
+
+  reservasOrdenadas.forEach(reserva => {
+    const pax = reserva.pax;
+    const livres = estado.filter(m => !m.reserva);
+
+    // 1. Tentar uma única mesa que caiba (best-fit: menor mesa suficiente)
+    const candidatas = livres.filter(m => m.cap >= pax).sort((a, b) => a.cap - b.cap);
+    if (candidatas.length > 0) {
+      candidatas[0].reserva = reserva;
+      return;
+    }
+
+    // 2. Tentar junção de duas mesas
+    for (let i = 0; i < livres.length; i++) {
+      for (let j = i + 1; j < livres.length; j++) {
+        if (livres[i].cap + livres[j].cap >= pax) {
+          // Ordenar par: maior primeiro
+          const [m1, m2] = livres[i].cap >= livres[j].cap
+            ? [livres[i], livres[j]]
+            : [livres[j], livres[i]];
+          const mesa1 = estado.find(m => m.num === m1.num);
+          const mesa2 = estado.find(m => m.num === m2.num);
+          mesa1.reserva = reserva;
+          mesa1.juncao  = [m2.num];
+          mesa2.reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: m1.num };
+          return;
         }
-        const maior = mesasLivres.filter(m => !m.reserva).sort((a,b) => b.cap - a.cap)[0];
-        if (maior) maior.reserva = { ...reserva, overflow: true };
-    });
-    return mesasLivres;
+      }
+    }
+
+    // 3. Tentar junção de três mesas
+    for (let i = 0; i < livres.length; i++) {
+      for (let j = i + 1; j < livres.length; j++) {
+        for (let k = j + 1; k < livres.length; k++) {
+          if (livres[i].cap + livres[j].cap + livres[k].cap >= pax) {
+            const trio = [livres[i], livres[j], livres[k]].sort((a, b) => b.cap - a.cap);
+            const mesa1 = estado.find(m => m.num === trio[0].num);
+            const mesa2 = estado.find(m => m.num === trio[1].num);
+            const mesa3 = estado.find(m => m.num === trio[2].num);
+            mesa1.reserva = reserva;
+            mesa1.juncao  = [trio[1].num, trio[2].num];
+            mesa2.reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: trio[0].num };
+            mesa3.reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: trio[0].num };
+            return;
+          }
+        }
+      }
+    }
+
+    // 4. Sem mesas suficientes — colocar na maior disponível com overflow
+    const maior = livres.sort((a, b) => b.cap - a.cap)[0];
+    if (maior) maior.reserva = { ...reserva, overflow: true };
+  });
+
+  return estado;
 }
 
 function mudarTurnoMapa(turno, btn) {
