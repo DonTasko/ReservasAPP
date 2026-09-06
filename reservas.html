@@ -572,7 +572,13 @@
       locale: 'pt',
       minDate: 'today',
       dateFormat: 'Y-m-d',
-      disable: [isDiaFechado],
+      onDayCreate: function(dObj, dStr, fp, dayElem) {
+        // Marcar dias fechados visualmente mas permitir selecção
+        if (isDiaFechado(dayElem.dateObj)) {
+          dayElem.style.opacity = '0.4';
+          dayElem.title = motivoFecho(dStr || dayElem.dateObj.toISOString().split('T')[0]);
+        }
+      },
       onChange: function() { gerarHorarios(); }
     });
   }
@@ -590,6 +596,22 @@
       container.innerHTML = '<p style="font-size:0.8rem;color:var(--text-dim);margin-bottom:16px">Selecione uma data primeiro.</p>';
       btnSubmit.style.display = 'block';
       horarioHidden.setAttribute('required','');
+      return;
+    }
+
+    // Verificar se o dia está fechado — mostrar motivo
+    const dataDate = new Date(dataVal + 'T12:00:00');
+    if (isDiaFechado(dataDate)) {
+      const motivo = motivoFecho(dataVal);
+      container.innerHTML = `
+        <div style="background:var(--red-dim);border:1px solid rgba(192,57,43,0.35);border-radius:12px;padding:20px;margin-bottom:16px;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:10px">🚫</div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#e74c3c;margin-bottom:8px">Restaurante Encerrado</h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6">${motivo}</p>
+          <p style="font-size:0.8rem;color:var(--text-dim);margin-top:8px">Por favor selecione outra data.</p>
+        </div>`;
+      btnSubmit.style.display = 'none';
+      horarioHidden.removeAttribute('required');
       return;
     }
 
