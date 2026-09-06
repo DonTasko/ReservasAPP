@@ -195,7 +195,7 @@
     <div class="horario-item">
       <span class="horario-label">🌙 Jantar</span>
       <span class="horario-value" id="hJantar">20h00–23h30</span>
-      <span class="horario-cozinha">Cozinha até <span id="hCozinhaJantar">22h00</span></span>
+      <span class="horario-cozinha">Cozinha até <span id="hCozinhaJantar">22h30</span></span>
     </div>
     <div class="horario-sep"></div>
     <div class="horario-item">
@@ -516,17 +516,53 @@
     const d = String(date.getDate()).padStart(2,'0');
     const dateISO = y+'-'+m+'-'+d;
     const dayName = normalizar(date.toLocaleDateString('pt-PT',{weekday:'long'}));
+
     for (let i = 0; i < diasFechadosGlobal.length; i++) {
       const entrada = diasFechadosGlobal[i];
-      if (toISO(entrada) === dateISO) return true;
-      if (normalizar(entrada) === dayName) return true;
+      // Suportar formato novo (objecto { data, motivo }) e antigo (string)
+      const dataStr  = typeof entrada === 'object' ? (entrada.data || '') : entrada;
+      const dataISO  = toISO(dataStr);
+      const dataNorm = normalizar(dataStr);
+      if (dataISO === dateISO) return true;
+      if (dataNorm === dayName) return true;
     }
+
+    // Verificar também pela config (dia marcado como não aberto)
     if (configReservas && configReservas.dias) {
-      const key = DIAS_MAP[date.getDay()];
+      const key     = DIAS_MAP[date.getDay()];
       const diaConf = configReservas.dias[key];
       if (diaConf && diaConf.aberto === 'NÃO') return true;
     }
     return false;
+  }
+
+  // Obter motivo do fecho para uma data
+  function motivoFecho(dateISO) {
+    const date    = new Date(dateISO + 'T12:00:00');
+    const dayName = normalizar(date.toLocaleDateString('pt-PT', { weekday: 'long' }));
+
+    for (let i = 0; i < diasFechadosGlobal.length; i++) {
+      const entrada = diasFechadosGlobal[i];
+      if (typeof entrada === 'object') {
+        const dataISO  = toISO(entrada.data || '');
+        const dataNorm = normalizar(entrada.data || '');
+        if (dataISO === dateISO || dataNorm === dayName) return entrada.motivo || 'Encerrado';
+      } else {
+        const dataISO  = toISO(entrada);
+        const dataNorm = normalizar(entrada);
+        if (dataISO === dateISO || dataNorm === dayName) return 'Encerrado';
+      }
+    }
+
+    // Verificar pela config
+    if (configReservas && configReservas.dias) {
+      const key     = DIAS_MAP[date.getDay()];
+      const diaConf = configReservas.dias[key];
+      if (diaConf && diaConf.aberto === 'NÃO') {
+        return configReservas.motivoFechoSemanal || 'Encerrado';
+      }
+    }
+    return 'Encerrado';
   }
 
   // ── CALENDÁRIO ──
@@ -714,7 +750,7 @@
         configReservas = cfgRes.config;
         actualizarBannerHorarios();
       }
-      diasFechadosGlobal = Array.isArray(diasRes) ? diasRes : [];
+      diasFechadosGlobal = Array.isArray(diasRes) ? diasRes : (diasRes && Array.isArray(diasRes.dias) ? diasRes.dias : []);
       inicializarCalendario();
       gerarHorarios();
       document.getElementById('formReserva').addEventListener('submit', submeterReserva);
