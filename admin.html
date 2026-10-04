@@ -323,18 +323,18 @@
             <div class="stat-card">
                 <div class="stat-label">Pax Almoço</div>
                 <div class="stat-value" id="statAlmoco">—</div>
-                <div class="stat-sub">de 34 lugares</div>
+                <div class="stat-sub" id="subAlmoco">de — lugares</div>
                 <div class="stat-bar"><div class="stat-bar-fill" id="barAlmoco" style="width:0%;background:var(--amber);"></div></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Pax Jantar</div>
                 <div class="stat-value" id="statJantar">—</div>
-                <div class="stat-sub">de 34 lugares</div>
+                <div class="stat-sub" id="subJantar">de — lugares</div>
                 <div class="stat-bar"><div class="stat-bar-fill" id="barJantar" style="width:0%;background:var(--gold);"></div></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Lotação Máx.</div>
-                <div class="stat-value" style="color:var(--text-muted)">24</div>
+                <div class="stat-value" id="statLotacao" style="color:var(--text-muted)">—</div>
                 <div class="stat-sub">8 mesas disponíveis</div>
             </div>
         </div>
@@ -435,7 +435,7 @@
 const CONFIG = {
     URL: "https://script.google.com/macros/s/AKfycby0fk-_i1Ugn7RDNrqy2GKR0xh0rcP7tpgJs62XmIePJBCcu0tzwxsbuR1hSTrzOKjP/exec",
     PASS: "Tasko123",
-    LOTACAO: 34
+    LOTACAO: 24
 };
 
 const MESAS = [
@@ -487,11 +487,26 @@ function logout() {
     document.getElementById('passInput').value = '';
 }
 
+async function carregarLotacao() {
+    try {
+        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify({ action: 'getConfigs' }) });
+        const j = await res.json();
+        if (j && j.LOTACAO_MAXIMA) {
+            CONFIG.LOTACAO = parseInt(j.LOTACAO_MAXIMA) || CONFIG.LOTACAO;
+        }
+    } catch(e) { /* usa valor padrão */ }
+    const l = CONFIG.LOTACAO;
+    const el = document.getElementById('statLotacao'); if (el) el.textContent = l;
+    const sA = document.getElementById('subAlmoco'); if (sA) sA.textContent = 'de ' + l + ' lugares';
+    const sJ = document.getElementById('subJantar'); if (sJ) sJ.textContent = 'de ' + l + ' lugares';
+}
+
 function iniciar() {
     const hoje = new Date().toISOString().split('T')[0];
     document.getElementById('dataGlobal').value = hoje;
     document.getElementById('dataForm').value = hoje;
     atualizarTopbarDate(hoje);
+    carregarLotacao();
     carregarTudo();
 }
 
