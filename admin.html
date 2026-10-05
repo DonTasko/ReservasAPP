@@ -433,10 +433,28 @@
 
 <script>
 const CONFIG = {
-    URL: "https://script.google.com/macros/s/AKfycby0fk-_i1Ugn7RDNrqy2GKR0xh0rcP7tpgJs62XmIePJBCcu0tzwxsbuR1hSTrzOKjP/exec",
+    SB_URL: 'https://pqrqxvpzxqwblhxtmdns.supabase.co',
+    SB_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcnF4dnB6eHF3YmxoeHRtZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzA1OTEsImV4cCI6MjA4NTAwNjU5MX0.84XwHtn3XLph28DOHFEaM8pFZL_dvT60pSo8mOCaJkY',
+    RID: '04270fa5-28ce-4813-9735-1433375b5d68',
     PASS: "Tasko123",
     LOTACAO: 24
 };
+
+// ── Supabase helper ──────────────────────────────────────────────────────────
+async function sb(path, opts = {}) {
+    const r = await fetch(`${CONFIG.SB_URL}/rest/v1/${path}`, {
+        ...opts,
+        headers: {
+            'apikey': CONFIG.SB_KEY,
+            'Authorization': `Bearer ${CONFIG.SB_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': opts.prefer || '',
+            ...(opts.headers || {})
+        }
+    });
+    if (!r.ok) { const t = await r.text(); throw new Error(t); }
+    const t = await r.text(); return t ? JSON.parse(t) : null;
+}
 
 const MESAS = [
     { num: 1, cap: 4 }, { num: 2, cap: 6 }, { num: 4, cap: 4 },
@@ -489,11 +507,8 @@ function logout() {
 
 async function carregarLotacao() {
     try {
-        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify({ action: 'getConfigs' }) });
-        const j = await res.json();
-        if (j && j.LOTACAO_MAXIMA) {
-            CONFIG.LOTACAO = parseInt(j.LOTACAO_MAXIMA) || CONFIG.LOTACAO;
-        }
+        const rows = await sb(`configs?restaurante_id=eq.${CONFIG.RID}&select=lotacao_max`, { method: 'GET' });
+        if (rows && rows[0] && rows[0].lotacao_max) CONFIG.LOTACAO = rows[0].lotacao_max;
     } catch(e) { /* usa valor padrão */ }
     const l = CONFIG.LOTACAO;
     const el = document.getElementById('statLotacao'); if (el) el.textContent = l;
@@ -530,10 +545,10 @@ async function carregarTudo() {
 
     let rawData = [];
     try {
-        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify({ action: 'listarReservasPorData', data }) });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const json = await res.json();
-        rawData = Array.isArray(json) ? json : (json.reservas || json.listaHoje || []);
+        rawData = await sb(
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&status=neq.cancelada&order=hora_reserva.asc`,
+            { method: 'GET' }
+        ) || [];
     } catch(e) {
         console.error('Erro:', e);
         toast('Erro ao carregar dados.', 'erro');
@@ -541,15 +556,16 @@ async function carregarTudo() {
     }
 
     todasReservas = rawData.map(r => {
-        const hora = String(r.hora || r.horario || r.HORARIO || '');
+        const hora = String(r.hora_reserva || '').slice(0, 5); // "HH:MM"
+        const obs = r.detalhes ? (r.detalhes.obs || JSON.stringify(r.detalhes)) : '';
         return {
-            id: String(r.id || r.ID || ''), nome: String(r.nome || r.NOME || ''),
-            hora, turno: String(r.turno || r.TURNO || (hora < '16:00' ? 'Almoço' : 'Jantar')),
-            pax: parseInt(r.pax || r.PAX) || 0, status: String(r.status || r.STATUS || 'Confirmada'),
-            tel: String(r.tel || r.telemovel || r.TELEMOVEL || ''),
-            email: String(r.email || r.EMAIL || ''), obs: String(r.obs || r.OBS || '')
+            id: String(r.id || ''), nome: String(r.cliente_nome || ''),
+            hora, turno: hora < '16:00' ? 'Almoço' : 'Jantar',
+            pax: parseInt(r.pax) || 0, status: String(r.status || 'pendente'),
+            tel: String(r.cliente_telemovel || ''),
+            email: String(r.cliente_email || ''), obs
         };
-    }).filter(r => r.status !== 'Cancelada');
+    });
 
     atualizarStats();
     renderizarMesas();
@@ -738,9 +754,10 @@ function renderizarLista() {
 async function marcarChegada(id) {
     if (!id || !confirm('Confirmar chegada?')) return;
     try {
-        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify({ action: 'marcarChegada', id }) });
-        const j = await res.json();
-        if (j.status === 'success') { toast('✅ Chegada registada!'); fecharModalDireto(); await carregarTudo(); }
+        await sb(`reservas?id=eq.${id}&restaurante_id=eq.${CONFIG.RID}`, {
+            method: 'PATCH', body: JSON.stringify({ status: 'confirmada' }), prefer: 'return=minimal'
+        });
+        toast('✅ Chegada registada!'); fecharModalDireto(); await carregarTudo();
         else toast(j.message || 'Erro', 'erro');
     } catch(e) { toast('Erro de ligação', 'erro'); }
 }
@@ -748,9 +765,10 @@ async function marcarChegada(id) {
 async function cancelarReserva(id, nome) {
     if (!id || !confirm(`Cancelar reserva de ${nome}?`)) return;
     try {
-        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify({ action: 'cancelarReserva', id }) });
-        const j = await res.json();
-        if (j.status === 'success') { toast('🗑️ Reserva cancelada'); fecharModalDireto(); await carregarTudo(); }
+        await sb(`reservas?id=eq.${id}&restaurante_id=eq.${CONFIG.RID}`, {
+            method: 'PATCH', body: JSON.stringify({ status: 'cancelada' }), prefer: 'return=minimal'
+        });
+        toast('🗑️ Reserva cancelada'); fecharModalDireto(); await carregarTudo();
         else toast(j.message || 'Erro', 'erro');
     } catch(e) { toast('Erro de ligação', 'erro'); }
 }
@@ -764,9 +782,12 @@ async function verificarDisp() {
     aviso.classList.remove('visivel'); btn.disabled = false;
     if (!data || !horario || !pax) return;
     try {
-        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify({ action: 'verificarDisponiblidade', data, horario, pax }) });
-        const j = await res.json();
-        if (!j.disponivel) { aviso.classList.add('visivel'); btn.disabled = true; }
+        const rows = await sb(
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&hora_reserva=eq.${horario}&status=neq.cancelada&select=pax`,
+            { method: 'GET' }
+        ) || [];
+        const totalPax = rows.reduce((s, r) => s + (r.pax || 0), 0);
+        if (totalPax + parseInt(pax) > CONFIG.LOTACAO) { aviso.classList.add('visivel'); btn.disabled = true; }
     } catch(e) {}
 }
 
@@ -777,17 +798,27 @@ document.getElementById('formReserva').onsubmit = async function(e) {
     e.preventDefault();
     const btn = document.getElementById('btnGravar');
     btn.disabled = true; btn.textContent = '⏳ A gravar...';
-    const dados = Object.fromEntries(new FormData(this).entries());
-    dados.action = 'reservaManual';
+    const f = Object.fromEntries(new FormData(this).entries());
     try {
-        const res = await fetch(CONFIG.URL, { method: 'POST', body: JSON.stringify(dados) });
-        const j = await res.json();
-        if (j.status === 'success') {
-            toast('✅ Reserva criada! ID: ' + j.id);
-            this.reset();
-            document.getElementById('dataForm').value = document.getElementById('dataGlobal').value || new Date().toISOString().split('T')[0];
-            await carregarTudo();
-        } else toast(j.message || 'Erro ao criar reserva', 'erro');
+        const payload = {
+            restaurante_id: CONFIG.RID,
+            cliente_nome:      f.nome,
+            cliente_telemovel: f.telemovel || null,
+            cliente_email:     f.email || null,
+            data_reserva:      f.data,
+            hora_reserva:      f.horario,
+            pax:               parseInt(f.pax) || 1,
+            status:            'confirmada',
+            detalhes:          f.obs ? { obs: f.obs } : null,
+        };
+        const result = await sb('reservas', {
+            method: 'POST', body: JSON.stringify(payload), prefer: 'return=representation'
+        });
+        const id = result && result[0] ? result[0].id : '?';
+        toast('✅ Reserva criada! ID: ' + id);
+        this.reset();
+        document.getElementById('dataForm').value = document.getElementById('dataGlobal').value || new Date().toISOString().split('T')[0];
+        await carregarTudo();
     } catch(e) { toast('Erro de ligação', 'erro'); }
     finally { btn.disabled = false; btn.textContent = '💾 Gravar Reserva'; }
 };
