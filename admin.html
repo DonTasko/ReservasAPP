@@ -758,7 +758,6 @@ async function marcarChegada(id) {
             method: 'PATCH', body: JSON.stringify({ status: 'confirmada' }), prefer: 'return=minimal'
         });
         toast('✅ Chegada registada!'); fecharModalDireto(); await carregarTudo();
-        else toast(j.message || 'Erro', 'erro');
     } catch(e) { toast('Erro de ligação', 'erro'); }
 }
 
@@ -769,7 +768,6 @@ async function cancelarReserva(id, nome) {
             method: 'PATCH', body: JSON.stringify({ status: 'cancelada' }), prefer: 'return=minimal'
         });
         toast('🗑️ Reserva cancelada'); fecharModalDireto(); await carregarTudo();
-        else toast(j.message || 'Erro', 'erro');
     } catch(e) { toast('Erro de ligação', 'erro'); }
 }
 
