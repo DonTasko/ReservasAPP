@@ -660,15 +660,16 @@ async function calRenderizar() {
 
     try {
         const rows = await sb(
-            `reservas?restaurante_id=eq.${CONFIG.RID}&data=gte.${inicioStr}&data=lte.${fimStr}&select=data,hora&order=data`,
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=gte.${inicioStr}&data_reserva=lte.${fimStr}&select=data_reserva,hora_reserva&order=data_reserva`,
             { method: 'GET', headers: { 'Range': '0-999' } }
         );
         calDadosMes = {};
         (rows || []).forEach(r => {
-            if (!calDadosMes[r.data]) calDadosMes[r.data] = {almoco:0,jantar:0};
-            const hora = (r.hora || '').substring(0,5);
-            if (hora < '16:00') calDadosMes[r.data].almoco++;
-            else calDadosMes[r.data].jantar++;
+            const d = r.data_reserva;
+            if (!calDadosMes[d]) calDadosMes[d] = {almoco:0,jantar:0};
+            const hora = (r.hora_reserva || '').substring(0,5);
+            if (hora < '16:00') calDadosMes[d].almoco++;
+            else calDadosMes[d].jantar++;
         });
     } catch(e) { console.error('Cal erro:', e); calDadosMes = {}; }
 
