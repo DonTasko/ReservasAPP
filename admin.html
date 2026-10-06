@@ -368,17 +368,11 @@
                 <button class="cal-nav" onclick="calMudarMes(1)">›</button>
             </div>
             <div class="cal-grid" id="calGrid"></div>
+            <div id="calDataSel" style="text-align:center;margin-top:12px;font-size:12px;color:var(--text-muted);letter-spacing:1px;"></div>
         </div>
 
-        <!-- Date nav -->
-        <div class="date-nav">
-            <label>Data</label>
-            <input type="date" id="dataGlobal" onchange="carregarTudo()">
-            <div class="date-quick">
-                <button class="date-q-btn" onclick="irParaHoje()">Hoje</button>
-                <button class="date-q-btn" onclick="irParaAmanha()">Amanhã</button>
-            </div>
-        </div>
+        <!-- dataGlobal hidden — controlado pelo calendário -->
+        <input type="date" id="dataGlobal" style="display:none" onchange="carregarTudo()">
 
         <!-- Stats -->
         <div class="stats-row">
@@ -636,6 +630,7 @@ function iniciar() {
     document.getElementById('dataGlobal').value = hoje;
     document.getElementById('dataForm').value = hoje;
     atualizarTopbarDate(hoje);
+    calMostrarDataSel(hoje);
     carregarLotacao();
     calRenderizar();
     carregarTudo();
@@ -666,15 +661,16 @@ async function calRenderizar() {
     try {
         const rows = await sb(
             `reservas?restaurante_id=eq.${CONFIG.RID}&data=gte.${inicioStr}&data=lte.${fimStr}&select=data,hora&order=data`,
-            { method: 'GET' }
+            { method: 'GET', headers: { 'Range': '0-999' } }
         );
         calDadosMes = {};
         (rows || []).forEach(r => {
             if (!calDadosMes[r.data]) calDadosMes[r.data] = {almoco:0,jantar:0};
-            if (r.hora < '16:00') calDadosMes[r.data].almoco++;
+            const hora = (r.hora || '').substring(0,5);
+            if (hora < '16:00') calDadosMes[r.data].almoco++;
             else calDadosMes[r.data].jantar++;
         });
-    } catch(e) { calDadosMes = {}; }
+    } catch(e) { console.error('Cal erro:', e); calDadosMes = {}; }
 
     calDesenhar();
 }
@@ -721,8 +717,18 @@ function calDesenhar() {
 function calSelecionarDia(dateStr) {
     document.getElementById('dataGlobal').value = dateStr;
     atualizarTopbarDate(dateStr);
-    calDesenhar(); // re-desenha para mostrar dia selecionado
+    calDesenhar();
+    calMostrarDataSel(dateStr);
     carregarTudo();
+}
+
+function calMostrarDataSel(dateStr) {
+    const el = document.getElementById('calDataSel');
+    if (!el || !dateStr) return;
+    const d = new Date(dateStr + 'T00:00:00');
+    const dias = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    el.textContent = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function iniciarAutoRefresh() {
