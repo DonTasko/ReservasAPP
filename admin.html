@@ -742,7 +742,19 @@ function abrirModalMesa(numMesa) {
     document.getElementById('modalSub').textContent = `${mesa.cap} lugares${juncaoTexto} · ${turnoMapa}`;
     let content = '';
     if (!reserva) {
-        content = `<div class="modal-empty">✅ Mesa livre para ${turnoMapa.toLowerCase()}</div>`;
+        const horaAtual = new Date().toTimeString().slice(0,5);
+        const dataAtual = document.getElementById('dataGlobal').value;
+        content = `<div style="text-align:center;padding:8px 0 16px">
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Mesa livre · ${turnoMapa}</div>
+            <div style="margin-bottom:16px">
+                <label style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:6px">Nº de pessoas</label>
+                <input id="walkinPax" type="number" min="1" max="${capTotal}" value="2"
+                    style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:22px;font-weight:700;text-align:center;font-family:inherit">
+            </div>
+            <button class="modal-btn verde" style="width:100%;padding:13px;font-size:14px" onclick="gravarWalkIn(${numMesa},'${dataAtual}','${horaAtual}')">
+                🚶 Sentar agora
+            </button>
+        </div>`;
     } else {
         const badgeClass = reserva.chegou ? 'badge-chegou' : reserva.status === 'cancelada' ? 'badge-cancelada' : 'badge-confirmada';
         const badgeLabel = reserva.chegou ? '✅ Chegou' : reserva.status === 'cancelada' ? 'Cancelada' : 'Confirmada';
@@ -813,6 +825,29 @@ async function desmarcarChegada(id) {
         });
         toast('↩️ Chegada desfeita'); fecharModalDireto(); await carregarTudo();
     } catch(e) { toast('Erro de ligação', 'erro'); }
+}
+
+async function gravarWalkIn(numMesa, data, hora) {
+    const pax = parseInt(document.getElementById('walkinPax').value) || 1;
+    try {
+        await sb('reservas', {
+            method: 'POST',
+            body: JSON.stringify({
+                restaurante_id: CONFIG.RID,
+                cliente_nome: `Walk-in Mesa ${numMesa}`,
+                cliente_email: null,
+                cliente_telemovel: null,
+                data_reserva: data,
+                hora_reserva: hora,
+                pax,
+                status: 'confirmada',
+                chegou: true,
+                detalhes: { obs: '(Calendário Manual)' }
+            }),
+            prefer: 'return=minimal'
+        });
+        toast(`🚶 Mesa ${numMesa} ocupada · ${pax} pax`); fecharModalDireto(); await carregarTudo();
+    } catch(e) { toast('Erro ao gravar', 'erro'); }
 }
 
 async function cancelarReserva(id, nome) {
