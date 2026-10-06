@@ -216,6 +216,37 @@
 
         .empty-msg { text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 14px; }
 
+        /* TIMELINE */
+        .vista-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .vista-tab { padding: 9px 20px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; transition: all 0.2s; }
+        .vista-tab.ativo { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+
+        #vistaTimeline { display: none; }
+        #vistaMesas { display: block; }
+
+        .tl-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+        .tl-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .tl-header-row th { padding: 10px 8px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; text-align: center; border-bottom: 1px solid var(--border); background: var(--surface2); }
+        .tl-header-row th:first-child { text-align: left; padding-left: 16px; min-width: 80px; background: var(--surface2); position: sticky; left: 0; z-index: 2; }
+        .tl-row { border-bottom: 1px solid var(--border); }
+        .tl-row:last-child { border-bottom: none; }
+        .tl-row td { padding: 0; height: 52px; border-right: 1px solid rgba(46,43,36,0.5); }
+        .tl-row td:last-child { border-right: none; }
+        .tl-mesa-label { padding: 0 16px; font-size: 12px; font-weight: 700; color: var(--text-muted); white-space: nowrap; background: var(--surface2); position: sticky; left: 0; z-index: 1; border-right: 1px solid var(--border) !important; }
+        .tl-slot { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: default; }
+        .tl-slot.ocupado { background: rgba(201,168,76,0.2); border-left: 2px solid var(--gold); cursor: pointer; flex-direction: column; gap: 2px; padding: 4px; }
+        .tl-slot.ocupado:hover { background: rgba(201,168,76,0.35); }
+        .tl-slot.chegou { background: rgba(46,204,113,0.15); border-left: 2px solid #2ecc71; }
+        .tl-slot.chegou:hover { background: rgba(46,204,113,0.25); }
+        .tl-slot.walkin { background: rgba(212,135,10,0.15); border-left: 2px solid var(--amber); }
+        .tl-slot-nome { font-size: 11px; font-weight: 700; color: var(--gold); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+        .tl-slot.chegou .tl-slot-nome { color: #2ecc71; }
+        .tl-slot.walkin .tl-slot-nome { color: var(--amber); }
+        .tl-slot-pax { font-size: 10px; color: var(--text-muted); }
+        .tl-slot.livre { color: var(--text-dim); font-size: 20px; }
+        .tl-turno-sep { background: var(--surface2); }
+        .tl-turno-sep td { height: 28px; padding: 0 16px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--border); }
+
         /* RESPONSIVE */
         @media (max-width: 1100px) { .content-grid { grid-template-columns: 1fr; } .mesas-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 700px) { .main { padding: 16px; } .topbar { padding: 0 16px; } .shortcuts { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } .mesas-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -382,18 +413,36 @@
         <!-- Main grid -->
         <div class="content-grid">
 
-            <!-- Mapa de mesas -->
+            <!-- Mapa de mesas / Timeline -->
             <div>
-                <div class="section-title">Mapa de Mesas</div>
-                <div class="turno-tabs">
-                    <button class="turno-tab ativo" onclick="mudarTurnoMapa('Almoço', this)">🌞 Almoço</button>
-                    <button class="turno-tab" onclick="mudarTurnoMapa('Jantar', this)">🌙 Jantar</button>
+                <div class="section-title">Vista</div>
+                <div class="vista-tabs">
+                    <button class="vista-tab ativo" onclick="mudarVista('mesas', this)">⬛ Mesas</button>
+                    <button class="vista-tab" onclick="mudarVista('timeline', this)">📊 Timeline</button>
                 </div>
-                <div class="mesas-grid" id="mesasGrid"></div>
-                <div class="legenda-mesas">
-                    <div class="leg-item"><div class="leg-dot" style="background:var(--free);box-shadow:0 0 6px var(--free)"></div> Livre</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:var(--partial);box-shadow:0 0 6px var(--partial)"></div> Com Reserva</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:var(--full);box-shadow:0 0 6px var(--full)"></div> Cheia</div>
+
+                <!-- MAPA DE MESAS -->
+                <div id="vistaMesas">
+                    <div class="turno-tabs">
+                        <button class="turno-tab ativo" id="tabAlmoco" onclick="mudarTurnoMapa('Almoço', this)">🌞 Almoço</button>
+                        <button class="turno-tab" id="tabJantar" onclick="mudarTurnoMapa('Jantar', this)">🌙 Jantar</button>
+                    </div>
+                    <div class="mesas-grid" id="mesasGrid"></div>
+                    <div class="legenda-mesas">
+                        <div class="leg-item"><div class="leg-dot" style="background:var(--free);box-shadow:0 0 6px var(--free)"></div> Livre</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:var(--partial);box-shadow:0 0 6px var(--partial)"></div> Com Reserva</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:var(--full);box-shadow:0 0 6px var(--full)"></div> Cheia</div>
+                    </div>
+                </div>
+
+                <!-- TIMELINE -->
+                <div id="vistaTimeline">
+                    <div id="timelineContainer"></div>
+                    <div class="legenda-mesas" style="margin-top:14px">
+                        <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div> Reserva</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:#2ecc71"></div> Chegou</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div> Walk-in</div>
+                    </div>
                 </div>
             </div>
 
@@ -624,6 +673,7 @@ async function carregarTudo() {
     atualizarStats();
     renderizarMesas();
     renderizarLista();
+    if (vistaAtual === 'timeline') renderizarTimeline();
 }
 
 function atualizarStats() {
@@ -702,11 +752,97 @@ function atribuirReservasAMesas(reservas) {
   return estado;
 }
 
+let vistaAtual = 'mesas';
+
+function mudarVista(vista, btn) {
+    vistaAtual = vista;
+    document.querySelectorAll('.vista-tab').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+    if (vista === 'mesas') {
+        document.getElementById('vistaMesas').style.display = 'block';
+        document.getElementById('vistaTimeline').style.display = 'none';
+    } else {
+        document.getElementById('vistaMesas').style.display = 'none';
+        document.getElementById('vistaTimeline').style.display = 'block';
+        renderizarTimeline();
+    }
+}
+
 function mudarTurnoMapa(turno, btn) {
     turnoMapa = turno;
     document.querySelectorAll('.turno-tab').forEach(b => b.classList.remove('ativo'));
     btn.classList.add('ativo');
     renderizarMesas();
+}
+
+// Slots de tempo para almoço e jantar
+const SLOTS_ALMOCO = ['11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00'];
+const SLOTS_JANTAR = ['19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'];
+
+function renderizarTimeline() {
+    const container = document.getElementById('timelineContainer');
+
+    // Para cada mesa, ver quais reservas tem (por turno)
+    // Usamos atribuição do almoço e do jantar
+    const reservasAlmoco = todasReservas.filter(r => r.turno === 'Almoço');
+    const reservasJantar = todasReservas.filter(r => r.turno === 'Jantar');
+    const mesasAlmoco = atribuirReservasAMesas(reservasAlmoco);
+    const mesasJantar = atribuirReservasAMesas(reservasJantar);
+
+    function slotHTML(reserva, hora) {
+        if (!reserva || reserva.juncaoSecundaria) return `<div class="tl-slot livre">·</div>`;
+        // Verificar se esta é a hora da reserva (match aproximado de ±30min)
+        const hRes = reserva.hora;
+        const [hR, mR] = hRes.split(':').map(Number);
+        const [hS, mS] = hora.split(':').map(Number);
+        const diffMin = Math.abs((hR*60+mR) - (hS*60+mS));
+        if (diffMin > 30) return `<div class="tl-slot"></div>`;
+        const isWalkIn = reserva.nome.startsWith('Walk-in');
+        const cls = isWalkIn ? 'walkin' : (reserva.chegou ? 'chegou' : 'ocupado');
+        const nomeEsc = reserva.nome.replace(/'/g,"\\'");
+        return `<div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})">
+            <div class="tl-slot-nome">${reserva.nome.replace('Walk-in ','🚶')}</div>
+            <div class="tl-slot-pax">${reserva.pax}p</div>
+        </div>`;
+    }
+
+    function blocoTurno(label, icon, slots, mesasAtrib) {
+        const thSlots = slots.map(s => `<th>${s}</th>`).join('');
+        const rows = mesasAtrib.map(mesa => {
+            const tds = slots.map(hora => `<td>${slotHTML(mesa.reserva, hora)}</td>`).join('');
+            return `<tr class="tl-row">
+                <td class="tl-mesa-label">M${mesa.num}<br><span style="font-size:10px;font-weight:400">${mesa.cap}lug</span></td>
+                ${tds}
+            </tr>`;
+        }).join('');
+        return `<div style="margin-bottom:16px">
+            <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:8px">${icon} ${label}</div>
+            <div class="tl-wrap">
+                <table class="tl-table">
+                    <thead><tr class="tl-header-row"><th>Mesa</th>${thSlots}</tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>`;
+    }
+
+    container.innerHTML =
+        blocoTurno('Almoço', '🌞', SLOTS_ALMOCO, mesasAlmoco) +
+        blocoTurno('Jantar', '🌙', SLOTS_JANTAR, mesasJantar);
+}
+
+function abrirModalTimeline(id, nome, hora, pax) {
+    // Abre o modal normal da reserva usando o id
+    const reserva = todasReservas.find(r => r.id === id);
+    if (!reserva) return;
+    // Encontrar a mesa atribuída
+    const turno = reserva.turno;
+    const reservasTurno = todasReservas.filter(r => r.turno === turno);
+    const mesasAtrib = atribuirReservasAMesas(reservasTurno);
+    window._mesasAtribuidas = mesasAtrib;
+    turnoMapa = turno;
+    const mesa = mesasAtrib.find(m => m.reserva && m.reserva.id === id && !m.reserva.juncaoSecundaria);
+    if (mesa) abrirModalMesa(mesa.num);
 }
 
 function renderizarMesas() {
