@@ -227,6 +227,33 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* PESQUISA CLIENTE */
+        .search-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 28px; }
+        .search-panel-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .search-input-wrap { display: flex; gap: 10px; }
+        .search-input-wrap input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 9px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
+        .search-input-wrap input:focus { outline: none; border-color: var(--gold); }
+        .search-input-wrap input::placeholder { color: var(--text-dim); }
+        .btn-pesquisar { background: var(--gold); color: #0f0e0c; border: none; padding: 11px 20px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; transition: background 0.2s; }
+        .btn-pesquisar:hover { background: var(--gold-light); }
+        .btn-limpar-search { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); padding: 11px 14px; border-radius: 9px; font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .btn-limpar-search:hover { border-color: var(--gold); color: var(--gold); }
+
+        .search-results { margin-top: 16px; }
+        .search-results-header { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+        .search-result-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; display: grid; grid-template-columns: 80px 1fr auto; gap: 12px; align-items: center; transition: border-color 0.2s; }
+        .search-result-item:hover { border-color: var(--gold-dim); }
+        .sr-data { text-align: center; }
+        .sr-data-dia { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--gold); line-height: 1; }
+        .sr-data-mes { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .sr-data-hora { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .sr-info-nome { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .sr-info-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; }
+        .sr-pax { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+        .sr-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-top: 4px; }
+        .search-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 14px; }
+        .search-loading { text-align: center; padding: 24px; color: var(--text-muted); font-size: 14px; }
     </style>
 </head>
 <body>
@@ -303,6 +330,17 @@
             </a>
         </div>
 
+        <!-- Pesquisa de Clientes -->
+        <div class="search-panel">
+            <div class="search-panel-title">🔍 Pesquisar Cliente</div>
+            <div class="search-input-wrap">
+                <input type="text" id="searchInput" placeholder="Nome ou número de telefone..." onkeypress="if(event.key==='Enter') pesquisarCliente()">
+                <button class="btn-pesquisar" onclick="pesquisarCliente()">Pesquisar</button>
+                <button class="btn-limpar-search" onclick="limparPesquisa()" id="btnLimpar" style="display:none">✕</button>
+            </div>
+            <div class="search-results" id="searchResults" style="display:none"></div>
+        </div>
+
         <!-- Date nav -->
         <div class="date-nav">
             <label>Data</label>
@@ -363,7 +401,7 @@
                 <!-- Form nova reserva -->
                 <div class="panel">
                     <div class="panel-title">➕ Nova Reserva Manual</div>
-                    <div class="aviso-lotacao" id="avisoLotacao">🔴 Lotação esgotada para este turno</div>
+                    <div class="aviso-lotacao" id="avisoLotacao"></div>
                     <form id="formReserva">
                         <div class="form-field">
                             <label>Nome *</label>
@@ -771,6 +809,102 @@ async function cancelarReserva(id, nome) {
     } catch(e) { toast('Erro de ligação', 'erro'); }
 }
 
+// ── Pesquisa de Clientes ────────────────────────────────────────────────────
+async function pesquisarCliente() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q.length < 2) { toast('Escreve pelo menos 2 caracteres', 'erro'); return; }
+    const resultsEl = document.getElementById('searchResults');
+    const btnLimpar = document.getElementById('btnLimpar');
+    resultsEl.style.display = 'block';
+    resultsEl.innerHTML = '<div class="search-loading">⏳ A pesquisar...</div>';
+    btnLimpar.style.display = '';
+    try {
+        // Pesquisar por nome (ilike) OU telefone (eq)
+        const isPhone = /^[\d\s\+\-]{6,}$/.test(q);
+        let rows = [];
+        if (isPhone) {
+            // Pesquisa exacta por telefone
+            const clean = q.replace(/\s/g, '');
+            rows = await sb(
+                `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_telemovel=eq.${encodeURIComponent(clean)}&status=neq.cancelada&order=data_reserva.desc,hora_reserva.asc&limit=50`,
+                { method: 'GET' }
+            ) || [];
+            // se não encontrou nada, tenta também como nome
+            if (!rows.length) {
+                rows = await sb(
+                    `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_nome=ilike.${encodeURIComponent('*'+q+'*')}&status=neq.cancelada&order=data_reserva.desc,hora_reserva.asc&limit=50`,
+                    { method: 'GET' }
+                ) || [];
+            }
+        } else {
+            rows = await sb(
+                `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_nome=ilike.${encodeURIComponent('*'+q+'*')}&status=neq.cancelada&order=data_reserva.desc,hora_reserva.asc&limit=50`,
+                { method: 'GET' }
+            ) || [];
+        }
+        renderizarResultadosPesquisa(rows, q);
+    } catch(e) {
+        resultsEl.innerHTML = '<div class="search-empty">❌ Erro ao pesquisar. Tenta novamente.</div>';
+    }
+}
+
+function renderizarResultadosPesquisa(rows, query) {
+    const el = document.getElementById('searchResults');
+    if (!rows.length) {
+        el.innerHTML = `<div class="search-empty">📭 Sem resultados para "<strong>${query}</strong>"</div>`;
+        return;
+    }
+    const totalPax = rows.reduce((s,r) => s + (r.pax||0), 0);
+    let html = `<div class="search-results-header">${rows.length} reserva${rows.length!==1?'s':''} encontrada${rows.length!==1?'s':''} · ${totalPax} pax total</div>`;
+    html += rows.map(r => {
+        const dataObj = new Date(r.data_reserva + 'T12:00:00');
+        const dia = dataObj.getDate();
+        const mes = dataObj.toLocaleDateString('pt-PT', { month: 'short' }).replace('.','');
+        const hora = String(r.hora_reserva || '').slice(0,5);
+        const turno = hora < '16:00' ? '🌞' : '🌙';
+        const obs = r.detalhes ? (r.detalhes.obs || '') : '';
+        const badgeClass = r.status === 'cancelada' ? 'badge-cancelada' : r.status === 'chegou' ? 'badge-chegou' : 'badge-confirmada';
+        const badgeLabel = r.status === 'cancelada' ? 'Cancelada' : r.status === 'chegou' ? 'Chegou' : 'Confirmada';
+        return `<div class="search-result-item">
+            <div class="sr-data">
+                <div class="sr-data-dia">${dia}</div>
+                <div class="sr-data-mes">${mes}</div>
+                <div class="sr-data-hora">${turno} ${hora}</div>
+            </div>
+            <div>
+                <div class="sr-info-nome">${r.cliente_nome || '—'}</div>
+                <div class="sr-info-meta">
+                    ${r.cliente_telemovel ? `<span>📞 ${r.cliente_telemovel}</span>` : ''}
+                    ${r.cliente_email ? `<span>✉️ ${r.cliente_email}</span>` : ''}
+                    ${obs ? `<span>📝 ${obs.replace('(Calendário Manual)','').trim()}</span>` : ''}
+                </div>
+                <span class="sr-badge ${badgeClass}">${badgeLabel}</span>
+            </div>
+            <div>
+                <div class="sr-pax">${r.pax}pax</div>
+                <div style="text-align:center;margin-top:6px">
+                    <button onclick="irParaData('${r.data_reserva}')" style="background:transparent;border:none;color:var(--gold);font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">Ver dia →</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+    el.innerHTML = html;
+}
+
+function limparPesquisa() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('btnLimpar').style.display = 'none';
+}
+
+function irParaData(data) {
+    document.getElementById('dataGlobal').value = data;
+    limparPesquisa();
+    carregarTudo();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Verificar disponibilidade por TURNO (não por hora exata) ───────────────
 async function verificarDisp() {
     const data = document.getElementById('dataForm').value;
     const horario = document.getElementById('horarioForm').value;
@@ -780,12 +914,23 @@ async function verificarDisp() {
     aviso.classList.remove('visivel'); btn.disabled = false;
     if (!data || !horario || !pax) return;
     try {
+        // Determinar turno: almoço = 12:00–15:59, jantar = 20:00+
+        const turno = horario < '16:00' ? 'almoco' : 'jantar';
+        // Buscar TODAS as reservas do mesmo turno no mesmo dia (não apenas a mesma hora)
         const rows = await sb(
-            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&hora_reserva=eq.${horario}&status=neq.cancelada&select=pax`,
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&status=neq.cancelada&select=pax,hora_reserva`,
             { method: 'GET' }
         ) || [];
-        const totalPax = rows.reduce((s, r) => s + (r.pax || 0), 0);
-        if (totalPax + parseInt(pax) > CONFIG.LOTACAO) { aviso.classList.add('visivel'); btn.disabled = true; }
+        const doTurno = rows.filter(r => {
+            const h = String(r.hora_reserva || '').slice(0,5);
+            return turno === 'almoco' ? h < '16:00' : h >= '16:00';
+        });
+        const totalPax = doTurno.reduce((s, r) => s + (r.pax || 0), 0);
+        if (totalPax + pax > CONFIG.LOTACAO) {
+            aviso.textContent = `🔴 Lotação esgotada para ${turno === 'almoco' ? 'Almoço' : 'Jantar'} (${totalPax}/${CONFIG.LOTACAO} pax)`;
+            aviso.classList.add('visivel');
+            btn.disabled = true;
+        }
     } catch(e) {}
 }
 
