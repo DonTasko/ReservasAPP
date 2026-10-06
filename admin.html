@@ -167,6 +167,8 @@
         .modal-res-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-top: 8px; }
         .badge-confirmada { background: var(--green-dim); color: #2ecc71; }
         .badge-chegou { background: rgba(39,174,96,0.3); color: #2ecc71; }
+        .mesa-card.chegou { border-color: rgba(46,204,113,0.5) !important; }
+        .mesa-card.chegou .mesa-status-dot { background: #2ecc71 !important; box-shadow: 0 0 6px rgba(46,204,113,0.6) !important; }
         .badge-cancelada { background: var(--red-dim); color: #e74c3c; }
         .modal-actions { display: flex; gap: 10px; margin-top: 12px; }
         .modal-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.2s; }
@@ -600,6 +602,7 @@ async function carregarTudo() {
             id: String(r.id || ''), nome: String(r.cliente_nome || ''),
             hora, turno: hora < '16:00' ? 'Almoço' : 'Jantar',
             pax: parseInt(r.pax) || 0, status: String(r.status || 'pendente'),
+            chegou: !!r.chegou,
             tel: String(r.cliente_telemovel || ''),
             email: String(r.cliente_email || ''), obs
         };
@@ -712,8 +715,10 @@ function renderizarMesas() {
             } else {
                 const capTotal = mesa.cap + (mesa.juncao||[]).reduce((s,n) => { const m = MESAS.find(x => x.num===n); return s+(m?m.cap:0); }, 0);
                 classe = reserva.pax >= capTotal ? 'cheia' : 'parcial';
+                if (reserva.chegou) classe += ' chegou';
                 const juncaoHTML = mesa.juncao && mesa.juncao.length > 0 ? `<div style="font-size:11px;color:var(--gold);margin-top:4px">🔗 + Mesa${mesa.juncao.length>1?'s':''} ${mesa.juncao.join(' + ')}</div>` : '';
-                clienteHTML = `<div class="mesa-cliente">${reserva.nome}</div><div class="mesa-pax">${reserva.pax} pax · ${reserva.hora}</div>${juncaoHTML}`;
+                const chegouHTML = reserva.chegou ? `<div style="font-size:11px;color:#2ecc71;font-weight:700;margin-top:2px">✅ Chegou</div>` : '';
+                clienteHTML = `<div class="mesa-cliente">${reserva.nome}</div><div class="mesa-pax">${reserva.pax} pax · ${reserva.hora}</div>${juncaoHTML}${chegouHTML}`;
             }
         }
         return `<div class="mesa-card ${classe}" onclick="abrirModalMesa(${mesa.num})">
@@ -739,7 +744,8 @@ function abrirModalMesa(numMesa) {
     if (!reserva) {
         content = `<div class="modal-empty">✅ Mesa livre para ${turnoMapa.toLowerCase()}</div>`;
     } else {
-        const badgeClass = reserva.status === 'Chegou' ? 'badge-chegou' : reserva.status === 'Cancelada' ? 'badge-cancelada' : 'badge-confirmada';
+        const badgeClass = reserva.chegou ? 'badge-chegou' : reserva.status === 'cancelada' ? 'badge-cancelada' : 'badge-confirmada';
+        const badgeLabel = reserva.chegou ? '✅ Chegou' : reserva.status === 'cancelada' ? 'Cancelada' : 'Confirmada';
         const nomeEsc = reserva.nome.replace(/'/g,"\\'");
         const avisoJ = mesa.juncao && mesa.juncao.length > 0 ? `<div style="background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:10px;margin-top:8px;font-size:12px;color:var(--gold)">🔗 Juntar Mesa ${numMesa} + Mesa${mesa.juncao.length>1?'s':''} ${mesa.juncao.join('+')} → ${capTotal} lugares</div>` : '';
         content = `<div class="modal-reserva-item">
@@ -747,9 +753,9 @@ function abrirModalMesa(numMesa) {
             <div class="modal-res-info"><span>🕐 ${reserva.hora}</span><span>👥 ${reserva.pax} pax</span>${reserva.tel?`<span>📞 ${reserva.tel}</span>`:''}</div>
             ${reserva.obs?`<div style="font-size:12px;color:var(--text-muted);margin-top:6px">📝 ${reserva.obs}</div>`:''}
             ${avisoJ}
-            <span class="modal-res-badge ${badgeClass}">${reserva.status}</span>
+            <span class="modal-res-badge ${badgeClass}">${badgeLabel}</span>
             <div class="modal-actions">
-                ${reserva.status==='Confirmada'?`<button class="modal-btn verde" onclick="marcarChegada('${reserva.id}')">✅ Chegou</button>`:''}
+                ${!reserva.chegou?`<button class="modal-btn verde" onclick="marcarChegada('${reserva.id}')">✅ Chegou</button>`:`<button class="modal-btn" style="opacity:0.5" onclick="desmarcarChegada('${reserva.id}')">↩️ Desfazer</button>`}
                 <button class="modal-btn vermelho" onclick="cancelarReserva('${reserva.id}','${nomeEsc}')">🗑️ Cancelar</button>
             </div>
         </div>`;
@@ -780,7 +786,7 @@ function renderizarLista() {
                 <div class="res-nome">${r.nome}</div>
                 <div class="res-meta">${r.tel||''} ${r.obs?'· '+r.obs.substring(0,30):''}</div>
                 <div class="res-actions">
-                    ${r.status==='Confirmada'?`<button class="res-btn verde" onclick="marcarChegada('${r.id}')">✅ Chegou</button>`:`<span style="font-size:11px;color:#2ecc71;font-weight:700">✓ ${r.status}</span>`}
+                    ${!r.chegou?`<button class="res-btn verde" onclick="marcarChegada('${r.id}')">✅ Chegou</button>`:`<span style="font-size:11px;color:#2ecc71;font-weight:700">✅ Chegou</span>`}
                     <button class="res-btn vermelho" onclick="cancelarReserva('${r.id}','${nomeEsc}')">🗑️</button>
                 </div>
             </div>
@@ -790,12 +796,22 @@ function renderizarLista() {
 }
 
 async function marcarChegada(id) {
-    if (!id || !confirm('Confirmar chegada?')) return;
+    if (!id) return;
     try {
         await sb(`reservas?id=eq.${id}&restaurante_id=eq.${CONFIG.RID}`, {
-            method: 'PATCH', body: JSON.stringify({ status: 'confirmada' }), prefer: 'return=minimal'
+            method: 'PATCH', body: JSON.stringify({ chegou: true }), prefer: 'return=minimal'
         });
         toast('✅ Chegada registada!'); fecharModalDireto(); await carregarTudo();
+    } catch(e) { toast('Erro de ligação', 'erro'); }
+}
+
+async function desmarcarChegada(id) {
+    if (!id) return;
+    try {
+        await sb(`reservas?id=eq.${id}&restaurante_id=eq.${CONFIG.RID}`, {
+            method: 'PATCH', body: JSON.stringify({ chegou: false }), prefer: 'return=minimal'
+        });
+        toast('↩️ Chegada desfeita'); fecharModalDireto(); await carregarTudo();
     } catch(e) { toast('Erro de ligação', 'erro'); }
 }
 
