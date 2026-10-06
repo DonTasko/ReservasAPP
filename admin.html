@@ -789,27 +789,32 @@ function renderizarTimeline() {
     const mesasAlmoco = atribuirReservasAMesas(reservasAlmoco);
     const mesasJantar = atribuirReservasAMesas(reservasJantar);
 
-    function slotHTML(reserva, hora) {
-        if (!reserva || reserva.juncaoSecundaria) return `<div class="tl-slot livre">·</div>`;
-        // Verificar se esta é a hora da reserva (match aproximado de ±30min)
-        const hRes = reserva.hora;
-        const [hR, mR] = hRes.split(':').map(Number);
-        const [hS, mS] = hora.split(':').map(Number);
-        const diffMin = Math.abs((hR*60+mR) - (hS*60+mS));
-        if (diffMin > 30) return `<div class="tl-slot"></div>`;
-        const isWalkIn = reserva.nome.startsWith('Walk-in');
-        const cls = isWalkIn ? 'walkin' : (reserva.chegou ? 'chegou' : 'ocupado');
-        const nomeEsc = reserva.nome.replace(/'/g,"\\'");
-        return `<div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})">
-            <div class="tl-slot-nome">${reserva.nome.replace('Walk-in ','🚶')}</div>
-            <div class="tl-slot-pax">${reserva.pax}p</div>
-        </div>`;
-    }
-
+    // Mesa ocupada = bloco contínuo em TODOS os slots do turno
+    // Só mostra o nome no primeiro slot, os restantes ficam coloridos mas vazios
     function blocoTurno(label, icon, slots, mesasAtrib) {
         const thSlots = slots.map(s => `<th>${s}</th>`).join('');
         const rows = mesasAtrib.map(mesa => {
-            const tds = slots.map(hora => `<td>${slotHTML(mesa.reserva, hora)}</td>`).join('');
+            const reserva = mesa.reserva;
+            let tds = '';
+            if (!reserva || reserva.juncaoSecundaria) {
+                // mesa livre — todos os slots com ponto
+                tds = slots.map(() => `<td><div class="tl-slot livre">·</div></td>`).join('');
+            } else {
+                const isWalkIn = reserva.nome.startsWith('Walk-in');
+                const cls = isWalkIn ? 'walkin' : (reserva.chegou ? 'chegou' : 'ocupado');
+                const nomeEsc = reserva.nome.replace(/'/g,"\\'");
+                const nomeDisplay = reserva.nome.replace('Walk-in ','🚶 M');
+                // Primeiro slot: mostra nome + pax; restantes: só cor
+                tds = slots.map((_, i) => {
+                    if (i === 0) {
+                        return `<td><div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})">
+                            <div class="tl-slot-nome">${nomeDisplay}</div>
+                            <div class="tl-slot-pax">${reserva.pax}p · ${reserva.hora}</div>
+                        </div></td>`;
+                    }
+                    return `<td><div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})" style="opacity:0.55"></div></td>`;
+                }).join('');
+            }
             return `<tr class="tl-row">
                 <td class="tl-mesa-label">M${mesa.num}<br><span style="font-size:10px;font-weight:400">${mesa.cap}lug</span></td>
                 ${tds}
