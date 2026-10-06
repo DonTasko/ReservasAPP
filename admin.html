@@ -660,7 +660,7 @@ async function calRenderizar() {
 
     try {
         const rows = await sb(
-            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=gte.${inicioStr}&data_reserva=lte.${fimStr}&select=data_reserva,hora_reserva&order=data_reserva`,
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=gte.${inicioStr}&data_reserva=lte.${fimStr}&or=(status.neq.cancelada,status.is.null)&select=data_reserva,hora_reserva&order=data_reserva`,
             { method: 'GET', headers: { 'Range': '0-999' } }
         );
         calDadosMes = {};
@@ -763,7 +763,7 @@ async function carregarTudo() {
     let rawData = [];
     try {
         rawData = await sb(
-            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&status=neq.cancelada&order=hora_reserva.asc`,
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&or=(status.neq.cancelada,status.is.null)&order=hora_reserva.asc`,
             { method: 'GET' }
         ) || [];
     } catch(e) {
@@ -859,7 +859,30 @@ function atribuirReservasAMesas(reservas) {
       }
     }
 
-    // 4. Sem mesas suficientes — colocar na maior disponível com overflow
+    // 4. Tentar junção de quatro mesas
+    for (let i = 0; i < livres.length; i++) {
+      for (let j = i+1; j < livres.length; j++) {
+        for (let k = j+1; k < livres.length; k++) {
+          for (let l = k+1; l < livres.length; l++) {
+            if (livres[i].cap + livres[j].cap + livres[k].cap + livres[l].cap >= pax) {
+              const quad = [livres[i], livres[j], livres[k], livres[l]].sort((a, b) => b.cap - a.cap);
+              const m1 = estado.find(m => m.num === quad[0].num);
+              const m2 = estado.find(m => m.num === quad[1].num);
+              const m3 = estado.find(m => m.num === quad[2].num);
+              const m4 = estado.find(m => m.num === quad[3].num);
+              m1.reserva = reserva;
+              m1.juncao  = [quad[1].num, quad[2].num, quad[3].num];
+              m2.reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: quad[0].num };
+              m3.reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: quad[0].num };
+              m4.reserva = { ...reserva, juncaoSecundaria: true, juncaoAncora: quad[0].num };
+              return;
+            }
+          }
+        }
+      }
+    }
+
+    // 5. Sem mesas suficientes — colocar na maior disponível com overflow
     const maior = livres.sort((a, b) => b.cap - a.cap)[0];
     if (maior) maior.reserva = { ...reserva, overflow: true };
   });
@@ -1147,19 +1170,19 @@ async function pesquisarCliente() {
             // Pesquisa exacta por telefone
             const clean = q.replace(/\s/g, '');
             rows = await sb(
-                `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_telemovel=eq.${encodeURIComponent(clean)}&status=neq.cancelada&order=data_reserva.desc,hora_reserva.asc&limit=50`,
+                `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_telemovel=eq.${encodeURIComponent(clean)}&or=(status.neq.cancelada,status.is.null)&order=data_reserva.desc,hora_reserva.asc&limit=50`,
                 { method: 'GET' }
             ) || [];
             // se não encontrou nada, tenta também como nome
             if (!rows.length) {
                 rows = await sb(
-                    `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_nome=ilike.${encodeURIComponent('*'+q+'*')}&status=neq.cancelada&order=data_reserva.desc,hora_reserva.asc&limit=50`,
+                    `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_nome=ilike.${encodeURIComponent('*'+q+'*')}&or=(status.neq.cancelada,status.is.null)&order=data_reserva.desc,hora_reserva.asc&limit=50`,
                     { method: 'GET' }
                 ) || [];
             }
         } else {
             rows = await sb(
-                `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_nome=ilike.${encodeURIComponent('*'+q+'*')}&status=neq.cancelada&order=data_reserva.desc,hora_reserva.asc&limit=50`,
+                `reservas?restaurante_id=eq.${CONFIG.RID}&cliente_nome=ilike.${encodeURIComponent('*'+q+'*')}&or=(status.neq.cancelada,status.is.null)&order=data_reserva.desc,hora_reserva.asc&limit=50`,
                 { method: 'GET' }
             ) || [];
         }
@@ -1239,7 +1262,7 @@ async function verificarDisp() {
         const turno = horario < '16:00' ? 'almoco' : 'jantar';
         // Buscar TODAS as reservas do mesmo turno no mesmo dia (não apenas a mesma hora)
         const rows = await sb(
-            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&status=neq.cancelada&select=pax,hora_reserva`,
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${data}&or=(status.neq.cancelada,status.is.null)&select=pax,hora_reserva`,
             { method: 'GET' }
         ) || [];
         const doTurno = rows.filter(r => {
@@ -1270,7 +1293,7 @@ document.getElementById('formReserva').onsubmit = async function(e) {
     const turno = f.horario < '16:00' ? 'almoco' : 'jantar';
     try {
         const rows = await sb(
-            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${f.data}&status=neq.cancelada&select=pax,hora_reserva`,
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${f.data}&or=(status.neq.cancelada,status.is.null)&select=pax,hora_reserva`,
             { method: 'GET' }
         ) || [];
         const doTurno = rows.filter(r => {
