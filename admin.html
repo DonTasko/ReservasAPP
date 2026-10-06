@@ -940,8 +940,35 @@ document.querySelector('input[name="pax"]').addEventListener('change', verificar
 document.getElementById('formReserva').onsubmit = async function(e) {
     e.preventDefault();
     const btn = document.getElementById('btnGravar');
-    btn.disabled = true; btn.textContent = '⏳ A gravar...';
+    const aviso = document.getElementById('avisoLotacao');
+    btn.disabled = true; btn.textContent = '⏳ A verificar...';
+
+    // Verificação de capacidade no momento do submit (não confiar no estado do botão)
     const f = Object.fromEntries(new FormData(this).entries());
+    const paxNovo = parseInt(f.pax) || 1;
+    const turno = f.horario < '16:00' ? 'almoco' : 'jantar';
+    try {
+        const rows = await sb(
+            `reservas?restaurante_id=eq.${CONFIG.RID}&data_reserva=eq.${f.data}&status=neq.cancelada&select=pax,hora_reserva`,
+            { method: 'GET' }
+        ) || [];
+        const doTurno = rows.filter(r => {
+            const h = String(r.hora_reserva || '').slice(0,5);
+            return turno === 'almoco' ? h < '16:00' : h >= '16:00';
+        });
+        const totalPax = doTurno.reduce((s, r) => s + (r.pax || 0), 0);
+        if (totalPax + paxNovo > CONFIG.LOTACAO) {
+            aviso.textContent = `🔴 Lotação esgotada para ${turno === 'almoco' ? 'Almoço' : 'Jantar'} (${totalPax}/${CONFIG.LOTACAO} pax). Reserva não gravada.`;
+            aviso.classList.add('visivel');
+            btn.disabled = false; btn.textContent = '💾 Gravar Reserva';
+            return; // bloquear gravação
+        }
+    } catch(e) {
+        // se falhar a verificação, continua mas avisa
+        console.warn('Verificação de capacidade falhou:', e);
+    }
+
+    btn.textContent = '⏳ A gravar...';
     try {
         const payload = {
             restaurante_id: CONFIG.RID,
