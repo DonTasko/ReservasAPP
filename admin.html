@@ -234,11 +234,11 @@
         .tl-row td:last-child { border-right: none; }
         .tl-mesa-label { padding: 0 16px; font-size: 12px; font-weight: 700; color: var(--text-muted); white-space: nowrap; background: var(--surface2); position: sticky; left: 0; z-index: 1; border-right: 1px solid var(--border) !important; }
         .tl-slot { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: default; }
-        .tl-slot.ocupado { background: rgba(201,168,76,0.2); border-left: 2px solid var(--gold); cursor: pointer; flex-direction: column; gap: 2px; padding: 4px; }
-        .tl-slot.ocupado:hover { background: rgba(201,168,76,0.35); }
-        .tl-slot.chegou { background: rgba(46,204,113,0.15); border-left: 2px solid #2ecc71; }
-        .tl-slot.chegou:hover { background: rgba(46,204,113,0.25); }
-        .tl-slot.walkin { background: rgba(212,135,10,0.15); border-left: 2px solid var(--amber); }
+        .tl-slot.ocupado { background: rgba(201,168,76,0.25); border-left: 3px solid var(--gold); cursor: pointer; flex-direction: column; gap: 2px; padding: 4px; }
+        .tl-slot.ocupado:hover { background: rgba(201,168,76,0.45); }
+        .tl-slot.chegou { background: rgba(46,204,113,0.22); border-left: 3px solid #2ecc71; cursor: pointer; flex-direction: column; gap: 2px; padding: 4px; }
+        .tl-slot.chegou:hover { background: rgba(46,204,113,0.38); }
+        .tl-slot.walkin { background: rgba(212,135,10,0.22); border-left: 3px solid var(--amber); cursor: pointer; flex-direction: column; gap: 2px; padding: 4px; }
         .tl-slot-nome { font-size: 11px; font-weight: 700; color: var(--gold); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
         .tl-slot.chegou .tl-slot-nome { color: #2ecc71; }
         .tl-slot.walkin .tl-slot-nome { color: var(--amber); }
@@ -326,42 +326,6 @@
     </div>
 
     <div class="main">
-
-        <!-- Atalhos -->
-        <div class="shortcuts">
-            <a href="reservas.html" class="shortcut sc-res">
-                <div class="shortcut-icon">📅</div>
-                <div>
-                    <div class="shortcut-label">Reservas</div>
-                    <div class="shortcut-sub">Gerir reservas e mesas</div>
-                </div>
-                <div class="shortcut-arr">→</div>
-            </a>
-            <a href="http://haccpdigital.online/" target="_blank" class="shortcut sc-haccp">
-                <div class="shortcut-icon">🛡️</div>
-                <div>
-                    <div class="shortcut-label">HACCP</div>
-                    <div class="shortcut-sub">Segurança alimentar</div>
-                </div>
-                <div class="shortcut-arr">→</div>
-            </a>
-            <a href="faturas.html" class="shortcut sc-fat">
-                <div class="shortcut-icon">🧾</div>
-                <div>
-                    <div class="shortcut-label">Faturas</div>
-                    <div class="shortcut-sub">Despesas e contabilidade</div>
-                </div>
-                <div class="shortcut-arr">→</div>
-            </a>
-            <a href="config-reservas.html" class="shortcut sc-cfg">
-                <div class="shortcut-icon">⚙️</div>
-                <div>
-                    <div class="shortcut-label">Configurações</div>
-                    <div class="shortcut-sub">Horários e dias de reserva</div>
-                </div>
-                <div class="shortcut-arr">→</div>
-            </a>
-        </div>
 
         <!-- Pesquisa de Clientes -->
         <div class="search-panel">
@@ -515,6 +479,34 @@
 
             </div>
         </div>
+
+        <!-- Atalhos (fundo da página) -->
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border)">
+            <div class="section-title">Acesso Rápido</div>
+            <div class="shortcuts">
+                <a href="reservas.html" class="shortcut sc-res">
+                    <div class="shortcut-icon">📅</div>
+                    <div><div class="shortcut-label">Reservas</div></div>
+                    <div class="shortcut-arr">→</div>
+                </a>
+                <a href="http://haccpdigital.online/" target="_blank" class="shortcut sc-haccp">
+                    <div class="shortcut-icon">🛡️</div>
+                    <div><div class="shortcut-label">HACCP</div></div>
+                    <div class="shortcut-arr">→</div>
+                </a>
+                <a href="faturas.html" class="shortcut sc-fat">
+                    <div class="shortcut-icon">🧾</div>
+                    <div><div class="shortcut-label">Faturas</div></div>
+                    <div class="shortcut-arr">→</div>
+                </a>
+                <a href="config-reservas.html" class="shortcut sc-cfg">
+                    <div class="shortcut-icon">⚙️</div>
+                    <div><div class="shortcut-label">Configurações</div></div>
+                    <div class="shortcut-arr">→</div>
+                </a>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -803,16 +795,17 @@ function renderizarTimeline() {
                 const isWalkIn = reserva.nome.startsWith('Walk-in');
                 const cls = isWalkIn ? 'walkin' : (reserva.chegou ? 'chegou' : 'ocupado');
                 const nomeEsc = reserva.nome.replace(/'/g,"\\'");
-                const nomeDisplay = reserva.nome.replace('Walk-in ','🚶 M');
-                // Primeiro slot: mostra nome + pax; restantes: só cor
+                const nomeDisplay = isWalkIn ? reserva.nome.replace('Walk-in','🚶') : reserva.nome;
+                // Todos os slots com cor; nome + hora apenas no primeiro, os outros ficam sólidos sem texto
                 tds = slots.map((_, i) => {
                     if (i === 0) {
-                        return `<td><div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})">
+                        return `<td style="padding:0"><div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})">
                             <div class="tl-slot-nome">${nomeDisplay}</div>
                             <div class="tl-slot-pax">${reserva.pax}p · ${reserva.hora}</div>
                         </div></td>`;
                     }
-                    return `<td><div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})" style="opacity:0.55"></div></td>`;
+                    // slots seguintes: mesmo fundo, sem texto, sem borda esquerda repetida
+                    return `<td style="padding:0"><div class="tl-slot ${cls}" onclick="abrirModalTimeline('${reserva.id}','${nomeEsc}','${reserva.hora}',${reserva.pax})" style="border-left:none;opacity:0.85"></div></td>`;
                 }).join('');
             }
             return `<tr class="tl-row">
