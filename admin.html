@@ -556,6 +556,8 @@ async function carregarLotacao() {
     const sJ = document.getElementById('subJantar'); if (sJ) sJ.textContent = 'de ' + l + ' lugares';
 }
 
+let _autoRefreshTimer = null;
+
 function iniciar() {
     const hoje = new Date().toISOString().split('T')[0];
     document.getElementById('dataGlobal').value = hoje;
@@ -563,6 +565,17 @@ function iniciar() {
     atualizarTopbarDate(hoje);
     carregarLotacao();
     carregarTudo();
+    iniciarAutoRefresh();
+}
+
+function iniciarAutoRefresh() {
+    if (_autoRefreshTimer) clearInterval(_autoRefreshTimer);
+    _autoRefreshTimer = setInterval(() => {
+        // Não atualiza se o modal estiver aberto ou formulário em foco
+        const modalAberto = document.getElementById('modalOverlay').classList.contains('open');
+        const formFoco = document.activeElement && ['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName);
+        if (!modalAberto && !formFoco) carregarTudo();
+    }, 60000); // 60 segundos
 }
 
 function atualizarTopbarDate(iso) {
