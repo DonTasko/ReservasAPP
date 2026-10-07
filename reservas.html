@@ -200,7 +200,7 @@
     <div class="horario-sep"></div>
     <div class="horario-item">
       <span class="horario-label">Fecho semanal</span>
-      <span class="horario-value">2ª, 3ª e 4ª feira</span>
+      <span class="horario-value" id="hFechoSemanal">—</span>
     </div>
   </div>
 </div>
@@ -495,11 +495,23 @@
     const almocoFim = ref.almocoRestFim || ref.almocoFim || '15:00';
     const jantarIni = ref.jantarRestIni || ref.jantarIni || '20:00';
     const jantarFim = ref.jantarRestFim || ref.jantarFim || '23:30';
+    // Cozinha = hora da última reserva (almocoResFim / jantarResFim)
+    const cozinhaAlmoco = ref.almocoResFim || subtrairMinutos(almocoFim, 60);
+    const cozinhaJantar = ref.jantarResFim || subtrairMinutos(jantarFim, 60);
 
     document.getElementById('hAlmoco').textContent = fmtH(almocoIni) + '–' + fmtH(almocoFim);
-    document.getElementById('hCozinhaAlmoco').textContent = subtrairMinutos(almocoFim, 60);
+    document.getElementById('hCozinhaAlmoco').textContent = fmtH(cozinhaAlmoco);
     document.getElementById('hJantar').textContent = fmtH(jantarIni) + '–' + fmtH(jantarFim);
-    document.getElementById('hCozinhaJantar').textContent = subtrairMinutos(jantarFim, 60);
+    document.getElementById('hCozinhaJantar').textContent = fmtH(cozinhaJantar);
+
+    // Fecho semanal dinâmico
+    const ABREV = { segunda:'2ª', terca:'3ª', quarta:'4ª', quinta:'5ª', sexta:'6ª', sabado:'Sáb', domingo:'Dom' };
+    const fechos = (configReservas.fechoSemanal || []).map(k => ABREV[k] || k);
+    const elFecho = document.getElementById('hFechoSemanal');
+    if (elFecho) {
+      if (fechos.length === 0) elFecho.closest('.horario-item').style.display = 'none';
+      else elFecho.textContent = fechos.join(', ') + ' feira';
+    }
   }
 
   // ── CONFIG DO DIA ──
