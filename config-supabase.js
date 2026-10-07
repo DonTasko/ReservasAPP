@@ -67,7 +67,9 @@ async function apiRequest(action, data = {}) {
       const almocoFimVal  = d.almocoRestFim || d.almocoFim || d.almoco_fim || '15:00';
       const jantarIniVal  = d.jantarRestIni || d.jantarIni || d.jantar_ini || '20:00';
       const jantarFimVal  = d.jantarRestFim || d.jantarFim || d.jantar_fim || '23:30';
+      const almocoResIniVal = d.almocoResIni || d.almoco_res_ini || almocoIniVal;
       const almocoResFimVal = d.almocoResFim || d.almoco_res_fim || almocoFimVal;
+      const jantarResIniVal = d.jantarResIni || d.jantar_res_ini || jantarIniVal;
       const jantarResFimVal = d.jantarResFim || d.jantar_res_fim || jantarFimVal;
       diasObj[dia] = {
         aberto,
@@ -79,7 +81,9 @@ async function apiRequest(action, data = {}) {
         almocoFim:     almocoFimVal,
         jantarIni:     jantarIniVal,
         jantarFim:     jantarFimVal,
+        almocoResIni:  almocoResIniVal,
         almocoResFim:  almocoResFimVal,
+        jantarResIni:  jantarResIniVal,
         jantarResFim:  jantarResFimVal,
         maxPax:        d.maxPax || d.max_pax || c.lotacao_max || 24,
         intervalo:     d.intervalo || 30,
