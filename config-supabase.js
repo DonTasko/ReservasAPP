@@ -62,21 +62,25 @@ async function apiRequest(action, data = {}) {
       const diaCustom = diasConfig[dia] || {};
       diasObj[dia] = {
         aberto,
-        almocoRestIni:   diaCustom.almocoRestIni   || diaCustom.almocoIni   || '12:00',
-        almocoRestFim:   diaCustom.almocoRestFim   || diaCustom.almocoFim   || '15:00',
-        almocoIni:       diaCustom.almocoIni       || '12:00',
-        almocoFim:       diaCustom.almocoFim       || '14:00',
-        jantarIni:       diaCustom.jantarIni       || '20:00',
-        jantarFim:       diaCustom.jantarFim       || '23:30',
         maxPax:          diaCustom.maxPax          || c.lotacao_max || 24,
         intervalo:       diaCustom.intervalo       || 30,
         ...diaCustom,
         aberto, // garantir aberto após spread
+        // Garantir campos normalizados com fallback entre novos e antigos nomes
+        almocoRestIni:   diaCustom.almocoRestIni   || diaCustom.almocoIni   || '12:00',
+        almocoRestFim:   diaCustom.almocoRestFim   || diaCustom.almocoFim   || '15:00',
+        jantarRestIni:   diaCustom.jantarRestIni   || diaCustom.jantarIni   || '20:00',
+        jantarRestFim:   diaCustom.jantarRestFim   || diaCustom.jantarFim   || '23:30',
+        almocoIni:       diaCustom.almocoRestIni   || diaCustom.almocoIni   || '12:00',
+        almocoFim:       diaCustom.almocoRestFim   || diaCustom.almocoFim   || '15:00',
+        jantarIni:       diaCustom.jantarRestIni   || diaCustom.jantarIni   || '20:00',
+        jantarFim:       diaCustom.jantarRestFim   || diaCustom.jantarFim   || '23:30',
       };
     });
 
     const config = {
       dias: diasObj,
+      fechoSemanal,
       maxConvidados: c.max_convidados || 6,
       lotacaoMaxima: c.lotacao_max || 24,
       motivoFechoSemanal: c.motivo_fecho_semanal || 'Encerrado',

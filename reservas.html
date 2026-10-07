@@ -483,21 +483,30 @@
   // ── BANNER COM HORÁRIOS DO RESTAURANTE ──
   function actualizarBannerHorarios() {
     if (!configReservas || !configReservas.dias) return;
-    const ref = configReservas.dias.quinta
-      || configReservas.dias.sexta
-      || configReservas.dias.sabado
-      || configReservas.dias.domingo;
+
+    // Usar um dia de referência que normalmente tem jantar (sexta ou sabado)
+    const PRIORIDADE = ['sexta','sabado','quinta','domingo','terca','quarta','segunda'];
+    let ref = null;
+    for (const dia of PRIORIDADE) {
+      const d = configReservas.dias[dia];
+      if (d && d.aberto === 'SIM' && d.jantarRestIni) { ref = d; break; }
+    }
+    if (!ref) {
+      // fallback: qualquer dia aberto
+      for (const dia of PRIORIDADE) {
+        const d = configReservas.dias[dia];
+        if (d && d.aberto === 'SIM') { ref = d; break; }
+      }
+    }
     if (!ref) return;
 
-    // Usar almocoRestIni/Fim para banner (horário restaurante)
-    // Compatibilidade com campos antigos almocoIni/Fim
-    const almocoIni = ref.almocoRestIni || ref.almocoIni || '12:00';
-    const almocoFim = ref.almocoRestFim || ref.almocoFim || '15:00';
-    const jantarIni = ref.jantarRestIni || ref.jantarIni || '20:00';
-    const jantarFim = ref.jantarRestFim || ref.jantarFim || '23:30';
-    // Cozinha = hora da última reserva (almocoResFim / jantarResFim)
-    const cozinhaAlmoco = ref.almocoResFim || subtrairMinutos(almocoFim, 60);
-    const cozinhaJantar = ref.jantarResFim || subtrairMinutos(jantarFim, 60);
+    const almocoIni = ref.almocoRestIni || '12:00';
+    const almocoFim = ref.almocoRestFim || '15:00';
+    const jantarIni = ref.jantarRestIni || '20:00';
+    const jantarFim = ref.jantarRestFim || '23:30';
+    // Cozinha = última hora de reserva (almocoResFim / jantarResFim)
+    const cozinhaAlmoco = ref.almocoResFim || ref.almocoFim || almocoFim;
+    const cozinhaJantar = ref.jantarResFim || ref.jantarFim || jantarFim;
 
     document.getElementById('hAlmoco').textContent = fmtH(almocoIni) + '–' + fmtH(almocoFim);
     document.getElementById('hCozinhaAlmoco').textContent = fmtH(cozinhaAlmoco);
