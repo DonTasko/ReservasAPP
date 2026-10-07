@@ -59,22 +59,31 @@ async function apiRequest(action, data = {}) {
     const diasObj = {};
     DIAS_SEMANA.forEach(dia => {
       const aberto = !fechoSemanal.includes(dia) ? 'SIM' : 'NÃO';
-      const diaCustom = diasConfig[dia] || {};
+      const d = diasConfig[dia] || {};
+      // A DB guarda em snake_case (almoco_ini) e boolean aberto
+      // config-reservas.html guarda em camelCase (almocoRestIni) e string 'SIM'/'NÃO'
+      // Suportar ambos os formatos
+      const almocoIniVal  = d.almocoRestIni || d.almocoIni || d.almoco_ini || '12:00';
+      const almocoFimVal  = d.almocoRestFim || d.almocoFim || d.almoco_fim || '15:00';
+      const jantarIniVal  = d.jantarRestIni || d.jantarIni || d.jantar_ini || '20:00';
+      const jantarFimVal  = d.jantarRestFim || d.jantarFim || d.jantar_fim || '23:30';
+      const almocoResFimVal = d.almocoResFim || d.almoco_res_fim || almocoFimVal;
+      const jantarResFimVal = d.jantarResFim || d.jantar_res_fim || jantarFimVal;
       diasObj[dia] = {
         aberto,
-        maxPax:          diaCustom.maxPax          || c.lotacao_max || 24,
-        intervalo:       diaCustom.intervalo       || 30,
-        ...diaCustom,
-        aberto, // garantir aberto após spread
-        // Garantir campos normalizados com fallback entre novos e antigos nomes
-        almocoRestIni:   diaCustom.almocoRestIni   || diaCustom.almocoIni   || '12:00',
-        almocoRestFim:   diaCustom.almocoRestFim   || diaCustom.almocoFim   || '15:00',
-        jantarRestIni:   diaCustom.jantarRestIni   || diaCustom.jantarIni   || '20:00',
-        jantarRestFim:   diaCustom.jantarRestFim   || diaCustom.jantarFim   || '23:30',
-        almocoIni:       diaCustom.almocoRestIni   || diaCustom.almocoIni   || '12:00',
-        almocoFim:       diaCustom.almocoRestFim   || diaCustom.almocoFim   || '15:00',
-        jantarIni:       diaCustom.jantarRestIni   || diaCustom.jantarIni   || '20:00',
-        jantarFim:       diaCustom.jantarRestFim   || diaCustom.jantarFim   || '23:30',
+        almocoRestIni: almocoIniVal,
+        almocoRestFim: almocoFimVal,
+        jantarRestIni: jantarIniVal,
+        jantarRestFim: jantarFimVal,
+        almocoIni:     almocoIniVal,
+        almocoFim:     almocoFimVal,
+        jantarIni:     jantarIniVal,
+        jantarFim:     jantarFimVal,
+        almocoResFim:  almocoResFimVal,
+        jantarResFim:  jantarResFimVal,
+        maxPax:        d.maxPax || d.max_pax || c.lotacao_max || 24,
+        intervalo:     d.intervalo || 30,
+        reservas:      d.reservas === 'SIM' || d.reservas === true ? 'SIM' : 'NÃO',
       };
     });
 

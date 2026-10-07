@@ -500,13 +500,13 @@
     }
     if (!ref) return;
 
-    const almocoIni = ref.almocoRestIni || '12:00';
-    const almocoFim = ref.almocoRestFim || '15:00';
-    const jantarIni = ref.jantarRestIni || '20:00';
-    const jantarFim = ref.jantarRestFim || '23:30';
-    // Cozinha = última hora de reserva (almocoResFim / jantarResFim)
-    const cozinhaAlmoco = ref.almocoResFim || ref.almocoFim || almocoFim;
-    const cozinhaJantar = ref.jantarResFim || ref.jantarFim || jantarFim;
+    const almocoIni = ref.almocoRestIni || ref.almocoIni || '12:00';
+    const almocoFim = ref.almocoRestFim || ref.almocoFim || '15:00';
+    const jantarIni = ref.jantarRestIni || ref.jantarIni || '20:00';
+    const jantarFim = ref.jantarRestFim || ref.jantarFim || '23:30';
+    // Cozinha = última hora de reserva; fallback para hora de fecho do restaurante
+    const cozinhaAlmoco = ref.almocoResFim || almocoFim;
+    const cozinhaJantar = ref.jantarResFim || jantarFim;
 
     document.getElementById('hAlmoco').textContent = fmtH(almocoIni) + '–' + fmtH(almocoFim);
     document.getElementById('hCozinhaAlmoco').textContent = fmtH(cozinhaAlmoco);
