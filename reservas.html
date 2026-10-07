@@ -667,13 +667,14 @@
     const almocoResIni = (diaConf && (diaConf.almocoResIni || diaConf.almocoIni)) || '12:00';
     const almocoResFim = (diaConf && (diaConf.almocoResFim || diaConf.almocoFim)) || '14:00';
     const almocoRestFim = (diaConf && (diaConf.almocoRestFim || diaConf.almocoFim)) || '15:00';
-    const almocoSlots = gerarSlots(almocoResIni, almocoResFim);
+    const intervalo = (diaConf && diaConf.intervalo) || 30;
+    const almocoSlots = gerarSlots(almocoResIni, almocoResFim, intervalo);
 
     // Slots de jantar — usar jantarResIni/Fim
     const jantarResIni = (diaConf && (diaConf.jantarResIni || diaConf.jantarIni)) || '';
     const jantarResFim = (diaConf && (diaConf.jantarResFim || diaConf.jantarFim)) || '';
     const jantarRestFim = (diaConf && (diaConf.jantarRestFim || diaConf.jantarFim)) || '23:30';
-    const jantarSlots = jantarResIni && jantarResFim ? gerarSlots(jantarResIni, jantarResFim) : [];
+    const jantarSlots = jantarResIni && jantarResFim ? gerarSlots(jantarResIni, jantarResFim, intervalo) : [];
 
     if (almocoSlots.length) {
       const g = document.createElement('div');
@@ -700,13 +701,14 @@
     }
   }
 
-  function gerarSlots(inicio, fim) {
+  function gerarSlots(inicio, fim, intervalo) {
+    intervalo = intervalo || 30;
     const slots = [];
     let [h, m] = inicio.split(':').map(Number);
     const [hF, mF] = fim.split(':').map(Number);
     while (h < hF || (h === hF && m < mF)) {
       slots.push(String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'));
-      m += 30; if (m >= 60) { m = 0; h++; }
+      m += intervalo; if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
     }
     return slots;
   }
