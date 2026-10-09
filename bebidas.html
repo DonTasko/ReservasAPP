@@ -260,7 +260,7 @@ function renderMenu() {
       const preco      = item.preco  || parseFloat(item['Preço']) || 0;
       const obs        = item.observacoes || item.Observações || item.Observacoes || '';
       const img        = item.imagem || item.Link_Imagem || item.Imagem || '';
-      const promo      = item._promoPrice || null;
+      const promo      = item.promocao ? parseFloat(item.promocao.toString().replace(',', '.')) : null;
       const pontuacao  = item.pontuacao ? parseFloat(item.pontuacao) : null;
       const linkVivino = item.linkVivino || '';
 
