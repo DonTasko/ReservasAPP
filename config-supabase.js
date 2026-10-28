@@ -170,11 +170,25 @@ async function apiRequest(action, data = {}) {
       detalhes:          data.obs ? { obs: data.obs } : null,
     };
 
-    await sbFetch('reservas', {
+    const inserted = await sbFetch('reservas', {
       method: 'POST',
       body: JSON.stringify(payload),
-      prefer: 'return=minimal',
+      prefer: 'return=representation',
     });
+
+    // Acionar Edge Function de notificações (email + calendário) sem bloquear o utilizador
+    const record = Array.isArray(inserted) ? inserted[0] : inserted;
+    if (record) {
+      fetch(`${CONFIG.SUPABASE_URL}/functions/v1/notify-reserva`, {
+        method: 'POST',
+        headers: {
+          'apikey': CONFIG.SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ record }),
+      }).catch(e => console.warn('[notify-reserva] erro:', e));
+    }
 
     if (CONFIG.DEBUG) console.log('📥 reservaSite: ok');
     return { status: 'success', message: 'Reserva registada com sucesso.' };
