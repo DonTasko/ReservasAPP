@@ -149,6 +149,126 @@ header {
 .items { display: grid; gap: 1.2rem; }
 .items.hidden { display: none; }
 
+/* ===== PRATO DO DIA ===== */
+.prato-dia-wrap {
+  margin-bottom: 3rem;
+}
+
+.prato-dia-card {
+  background: linear-gradient(135deg, #2a1f12 0%, #1e1a14 100%);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 1.8rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.prato-dia-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.prato-dia-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent);
+  color: #1a1a1a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  margin-bottom: 1.2rem;
+}
+
+.prato-dia-nome {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.5px;
+}
+
+.prato-dia-obs {
+  color: #bdbdbd;
+  font-size: 0.9rem;
+  margin-bottom: 1.4rem;
+  line-height: 1.5;
+}
+
+.prato-dia-itens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+}
+
+.prato-dia-item {
+  background: rgba(212,165,116,0.1);
+  border: 1px solid rgba(212,165,116,0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.88rem;
+  color: var(--light);
+}
+
+.prato-dia-item span {
+  color: var(--accent);
+  font-weight: 500;
+  margin-right: 0.3rem;
+}
+
+.prato-dia-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(212,165,116,0.2);
+}
+
+.prato-dia-inclui {
+  font-size: 0.8rem;
+  color: #999;
+  letter-spacing: 0.5px;
+}
+
+.prato-dia-preco {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.prato-dia-preco small {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.prato-dia-indisponivel {
+  text-align: center;
+  padding: 2rem;
+  border: 1px dashed rgba(212,165,116,0.3);
+  border-radius: 16px;
+  color: #888;
+}
+
+.prato-dia-indisponivel p {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+@media (max-width: 600px) {
+  .prato-dia-card { padding: 1.4rem 1.2rem; }
+  .prato-dia-nome { font-size: 1.6rem; }
+  .prato-dia-footer { flex-direction: column; gap: 0.8rem; align-items: flex-start; }
+}
+
 .item {
   background: var(--card);
   border-radius: 12px;
@@ -219,6 +339,7 @@ header {
 <div class="wrapper">
   <h1 class="page-title">Nosso Menu</h1>
   <p class="page-subtitle">Sabores Autênticos</p>
+  <div id="prato-dia" class="prato-dia-wrap"></div>
   <div id="menu" class="loading">Carregando menu...</div>
 </div>
 
@@ -311,6 +432,47 @@ function renderMenu(menu) {
   });
 }
 
+async function loadPratoDia() {
+  const el = document.getElementById('prato-dia');
+  if (!el) return;
+  try {
+    const d = await apiRequest('getPratoDia');
+    if (!d || !d.disponivel) {
+      el.innerHTML = `
+        <div class="prato-dia-indisponivel">
+          <div style="font-size:1.6rem">🍽️</div>
+          <p>Consulte as várias opções do nosso menu</p>
+        </div>`;
+      return;
+    }
+    const preco = parseFloat(d.preco) || 0;
+    el.innerHTML = `
+      <div class="prato-dia-card">
+        <div class="prato-dia-badge">⭐ Prato do Dia</div>
+        <div class="prato-dia-nome">${d.prato || '—'}</div>
+        ${d.obs ? `<div class="prato-dia-obs">${d.obs}</div>` : ''}
+        <div class="prato-dia-itens">
+          ${d.sopa ? `<div class="prato-dia-item"><span>🍲</span>${d.sopa}</div>` : ''}
+          <div class="prato-dia-item"><span>🍽️</span>${d.prato || ''}</div>
+          ${d.sobremesa ? `<div class="prato-dia-item"><span>🍮</span>${d.sobremesa}</div>` : ''}
+          <div class="prato-dia-item"><span>☕</span>Café</div>
+        </div>
+        <div class="prato-dia-footer">
+          <div class="prato-dia-inclui">Sopa · Prato · Sobremesa · Café</div>
+          <div class="prato-dia-preco">${preco.toFixed(2)}<small> €</small></div>
+        </div>
+      </div>`;
+  } catch (e) {
+    console.warn('Prato do dia não disponível:', e);
+    el.innerHTML = `
+      <div class="prato-dia-indisponivel">
+        <div style="font-size:1.6rem">🍽️</div>
+        <p>Consulte as várias opções do nosso menu</p>
+      </div>`;
+  }
+}
+
+loadPratoDia();
 loadMenu();
 </script>
 
