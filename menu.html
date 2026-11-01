@@ -152,6 +152,9 @@ header {
 /* ===== PRATO DO DIA ===== */
 .prato-dia-wrap {
   margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .prato-dia-card {
@@ -437,7 +440,7 @@ async function loadPratoDia() {
   if (!el) return;
   try {
     const d = await apiRequest('getPratoDia');
-    if (!d || !d.disponivel) {
+    if (!d || !d.disponivel || !d.pratos || !d.pratos.length) {
       el.innerHTML = `
         <div class="prato-dia-indisponivel">
           <div style="font-size:1.6rem">🍽️</div>
@@ -445,23 +448,25 @@ async function loadPratoDia() {
         </div>`;
       return;
     }
-    const preco = parseFloat(d.preco) || 0;
-    el.innerHTML = `
-      <div class="prato-dia-card">
-        <div class="prato-dia-badge">⭐ Prato do Dia</div>
-        <div class="prato-dia-nome">${d.prato || '—'}</div>
-        ${d.obs ? `<div class="prato-dia-obs">${d.obs}</div>` : ''}
-        <div class="prato-dia-itens">
-          ${d.sopa ? `<div class="prato-dia-item"><span>🍲</span>${d.sopa}</div>` : ''}
-          <div class="prato-dia-item"><span>🍽️</span>${d.prato || ''}</div>
-          ${d.sobremesa ? `<div class="prato-dia-item"><span>🍮</span>${d.sobremesa}</div>` : ''}
-          <div class="prato-dia-item"><span>☕</span>Café</div>
-        </div>
-        <div class="prato-dia-footer">
-          <div class="prato-dia-inclui">Sopa · Prato · Sobremesa · Café</div>
-          <div class="prato-dia-preco">${preco.toFixed(2)}<small> €</small></div>
-        </div>
-      </div>`;
+    el.innerHTML = d.pratos.map(p => {
+      const preco = parseFloat(p.preco) || 0;
+      return `
+        <div class="prato-dia-card">
+          <div class="prato-dia-badge">⭐ Prato do Dia</div>
+          <div class="prato-dia-nome">${p.prato || '—'}</div>
+          ${p.obs ? `<div class="prato-dia-obs">${p.obs}</div>` : ''}
+          <div class="prato-dia-itens">
+            ${p.sopa ? `<div class="prato-dia-item"><span>🍲</span>${p.sopa}</div>` : ''}
+            <div class="prato-dia-item"><span>🍽️</span>${p.prato || ''}</div>
+            ${p.sobremesa ? `<div class="prato-dia-item"><span>🍮</span>${p.sobremesa}</div>` : ''}
+            <div class="prato-dia-item"><span>☕</span>Café</div>
+          </div>
+          <div class="prato-dia-footer">
+            <div class="prato-dia-inclui">Sopa · Prato · Sobremesa · Café</div>
+            <div class="prato-dia-preco">${preco.toFixed(2)}<small> €</small></div>
+          </div>
+        </div>`;
+    }).join('');
   } catch (e) {
     console.warn('Prato do dia não disponível:', e);
     el.innerHTML = `
