@@ -465,7 +465,7 @@
                             </div>
                             <div class="form-field">
                                 <label>Pax *</label>
-                                <input type="number" name="pax" value="2" min="1" max="34" required>
+                                <input type="number" name="pax" value="2" min="1" max="999" required>
                             </div>
                         </div>
                         <div class="form-field">
@@ -1135,7 +1135,8 @@ async function gravarWalkIn(numMesa, data, hora) {
                 pax,
                 status: 'confirmada',
                 chegou: true,
-                detalhes: { obs: '(Calendário Manual)' }
+                detalhes: { obs: '(Calendário Manual)' },
+                origem: 'admin'
             }),
             prefer: 'return=minimal'
         });
@@ -1271,9 +1272,9 @@ async function verificarDisp() {
         });
         const totalPax = doTurno.reduce((s, r) => s + (r.pax || 0), 0);
         if (totalPax + pax > CONFIG.LOTACAO) {
-            aviso.textContent = `🔴 Lotação esgotada para ${turno === 'almoco' ? 'Almoço' : 'Jantar'} (${totalPax}/${CONFIG.LOTACAO} pax)`;
+            aviso.textContent = `⚠️ Atenção: lotação excedida para ${turno === 'almoco' ? 'Almoço' : 'Jantar'} (${totalPax + pax}/${CONFIG.LOTACAO} pax) — pode gravar mesmo assim`;
             aviso.classList.add('visivel');
-            btn.disabled = true;
+            // Admin pode sempre gravar, independente da lotação
         }
     } catch(e) {}
 }
@@ -1302,10 +1303,9 @@ document.getElementById('formReserva').onsubmit = async function(e) {
         });
         const totalPax = doTurno.reduce((s, r) => s + (r.pax || 0), 0);
         if (totalPax + paxNovo > CONFIG.LOTACAO) {
-            aviso.textContent = `🔴 Lotação esgotada para ${turno === 'almoco' ? 'Almoço' : 'Jantar'} (${totalPax}/${CONFIG.LOTACAO} pax). Reserva não gravada.`;
+            aviso.textContent = `⚠️ Atenção: lotação excedida (${totalPax + paxNovo}/${CONFIG.LOTACAO} pax) — a gravar mesmo assim...`;
             aviso.classList.add('visivel');
-            btn.disabled = false; btn.textContent = '💾 Gravar Reserva';
-            return; // bloquear gravação
+            // Admin pode sempre gravar, não bloqueamos
         }
     } catch(e) {
         // se falhar a verificação, continua mas avisa
@@ -1324,6 +1324,7 @@ document.getElementById('formReserva').onsubmit = async function(e) {
             pax:               parseInt(f.pax) || 1,
             status:            'confirmada',
             detalhes:          f.obs ? { obs: f.obs } : null,
+            origem:            'admin',
         };
         const result = await sb('reservas', {
             method: 'POST', body: JSON.stringify(payload), prefer: 'return=representation'
