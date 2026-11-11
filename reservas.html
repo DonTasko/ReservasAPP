@@ -706,7 +706,7 @@
     const slots = [];
     let [h, m] = inicio.split(':').map(Number);
     const [hF, mF] = fim.split(':').map(Number);
-    while (h < hF || (h === hF && m < mF)) {
+    while (h < hF || (h === hF && m <= mF)) { // inclui a hora de fim
       slots.push(String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'));
       m += intervalo; if (m >= 60) { h += Math.floor(m/60); m = m % 60; }
     }
