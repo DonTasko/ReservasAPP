@@ -319,9 +319,10 @@
         <div class="login-logo">DON TASKO</div>
         <div class="login-sub">Painel de Administração</div>
         <div class="login-box">
+            <input type="email" id="emailInput" placeholder="Email" autocomplete="username">
             <input type="password" id="passInput" placeholder="Palavra-passe" autocomplete="current-password">
             <button onclick="verificarPass()">Entrar</button>
-            <div class="login-erro" id="loginErro">⚠️ Palavra-passe incorreta</div>
+            <div class="login-erro" id="loginErro">⚠️ Email ou palavra-passe incorretos</div>
         </div>
     </div>
 </div>
@@ -543,22 +544,57 @@ const CONFIG = {
     SB_URL: 'https://pqrqxvpzxqwblhxtmdns.supabase.co',
     SB_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcnF4dnB6eHF3YmxoeHRtZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzA1OTEsImV4cCI6MjA4NTAwNjU5MX0.84XwHtn3XLph28DOHFEaM8pFZL_dvT60pSo8mOCaJkY',
     RID: '04270fa5-28ce-4813-9735-1433375b5d68',
-    PASS: "Tasko123",
     LOTACAO: 24
 };
 
 // ── Supabase helper ──────────────────────────────────────────────────────────
+// ── Sessão (Supabase Auth) ───────────────────────────────────────────────────
+const AUTH_KEY = 'dt_admin_session';
+let SESSION = null;
+function loadSession() { try { SESSION = JSON.parse(localStorage.getItem(AUTH_KEY)); } catch(e) { SESSION = null; } }
+function saveSession(s) {
+    SESSION = s ? { access_token: s.access_token, refresh_token: s.refresh_token,
+                    expires_at: Date.now() + ((s.expires_in || 3600) - 60) * 1000 } : null;
+    try { SESSION ? localStorage.setItem(AUTH_KEY, JSON.stringify(SESSION)) : localStorage.removeItem(AUTH_KEY); } catch(e) {}
+}
+async function authToken(grant, body) {
+    const r = await fetch(`${CONFIG.SB_URL}/auth/v1/token?grant_type=${grant}`, {
+        method: 'POST',
+        headers: { 'apikey': CONFIG.SB_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error_description || j.msg || 'Falha no login');
+    return j;
+}
+function sessaoExpirada() {
+    saveSession(null);
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+}
+async function accessToken() {
+    if (!SESSION) { sessaoExpirada(); throw new Error('Sem sessão'); }
+    if (Date.now() > SESSION.expires_at) {
+        try { saveSession(await authToken('refresh_token', { refresh_token: SESSION.refresh_token })); }
+        catch(e) { sessaoExpirada(); throw e; }
+    }
+    return SESSION.access_token;
+}
+
+// ── Supabase helper ──────────────────────────────────────────────────────────
 async function sb(path, opts = {}) {
+    const token = await accessToken();
     const r = await fetch(`${CONFIG.SB_URL}/rest/v1/${path}`, {
         ...opts,
         headers: {
             'apikey': CONFIG.SB_KEY,
-            'Authorization': `Bearer ${CONFIG.SB_KEY}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
             'Prefer': opts.prefer || '',
             ...(opts.headers || {})
         }
     });
+    if (r.status === 401) { sessaoExpirada(); throw new Error('Sessão expirada'); }
     if (!r.ok) { const t = await r.text(); throw new Error(t); }
     const t = await r.text(); return t ? JSON.parse(t) : null;
 }
@@ -591,15 +627,25 @@ function setLoading(on) {
     }
 }
 
-function verificarPass() {
-    if (document.getElementById('passInput').value === CONFIG.PASS) {
+async function verificarPass() {
+    const el = document.getElementById('loginErro');
+    const erro = msg => { el.textContent = '⚠️ ' + msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); };
+    try {
+        const s = await authToken('password', {
+            email: document.getElementById('emailInput').value.trim(),
+            password: document.getElementById('passInput').value
+        });
+        saveSession(s);
+        // Confirmar que esta conta gere este restaurante
+        const ok = (s.user && s.user.id === CONFIG.RID) ||
+            ((await sb(`restaurante_admins?restaurante_id=eq.${CONFIG.RID}&select=restaurante_id`, { method: 'GET' })) || []).length > 0;
+        if (!ok) { saveSession(null); erro('Esta conta não tem acesso a este restaurante'); return; }
+        document.getElementById('passInput').value = '';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         iniciar();
-    } else {
-        const el = document.getElementById('loginErro');
-        el.style.display = 'block';
-        setTimeout(() => el.style.display = 'none', 3000);
+    } catch(e) {
+        erro('Email ou palavra-passe incorretos');
     }
 }
 
@@ -610,7 +656,20 @@ function logout() {
     document.getElementById('app').style.display = 'none';
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('passInput').value = '';
+    const t = SESSION && SESSION.access_token;
+    if (t) fetch(`${CONFIG.SB_URL}/auth/v1/logout`, { method: 'POST', headers: { 'apikey': CONFIG.SB_KEY, 'Authorization': `Bearer ${t}` } }).catch(() => {});
+    saveSession(null);
 }
+
+// Retomar sessão guardada
+window.addEventListener('load', () => {
+    loadSession();
+    if (SESSION) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        iniciar();
+    }
+});
 
 async function carregarLotacao() {
     try {

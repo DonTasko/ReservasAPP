@@ -131,53 +131,32 @@ async function apiRequest(action, data = {}) {
   // ── reservaSite ───────────────────────────────────────────────────────────
   if (action === 'reservaSite') {
     const paxNovo = parseInt(data.pax) || 1;
-    const turno = data.horario < '16:00' ? 'almoco' : 'jantar';
 
-    // Verificar capacidade antes de gravar
-    const cfgRows = await sbFetch(
-      `configs?restaurante_id=eq.${CONFIG.RESTAURANTE_ID}&select=lotacao_max`,
-      { method: 'GET', prefer: '' }
-    );
-    const lotacao = (cfgRows && cfgRows[0] && cfgRows[0].lotacao_max) ? cfgRows[0].lotacao_max : 24;
-
-    const existentes = await sbFetch(
-      `reservas?restaurante_id=eq.${CONFIG.RESTAURANTE_ID}&data_reserva=eq.${data.data}&status=neq.cancelada&select=pax,hora_reserva`,
-      { method: 'GET', prefer: '' }
-    ) || [];
-
-    const doTurno = existentes.filter(r => {
-      const h = String(r.hora_reserva || '').slice(0, 5);
-      return turno === 'almoco' ? h < '16:00' : h >= '16:00';
+    // Lotação verificada e reserva gravada no servidor (função criar_reserva).
+    // A chave pública já não consegue ler as reservas de outros clientes.
+    const res = await sbFetch('rpc/criar_reserva', {
+      method: 'POST',
+      prefer: '',
+      body: JSON.stringify({
+        p_restaurante: CONFIG.RESTAURANTE_ID,
+        p_nome:        data.nome,
+        p_email:       data.email     || null,
+        p_telemovel:   data.telemovel || null,
+        p_data:        data.data,
+        p_hora:        data.horario,
+        p_pax:         paxNovo,
+        p_obs:         data.obs       || null,
+      }),
     });
-    const totalPax = doTurno.reduce((s, r) => s + (r.pax || 0), 0);
 
-    if (totalPax + paxNovo > lotacao) {
+    if (res && res.status === 'esgotado') {
       return {
         status: 'error',
-        message: `Lamentamos, mas a lotação para ${turno === 'almoco' ? 'almoço' : 'jantar'} nesse dia está esgotada. Por favor escolha outra data ou contacte-nos diretamente.`
+        message: `Lamentamos, mas a lotação para ${res.turno === 'almoco' ? 'almoço' : 'jantar'} nesse dia está esgotada. Por favor escolha outra data ou contacte-nos diretamente.`
       };
     }
 
-    const payload = {
-      restaurante_id:    CONFIG.RESTAURANTE_ID,
-      cliente_nome:      data.nome,
-      cliente_email:     data.email      || null,
-      cliente_telemovel: data.telemovel  || null,
-      data_reserva:      data.data,
-      hora_reserva:      data.horario,
-      pax:               paxNovo,
-      status:            'confirmada',
-      detalhes:          data.obs ? { obs: data.obs } : null,
-    };
-
-    const inserted = await sbFetch('reservas', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      prefer: 'return=representation',
-    });
-
-    // Acionar Edge Function de notificações (email + calendário) sem bloquear o utilizador
-    const record = Array.isArray(inserted) ? inserted[0] : inserted;
+    const record = res && res.record;
     if (record) {
       fetch(`${CONFIG.SUPABASE_URL}/functions/v1/notify-reserva`, {
         method: 'POST',
