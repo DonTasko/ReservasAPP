@@ -2,1096 +2,548 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Don Tasko - Restaurante</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1a1a1a;
-            --accent: #d4a574;
-            --light: #f5f5f0;
-            --secondary: #5a4a3a;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--light);
-            color: var(--primary);
-            overflow-x: hidden;
-        }
-
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: linear-gradient(180deg, rgba(26, 26, 26, 0.9) 0%, rgba(26, 26, 26, 0) 100%);
-            animation: slideDown 1s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--light);
-            letter-spacing: 2px;
-            animation: fadeIn 1.5s ease-out 0.3s backwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        nav {
-            display: flex;
-            gap: 3rem;
-            animation: fadeIn 1.5s ease-out 0.6s backwards;
-        }
-
-        nav a {
-            color: var(--light);
-            text-decoration: none;
-            font-size: 0.95rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            position: relative;
-            transition: color 0.3s ease;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.4s ease;
-        }
-
-        nav a:hover {
-            color: var(--accent);
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .hero-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            animation: zoomIn 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.7) 0%, rgba(90, 74, 58, 0.5) 100%);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            color: var(--light);
-            animation: fadeInUp 1.2s ease-out 0.8s backwards;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                transform: translateY(40px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .hero-content h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 6rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .hero-content .tagline {
-            font-size: 1.2rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 3rem;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            animation: fadeInUp 1.2s ease-out 1.2s backwards;
-        }
-
-        .btn {
-            padding: 1.2rem 3rem;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--primary);
-            border: 2px solid var(--accent);
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: var(--light);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .btn-primary:hover::before {
-            width: 400px;
-            height: 400px;
-        }
-
-        .btn-primary span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--light);
-            border: 2px solid var(--light);
-        }
-
-        .btn-secondary:hover {
-            background: var(--light);
-            color: var(--primary);
-        }
-
-        /* Gallery Section */
-        .gallery {
-            padding: 8rem 5%;
-            background: var(--primary);
-        }
-
-        .section-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3.5rem;
-            font-weight: 300;
-            text-align: center;
-            color: var(--light);
-            margin-bottom: 1rem;
-            letter-spacing: 3px;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--accent);
-            font-size: 1rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 5rem;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .gallery-item {
-            position: relative;
-            aspect-ratio: 1;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-            filter: grayscale(20%);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.15);
-            filter: grayscale(0%);
-        }
-
-        .gallery-item::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.3) 0%, rgba(26, 26, 26, 0.5) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .gallery-item:hover::after {
-            opacity: 1;
-        }
-
-        .gallery-item:nth-child(1) {
-            grid-column: span 2;
-        }
-
-        .gallery-item:nth-child(4) {
-            grid-column: span 2;
-        }
-
-        /* Experience Section */
-        .experience {
-            padding: 8rem 5%;
-            background: var(--light);
-            text-align: center;
-        }
-
-        .experience .section-title {
-            color: var(--primary);
-        }
-
-        .experience-content {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1.2rem;
-            line-height: 2;
-            color: var(--secondary);
-            font-weight: 300;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--primary);
-            color: var(--light);
-            padding: 4rem 5%;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            margin-bottom: 2rem;
-        }
-
-        .footer-info {
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-            line-height: 1.8;
-            opacity: 0.8;
-        }
-
-        .footer-divider {
-            width: 100px;
-            height: 2px;
-            background: var(--accent);
-            margin: 2rem auto;
-        }
-
-        /* Responsive */
-        @media (max-width: 968px) {
-            .hero-content h1 {
-                font-size: 4rem;
-            }
-
-            .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .gallery-item:nth-child(1),
-            .gallery-item:nth-child(4) {
-                grid-column: span 1;
-            }
-
-            nav {
-                gap: 1.5rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
-                letter-spacing: 4px;
-            }
-
-            .logo {
-                font-size: 1.8rem;
-            }
-
-            nav {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            header {
-                padding: 1.5rem 5%;
-            }
-
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="logo">Don Tasko</div>
-        <nav>
-            <a href="menu.html">Menu</a>
-            <a href="reservas.html">Reservas</a>
-        </nav>
-    </header>
-
-   <!-- Hero Section -->
-    <section class="hero">
-        <img src="img1.png" alt="Don Tasko Restaurant" class="hero-image">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>Don Tasko</h1>
-            <p class="tagline">Experiência Gastronómica Autêntica</p>
-            <div class="cta-buttons">
-                <a href="menu.html" class="btn btn-primary"><span>Ver Menu</span></a>
-                <a href="reservas.html" class="btn btn-secondary"><span>Reservar Mesa</span></a>
-                <a href="bebidas.html" class="btn btn-secondary"><span>🍷 Carta de Vinhos</span></a>
-            </div>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px">
-                <a href="https://www.google.com/maps/dir/?api=1&destination=Restaurante+Don+Tasko+Castelo+Branco&destination_place_id=0xd3d5f83bf5aba8b:0x2b3c6b258c2d02c8"
-                   target="_blank" rel="noopener"
-                   style="display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;padding:11px 20px;border-radius:10px;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
-                    📍 Como Chegar
-                </a>
-                <a href="https://www.google.com/maps/place/Restaurante+Don+Tasko/@39.828886,-7.4826148,17z"
-                   target="_blank" rel="noopener"
-                   style="display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;padding:11px 20px;border-radius:10px;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
-                    ⭐ Avaliar no Google
-                </a>
-            </div>
-        </div>
-    </section>
-    <!-- Gallery Section -->
-    <section class="gallery">
-        <h2 class="section-title">Os Nossos Espaços</h2>
-        <p class="section-subtitle">Ambiente & Atmosfera</p>
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="img1.png" alt="Sala Principal">
-            </div>
-            <div class="gallery-item">
-                <img src="img2.png" alt="Bar">
-            </div>
-            <div class="gallery-item">
-                <img src="img3.png" alt="Esplanada">
-            </div>
-            <div class="gallery-item">
-                <img src="img4.png" alt="Mesa">
-            </div>
-            <div class="gallery-item">
-                <img src="img1.png" alt="Detalhes">
-            </div>
-        </div>
-    </section>
-    <!-- Experience Section -->
-    <section class="experience">
-        <h2 class="section-title">Uma Experiência Única</h2>
-        <p class="section-subtitle">Tradição & Inovação</p>
-        <div class="experience-content">
-            <p>No Don Tasko, cada refeição é uma celebração da gastronomia autêntica. Combinamos ingredientes da mais alta qualidade com técnicas tradicionais e um toque de criatividade moderna, criando momentos inesquecíveis num ambiente elegante e acolhedor.</p>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">Don Tasko</div>
-            <div class="footer-divider"></div>
-            <div class="footer-info">
-                <p>Restaurante Don Tasko</p>
-                <p>Uma experiência gastronómica memorável</p>
-                <p style="margin-top: 1.5rem; font-size: 0.85rem;">
-                    <a href="politica-privacidade.html" style="color: var(--accent); text-decoration: none; margin: 0 0.5rem;">Política de Privacidade</a> | 
-                    <a href="politica-cookies.html" style="color: var(--accent); text-decoration: none; margin: 0 0.5rem;">Política de Cookies</a> | 
-                    <a href="termos-condicoes.html" style="color: var(--accent); text-decoration: none; margin: 0 0.5rem;">Termos e Condições</a>
-                </p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Cookie Banner Script -->
-    <script src="cookie-banner.js"></script>
-
-    <script>
-        // Add scroll animation trigger for sections
-        const observerOptions = {
-            threshold: 0.2,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.gallery-item, .experience-content').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.8s ease-out';
-            observer.observe(el);
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Don Tasko — Restaurante em Castelo Branco</title>
-    <meta name="description" content="Don Tasko — Experiência gastronómica autêntica em Castelo Branco. Reserve a sua mesa online.">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <meta name="description" content="Don Tasko — Cortes de Novilho em Castelo Branco. Reserve a sua mesa online.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap">
     <style>
-        :root {
-            --primary: #1a1a1a;
-            --accent: #d4a574;
-            --light: #f5f5f0;
-            --secondary: #5a4a3a;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--light);
-            color: var(--primary);
-            overflow-x: hidden;
-        }
-
-        /* HEADER */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: linear-gradient(180deg, rgba(26,26,26,0.9) 0%, rgba(26,26,26,0) 100%);
-            animation: slideDown 1s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--light);
-            letter-spacing: 2px;
-            animation: fadeIn 1.5s ease-out 0.3s backwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        nav {
-            display: flex;
-            gap: 3rem;
-            animation: fadeIn 1.5s ease-out 0.6s backwards;
-        }
-
-        nav a {
-            color: var(--light);
-            text-decoration: none;
-            font-size: 0.95rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            position: relative;
-            transition: color 0.3s ease;
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width 0.4s ease;
-        }
-
-        nav a:hover { color: var(--accent); }
-        nav a:hover::after { width: 100%; }
-
-        /* HERO */
-        .hero {
-            height: 100vh;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .hero-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            animation: zoomIn 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(26,26,26,0.7) 0%, rgba(90,74,58,0.5) 100%);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            color: var(--light);
-            animation: fadeInUp 1.2s ease-out 0.8s backwards;
-        }
-
-        @keyframes fadeInUp {
-            from { transform: translateY(40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .hero-content h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 6rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .hero-content .tagline {
-            font-size: 1.2rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 0.75rem;
-        }
-
-        .hero-horarios {
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            color: rgba(245,245,240,0.7);
-            margin-bottom: 2.5rem;
-        }
-
-        .hero-horarios span {
-            color: var(--accent);
-            margin: 0 6px;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            animation: fadeInUp 1.2s ease-out 1.2s backwards;
-        }
-
-        .btn {
-            padding: 1.2rem 3rem;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--primary);
-            border: 2px solid var(--accent);
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 0; height: 0;
-            border-radius: 50%;
-            background: var(--light);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .btn-primary:hover::before { width: 400px; height: 400px; }
-        .btn-primary span { position: relative; z-index: 1; }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--light);
-            border: 2px solid var(--light);
-        }
-
-        .btn-secondary:hover { background: var(--light); color: var(--primary); }
-
-        /* GALLERY */
-        .gallery {
-            padding: 8rem 5%;
-            background: var(--primary);
-        }
-
-        .section-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3.5rem;
-            font-weight: 300;
-            text-align: center;
-            color: var(--light);
-            margin-bottom: 1rem;
-            letter-spacing: 3px;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--accent);
-            font-size: 1rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 5rem;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .gallery-item {
-            position: relative;
-            aspect-ratio: 1;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .gallery-item img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-            filter: grayscale(20%);
-        }
-
-        .gallery-item:hover img { transform: scale(1.15); filter: grayscale(0%); }
-
-        .gallery-item::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(212,165,116,0.3) 0%, rgba(26,26,26,0.5) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .gallery-item:hover::after { opacity: 1; }
-        .gallery-item:nth-child(1) { grid-column: span 2; }
-        .gallery-item:nth-child(4) { grid-column: span 2; }
-
-        /* EXPERIENCE */
-        .experience {
-            padding: 8rem 5%;
-            background: var(--light);
-            text-align: center;
-        }
-
-        .experience .section-title { color: var(--primary); }
-
-        .experience-content {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1.2rem;
-            line-height: 2;
-            color: var(--secondary);
-            font-weight: 300;
-        }
-
-        /* FOOTER */
-        footer {
-            background: var(--primary);
-            color: var(--light);
-            padding: 4rem 5% 2rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .footer-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            margin-bottom: 2rem;
-        }
-
-        .footer-divider {
-            width: 100px;
-            height: 2px;
-            background: var(--accent);
-            margin: 2rem auto;
-        }
-
-        .footer-empresa {
-            font-size: 0.85rem;
-            line-height: 2;
-            opacity: 0.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-empresa a {
-            color: var(--light);
-            text-decoration: none;
-        }
-
-        .footer-contatos {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-
-        .footer-contatos a { color: var(--light); text-decoration: none; }
-        .footer-contatos a:hover { color: var(--accent); }
-
-        .footer-tarifa {
-            font-size: 0.7rem;
-            opacity: 0.5;
-            display: block;
-            margin-top: 2px;
-        }
-
-        /* LIVRO RECLAMAÇÕES */
-        .livro-rec-wrap {
-            display: flex;
-            justify-content: center;
-            margin: 1.5rem 0;
-        }
-
-        .livro-rec {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            border: 1px solid rgba(212,165,116,0.4);
-            border-radius: 8px;
-            padding: 10px 16px;
-            transition: border-color 0.2s;
-        }
-
-        .livro-rec:hover { border-color: var(--accent); }
-
-        .livro-rec-text {
-            font-size: 0.72rem;
-            color: rgba(245,245,240,0.7);
-            line-height: 1.5;
-            text-align: left;
-        }
-
-        .livro-rec-text strong {
-            color: var(--light);
-            display: block;
-            font-size: 0.78rem;
-        }
-
-        .footer-legal {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(245,245,240,0.1);
-            font-size: 0.75rem;
-            opacity: 0.6;
-        }
-
-        .footer-legal a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .footer-legal a:hover { text-decoration: underline; }
-
-        .footer-copy {
-            font-size: 0.72rem;
-            opacity: 0.4;
-            margin-top: 1rem;
-        }
-
-        /* COOKIE BANNER */
-        .cookie-banner {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: rgba(26,26,26,0.97);
-            border-top: 1px solid rgba(212,165,116,0.3);
-            padding: 16px 5%;
-            z-index: 8888;
-            display: none;
-        }
-
-        .cookie-banner.show { display: block; }
-
-        .cookie-inner {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .cookie-text {
-            flex: 1;
-            font-size: 0.78rem;
-            color: rgba(245,245,240,0.7);
-            line-height: 1.6;
-            min-width: 200px;
-        }
-
-        .cookie-text a { color: var(--accent); text-decoration: underline; }
-
-        .cookie-btns { display: flex; gap: 10px; flex-shrink: 0; }
-
-        .cookie-btn {
-            padding: 8px 20px;
-            border-radius: 4px;
-            border: none;
-            font-size: 0.78rem;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            cursor: pointer;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.2s;
-        }
-
-        .cookie-btn.aceitar { background: var(--accent); color: var(--primary); }
-        .cookie-btn.aceitar:hover { background: #e8c97a; }
-        .cookie-btn.recusar { background: transparent; color: rgba(245,245,240,0.6); border: 1px solid rgba(245,245,240,0.2); }
-        .cookie-btn.recusar:hover { border-color: rgba(245,245,240,0.5); color: var(--light); }
-
-        /* MODAL */
-        .modal-priv {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 9000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-priv.show { display: flex; }
-
-        .modal-priv-box {
-            background: var(--primary);
-            border: 1px solid rgba(212,165,116,0.3);
-            border-radius: 12px;
-            padding: 32px 28px;
-            max-width: 560px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            color: var(--light);
-        }
-
-        .modal-priv-box h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            color: var(--accent);
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .modal-priv-box h4 {
-            font-size: 0.85rem;
-            color: var(--accent);
-            margin: 16px 0 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .modal-priv-box p, .modal-priv-box li {
-            font-size: 0.82rem;
-            color: rgba(245,245,240,0.75);
-            line-height: 1.8;
-            margin-bottom: 8px;
-        }
-
-        .modal-priv-box ul { padding-left: 18px; margin-bottom: 8px; }
-
-        .modal-priv-close {
-            width: 100%;
-            margin-top: 24px;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid rgba(212,165,116,0.4);
-            color: rgba(245,245,240,0.7);
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.2s;
-        }
-
-        .modal-priv-close:hover { border-color: var(--accent); color: var(--accent); }
-
-        /* RESPONSIVE */
-        @media (max-width: 968px) {
-            .hero-content h1 { font-size: 4rem; }
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-            .gallery-item:nth-child(1),
-            .gallery-item:nth-child(4) { grid-column: span 1; }
-            nav { gap: 1.5rem; }
-            .cta-buttons { flex-direction: column; align-items: center; }
-        }
-
-        @media (max-width: 640px) {
-            .hero-content h1 { font-size: 2.5rem; letter-spacing: 4px; }
-            .logo { font-size: 1.8rem; }
-            nav { flex-direction: column; gap: 1rem; }
-            header { padding: 1.5rem 5%; }
-            .gallery-grid { grid-template-columns: 1fr; }
-            .section-title { font-size: 2.5rem; }
-            .cookie-inner { flex-direction: column; }
-        }
+/* ── TOKENS ── */
+:root {
+    --bg:       #0d0b09;
+    --surface:  #131110;
+    --surface2: #1a1714;
+    --fg:       #f0ece4;
+    --dim:      #8a8278;
+    --red:      #c0392b;
+    --gold:     #c9a84c;
+    --border:   rgba(240,236,228,.08);
+    --display:  'Bebas Neue', sans-serif;
+    --serif:    'Instrument Serif', serif;
+    --body:     'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--fg);
+    overflow-x: hidden;
+    padding-left: max(0px, env(safe-area-inset-left,0px));
+    padding-right: max(0px, env(safe-area-inset-right,0px));
+    padding-top: env(safe-area-inset-top,0px);
+    padding-bottom: env(safe-area-inset-bottom,0px);
+}
+
+/* ── HEADER ── */
+header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem max(5%, 24px);
+    padding-left: max(max(5%, 24px), env(safe-area-inset-left,0px));
+    padding-right: max(max(5%, 24px), env(safe-area-inset-right,0px));
+    background: rgba(13,11,9,.96);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+}
+.logo-text {
+    font-family: var(--display);
+    font-size: 1.9rem;
+    color: var(--fg);
+    letter-spacing: .08em;
+    text-decoration: none;
+}
+.logo-text .dot { color: var(--red); }
+nav { display: flex; gap: 2rem; align-items: center; }
+nav a {
+    font-size: .74rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--dim);
+    text-decoration: none;
+    transition: color .2s;
+}
+nav a:hover { color: var(--gold); }
+.nav-cta {
+    background: var(--red) !important;
+    color: #fff !important;
+    padding: .5rem 1.3rem !important;
+    transition: background .2s !important;
+}
+.nav-cta:hover { background: #a93226 !important; color: #fff !important; }
+
+/* ── HERO ── */
+.hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100svh;
+    padding-top: 65px;
+}
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem max(5%, 32px);
+    padding-left: max(max(5%, 32px), env(safe-area-inset-left,0px));
+    gap: 2rem;
+}
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .7rem;
+    font-size: .7rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--gold);
+}
+.hero-tag::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+.hero-title {
+    font-family: var(--display);
+    font-size: clamp(4rem, 7vw, 8rem);
+    line-height: .92;
+    letter-spacing: .04em;
+    color: var(--fg);
+}
+.hero-title .accent { color: var(--red); display: block; }
+.hero-horarios {
+    font-size: .78rem;
+    color: var(--dim);
+    letter-spacing: .08em;
+    line-height: 1.8;
+}
+.hero-horarios span { color: var(--gold); margin: 0 6px; }
+.hero-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(.95rem, 1.6vw, 1.2rem);
+    color: var(--dim);
+    line-height: 1.7;
+    max-width: 40ch;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+
+.btn-red {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 2rem;
+    background: var(--red);
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+}
+.btn-red:hover { background: #a93226; transform: translateY(-2px); }
+.btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 2rem;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color .2s, color .2s;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem 1.4rem;
+    border: 1px solid rgba(201,168,76,.4);
+    background: rgba(201,168,76,.08);
+    color: var(--gold);
+    font-size: .74rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color .2s, background .2s;
+}
+.btn-gold:hover { border-color: var(--gold); background: rgba(201,168,76,.14); }
+
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+.stat { display: flex; flex-direction: column; gap: .2rem; }
+.stat .n {
+    font-family: var(--display);
+    font-size: 2.4rem;
+    color: var(--fg);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .04em;
+}
+.stat .l { font-size: .65rem; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); }
+
+.hero-right { position: relative; overflow: hidden; background: #0a0908; }
+.hero-right img { width: 100%; height: 100%; object-fit: cover; opacity: .78; }
+.hero-right::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, rgba(13,11,9,.35) 0%, transparent 55%),
+        linear-gradient(to top, rgba(13,11,9,.75) 0%, transparent 40%);
+}
+.hero-badge {
+    position: absolute;
+    bottom: 2rem; left: 2rem;
+    z-index: 2;
+    background: rgba(13,11,9,.88);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+    padding: 1rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+.hero-badge .bl { font-size: .65rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+.hero-badge .bv { font-family: var(--serif); font-style: italic; font-size: 1rem; color: var(--fg); }
+
+/* ── MARQUEE ── */
+.marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--red);
+    padding: .75rem 0;
+}
+.marquee {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+    animation: scroll 26s linear infinite;
+}
+.marquee span { font-size: .72rem; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.8); font-weight: 500; }
+.marquee .sep { color: rgba(255,255,255,.35); }
+@keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ── CORTES ── */
+.cortes { padding: 7rem max(5%,24px); }
+.section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 3.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.section-head h2 {
+    font-family: var(--display);
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    color: var(--fg);
+    letter-spacing: .04em;
+    line-height: 1;
+}
+.section-head a {
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.section-head a:hover { color: var(--red); }
+
+.corte-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 1.5px;
+    background: var(--border);
+}
+.corte { background: var(--surface); display: flex; flex-direction: column; overflow: hidden; }
+.corte-img { aspect-ratio: 3/4; overflow: hidden; background: #0a0908; }
+.corte-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .6s ease;
+    filter: grayscale(20%);
+}
+.corte:hover .corte-img img { transform: scale(1.07); filter: grayscale(0%); }
+.corte-body { padding: 1.4rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; }
+.corte-tag { font-size: .65rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+.corte-name { font-family: var(--display); font-size: 1.5rem; letter-spacing: .05em; color: var(--fg); }
+.corte-desc { font-size: .8rem; line-height: 1.7; color: var(--dim); font-weight: 300; flex: 1; }
+
+/* ── EXTRAS ── */
+.extras { padding: 0 max(5%,24px) 6rem; }
+.extras-title {
+    font-family: var(--display);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    color: var(--fg);
+    letter-spacing: .04em;
+    margin-bottom: 2rem;
+}
+.extras-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1.5px;
+    background: var(--border);
+}
+.extra {
+    background: var(--surface2);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+}
+.extra-name { font-size: .88rem; font-weight: 400; color: var(--fg); min-width: 0; }
+
+/* ── ABOUT ── */
+.about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+}
+.about-img { position: relative; min-height: 480px; overflow: hidden; background: #0a0908; }
+.about-img img { width: 100%; height: 100%; object-fit: cover; opacity: .8; }
+.about-text {
+    background: var(--surface2);
+    padding: 5rem max(5%,32px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.8rem;
+}
+.about-tag { font-size: .7rem; letter-spacing: .24em; text-transform: uppercase; color: var(--red); font-weight: 500; }
+.about-text h2 { font-family: var(--display); font-size: clamp(2.5rem, 4.5vw, 4rem); color: var(--fg); letter-spacing: .04em; line-height: 1; }
+.about-text blockquote { border-left: 2px solid var(--gold); padding-left: 1.2rem; font-family: var(--serif); font-style: italic; font-size: 1.1rem; color: var(--fg); line-height: 1.6; }
+.about-text p { font-size: .9rem; line-height: 1.9; color: var(--dim); font-weight: 300; max-width: 44ch; }
+.about-divider { width: 40px; height: 2px; background: linear-gradient(to right, var(--red), var(--gold)); }
+
+/* ── INFO BLOCKS ── */
+.infos {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1.5px;
+    background: var(--border);
+}
+.info-block {
+    background: var(--surface);
+    padding: 3rem max(4%,20px);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.info-icon { font-size: 1.6rem; }
+.info-block h3 { font-family: var(--display); font-size: 1.8rem; letter-spacing: .05em; color: var(--fg); }
+.info-block p { font-size: .86rem; line-height: 1.8; color: var(--dim); }
+.info-block a {
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    margin-top: auto;
+    padding-top: .5rem;
+}
+.info-block a:hover { color: var(--red); }
+
+/* ── FOOTER ── */
+footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 3rem max(5%,24px) 2rem;
+    padding-left: max(max(5%,24px), env(safe-area-inset-left,0px));
+    padding-right: max(max(5%,24px), env(safe-area-inset-right,0px));
+}
+.footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+.foot-logo { font-family: var(--display); font-size: 1.6rem; letter-spacing: .08em; color: var(--dim); }
+.foot-logo .dot { color: var(--red); }
+.footer-empresa { font-size: .8rem; line-height: 2; color: var(--dim); }
+.footer-empresa strong { color: var(--fg); display: block; font-size: .84rem; }
+.footer-empresa a { color: var(--dim); text-decoration: none; }
+.footer-empresa a:hover { color: var(--gold); }
+
+.footer-nav { display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center; }
+.footer-nav a { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); text-decoration: none; }
+.footer-nav a:hover { color: var(--gold); }
+
+.footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.footer-copy { font-size: .7rem; color: rgba(240,236,228,.3); }
+
+/* Livro de Reclamações */
+.livro-rec {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    border: 1px solid rgba(201,168,76,.25);
+    padding: 8px 14px;
+    transition: border-color .2s;
+}
+.livro-rec:hover { border-color: var(--gold); }
+.livro-rec-text { font-size: .68rem; color: var(--dim); line-height: 1.5; }
+.livro-rec-text strong { color: var(--fg); display: block; font-size: .72rem; }
+
+/* ── COOKIE BANNER ── */
+.cookie-banner {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(13,11,9,.97);
+    border-top: 1px solid rgba(201,168,76,.2);
+    padding: 16px max(5%,24px);
+    padding-left: max(max(5%,24px), env(safe-area-inset-left,0px));
+    padding-right: max(max(5%,24px), env(safe-area-inset-right,0px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom,0px));
+    z-index: 8888;
+    display: none;
+}
+.cookie-banner.show { display: block; }
+.cookie-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.cookie-text { flex: 1; font-size: .78rem; color: var(--dim); line-height: 1.6; min-width: 200px; }
+.cookie-text a { color: var(--gold); text-decoration: underline; }
+.cookie-btns { display: flex; gap: 10px; flex-shrink: 0; }
+.cookie-btn {
+    padding: 8px 20px;
+    border: none;
+    font-size: .78rem;
+    font-weight: 600;
+    font-family: var(--body);
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all .2s;
+}
+.cookie-btn.aceitar { background: var(--red); color: #fff; }
+.cookie-btn.aceitar:hover { background: #a93226; }
+.cookie-btn.recusar { background: transparent; color: var(--dim); border: 1px solid var(--border); }
+.cookie-btn.recusar:hover { border-color: rgba(240,236,228,.3); color: var(--fg); }
+
+/* ── MODAIS ── */
+.modal-priv {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.85);
+    z-index: 9000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+.modal-priv.show { display: flex; }
+.modal-priv-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 32px 28px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: var(--fg);
+}
+.modal-priv-box h3 {
+    font-family: var(--display);
+    font-size: 1.8rem;
+    letter-spacing: .05em;
+    color: var(--gold);
+    margin-bottom: 20px;
+}
+.modal-priv-box h4 {
+    font-size: .82rem;
+    color: var(--gold);
+    margin: 16px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.modal-priv-box p, .modal-priv-box li { font-size: .82rem; color: var(--dim); line-height: 1.8; margin-bottom: 8px; }
+.modal-priv-box ul { padding-left: 18px; margin-bottom: 8px; }
+.modal-priv-close {
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    cursor: pointer;
+    font-family: var(--body);
+    font-size: .8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all .2s;
+}
+.modal-priv-close:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+    .corte-grid { grid-template-columns: repeat(2,1fr); }
+    .extras-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 320px; order: -1; }
+    .about { grid-template-columns: 1fr; }
+    .infos { grid-template-columns: 1fr; }
+    nav .nav-cta { display: none; }
+}
+@media (max-width: 480px) {
+    nav { gap: 1rem; }
+    .hero-stats { gap: 1.5rem; }
+    .corte-grid { grid-template-columns: 1fr; }
+    .extras-grid { grid-template-columns: 1fr; }
+    .cookie-inner { flex-direction: column; }
+}
     </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header>
-    <div class="logo">Don Tasko</div>
+    <span class="logo-text">Don Tasko<span class="dot">.</span></span>
     <nav>
         <a href="menu.html">Menu</a>
-        <a href="reservas.html">Reservas</a>
+        <a href="bebidas.html">Vinhos</a>
+        <a href="reservas.html" class="nav-cta">Reservar</a>
     </nav>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-    <img src="img1.png" alt="Restaurante Don Tasko — Castelo Branco" class="hero-image">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1>Don Tasko</h1>
-        <p class="tagline">Experiência Gastronómica Autêntica</p>
+    <div class="hero-left">
+        <div class="hero-tag">Novilho · Castelo Branco</div>
+        <h1 class="hero-title">
+            Cortes de<span class="accent">Novilho</span>
+        </h1>
         <p class="hero-horarios">
             🌞 Almoço 12h–15h
             <span>·</span>
@@ -1099,85 +551,185 @@
             <span>·</span>
             Encerrado 2ª, 3ª e 4ª feira
         </p>
-        <div class="cta-buttons">
-            <a href="menu.html" class="btn btn-primary"><span>Ver Menu</span></a>
-            <a href="reservas.html" class="btn btn-secondary"><span>Reservar Mesa</span></a>
+        <p class="hero-sub">Cada corte tem a sua identidade. No Don Tasko trabalhamos novilho selecionado com técnicas distintas — para que cada peça chegue à mesa no seu melhor.</p>
+        <div class="hero-actions">
+            <a href="menu.html" class="btn-red">📋 Ver Menu</a>
+            <a href="reservas.html" class="btn-ghost">🗓 Reservar Mesa</a>
+            <a href="bebidas.html" class="btn-ghost">🍷 Vinhos</a>
+        </div>
+        <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Restaurante+Don+Tasko+Castelo+Branco&destination_place_id=0xd3d5f83bf5aba8b:0x2b3c6b258c2d02c8"
+               target="_blank" rel="noopener" class="btn-gold">📍 Como Chegar</a>
+            <a href="https://www.google.com/maps/place/Restaurante+Don+Tasko/@39.828886,-7.4826148,17z"
+               target="_blank" rel="noopener" class="btn-gold">⭐ Avaliar no Google</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><span class="n">4.8★</span><span class="l">Google Reviews</span></div>
+            <div class="stat"><span class="n">CB</span><span class="l">Castelo Branco</span></div>
+        </div>
+    </div>
+    <div class="hero-right">
+        <img src="img1.png" alt="Don Tasko — Cortes de Novilho, Castelo Branco">
+        <div class="hero-badge">
+            <span class="bl">Especialidade</span>
+            <span class="bv">Novilho, vários cortes</span>
         </div>
     </div>
 </section>
 
-<!-- GALLERY -->
-<section class="gallery">
-    <h2 class="section-title">Os Nossos Espaços</h2>
-    <p class="section-subtitle">Ambiente & Atmosfera</p>
-    <div class="gallery-grid">
-        <div class="gallery-item"><img src="img1.png" alt="Sala Principal Don Tasko"></div>
-        <div class="gallery-item"><img src="img2.png" alt="Bar Don Tasko"></div>
-        <div class="gallery-item"><img src="img3.png" alt="Esplanada Don Tasko"></div>
-        <div class="gallery-item"><img src="img4.png" alt="Mesa Don Tasko"></div>
-        <div class="gallery-item"><img src="img1.png" alt="Detalhes Don Tasko"></div>
+<!-- MARQUEE -->
+<div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee">
+        <span>Novilho Selecionado</span><span class="sep">·</span>
+        <span>Picanha Grelhada</span><span class="sep">·</span>
+        <span>Filet Mignon</span><span class="sep">·</span>
+        <span>Entrecôte</span><span class="sep">·</span>
+        <span>Carta de Vinhos</span><span class="sep">·</span>
+        <span>Reservas Online</span><span class="sep">·</span>
+        <span>Castelo Branco</span><span class="sep">·</span>
+        <span>Vários Cortes</span><span class="sep">·</span>
+        <span>Novilho Selecionado</span><span class="sep">·</span>
+        <span>Picanha Grelhada</span><span class="sep">·</span>
+        <span>Filet Mignon</span><span class="sep">·</span>
+        <span>Entrecôte</span><span class="sep">·</span>
+        <span>Carta de Vinhos</span><span class="sep">·</span>
+        <span>Reservas Online</span><span class="sep">·</span>
+        <span>Castelo Branco</span><span class="sep">·</span>
+        <span>Vários Cortes</span><span class="sep">·</span>
+    </div>
+</div>
+
+<!-- OS NOSSOS CORTES -->
+<section class="cortes">
+    <div class="section-head">
+        <h2>Os Nossos Cortes</h2>
+        <a href="menu.html">Menu completo →</a>
+    </div>
+    <div class="corte-grid">
+        <div class="corte">
+            <div class="corte-img"><img src="img1.png" alt="Picanha Grelhada com Salada Laranja"></div>
+            <div class="corte-body">
+                <span class="corte-tag">Clássico da Casa</span>
+                <div class="corte-name">Picanha Grelhada</div>
+                <p class="corte-desc">Servida com salada laranja. Um corte marcante, com sabor concentrado e textura inconfundível.</p>
+            </div>
+        </div>
+        <div class="corte">
+            <div class="corte-img"><img src="img2.png" alt="Filet Mignon com Redução de Vinho do Porto"></div>
+            <div class="corte-body">
+                <span class="corte-tag">Corte Nobre</span>
+                <div class="corte-name">Filet Mignon</div>
+                <p class="corte-desc">Com redução de Vinho do Porto. O corte mais macio do novilho, num prato de elegância rara.</p>
+            </div>
+        </div>
+        <div class="corte">
+            <div class="corte-img"><img src="img3.png" alt="Entrecôte Grelhado"></div>
+            <div class="corte-body">
+                <span class="corte-tag">Corte Nobre</span>
+                <div class="corte-name">Entrecôte Grelhado</div>
+                <p class="corte-desc">Marmoreado natural, sabor intenso. Um dos cortes mais apreciados pelos habituais do Don Tasko.</p>
+            </div>
+        </div>
+        <div class="corte">
+            <div class="corte-img"><img src="img4.png" alt="Bife Novilho com Roquefort e Pera Flamejada"></div>
+            <div class="corte-body">
+                <span class="corte-tag">Combinação do Chef</span>
+                <div class="corte-name">Bife com Roquefort</div>
+                <p class="corte-desc">Novilho com queijo Roquefort e pera flamejada. Contraste de sabores que surpreende a cada garfada.</p>
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- EXPERIENCE -->
-<section class="experience">
-    <h2 class="section-title">Uma Experiência Única</h2>
-    <p class="section-subtitle">Tradição & Inovação</p>
-    <div class="experience-content">
-        <p>No Don Tasko, cada refeição é uma celebração da gastronomia autêntica. Combinamos ingredientes da mais alta qualidade com técnicas tradicionais e um toque de criatividade moderna, criando momentos inesquecíveis num ambiente elegante e acolhedor.</p>
+<!-- OUTROS PRATOS -->
+<section class="extras">
+    <div class="extras-title">Mais da Carta</div>
+    <div class="extras-grid">
+        <div class="extra"><span class="extra-name">Bife Novilho com Queijo de Serra, Presunto e Ovo</span></div>
+        <div class="extra"><span class="extra-name">Bife Novilho à Portuguesa</span></div>
+        <div class="extra"><span class="extra-name">Bife Novilho com Molho de Pimenta e Cogumelos</span></div>
+        <div class="extra"><span class="extra-name">Bife Novilho Grelhado</span></div>
+        <div class="extra"><span class="extra-name">Lombo de Bacalhau "Don Tasko"</span></div>
+        <div class="extra"><span class="extra-name">Lombo de Salmão Selado</span></div>
     </div>
 </section>
+
+<!-- SOBRE NÓS -->
+<section class="about">
+    <div class="about-img"><img src="img1.png" alt="Interior Restaurante Don Tasko"></div>
+    <div class="about-text">
+        <span class="about-tag">O Don Tasko</span>
+        <div class="about-divider"></div>
+        <h2>Novilho<br>Sem Atalhos</h2>
+        <blockquote>Um bom corte não precisa de disfarce. Precisa de respeito.</blockquote>
+        <p>Especializámo-nos em cortes de novilho, cada um trabalhado com a técnica certa para o que é. Sem atalhos: matéria-prima selecionada, preparação cuidada e uma sala que convida a voltar.</p>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Restaurante+Don+Tasko+Castelo+Branco&destination_place_id=0xd3d5f83bf5aba8b:0x2b3c6b258c2d02c8"
+           target="_blank" rel="noopener" class="btn-red">📍 Como Chegar</a>
+    </div>
+</section>
+
+<!-- INFO BLOCKS -->
+<div class="infos">
+    <div class="info-block">
+        <div class="info-icon">📍</div>
+        <h3>Localização</h3>
+        <p>Avenida de Espanha, Lote 7, R/C Esq.<br>Castelo Branco</p>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Restaurante+Don+Tasko+Castelo+Branco&destination_place_id=0xd3d5f83bf5aba8b:0x2b3c6b258c2d02c8"
+           target="_blank" rel="noopener">Como Chegar →</a>
+    </div>
+    <div class="info-block">
+        <div class="info-icon">⭐</div>
+        <h3>Avaliações</h3>
+        <p>4.8 estrelas no Google.<br>Veja o que os nossos clientes dizem.</p>
+        <a href="https://www.google.com/maps/place/Restaurante+Don+Tasko/@39.828886,-7.4826148,17z"
+           target="_blank" rel="noopener">Avaliar no Google →</a>
+    </div>
+    <div class="info-block">
+        <div class="info-icon">🗓</div>
+        <h3>Reservas</h3>
+        <p>Reserve a sua mesa online. Confirmação imediata, sem telefonemas.</p>
+        <a href="reservas.html">Reservar Mesa →</a>
+    </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
-    <div class="footer-content">
-
-        <div class="footer-logo">Don Tasko</div>
-        <div class="footer-divider"></div>
-
-        <!-- Identificação legal obrigatória (DL 7/2004) -->
+    <div class="footer-top">
+        <div>
+            <div class="foot-logo">Don Tasko<span class="dot">.</span></div>
+        </div>
         <div class="footer-empresa">
-            <strong>Maria Helena V. Fernandes Afonso, Lda</strong><br>
+            <strong>Maria Helena V. Fernandes Afonso, Lda</strong>
             NIF: 516 763 482<br>
-            Avenida de Espanha, Lote 7, R/C Esq. · Castelo Branco
+            Avenida de Espanha, Lote 7, R/C Esq. · Castelo Branco<br>
+            <a href="tel:+351925504212">📞 +351 925 504 212</a>
+            <span style="font-size:.68rem;opacity:.5;display:block">Chamada para rede móvel nacional</span>
+            <a href="mailto:dontasko.geral@gmail.com" style="font-size:.8rem">✉️ dontasko.geral@gmail.com</a>
         </div>
-
-        <div class="footer-contatos">
-            <a href="tel:+351925504212">
-                📞 +351 925 504 212
-                <span class="footer-tarifa">Chamada para rede móvel nacional</span>
-            </a>
-            <a href="mailto:dontasko.geral@gmail.com">✉️ dontasko.geral@gmail.com</a>
-        </div>
-
-        <!-- Livro de Reclamações — obrigatório (Portaria 1284/2003) -->
-        <div class="livro-rec-wrap">
-            <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener noreferrer" class="livro-rec">
-                <svg width="44" height="34" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="80" height="60" rx="6" fill="#c0392b"/>
-                    <rect x="6" y="8" width="68" height="44" rx="4" fill="#e74c3c"/>
-                    <rect x="12" y="14" width="56" height="32" rx="2" fill="white"/>
-                    <text x="40" y="28" font-family="Arial" font-size="7" font-weight="bold" fill="#c0392b" text-anchor="middle">LIVRO DE</text>
-                    <text x="40" y="37" font-family="Arial" font-size="7" font-weight="bold" fill="#c0392b" text-anchor="middle">RECLAMAÇÕES</text>
-                    <text x="40" y="44" font-family="Arial" font-size="5" fill="#888" text-anchor="middle">ELECTRÓNICO</text>
-                </svg>
-                <div class="livro-rec-text">
-                    <strong>Livro de Reclamações</strong>
-                    Reclamações electrónicas disponíveis em livroreclamacoes.pt
-                </div>
-            </a>
-        </div>
-
-        <div class="footer-legal">
+        <div class="footer-nav">
             <a href="#" onclick="abrirPrivacidade(event)">Política de Privacidade</a>
             <a href="#" onclick="abrirCookies(event)">Política de Cookies</a>
             <a href="#" onclick="abrirTermos(event)">Termos e Condições</a>
         </div>
-
+    </div>
+    <div class="footer-bottom">
         <div class="footer-copy">
-            © 2024 Don Tasko · Maria Helena V. Fernandes Afonso, Lda · NIF 516 763 482 · Todos os direitos reservados
+            © 2024 Don Tasko · Maria Helena V. Fernandes Afonso, Lda · NIF 516 763 482
         </div>
-
+        <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener noreferrer" class="livro-rec">
+            <svg width="40" height="30" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="60" rx="6" fill="#c0392b"/>
+                <rect x="6" y="8" width="68" height="44" rx="4" fill="#e74c3c"/>
+                <rect x="12" y="14" width="56" height="32" rx="2" fill="white"/>
+                <text x="40" y="28" font-family="Arial" font-size="7" font-weight="bold" fill="#c0392b" text-anchor="middle">LIVRO DE</text>
+                <text x="40" y="37" font-family="Arial" font-size="7" font-weight="bold" fill="#c0392b" text-anchor="middle">RECLAMAÇÕES</text>
+                <text x="40" y="44" font-family="Arial" font-size="5" fill="#888" text-anchor="middle">ELECTRÓNICO</text>
+            </svg>
+            <div class="livro-rec-text">
+                <strong>Livro de Reclamações</strong>
+                Reclamações electrónicas em livroreclamacoes.pt
+            </div>
+        </a>
     </div>
 </footer>
 
@@ -1260,52 +812,33 @@
     </div>
 </div>
 
+<script src="cookie-banner.js"></script>
 <script>
-    // ── COOKIES ──
-    function verificarConsentimento() {
-        if (!localStorage.getItem('dt_cookie_consent'))
-            document.getElementById('cookieBanner').classList.add('show');
-    }
+// ── COOKIES ──
+function verificarConsentimento() {
+    if (!localStorage.getItem('dt_cookie_consent'))
+        document.getElementById('cookieBanner').classList.add('show');
+}
+function aceitarCookies() {
+    localStorage.setItem('dt_cookie_consent', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('show');
+}
+function recusarCookies() {
+    localStorage.setItem('dt_cookie_consent', 'essential');
+    document.getElementById('cookieBanner').classList.remove('show');
+}
 
-    function aceitarCookies() {
-        localStorage.setItem('dt_cookie_consent', 'accepted');
-        document.getElementById('cookieBanner').classList.remove('show');
-    }
+// ── MODAIS ──
+function abrirPrivacidade(e) { e.preventDefault(); document.getElementById('modalPrivacidade').classList.add('show'); }
+function abrirCookies(e)     { e.preventDefault(); document.getElementById('modalCookies').classList.add('show'); }
+function abrirTermos(e)      { e.preventDefault(); document.getElementById('modalTermos').classList.add('show'); }
+function fecharModal(id, e) {
+    if (e.target === document.getElementById(id))
+        document.getElementById(id).classList.remove('show');
+}
 
-    function recusarCookies() {
-        localStorage.setItem('dt_cookie_consent', 'essential');
-        document.getElementById('cookieBanner').classList.remove('show');
-    }
-
-    // ── MODAIS ──
-    function abrirPrivacidade(e) { e.preventDefault(); document.getElementById('modalPrivacidade').classList.add('show'); }
-    function abrirCookies(e)     { e.preventDefault(); document.getElementById('modalCookies').classList.add('show'); }
-    function abrirTermos(e)      { e.preventDefault(); document.getElementById('modalTermos').classList.add('show'); }
-
-    function fecharModal(id, e) {
-        if (e.target === document.getElementById(id))
-            document.getElementById(id).classList.remove('show');
-    }
-
-    // ── SCROLL ANIMATIONS ──
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, { threshold: 0.2, rootMargin: '0px 0px -100px 0px' });
-
-    document.querySelectorAll('.gallery-item, .experience-content').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.8s ease-out';
-        observer.observe(el);
-    });
-
-    // ── INIT ──
-    document.addEventListener('DOMContentLoaded', verificarConsentimento);
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', verificarConsentimento);
 </script>
 </body>
 </html>
