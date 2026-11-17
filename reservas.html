@@ -748,11 +748,15 @@
     if (!horario) { showToast('Por favor selecione um horário.','error'); return; }
     const tel = document.getElementById('telemovel').value.replace(/\D/g,'');
     if (tel.length < 9) { showToast('Telemóvel inválido.','error'); return; }
+    const dataVal = document.getElementById('data').value;
+    if (dataVal && isDiaFechado(new Date(dataVal + 'T12:00:00'))) {
+      showToast('Este dia está encerrado. Por favor escolha outra data.','error'); return;
+    }
     const dados = {
       nome:      document.getElementById('nome').value.trim(),
       email:     document.getElementById('email').value.trim(),
       telemovel: tel,
-      data:      document.getElementById('data').value,
+      data:      dataVal,
       pax:       parseInt(document.getElementById('pax').value),
       horario:   horario,
       obs:       construirObs()
