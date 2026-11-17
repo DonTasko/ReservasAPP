@@ -106,15 +106,18 @@ async function apiRequest(action, data = {}) {
   // ── getDiasFechados ────────────────────────────────────────────────────────
   if (action === 'getDiasFechados') {
     const rows = await sbFetch(
-      `configs?restaurante_id=eq.${CONFIG.RESTAURANTE_ID}&select=fecho_semanal,datas_fecho`,
+      `configs?restaurante_id=eq.${CONFIG.RESTAURANTE_ID}&select=fecho_semanal,datas_fecho,dias_abertos_excecao`,
       { method: 'GET', prefer: '' }
     );
     if (!rows || rows.length === 0) return [];
 
     const c = rows[0];
+    const excecoes = Array.isArray(c.dias_abertos_excecao) ? c.dias_abertos_excecao : [];
     const dias = [];
 
     // Dias de fecho semanal como strings (ex: "segunda")
+    // Mas só os que não têm exceção de abertura para uma data específica
+    // (as exceções são verificadas em isDiaFechado no reservas.html)
     if (Array.isArray(c.fecho_semanal)) {
       dias.push(...c.fecho_semanal);
     }
@@ -122,6 +125,12 @@ async function apiRequest(action, data = {}) {
     // Datas específicas de fecho (ISO date strings)
     if (Array.isArray(c.datas_fecho)) {
       dias.push(...c.datas_fecho);
+    }
+
+    // Exceções de abertura — datas que abrem mesmo em dia de fecho semanal
+    // Adicionadas como objecto especial para que reservas.html as possa usar
+    if (excecoes.length) {
+      dias.push(...excecoes.map(d => `open:${d}`));
     }
 
     if (CONFIG.DEBUG) console.log('📥 getDiasFechados:', dias);

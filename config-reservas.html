@@ -190,6 +190,13 @@
         <input type="date" id="novaDataFecho">
         <button class="btn-add" onclick="adicionarDataFecho()">+ Adicionar data</button>
       </div>
+      <div class="datas-especificas-title" style="margin-top:16px;color:#2e7d32">🟢 Exceções de abertura</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">Datas que abrem mesmo sendo dia de fecho semanal (ex: 23/12 se quarta é dia de fecho)</div>
+      <div class="datas-list" id="datasAberturaList"></div>
+      <div class="add-data-row">
+        <input type="date" id="novaDataAbertura">
+        <button class="btn-add" style="background:#2e7d32" onclick="adicionarDataAbertura()">+ Adicionar exceção</button>
+      </div>
     </div>
 
     <!-- GUARDAR -->
@@ -211,6 +218,36 @@ const DIAS_SEMANA = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira
 const DIAS_KEYS   = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
 
 let datasFechoEspecificas = [];
+let datasAberturaExcecao = [];
+
+function renderizarDatasAbertura() {
+  const el = document.getElementById('datasAberturaList');
+  if (!datasAberturaExcecao.length) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--text-dim)">Nenhuma exceção adicionada</span>';
+    return;
+  }
+  el.innerHTML = datasAberturaExcecao.map(d => `
+    <div class="data-tag" style="background:#e8f5e9;border-color:#a5d6a7;color:#1b5e20">
+      ${d.split('-').reverse().join('/')}
+      <button onclick="removerDataAbertura('${d}')" style="color:#1b5e20">×</button>
+    </div>`).join('');
+}
+
+function adicionarDataAbertura() {
+  const input = document.getElementById('novaDataAbertura');
+  const val = input.value;
+  if (!val) { toast('Selecione uma data.', 'erro'); return; }
+  if (datasAberturaExcecao.includes(val)) { toast('Data já adicionada.', 'erro'); return; }
+  datasAberturaExcecao.push(val);
+  datasAberturaExcecao.sort();
+  input.value = '';
+  renderizarDatasAbertura();
+}
+
+function removerDataAbertura(data) {
+  datasAberturaExcecao = datasAberturaExcecao.filter(d => d !== data);
+  renderizarDatasAbertura();
+}
 let _jc = 0;
 
 // ── JSONP ──
@@ -408,6 +445,8 @@ function aplicarConfigs(cfg) {
 
   datasFechoEspecificas = cfg.datasFecho || [];
   renderizarDatasFecho();
+  datasAberturaExcecao = cfg.datasAbertaExcecao || [];
+  renderizarDatasAbertura();
 }
 
 // ── RECOLHER E GUARDAR ──
@@ -445,8 +484,34 @@ function recolherConfigs() {
     maxConvidados: parseInt(document.getElementById('maxConvidados').value) || 6,
     dias,
     fechoSemanal,
-    datasFecho: datasFechoEspecificas
+    datasFecho: datasFechoEspecificas,
+    datasAbertaExcecao: datasAberturaExcecao
   };
+}
+
+// Sincroniza datas de fecho e exceções com Supabase
+async function sincronizarSupabase(cfg) {
+  const SUPA_URL = 'https://pqrqxvpzxqwblhxtmdns.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcnF4dnB6eHF3YmxoeHRtZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzA1OTEsImV4cCI6MjA4NTAwNjU5MX0.84XwHtn3XLph28DOHFEaM8pFZL_dvT60pSo8mOCaJkY';
+  const RESTAURANTE_ID = '04270fa5-28ce-4813-9735-1433375b5d68';
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/configs?restaurante_id=eq.${RESTAURANTE_ID}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        datas_fecho: cfg.datasFecho || [],
+        dias_abertos_excecao: cfg.datasAbertaExcecao || [],
+        fecho_semanal: cfg.fechoSemanal || []
+      })
+    });
+  } catch(e) {
+    console.warn('[Supabase sync] erro:', e);
+  }
 }
 
 async function guardarConfigs() {
@@ -454,7 +519,10 @@ async function guardarConfigs() {
   try {
     const cfg = recolherConfigs();
     const cfgStr = JSON.stringify(cfg);
-    const res = await apiRequest('setConfigReservas', { config: cfgStr });
+    const [res] = await Promise.all([
+      apiRequest('setConfigReservas', { config: cfgStr }),
+      sincronizarSupabase(cfg)
+    ]);
     if (res && res.status === 'success') {
       toast('✅ Configurações guardadas com sucesso!', 'ok');
     } else {

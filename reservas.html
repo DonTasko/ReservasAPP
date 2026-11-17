@@ -538,8 +538,15 @@
     const dateISO = y+'-'+m+'-'+d;
     const dayName = normalizar(date.toLocaleDateString('pt-PT',{weekday:'long'}));
 
+    // Exceções de abertura: datas que abrem mesmo em dia de fecho semanal
+    const excecoes = diasFechadosGlobal
+      .filter(e => typeof e === 'string' && e.startsWith('open:'))
+      .map(e => e.slice(5));
+    if (excecoes.includes(dateISO)) return false;
+
     for (let i = 0; i < diasFechadosGlobal.length; i++) {
       const entrada = diasFechadosGlobal[i];
+      if (typeof entrada === 'string' && entrada.startsWith('open:')) continue;
       // Suportar formato novo (objecto { data, motivo }) e antigo (string)
       const dataStr  = typeof entrada === 'object' ? (entrada.data || '') : entrada;
       const dataISO  = toISO(dataStr);
