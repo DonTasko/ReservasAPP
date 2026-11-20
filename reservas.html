@@ -539,14 +539,18 @@
     const dayName = normalizar(date.toLocaleDateString('pt-PT',{weekday:'long'}));
 
     // Exceções de abertura: datas que abrem mesmo em dia de fecho semanal
+    // Suporta string "open:YYYY-MM-DD" e objecto {data:"open:YYYY-MM-DD"} ou {data:"YYYY-MM-DD", aberto:true}
     const excecoes = diasFechadosGlobal
-      .filter(e => typeof e === 'string' && e.startsWith('open:'))
-      .map(e => e.slice(5));
+      .map(e => typeof e === 'string' ? e : (e && e.data ? e.data : ''))
+      .filter(s => s.startsWith('open:'))
+      .map(s => s.slice(5));
     if (excecoes.includes(dateISO)) return false;
 
     for (let i = 0; i < diasFechadosGlobal.length; i++) {
       const entrada = diasFechadosGlobal[i];
-      if (typeof entrada === 'string' && entrada.startsWith('open:')) continue;
+      // Ignorar entradas de abertura (string ou objecto)
+      const rawStr = typeof entrada === 'string' ? entrada : (entrada && entrada.data ? entrada.data : '');
+      if (rawStr.startsWith('open:')) continue;
       // Suportar formato novo (objecto { data, motivo }) e antigo (string)
       const dataStr  = typeof entrada === 'object' ? (entrada.data || '') : entrada;
       const dataISO  = toISO(dataStr);
@@ -571,6 +575,8 @@
 
     for (let i = 0; i < diasFechadosGlobal.length; i++) {
       const entrada = diasFechadosGlobal[i];
+      const rawStr = typeof entrada === 'string' ? entrada : (entrada && entrada.data ? entrada.data : '');
+      if (rawStr.startsWith('open:')) continue; // nunca devolver motivo para exceções de abertura
       if (typeof entrada === 'object') {
         const dataISO  = toISO(entrada.data || '');
         const dataNorm = normalizar(entrada.data || '');
