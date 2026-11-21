@@ -495,6 +495,26 @@ async function sincronizarSupabase(cfg) {
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcnF4dnB6eHF3YmxoeHRtZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzA1OTEsImV4cCI6MjA4NTAwNjU5MX0.84XwHtn3XLph28DOHFEaM8pFZL_dvT60pSo8mOCaJkY';
   const RESTAURANTE_ID = '04270fa5-28ce-4813-9735-1433375b5d68';
 
+  // Converter dias de camelCase/SIM-NÃO para snake_case/boolean (formato BD)
+  const diasBD = {};
+  if (cfg.dias) {
+    Object.entries(cfg.dias).forEach(([k, d]) => {
+      diasBD[k] = {
+        aberto:         d.aberto === 'SIM' || d.aberto === true,
+        reservas:       d.reservas === 'SIM' || d.reservas === true,
+        almoco_ini:     d.almocoRestIni || d.almocoIni || '',
+        almoco_fim:     d.almocoRestFim || d.almocoFim || '',
+        jantar_ini:     d.jantarRestIni || d.jantarIni || '',
+        jantar_fim:     d.jantarRestFim || d.jantarFim || '',
+        almoco_res_ini: d.almocoResIni || d.almocoRestIni || '',
+        almoco_res_fim: d.almocoResFim || d.almocoRestFim || '',
+        jantar_res_ini: d.jantarResIni || d.jantarRestIni || '',
+        jantar_res_fim: d.jantarResFim || d.jantarRestFim || '',
+        intervalo:      d.intervalo || 15,
+      };
+    });
+  }
+
   const res = await fetch(`${SUPA_URL}/rest/v1/rpc/atualizar_config_reservas`, {
     method: 'POST',
     headers: {
@@ -508,6 +528,7 @@ async function sincronizarSupabase(cfg) {
       p_fecho_semanal: cfg.fechoSemanal || [],
       p_datas_fecho: cfg.datasFecho || [],
       p_dias_abertos_excecao: cfg.datasAbertaExcecao || [],
+      p_dias: diasBD,
     })
   });
 
