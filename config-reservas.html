@@ -489,28 +489,31 @@ function recolherConfigs() {
   };
 }
 
-// Sincroniza datas de fecho e exceções com Supabase
+// Sincroniza datas de fecho e exceções com Supabase via RPC (bypassa RLS)
 async function sincronizarSupabase(cfg) {
   const SUPA_URL = 'https://pqrqxvpzxqwblhxtmdns.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxcnF4dnB6eHF3YmxoeHRtZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzA1OTEsImV4cCI6MjA4NTAwNjU5MX0.84XwHtn3XLph28DOHFEaM8pFZL_dvT60pSo8mOCaJkY';
   const RESTAURANTE_ID = '04270fa5-28ce-4813-9735-1433375b5d68';
-  try {
-    await fetch(`${SUPA_URL}/rest/v1/configs?restaurante_id=eq.${RESTAURANTE_ID}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        datas_fecho: cfg.datasFecho || [],
-        dias_abertos_excecao: cfg.datasAbertaExcecao || [],
-        fecho_semanal: cfg.fechoSemanal || []
-      })
-    });
-  } catch(e) {
-    console.warn('[Supabase sync] erro:', e);
+
+  const res = await fetch(`${SUPA_URL}/rest/v1/rpc/atualizar_config_reservas`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': `Bearer ${SUPA_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      p_restaurante_id: RESTAURANTE_ID,
+      p_password: 'Tasko123',
+      p_fecho_semanal: cfg.fechoSemanal || [],
+      p_datas_fecho: cfg.datasFecho || [],
+      p_dias_abertos_excecao: cfg.datasAbertaExcecao || [],
+    })
+  });
+
+  const json = await res.json();
+  if (!res.ok || json.status !== 'success') {
+    throw new Error(json.message || 'Erro ao guardar no Supabase');
   }
 }
 
