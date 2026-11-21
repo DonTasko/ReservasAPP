@@ -518,16 +518,8 @@ async function guardarConfigs() {
   setLoading(true);
   try {
     const cfg = recolherConfigs();
-    const cfgStr = JSON.stringify(cfg);
-    const [res] = await Promise.all([
-      apiRequest('setConfigReservas', { config: cfgStr }),
-      sincronizarSupabase(cfg)
-    ]);
-    if (res && res.status === 'success') {
-      toast('✅ Configurações guardadas com sucesso!', 'ok');
-    } else {
-      toast('Erro ao guardar: ' + (res && res.message ? res.message : 'desconhecido'), 'erro');
-    }
+    await sincronizarSupabase(cfg);
+    toast('✅ Configurações guardadas com sucesso!', 'ok');
   } catch(e) {
     console.error(e);
     toast('Erro de ligação ao servidor.', 'erro');
