@@ -839,6 +839,7 @@ async function carregarTudo() {
             hora, turno: hora < '16:00' ? 'Almoço' : 'Jantar',
             pax: parseInt(r.pax) || 0, status: String(r.status || 'pendente'),
             chegou: !!r.chegou,
+            origem: String(r.origem || 'formulario'),
             tel: String(r.cliente_telemovel || ''),
             email: String(r.cliente_email || ''), obs
         };
@@ -1000,7 +1001,8 @@ function renderizarTimeline() {
                 const isWalkIn = reserva.nome.startsWith('Walk-in');
                 const cls = isWalkIn ? 'walkin' : (reserva.chegou ? 'chegou' : 'ocupado');
                 const nomeEsc = reserva.nome.replace(/'/g,"\\'");
-                const nomeDisplay = isWalkIn ? reserva.nome.replace('Walk-in','🚶') : reserva.nome;
+                const isAdmin = reserva.origem === 'admin';
+                const nomeDisplay = isWalkIn ? reserva.nome.replace('Walk-in','🚶') : (isAdmin ? '🔧 ' + reserva.nome : reserva.nome);
                 // Todos os slots com cor; nome + hora apenas no primeiro, os outros ficam sólidos sem texto
                 tds = slots.map((_, i) => {
                     if (i === 0) {
@@ -1147,7 +1149,7 @@ function renderizarLista() {
         return `<div class="reserva-item">
             <div><div class="res-hora">${r.hora}</div><div class="res-hora-turno">${r.turno==='Almoço'?'🌞':'🌙'}</div></div>
             <div>
-                <div class="res-nome">${r.nome}</div>
+                <div class="res-nome">${r.origem==='admin'?'🔧 ':''}${r.nome}</div>
                 <div class="res-meta">${r.tel||''} ${r.obs?'· '+r.obs.substring(0,30):''}</div>
                 <div class="res-actions">
                     ${!r.chegou?`<button class="res-btn verde" onclick="marcarChegada('${r.id}')">✅ Chegou</button>`:`<span style="font-size:11px;color:#2ecc71;font-weight:700">✅ Chegou</span>`}
@@ -1276,7 +1278,7 @@ function renderizarResultadosPesquisa(rows, query) {
                 <div class="sr-data-hora">${turno} ${hora}</div>
             </div>
             <div>
-                <div class="sr-info-nome">${r.cliente_nome || '—'}</div>
+                <div class="sr-info-nome">${r.origem==='admin'?'🔧 ':''}${r.cliente_nome || '—'}</div>
                 <div class="sr-info-meta">
                     ${r.cliente_telemovel ? `<span>📞 ${r.cliente_telemovel}</span>` : ''}
                     ${r.cliente_email ? `<span>✉️ ${r.cliente_email}</span>` : ''}
