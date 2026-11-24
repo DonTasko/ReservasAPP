@@ -694,6 +694,33 @@ function iniciar() {
     calRenderizar();
     carregarTudo();
     iniciarAutoRefresh();
+    preencherDoCallApp();
+}
+
+/* ── PRÉ-PREENCHIMENTO VIA URL (macro CallApp → ?nome=...&tel=...) ── */
+// Guarda os dados logo ao abrir (sobrevivem ao login) e limpa o endereço.
+(function capturarParamsCallApp() {
+    const p = new URLSearchParams(location.search);
+    if (!p.has('nome') && !p.has('tel')) return;
+    try {
+        sessionStorage.setItem('prefillCallApp', JSON.stringify({
+            nome: (p.get('nome') || '').trim(),
+            tel:  (p.get('tel')  || '').replace(/\D/g, '').slice(-9)
+        }));
+    } catch(e) {}
+    history.replaceState(null, '', location.pathname);
+})();
+
+function preencherDoCallApp() {
+    let d = null;
+    try { d = JSON.parse(sessionStorage.getItem('prefillCallApp') || 'null'); sessionStorage.removeItem('prefillCallApp'); } catch(e) {}
+    if (!d) return;
+    const form = document.getElementById('formReserva');
+    if (d.nome) form.querySelector('input[name="nome"]').value = d.nome;
+    if (d.tel)  form.querySelector('input[name="telemovel"]').value = d.tel;
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => form.querySelector('input[name="pax"]').focus(), 400);
+    toast('📇 Dados do CallApp preenchidos');
 }
 
 /* ── CALENDÁRIO MENSAL ── */
