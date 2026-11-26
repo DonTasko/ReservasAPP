@@ -571,7 +571,7 @@ body {
   <h1 class="hero-title">Sobremesas<br><em>de Festa</em></h1>
   <p class="hero-subtitle">Feitas à mão, prontas a levar para a sua mesa</p>
   <div class="hero-badges">
-    <span class="badge gold">🎄 Encomendas abertas</span>
+    <span class="badge gold">🎄 Encomendas até 20 Dez</span>
     <span class="badge">Levantamento em loja</span>
     <span class="badge">Aprox. 10 doses por unidade</span>
   </div>
@@ -588,7 +588,7 @@ body {
       <label class="pickup-label" for="pickupDate">📅 Data de levantamento</label>
       <input type="date" id="pickupDate" class="pickup-input">
       <p class="pickup-note">🕐 Levantamento sempre até às 13h00</p>
-      <p class="pickup-note">Natal: até 24 Dez · Ano Novo: 27 a 31 Dez</p>
+      <p class="pickup-note">⚠️ Encomendas até 20 Dez · Levantamento: Natal até 24 Dez · Ano Novo 27–31 Dez</p>
       <p class="pickup-note" id="pickupError" style="color:var(--red);display:none">⚠️ Dias 25 e 26 de Dezembro não disponíveis</p>
     </div>
   </div>
@@ -883,6 +883,7 @@ const today = new Date().toISOString().slice(0,10);
 const yr = new Date().getFullYear();
 inp.min = today;
 inp.max = `${yr}-12-31`;
+inp.min = today > `${yr}-12-20` ? today : today; // encomendas só até 20 dez, mas levantamento pode ser depois
 
 inp.addEventListener('change', () => {
   const val = inp.value;
