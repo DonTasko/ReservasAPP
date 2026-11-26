@@ -6,15 +6,15 @@
 <style>
 /* ── tokens ─────────────────────────────────────────────── */
 :root {
-  --bg:       #0d0b09;
-  --surface:  #131110;
-  --surface2: #1a1714;
+  --bg:       #1a1208;
+  --surface:  #221a0e;
+  --surface2: #2a2010;
   --gold:     #c9a84c;
   --gold-dim: #a0813a;
   --red:      #c0392b;
   --fg:       #f0ece4;
-  --fg-muted: #8a8070;
-  --border:   #2a2520;
+  --fg-muted: #9a8870;
+  --border:   #3a2e1a;
   --success:  #4caf80;
   color-scheme: dark;
 }
@@ -215,7 +215,7 @@ body {
 
 .card-name {
   font-family: 'Instrument Serif', serif;
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   font-weight: 400;
   color: var(--fg);
   line-height: 1.2;
@@ -313,22 +313,22 @@ body {
 
 .add-btn {
   flex: 1;
-  padding: 0.5rem 0.5rem;
-  background: transparent;
+  padding: 0.55rem 0.5rem;
+  background: #2e2210;
   border: 1px solid var(--gold-dim);
   color: var(--gold);
   font-family: 'Instrument Serif', serif;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   cursor: pointer;
   border-radius: 2rem;
   transition: background 0.15s, border-color 0.15s;
   text-align: center;
 }
-.add-btn:hover { background: rgba(201,168,76,0.1); }
+.add-btn:hover { background: #3a2c14; }
 .add-btn.added {
   border-color: var(--success);
   color: var(--success);
-  background: rgba(76,175,128,0.06);
+  background: rgba(76,175,128,0.1);
 }
 
 /* card-meta e card-top não usadas */
