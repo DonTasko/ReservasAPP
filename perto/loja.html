@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ofertas — Perto</title>
+<style>
+  :root{--p:#E4572E}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f4f1;color:#222}
+  header{background:var(--p);color:#fff;padding:22px 18px}
+  header{display:flex;gap:14px;align-items:center}
+  header h1{margin:0;font-size:24px} header p{margin:4px 0 0;opacity:.9}
+  #logo{width:64px;height:64px;border-radius:14px;object-fit:cover;background:#fff;flex:none}
+  main{max-width:560px;margin:0 auto;padding:16px}
+  .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px #0001}
+  .card h2{margin:0 0 6px;font-size:18px} .mut{color:#777;font-size:14px}
+  .btn{display:block;text-align:center;background:var(--p);color:#fff;text-decoration:none;padding:14px;border-radius:10px;font-weight:600;margin:8px 0}
+  .btn.ghost{background:#fff;color:var(--p);border:1px solid var(--p)}
+  .promo{background:#fff3ee;border:1px solid #f6c6b6}
+</style>
+</head>
+<body>
+<header><img id="logo" alt="" hidden><div><h1 id="name">A carregar…</h1><p id="addr"></p></div></header>
+<main>
+  <div id="offers"></div>
+  <div class="card promo">
+    <b>Recebe estas ofertas sem abrir nada.</b>
+    <p class="mut">Com a app Perto, o telemóvel avisa-te quando passas perto de uma loja com promoções.</p>
+    <a class="btn" id="play" href="#">Instalar a app (Android)</a>
+  </div>
+  <div class="row">
+    <a class="btn ghost" id="maps" href="#" hidden>Como chegar</a>
+    <a class="btn ghost" id="call" href="#" hidden>Ligar</a>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+$('play').href = PERTO.PLAY_STORE_URL;
+const DIAS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+function horario(o){
+  const d = [...(o.days_of_week || [])].sort((a,b) => a-b);
+  let t = '';
+  if (d.length && d.length < 7) {
+    const seguidos = d.every((v,i) => i === 0 || v === d[i-1] + 1);
+    t += seguidos && d.length > 2 ? `${DIAS[d[0]-1]} a ${DIAS[d[d.length-1]-1]}` : d.map(x => DIAS[x-1]).join(', ');
+  }
+  if (o.hour_start && o.hour_end) t += (t ? ', ' : '') + `${o.hour_start.slice(0,5)}–${o.hour_end.slice(0,5)}`;
+  return t ? `<b>${t}</b> · ` : '';
+}
+
+(async () => {
+  const id = new URLSearchParams(location.search).get('loja') || '';
+  if (!/^[0-9a-f-]{36}$/i.test(id)) { $('name').textContent = 'Loja não encontrada'; return; }
+  const sb = supabase.createClient(PERTO.SUPABASE_URL, PERTO.SUPABASE_ANON_KEY);
+  const [{ data: shop }, { data: offers }] = await Promise.all([
+    sb.from('perto_shops').select('name,address,phone,lat,lng,logo_url').eq('id', id).maybeSingle(),
+    sb.from('perto_offers').select('title,description,ends_at,days_of_week,hour_start,hour_end').eq('shop_id', id).order('ends_at')
+  ]);
+  if (!shop) { $('name').textContent = 'Loja não encontrada'; return; }
+  document.title = shop.name + ' — Ofertas';
+  if (shop.logo_url) { $('logo').src = shop.logo_url; $('logo').hidden = false; }
+  $('name').textContent = shop.name; $('addr').textContent = shop.address || '';
+  $('maps').href = `https://www.google.com/maps/search/?api=1&query=${shop.lat},${shop.lng}`; $('maps').hidden = false;
+  if (shop.phone) { $('call').href = 'tel:' + shop.phone.replace(/\s/g, ''); $('call').hidden = false; }
+  $('offers').innerHTML = (offers && offers.length) ? offers.map(o => `
+    <div class="card"><h2>${esc(o.title)}</h2>
+      ${o.description ? `<p>${esc(o.description)}</p>` : ''}
+      <p class="mut">${horario(o)}${o.ends_at ? 'Válido até ' + new Date(o.ends_at).toLocaleDateString('pt-PT') : 'Sem data de fim'}</p></div>`).join('')
+    : '<div class="card"><p class="mut">Neste momento não há ofertas ativas. Volta em breve!</p></div>';
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<title>Don Tasko — Sobremesas de Natal & Ano Novo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap">
+
+<style>
+/* ── tokens ─────────────────────────────────────────────── */
+:root {
+  --bg:       #0d0b09;
+  --surface:  #131110;
+  --surface2: #1a1714;
+  --gold:     #c9a84c;
+  --gold-dim: #a0813a;
+  --red:      #c0392b;
+  --fg:       #f0ece4;
+  --fg-muted: #8a8070;
+  --border:   #2a2520;
+  --success:  #4caf80;
+  color-scheme: dark;
+}
+
+/* deliberate dark-only design */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100%;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+
+/* ── hero ─────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 4rem 1rem 3rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #1e1508 0%, var(--bg) 70%);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle 2px at 15% 20%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1px at 85% 15%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 2px at 60% 80%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1px at 30% 70%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1.5px at 75% 55%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1px at 20% 50%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 2px at 90% 70%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1px at 50% 30%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1.5px at 10% 85%, var(--gold-dim) 0%, transparent 100%),
+    radial-gradient(circle 1px at 70% 10%, var(--gold-dim) 0%, transparent 100%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.hero-eyebrow span {
+  display: inline-block;
+  padding: 0 1em;
+  position: relative;
+}
+.hero-eyebrow span::before,
+.hero-eyebrow span::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--gold-dim);
+  opacity: 0.5;
+}
+.hero-eyebrow span::before { right: 100%; }
+.hero-eyebrow span::after  { left: 100%; }
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 10vw, 6rem);
+  line-height: 0.9;
+  letter-spacing: 0.03em;
+  color: var(--fg);
+  text-wrap: balance;
+  margin-bottom: 0.4rem;
+}
+
+.hero-title em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--gold);
+  font-size: 0.85em;
+}
+
+.hero-subtitle {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--fg-muted);
+  font-size: 1.05rem;
+  margin-top: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  color: var(--fg-muted);
+}
+.badge.gold {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+  background: rgba(201,168,76,0.07);
+}
+
+/* ── catalog grid ──────────────────────────────────────── */
+.catalog {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-block: 3rem;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+/* ── card estilo velas ── */
+.card {
+  background: var(--surface);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.card:active { transform: scale(0.98); border-color: var(--gold-dim); }
+
+/* placeholder foto */
+.card-photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 10px 10px 0 0;
+}
+.card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* corpo do card */
+.card-body {
+  padding: 0.65rem 0.7rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.card-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--fg);
+  line-height: 1.2;
+}
+
+.card-desc {
+  color: var(--fg-muted);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.card-doses {
+  font-size: 9px;
+  color: var(--fg-muted);
+  opacity: 0.5;
+  margin-top: 0.1rem;
+}
+
+.card-price {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.05rem;
+  color: var(--gold);
+  margin-top: 0.3rem;
+}
+
+/* alergénios */
+.card-alergenios {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+}
+.alerg-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.alerg-pills { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+.alerg-pill {
+  font-size: 8px;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2rem;
+  border: 1px solid #3a2e1a;
+  color: #c9a84c77;
+  background: rgba(201,168,76,0.05);
+  white-space: nowrap;
+}
+
+/* footer do card: qty + botão */
+.card-footer {
+  padding: 0.5rem 0.75rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+/* quantity control */
+.qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+.qty-btn {
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--fg);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.1s, color 0.1s;
+  line-height: 1;
+  font-family: inherit;
+}
+.qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.qty-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  min-width: 1.4rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.add-btn {
+  flex: 1;
+  padding: 0.5rem 0.5rem;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: 'Instrument Serif', serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  border-radius: 2rem;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: center;
+}
+.add-btn:hover { background: rgba(201,168,76,0.1); }
+.add-btn.added {
+  border-color: var(--success);
+  color: var(--success);
+  background: rgba(76,175,128,0.06);
+}
+
+/* card-meta e card-top não usadas */
+.card-meta, .card-top, .card-bottom { display: none; }
+
+/* ── pickup date ──────────────────────────────────────── */
+.pickup-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-top: 1px;
+}
+.pickup-inner {
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pickup-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.pickup-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 2px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 160px;
+  color-scheme: dark;
+}
+.pickup-input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: var(--gold); }
+.pickup-note {
+  font-size: 11px;
+  color: var(--fg-muted);
+  flex-basis: 100%;
+  margin-top: -0.3rem;
+}
+
+/* ── cart ──────────────────────────────────────────────── */
+.cart-bar {
+  position: sticky;
+  bottom: 0;
+  /* sits above pickup bar */
+  left: 0; right: 0;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  padding: 1rem;
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  transform: translateY(100%);
+  z-index: 100;
+}
+.cart-bar.visible { transform: translateY(0); }
+
+.cart-summary {
+  flex: 1;
+  min-width: 0;
+}
+.cart-count {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+.cart-items-preview {
+  font-size: 12px;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-clear {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: border-color 0.1s, color 0.1s;
+}
+.cart-clear:hover { border-color: var(--red); color: var(--red); }
+
+.order-btn {
+  background: var(--gold);
+  color: #0d0b09;
+  border: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  padding: 0.7rem 1.6rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.order-btn:hover { background: #e0bc56; }
+.order-btn:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+/* ── sinal aviso ─────────────────────────────────────── */
+.sinal-aviso {
+  border-top: 1px solid #3a1f1a;
+  border-bottom: 1px solid #3a1f1a;
+  background: rgba(192,57,43,0.08);
+  padding: 1.2rem;
+  padding-left: max(1.2rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1.2rem, env(safe-area-inset-right, 0px));
+}
+.sinal-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.sinal-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+.sinal-aviso strong { color: #e07060; font-size: 0.88rem; display: block; margin-bottom: 0.2rem; }
+.sinal-aviso p { font-size: 0.82rem; color: var(--fg-muted); line-height: 1.5; margin: 0; }
+.sinal-aviso p strong { display: inline; color: var(--fg); }
+
+/* ── footer ───────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.footer strong { color: var(--fg); }
+.footer-tariff {
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+  opacity: 0.7;
+  margin-top: 0.1rem;
+}
+.footer-contact {
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ── whatsapp number display ─────────────────────────── */
+.wa-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--gold);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+}
+
+/* ── layout ─────────────────────────────────────────────── */
+.cart-bar { flex-direction: column; align-items: stretch; gap: 0.7rem; }
+.order-btn { text-align: center; justify-content: center; padding: 0.9rem 1.6rem; font-size: 1.15rem; }
+
+@media (min-width: 480px) {
+  .cart-bar { flex-direction: row; align-items: center; }
+  .order-btn { width: auto; }
+  .hero-title { font-size: clamp(3.2rem, 10vw, 6rem); }
+}
+</style>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow"><span>Take Away · Natal & Ano Novo 2024</span></div>
+  <h1 class="hero-title">Sobremesas<br><em>de Festa</em></h1>
+  <p class="hero-subtitle">Feitas à mão, prontas a levar para a sua mesa</p>
+  <div class="hero-badges">
+    <span class="badge gold">🎄 Encomendas abertas</span>
+    <span class="badge">Levantamento em loja</span>
+    <span class="badge">Aprox. 10 doses por unidade</span>
+  </div>
+</header>
+
+<!-- CATALOG -->
+<main class="catalog">
+  <div class="section-label">As nossas sobremesas</div>
+  <div class="grid" id="grid"></div>
+
+  <!-- PICKUP DATE -->
+  <div class="pickup-wrap" id="pickupWrap" hidden>
+    <div class="pickup-inner">
+      <label class="pickup-label" for="pickupDate">📅 Data de levantamento</label>
+      <input type="date" id="pickupDate" class="pickup-input">
+      <p class="pickup-note">Natal: até 24 Dez (antes das 13h) · Ano Novo: 27 a 31 Dez</p>
+      <p class="pickup-note" id="pickupError" style="color:var(--red);display:none">⚠️ Dias 25 e 26 de Dezembro não disponíveis</p>
+    </div>
+  </div>
+</main>
+
+<!-- AVISO SINAL -->
+<div class="sinal-aviso">
+  <div class="sinal-inner">
+    <span class="sinal-icon">⚠️</span>
+    <div>
+      <strong>Pagamento de sinal obrigatório</strong>
+      <p>A encomenda só é confirmada após pagamento de <strong>50% do valor total</strong>. Sem sinal, a encomenda não será realizada.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>Para dúvidas ou encomendas personalizadas, contacte-nos diretamente</p>
+  <p class="wa-number">📱 925 504 212</p>
+  <p class="footer-tariff">(Chamada para rede móvel nacional)</p>
+  <p class="footer-contact">Don Tasko · Sobremesas caseiras de Natal & Ano Novo · Produção artesanal limitada</p>
+</footer>
+
+<!-- CART BAR -->
+<div class="cart-bar" id="cartBar">
+  <div class="cart-summary">
+    <div class="cart-count" id="cartCount">0 items</div>
+    <div class="cart-items-preview" id="cartPreview"></div>
+  </div>
+  <button class="cart-clear" id="clearBtn" onclick="clearCart()">Limpar</button>
+  <a class="order-btn" id="orderBtn" href="#" onclick="sendWhatsApp(event)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Encomendar via WhatsApp
+  </a>
+</div>
+
+<script>
+const WHATSAPP = '351925504212';
+
+const products = [
+  {
+    id: 'baba',
+    icon: '🥚',
+    name: 'Baba de Camelo',
+    desc: 'Creme sedoso de leite condensado com ovos, levemente caramelizado.',
+    doses: 'aprox. 10 doses',
+    pvp: '21€',
+    alergenios: ['Ovos', 'Leite'],
+  },
+  {
+    id: 'cheesecake',
+    icon: '🍋',
+    name: 'Cheesecake F.',
+    desc: 'Base crocante de bolacha, recheio cremoso e cobertura de fruta fresca.',
+    doses: 'aprox. 10 doses',
+    pvp: '28€',
+    alergenios: ['Glúten', 'Leite', 'Ovos'],
+  },
+  {
+    id: 'cheesecake-caramelo',
+    icon: '🍯',
+    name: 'Cheesecake Caramelo Salgado',
+    desc: 'Cheesecake cremoso com cobertura de caramelo salgado — o equilíbrio perfeito entre doce e sal.',
+    doses: 'aprox. 10 doses',
+    pvp: '32€',
+    alergenios: ['Glúten', 'Leite', 'Ovos'],
+  },
+  {
+    id: 'mousse-choc',
+    icon: '🍫',
+    name: 'Mousse de Chocolate',
+    desc: 'Mousse densa e aveludada de chocolate negro, levíssima na textura.',
+    doses: 'aprox. 10 doses',
+    pvp: '25€',
+    alergenios: ['Ovos', 'Leite', 'Soja'],
+  },
+  {
+    id: 'pudim',
+    icon: '🍮',
+    name: 'Pudim de Ovos',
+    desc: 'Pudim tradicional português, cozido a banho-maria com calda de caramelo.',
+    doses: 'aprox. 10 doses',
+    pvp: '18€',
+    alergenios: ['Ovos', 'Leite'],
+  },
+  {
+    id: 'mousse-limao',
+    icon: '🍋',
+    name: 'Mousse Limão & Ganache',
+    desc: 'Mousse arejada de limão com ganache fria de chocolate negro por cima.',
+    doses: 'aprox. 10 doses',
+    pvp: '28€',
+    alergenios: ['Ovos', 'Leite', 'Soja'],
+  },
+  {
+    id: 'bolo-bolacha',
+    icon: '🍪',
+    name: 'Bolo de Bolacha',
+    desc: 'Bolo de bolacha Maria com creme de manteiga, o clássico de família.',
+    doses: 'aprox. 10 doses',
+    pvp: '21€',
+    alergenios: ['Glúten', 'Leite', 'Ovos'],
+  },
+  {
+    id: 'farofias',
+    icon: '☁️',
+    name: 'Farofias',
+    desc: 'Claras em castelo cozidas em leite aromatizado, com creme de ovos por baixo.',
+    doses: 'aprox. 10 doses',
+    pvp: '25€',
+    alergenios: ['Ovos', 'Leite'],
+  },
+  {
+    id: 'rabanadas',
+    icon: '🍞',
+    name: 'Rabanadas com Doce de Ovos',
+    desc: 'Rabanadas douradas cobertas com doce de ovos — o sabor da tradição natalícia.',
+    doses: 'à unidade · mín. 4 un.',
+    pvp: '3€/un',
+    minQty: 4,
+    alergenios: ['Glúten', 'Ovos', 'Leite'],
+  },
+];
+
+// cart state: { id -> qty }
+let cart = {};
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  products.forEach(p => {
+    const qty = cart[p.id] || 0;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-photo" aria-hidden="true">
+        ${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : p.icon}
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-doses">${p.doses}</div>
+        <div class="card-price">${p.pvp}</div>
+        <div class="card-alergenios" aria-label="Alergénios">
+          <span class="alerg-label">Alergénios:</span>
+          <div class="alerg-pills">${p.alergenios.map(a => `<span class="alerg-pill">${a}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="qty-row" id="qtyrow-${p.id}" style="${qty > 0 ? '' : 'display:none'}">
+          <button class="qty-btn" aria-label="Diminuir" onclick="changeQty('${p.id}',-1)">−</button>
+          <span class="qty-val" id="qty-${p.id}">${qty}</span>
+          <button class="qty-btn" aria-label="Aumentar" onclick="changeQty('${p.id}',1)">+</button>
+        </div>
+        <button class="add-btn${qty>0?' added':''}" id="addbtn-${p.id}" onclick="addOne('${p.id}')">
+          ${qty > 0 ? '✓ Adicionado' : '+ Adicionar'}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function changeQty(id, delta) {
+  const p = products.find(x => x.id === id);
+  const min = p.minQty || 0;
+  const current = cart[id] || 0;
+  let next = current + delta;
+  if (next < 0) next = 0;
+  // rabanadas: saltar de 0 para mínimo, não ir abaixo do mínimo se já lá está
+  if (next > 0 && next < min) next = delta > 0 ? min : 0;
+  if (next === 0) delete cart[id]; else cart[id] = next;
+  updateCard(id);
+  updateCartBar();
+}
+
+function addOne(id) {
+  const p = products.find(x => x.id === id);
+  const min = p.minQty || 1;
+  cart[id] = Math.max(cart[id] || 0, 0) + (cart[id] ? 1 : min);
+  updateCard(id);
+  updateCartBar();
+}
+
+function updateCard(id) {
+  const qtyEl = document.getElementById('qty-' + id);
+  const btnEl = document.getElementById('addbtn-' + id);
+  const rowEl = document.getElementById('qtyrow-' + id);
+  if (!qtyEl || !btnEl) return;
+  const qty = cart[id] || 0;
+  qtyEl.textContent = qty;
+  if (rowEl) rowEl.style.display = qty > 0 ? '' : 'none';
+  btnEl.className = 'add-btn' + (qty > 0 ? ' added' : '');
+  btnEl.textContent = qty > 0 ? '✓ Adicionado' : '+ Adicionar';
+  // quando qty>0 o botão encolhe para caber ao lado do qty-row
+  if (rowEl) btnEl.style.flex = qty > 0 ? '1' : '1';
+}
+
+function updateCartBar() {
+  const bar = document.getElementById('cartBar');
+  const pickupWrap = document.getElementById('pickupWrap');
+  const countEl = document.getElementById('cartCount');
+  const previewEl = document.getElementById('cartPreview');
+
+  const entries = Object.entries(cart).filter(([,v]) => v > 0);
+  const total = entries.reduce((s,[,v]) => s+v, 0);
+
+  if (total === 0) {
+    bar.classList.remove('visible');
+    pickupWrap.hidden = true;
+    pickupWrap.classList.remove('visible');
+    return;
+  }
+
+  pickupWrap.hidden = false;
+  requestAnimationFrame(() => pickupWrap.classList.add('visible'));
+  bar.classList.add('visible');
+  countEl.textContent = total + (total === 1 ? ' unidade' : ' unidades');
+
+  const names = entries.map(([id, qty]) => {
+    const p = products.find(x => x.id === id);
+    return `${p.name} ×${qty}`;
+  });
+  previewEl.textContent = names.join(' · ');
+}
+
+function clearCart() {
+  cart = {};
+  renderGrid();
+  updateCartBar();
+  document.getElementById('pickupDate').value = '';
+}
+
+function sendWhatsApp(e) {
+  e.preventDefault();
+  const entries = Object.entries(cart).filter(([,v]) => v > 0);
+  if (entries.length === 0) return;
+
+  const dateVal = document.getElementById('pickupDate').value;
+  if (!dateVal) {
+    const inp = document.getElementById('pickupDate');
+    inp.focus();
+    inp.style.borderColor = 'var(--red)';
+    setTimeout(() => inp.style.borderColor = '', 1500);
+    return;
+  }
+
+  const lines = entries.map(([id, qty]) => {
+    const p = products.find(x => x.id === id);
+    const preco = parseFloat(p.pvp);
+    const subtotal = (preco * qty).toFixed(2).replace('.', ',');
+    if (p.minQty) {
+      return `• ${p.name} × ${qty} un. (${p.pvp} cada) = ${subtotal}€`;
+    }
+    return `• ${p.name} × ${qty} (${p.pvp} cada) = ${subtotal}€`;
+  });
+
+  const total = entries.reduce((s, [id, qty]) => {
+    const p = products.find(x => x.id === id);
+    return s + parseFloat(p.pvp) * qty;
+  }, 0);
+  const sinal = (total * 0.5).toFixed(2).replace('.', ',');
+  const totalFmt = total.toFixed(2).replace('.', ',');
+
+  const [y,m,d] = dateVal.split('-');
+  const dateFormatted = `${d}/${m}/${y}`;
+  const msg = [
+    '🎄 *Encomenda — Sobremesas de Natal & Ano Novo Don Tasko*',
+    '',
+    ...lines,
+    '',
+    `💰 *Total: ${totalFmt}€*`,
+    `⚠️ *Sinal a pagar (50%): ${sinal}€*`,
+    '',
+    `📅 Data de levantamento pretendida: *${dateFormatted}*`,
+    '',
+    'A encomenda só é confirmada após pagamento do sinal. Obrigado!'
+  ].join('\n');
+
+  const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+// set date limits: today → 31 dec, bloquear 25 e 26
+const inp = document.getElementById('pickupDate');
+const today = new Date().toISOString().slice(0,10);
+const yr = new Date().getFullYear();
+inp.min = today;
+inp.max = `${yr}-12-31`;
+
+inp.addEventListener('change', () => {
+  const val = inp.value;
+  const errEl = document.getElementById('pickupError');
+  if (val === `${yr}-12-25` || val === `${yr}-12-26`) {
+    errEl.style.display = 'block';
+    inp.style.borderColor = 'var(--red)';
+    inp.value = '';
+  } else {
+    errEl.style.display = 'none';
+    inp.style.borderColor = '';
+  }
+});
+
+// init
+renderGrid();
+updateCartBar();
+</script>

@@ -97,7 +97,6 @@ async function apiRequest(action, data = {}) {
       maxConvidados: c.max_convidados || 6,
       lotacaoMaxima: c.lotacao_max || 24,
       motivoFechoSemanal: c.motivo_fecho_semanal || 'Encerrado',
-      datasAbertaExcecao: Array.isArray(c.dias_abertos_excecao) ? c.dias_abertos_excecao.map(d => String(d).slice(0,10)) : [],
     };
 
     if (CONFIG.DEBUG) console.log('📥 getConfigReservas:', config);
@@ -129,9 +128,9 @@ async function apiRequest(action, data = {}) {
     }
 
     // Exceções de abertura — datas que abrem mesmo em dia de fecho semanal
-    // Adicionadas como string "open:YYYY-MM-DD" para que reservas.html as possa usar
+    // Adicionadas como objecto especial para que reservas.html as possa usar
     if (excecoes.length) {
-      dias.push(...excecoes.map(d => `open:${String(d).slice(0,10)}`));
+      dias.push(...excecoes.map(d => `open:${d}`));
     }
 
     if (CONFIG.DEBUG) console.log('📥 getDiasFechados:', dias);

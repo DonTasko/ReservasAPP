@@ -1,0 +1,362 @@
+<title>Don Tasko — Cartaz Natal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+
+<style>
+:root {
+  --bg:      #0d0b09;
+  --gold:    #c9a84c;
+  --gold2:   #e8c96a;
+  --gold-dim:#7a5f28;
+  --red:     #c0392b;
+  --fg:      #f0ece4;
+  --muted:   #8a8070;
+  --border:  #2a2520;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: 1.5rem max(1rem, env(safe-area-inset-left,0px));
+  padding-left:  max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  padding-block: 2rem;
+}
+
+/* ── poster card ── */
+.poster {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* gold corner ornaments */
+.poster::before,
+.poster::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-color: var(--gold-dim);
+  border-style: solid;
+  opacity: 0.6;
+}
+.poster::before { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+.poster::after  { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+/* inner corners */
+.poster-inner::before,
+.poster-inner::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-color: var(--gold-dim);
+  border-style: solid;
+  opacity: 0.6;
+}
+.poster-inner::before { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+.poster-inner::after  { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+
+.poster-inner {
+  position: relative;
+  padding: 2.4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 100% 50% at 50% 0%, #1e1508 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, #1a1206 0%, transparent 70%);
+}
+
+/* stars scattered */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0;
+  animation: twinkle var(--d, 3s) var(--delay, 0s) ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50%       { opacity: var(--op, 0.5); transform: scale(1); }
+}
+
+/* eyebrow */
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  white-space: nowrap;
+}
+.eyebrow::before,
+.eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim));
+}
+.eyebrow::after { background: linear-gradient(to left, transparent, var(--gold-dim)); }
+
+/* logo */
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.6rem, 7vw, 2.2rem);
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+
+/* headline */
+.headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 14vw, 5.2rem);
+  line-height: 0.88;
+  letter-spacing: 0.03em;
+  color: var(--fg);
+  text-wrap: balance;
+  margin-bottom: 0.3rem;
+}
+.headline em {
+  display: block;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--gold);
+  font-size: 0.72em;
+  line-height: 1;
+}
+
+/* divider */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  margin: 1.6rem 0;
+  opacity: 0.6;
+}
+
+/* product list */
+.products {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: left;
+  margin-bottom: 0.4rem;
+}
+.products li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--fg);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  line-height: 1.4;
+}
+.products li::before {
+  content: '◆';
+  font-size: 5px;
+  color: var(--gold);
+  flex-shrink: 0;
+  position: relative;
+  top: -1px;
+  font-style: normal;
+}
+.products .doses {
+  margin-left: auto;
+  font-style: normal;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.divider2 {
+  width: 40%;
+  height: 1px;
+  background: var(--border);
+  margin: 1.4rem 0;
+}
+
+/* deadline banner */
+.deadline {
+  background: var(--gold);
+  color: #0d0b09;
+  width: calc(100% + 4rem);
+  margin: 0 -2rem;
+  padding: 0.9rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  margin-bottom: -0.4rem;
+}
+.deadline-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+.deadline-date {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+.deadline-sub {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+/* contact */
+.contact-row {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+.contact-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.contact-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.contact-tariff {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* take-away badge */
+.ta-badge {
+  margin-top: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.9rem;
+  border-radius: 2rem;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── hint below poster ── */
+.hint {
+  margin-top: 1.5rem;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  opacity: 0.7;
+}
+</style>
+
+<div class="poster" role="img" aria-label="Cartaz Sobremesas de Natal Don Tasko">
+  <div class="stars" id="stars"></div>
+  <div class="poster-inner">
+
+    <div class="eyebrow">Natal 2024</div>
+    <div class="logo">Don Tasko</div>
+
+    <h1 class="headline">
+      Sobremesas<br>
+      <em>de Natal</em>
+    </h1>
+
+    <div class="divider"></div>
+
+    <ul class="products">
+      <li>Baba de Camelo<span class="doses">aprox. 10 doses</span></li>
+      <li>Cheesecake F.<span class="doses">aprox. 10 doses</span></li>
+      <li>Cheesecake Caramelo Salgado<span class="doses">aprox. 10 doses</span></li>
+      <li>Mousse de Chocolate<span class="doses">aprox. 10 doses</span></li>
+      <li>Pudim de Ovos<span class="doses">aprox. 10 doses</span></li>
+      <li>Mousse Limão &amp; Ganache<span class="doses">aprox. 10 doses</span></li>
+      <li>Bolo de Bolacha<span class="doses">aprox. 10 doses</span></li>
+    </ul>
+
+    <div class="divider2"></div>
+
+    <div class="deadline">
+      <span class="deadline-label">Encomendas até</span>
+      <span class="deadline-date">18 de Dezembro</span>
+      <span class="deadline-sub">Levantamento em loja · Produção artesanal</span>
+    </div>
+
+    <div class="contact-row">
+      <span class="contact-label">Encomendar via WhatsApp</span>
+      <span class="contact-num">925 504 212</span>
+      <span class="contact-tariff">(Chamada para rede móvel nacional)</span>
+    </div>
+
+    <span class="ta-badge">🎄 Sobremesas Caseiras · Take Away</span>
+
+  </div>
+</div>
+
+<p class="hint">Partilhe esta imagem nas redes sociais ou imprima em A4/A3</p>
+
+<script>
+// scatter twinkling stars
+const container = document.getElementById('stars');
+const count = 18;
+for (let i = 0; i < count; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2 + 1;
+  s.style.cssText = [
+    `width:${size}px`, `height:${size}px`,
+    `top:${Math.random()*100}%`, `left:${Math.random()*100}%`,
+    `--d:${(Math.random()*3+2).toFixed(1)}s`,
+    `--delay:${(Math.random()*4).toFixed(1)}s`,
+    `--op:${(Math.random()*0.4+0.2).toFixed(2)}`,
+  ].join(';');
+  container.appendChild(s);
+}
+</script>

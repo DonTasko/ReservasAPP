@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perto — Painel da loja</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{--p:#E4572E;--bg:#f6f4f1;--card:#fff;--tx:#222;--mut:#777;--ok:#2e7d32;--warn:#b26a00}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+  header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--p);color:#fff}
+  header h1{margin:0;font-size:20px} header h1 span{font-weight:400;opacity:.85;font-size:15px}
+  main{max-width:760px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
+  h2{margin:0 0 12px;font-size:17px} h3{margin:16px 0 8px;font-size:15px}
+  label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+  input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font:inherit;background:#fff}
+  textarea{min-height:70px;resize:vertical}
+  button{background:var(--p);color:#fff;border:0;border-radius:8px;padding:10px 14px;font:inherit;cursor:pointer}
+  button.ghost{background:transparent;color:var(--p);border:1px solid var(--p)}
+  button.small{padding:6px 10px;font-size:13px}
+  button.danger{background:#c62828}
+  header button{background:#fff3;}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .between{justify-content:space-between}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+  .msg{color:#c62828;font-size:14px;min-height:1em}
+  .item{border-top:1px solid #eee;padding:10px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .item:first-child{border-top:0}
+  .badge{font-size:12px;padding:2px 8px;border-radius:99px;background:#eee;color:#555;white-space:nowrap}
+  .badge.ok{background:#e8f5e9;color:var(--ok)} .badge.warn{background:#fff3e0;color:var(--warn)}
+  .mut{color:var(--mut);font-size:13px}
+  #map{height:260px;border-radius:8px;margin-top:6px}
+  .days{display:flex;gap:6px;flex-wrap:wrap} .days label{display:flex;gap:4px;align-items:center;margin:0;color:var(--tx)}
+  .days input{width:auto}
+  #qr svg{width:180px;height:180px}
+  .qrbox{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .link{word-break:break-all;font-size:12px;color:var(--mut)}
+  .logo{width:72px;height:72px;border-radius:14px;object-fit:cover;background:#eee;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;flex:none}
+  .shoplogo{width:40px;height:40px;border-radius:10px;object-fit:cover;flex:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Perto <span>painel da loja</span></h1>
+  <button id="logout" class="small" hidden>Sair</button>
+</header>
+<main>
+
+<section id="auth" class="card">
+  <h2>Entrar</h2>
+  <label>Email</label><input id="email" type="email" autocomplete="email">
+  <label>Palavra-passe (mín. 6 caracteres)</label><input id="pass" type="password" autocomplete="current-password">
+  <div class="row" style="margin-top:12px">
+    <button id="btnLogin">Entrar</button>
+    <button id="btnSignup" class="ghost">Criar conta</button>
+  </div>
+  <p id="authMsg" class="msg"></p>
+</section>
+
+<section id="app" hidden>
+  <div class="card">
+    <div class="row between"><h2>As minhas lojas</h2><button id="btnNewShop" class="small">+ Nova loja</button></div>
+    <div id="shops"><p class="mut">A carregar…</p></div>
+  </div>
+
+  <div class="card" id="shopForm" hidden>
+    <h2 id="shopFormTitle">Nova loja</h2>
+    <label>Nome</label><input id="sName" maxlength="80">
+    <div class="grid2">
+      <div><label>Categoria</label>
+        <select id="sCat">
+          <option value="restauracao">Restauração</option><option value="cafe">Café / Pastelaria</option>
+          <option value="mercearia">Mercearia</option><option value="roupa">Roupa / Calçado</option>
+          <option value="beleza">Beleza</option><option value="servicos">Serviços</option>
+          <option value="outro">Outro</option>
+        </select></div>
+      <div><label>Telefone</label><input id="sPhone" maxlength="30" inputmode="tel"></div>
+    </div>
+    <label>Morada</label><input id="sAddr" maxlength="200">
+    <label>Raio do aviso: <b id="sRadiusTxt">150</b> m</label>
+    <input id="sRadius" type="range" min="100" max="500" step="25" value="150">
+    <label>Localização (toca no mapa para marcar a porta da loja)</label>
+    <div class="row"><button id="btnMyLoc" class="ghost small" type="button">Usar a minha localização</button>
+      <span id="sCoords" class="mut"></span></div>
+    <div id="map"></div>
+    <p id="shopMsg" class="msg"></p>
+    <div class="row"><button id="btnSaveShop">Guardar</button><button id="btnCancelShop" class="ghost">Cancelar</button></div>
+  </div>
+
+  <div class="card" id="shopDetail" hidden>
+    <div class="row between"><h2 id="dName"></h2><button id="btnCloseDetail" class="ghost small">Fechar</button></div>
+    <p id="dStatus" class="mut"></p>
+
+    <h3>Logotipo</h3>
+    <div class="row">
+      <div id="logoPrev"></div>
+      <div>
+        <p class="mut">Aparece na app e na página do QR. Usa uma imagem quadrada; é reduzida automaticamente.</p>
+        <div class="row">
+          <label class="ghost small" style="margin:0"><input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            <span style="display:inline-block;padding:6px 10px;border:1px solid var(--p);border-radius:8px;color:var(--p);cursor:pointer">Escolher imagem</span></label>
+          <button id="btnLogoDel" class="small ghost" hidden>Remover</button>
+        </div>
+        <p id="logoMsg" class="msg"></p>
+      </div>
+    </div>
+
+    <h3>Código QR para a montra</h3>
+    <div class="qrbox">
+      <div id="qr"></div>
+      <div>
+        <p class="mut">Quem lê o QR vê as tuas ofertas e o link para instalar a app.</p>
+        <p class="link" id="qrLink"></p>
+        <button id="btnPrint" class="small">Imprimir cartaz</button>
+      </div>
+    </div>
+
+    <h3>Ofertas</h3>
+    <div id="offers"></div>
+
+    <h3 id="offerFormTitle">Nova oferta</h3>
+    <label>Título (aparece na notificação)</label><input id="oTitle" maxlength="80" placeholder="Ex.: Café + pastel de nata por 1,50€">
+    <label>Descrição (opcional)</label><textarea id="oDesc" maxlength="500"></textarea>
+    <div class="grid2">
+      <div><label>Começa (vazio = já)</label><input id="oStart" type="datetime-local"></div>
+      <div><label>Termina (vazio = sem fim)</label><input id="oEnd" type="datetime-local"></div>
+    </div>
+    <label>Dias da semana</label>
+    <div class="days" id="oDays"></div>
+    <div class="grid2">
+      <div><label>Das (opcional)</label><input id="oH1" type="time"></div>
+      <div><label>Até (opcional)</label><input id="oH2" type="time"></div>
+    </div>
+    <p id="offerMsg" class="msg"></p>
+    <div class="row"><button id="btnSaveOffer">Publicar oferta</button><button id="btnCancelEdit" class="ghost" hidden>Cancelar edição</button></div>
+  </div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+const sb = supabase.createClient(PERTO.SUPABASE_URL, PERTO.SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CB = [39.8222, -7.4909]; // Castelo Branco
+const DAYS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+let user = null, shops = [], offersCache = [], editingOffer = null, editing = null, current = null, map = null, marker = null, pos = null;
+
+function errPt(m){
+  if (/Invalid login/i.test(m)) return 'Email ou palavra-passe errados.';
+  if (/Email not confirmed/i.test(m)) return 'Confirma primeiro o email (vê a tua caixa de correio).';
+  if (/already registered/i.test(m)) return 'Esse email já tem conta. Usa "Entrar".';
+  if (/Limite/i.test(m)) return m;
+  return 'Erro: ' + m;
+}
+
+// ---------- Autenticação ----------
+async function init(){
+  const { data: { session } } = await sb.auth.getSession();
+  setUser(session?.user);
+  sb.auth.onAuthStateChange((_e, s) => setUser(s?.user));
+}
+function setUser(u){
+  const changed = (u?.id || null) !== (user?.id || null);
+  user = u || null;
+  $('auth').hidden = !!user; $('app').hidden = !user; $('logout').hidden = !user;
+  if (user && changed) loadShops();
+}
+$('btnLogin').onclick = async () => {
+  $('authMsg').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('pass').value });
+  if (error) $('authMsg').textContent = errPt(error.message);
+};
+$('btnSignup').onclick = async () => {
+  $('authMsg').textContent = '';
+  const { data, error } = await sb.auth.signUp({
+    email: $('email').value.trim(), password: $('pass').value,
+    options: { emailRedirectTo: location.origin + location.pathname }
+  });
+  if (error) $('authMsg').textContent = errPt(error.message);
+  else if (!data.session) { $('authMsg').style.color = '#2e7d32'; $('authMsg').textContent = 'Conta criada. Confirma o email e depois entra.'; }
+};
+$('logout').onclick = () => sb.auth.signOut();
+
+// ---------- Lojas ----------
+async function loadShops(){
+  const { data, error } = await sb.from('perto_shops').select('*').eq('owner_id', user.id).order('created_at');
+  if (error) { $('shops').innerHTML = `<p class="msg">${esc(errPt(error.message))}</p>`; return; }
+  shops = data;
+  $('shops').innerHTML = shops.length ? shops.map(s => `
+    <div class="item">
+      <div class="row">${s.logo_url ? `<img class="shoplogo" src="${esc(s.logo_url)}" alt="">` : ''}<div><b>${esc(s.name)}</b><br><span class="mut">${esc(s.address || '')}</span></div></div>
+      <div class="row">
+        ${s.approved ? '<span class="badge ok">Aprovada</span>' : '<span class="badge warn">A aguardar aprovação</span>'}
+        <button class="small" data-open="${s.id}">Ofertas e QR</button>
+        <button class="small ghost" data-edit="${s.id}">Editar</button>
+      </div>
+    </div>`).join('') : '<p class="mut">Ainda não tens lojas. Cria a primeira.</p>';
+}
+$('shops').onclick = e => {
+  const o = e.target.dataset.open, ed = e.target.dataset.edit;
+  if (o) openDetail(shops.find(s => s.id === o));
+  if (ed) openShopForm(shops.find(s => s.id === ed));
+};
+$('btnNewShop').onclick = () => openShopForm(null);
+$('btnCancelShop').onclick = () => { $('shopForm').hidden = true; };
+$('sRadius').oninput = () => $('sRadiusTxt').textContent = $('sRadius').value;
+
+function openShopForm(s){
+  editing = s; $('shopDetail').hidden = true; $('shopForm').hidden = false; $('shopMsg').textContent = '';
+  $('shopFormTitle').textContent = s ? 'Editar loja' : 'Nova loja';
+  $('sName').value = s?.name || ''; $('sCat').value = s?.category || 'restauracao';
+  $('sPhone').value = s?.phone || ''; $('sAddr').value = s?.address || '';
+  $('sRadius').value = s?.radius_m || 150; $('sRadiusTxt').textContent = $('sRadius').value;
+  pos = s ? [s.lat, s.lng] : null;
+  if (!map) {
+    map = L.map('map').setView(CB, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+    map.on('click', e => setPos([e.latlng.lat, e.latlng.lng]));
+  }
+  setTimeout(() => { map.invalidateSize(); map.setView(pos || CB, 17); setPos(pos); }, 50);
+  $('shopForm').scrollIntoView({ behavior: 'smooth' });
+}
+function setPos(p){
+  pos = p;
+  if (marker) { map.removeLayer(marker); marker = null; }
+  if (p) { marker = L.marker(p).addTo(map); $('sCoords').textContent = p[0].toFixed(5) + ', ' + p[1].toFixed(5); }
+  else $('sCoords').textContent = 'sem localização';
+}
+$('btnMyLoc').onclick = () => {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    g => { const p = [g.coords.latitude, g.coords.longitude]; setPos(p); map.setView(p, 18); },
+    () => { $('shopMsg').textContent = 'Não foi possível obter a localização. Marca no mapa.'; },
+    { enableHighAccuracy: true, timeout: 10000 });
+};
+$('btnSaveShop').onclick = async () => {
+  $('shopMsg').textContent = '';
+  const name = $('sName').value.trim();
+  if (name.length < 2) return $('shopMsg').textContent = 'Indica o nome da loja.';
+  if (!pos) return $('shopMsg').textContent = 'Marca a localização no mapa.';
+  const row = { name, category: $('sCat').value, phone: $('sPhone').value.trim() || null,
+    address: $('sAddr').value.trim() || null, radius_m: +$('sRadius').value, lat: pos[0], lng: pos[1] };
+  const q = editing ? sb.from('perto_shops').update(row).eq('id', editing.id) : sb.from('perto_shops').insert(row);
+  const { error } = await q;
+  if (error) return $('shopMsg').textContent = errPt(error.message);
+  $('shopForm').hidden = true; loadShops();
+};
+
+// ---------- Detalhe: QR + ofertas ----------
+function landingUrl(id){ return PERTO.LANDING_URL + '?loja=' + encodeURIComponent(id); }
+function qrSvg(text, cell){ const q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createSvgTag({ cellSize: cell, margin: 2, scalable: true }); }
+
+function openDetail(s){
+  current = s; $('shopForm').hidden = true; $('shopDetail').hidden = false;
+  $('dName').textContent = s.name;
+  $('dStatus').textContent = s.approved
+    ? 'Aprovada: as ofertas ativas aparecem na app.'
+    : 'A aguardar aprovação. Podes já criar ofertas; aparecem na app quando a loja for aprovada.';
+  const url = landingUrl(s.id);
+  $('qr').innerHTML = qrSvg(url, 6); $('qrLink').textContent = url;
+  showLogo();
+  resetOfferForm();
+  loadOffers();
+  $('shopDetail').scrollIntoView({ behavior: 'smooth' });
+}
+function showLogo(){
+  const s = current;
+  $('logoPrev').innerHTML = s.logo_url
+    ? `<img class="logo" src="${esc(s.logo_url)}" alt="Logotipo">`
+    : `<div class="logo" style="background:var(--p)">${esc((s.name || '?').trim().charAt(0).toUpperCase())}</div>`;
+  $('btnLogoDel').hidden = !s.logo_url; $('logoMsg').textContent = '';
+}
+// Reduz para 256x256 (corte central) antes de enviar
+function resizeImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const S = 256, c = document.createElement('canvas'); c.width = c.height = S;
+      const side = Math.min(img.width, img.height);
+      const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S, S);
+      ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, S, S);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => {
+        if (b && b.type === 'image/webp') return resolve(b);
+        c.toBlob(b2 => b2 ? resolve(b2) : reject(new Error('Imagem inválida')), 'image/png');
+      }, 'image/webp', 0.85);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Não consegui ler a imagem')); };
+    img.src = url;
+  });
+}
+$('logoFile').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  $('logoMsg').style.color = ''; $('logoMsg').textContent = 'A enviar…';
+  try {
+    const blob = await resizeImage(f);
+    const ext = blob.type === 'image/webp' ? 'webp' : 'png';
+    const path = `${current.id}/logo.${ext}`;
+    await sb.storage.from('perto-logos').remove([`${current.id}/logo.webp`, `${current.id}/logo.png`]);
+    const up = await sb.storage.from('perto-logos').upload(path, blob, { contentType: blob.type, upsert: true });
+    if (up.error) throw up.error;
+    const pub = sb.storage.from('perto-logos').getPublicUrl(path).data.publicUrl + '?v=' + Date.now();
+    const { error } = await sb.from('perto_shops').update({ logo_url: pub }).eq('id', current.id);
+    if (error) throw error;
+    current.logo_url = pub; showLogo(); loadShops();
+  } catch (err) { $('logoMsg').textContent = errPt(err.message || String(err)); }
+};
+$('btnLogoDel').onclick = async () => {
+  if (!confirm('Remover o logotipo?')) return;
+  await sb.storage.from('perto-logos').remove([`${current.id}/logo.webp`, `${current.id}/logo.png`]);
+  const { error } = await sb.from('perto_shops').update({ logo_url: null }).eq('id', current.id);
+  if (error) return $('logoMsg').textContent = errPt(error.message);
+  current.logo_url = null; showLogo(); loadShops();
+};
+$('btnCloseDetail').onclick = () => { $('shopDetail').hidden = true; };
+
+function resetOfferForm(){
+  editingOffer = null;
+  const now = new Date(), end = new Date(now.getTime() + 7 * 864e5);
+  $('oStart').value = toLocal(now); $('oEnd').value = toLocal(end);
+  $('oTitle').value = ''; $('oDesc').value = ''; $('oH1').value = ''; $('oH2').value = '';
+  $('oDays').innerHTML = DAYS.map((d, i) => `<label><input type="checkbox" value="${i + 1}" checked>${d}</label>`).join('');
+  $('offerFormTitle').textContent = 'Nova oferta'; $('btnSaveOffer').textContent = 'Publicar oferta';
+  $('btnCancelEdit').hidden = true; $('offerMsg').textContent = '';
+}
+function editOffer(o){
+  editingOffer = o;
+  $('oTitle').value = o.title; $('oDesc').value = o.description || '';
+  $('oStart').value = toLocal(new Date(o.starts_at)); $('oEnd').value = o.ends_at ? toLocal(new Date(o.ends_at)) : '';
+  $('oH1').value = o.hour_start ? o.hour_start.slice(0, 5) : ''; $('oH2').value = o.hour_end ? o.hour_end.slice(0, 5) : '';
+  $('oDays').innerHTML = DAYS.map((d, i) => `<label><input type="checkbox" value="${i + 1}" ${o.days_of_week.includes(i + 1) ? 'checked' : ''}>${d}</label>`).join('');
+  $('offerFormTitle').textContent = 'Editar oferta'; $('btnSaveOffer').textContent = 'Guardar alterações';
+  $('btnCancelEdit').hidden = false; $('offerMsg').textContent = '';
+  $('offerFormTitle').scrollIntoView({ behavior: 'smooth' });
+}
+$('btnCancelEdit').onclick = resetOfferForm;
+function toLocal(d){ const z = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`; }
+function fmt(iso){ if (!iso) return 'sem fim'; return new Date(iso).toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+function state(o){
+  const n = Date.now();
+  if (!o.active) return ['Pausada', ''];
+  if (n < Date.parse(o.starts_at)) return ['Agendada', 'warn'];
+  if (o.ends_at && n > Date.parse(o.ends_at)) return ['Terminada', ''];
+  const pt = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Lisbon' }));
+  const dow = pt.getDay() === 0 ? 7 : pt.getDay();
+  const hm = String(pt.getHours()).padStart(2, '0') + ':' + String(pt.getMinutes()).padStart(2, '0');
+  const foraHoras = !o.days_of_week.includes(dow) ||
+    (o.hour_start && o.hour_end && (hm < o.hour_start.slice(0, 5) || hm > o.hour_end.slice(0, 5)));
+  return foraHoras ? ['Ativa · fora de horas', 'warn'] : ['Em curso', 'ok'];
+}
+
+async function loadOffers(){
+  const { data, error } = await sb.from('perto_offers').select('*').eq('shop_id', current.id).order('created_at', { ascending: false });
+  if (error) { $('offers').innerHTML = `<p class="msg">${esc(errPt(error.message))}</p>`; return; }
+  offersCache = data;
+  $('offers').innerHTML = data.length ? data.map(o => { const [t, c] = state(o); return `
+    <div class="item">
+      <div><b>${esc(o.title)}</b><br>
+        <span class="mut">${fmt(o.starts_at)} → ${fmt(o.ends_at)}${o.hour_start && o.hour_end ? ` · ${o.hour_start.slice(0,5)}–${o.hour_end.slice(0,5)}` : ''}${o.days_of_week.length < 7 ? ' · ' + o.days_of_week.map(d => DAYS[d - 1]).join(', ') : ''}</span></div>
+      <div class="row">
+        <span class="badge ${c}">${t}</span>
+        <button class="small ghost" data-editoffer="${o.id}">Editar</button>
+        <button class="small ghost" data-toggle="${o.id}" data-active="${o.active}">${o.active ? 'Pausar' : 'Ativar'}</button>
+        <button class="small danger" data-del="${o.id}">Apagar</button>
+      </div>
+    </div>`; }).join('') : '<p class="mut">Sem ofertas.</p>';
+}
+$('offers').onclick = async e => {
+  const ed = e.target.dataset.editoffer;
+  if (ed) { editOffer(offersCache.find(o => o.id === ed)); return; }
+  const t = e.target.dataset.toggle, d = e.target.dataset.del;
+  if (t) { await sb.from('perto_offers').update({ active: e.target.dataset.active !== 'true' }).eq('id', t); loadOffers(); }
+  if (d && confirm('Apagar esta oferta?')) { await sb.from('perto_offers').delete().eq('id', d); loadOffers(); }
+};
+$('btnSaveOffer').onclick = async () => {
+  $('offerMsg').textContent = '';
+  const title = $('oTitle').value.trim();
+  const days = [...$('oDays').querySelectorAll('input:checked')].map(i => +i.value);
+  const s = $('oStart').value ? new Date($('oStart').value) : new Date();
+  const en = $('oEnd').value ? new Date($('oEnd').value) : null;
+  const h1 = $('oH1').value || null, h2 = $('oH2').value || null;
+  if (title.length < 3) return $('offerMsg').textContent = 'Escreve um título com pelo menos 3 letras.';
+  if (isNaN(s) || (en && (isNaN(en) || en <= s))) return $('offerMsg').textContent = 'A data de fim tem de ser depois do início.';
+  if (!days.length) return $('offerMsg').textContent = 'Escolhe pelo menos um dia.';
+  if ((h1 && !h2) || (!h1 && h2) || (h1 && h2 && h2 <= h1)) return $('offerMsg').textContent = 'Horário inválido: preenche as duas horas, com o fim depois do início.';
+  const row = { title, description: $('oDesc').value.trim() || null, starts_at: s.toISOString(),
+    ends_at: en ? en.toISOString() : null, days_of_week: days, hour_start: h1, hour_end: h2 };
+  const { error } = editingOffer
+    ? await sb.from('perto_offers').update(row).eq('id', editingOffer.id)
+    : await sb.from('perto_offers').insert({ shop_id: current.id, ...row });
+  if (error) return $('offerMsg').textContent = errPt(error.message);
+  resetOfferForm(); loadOffers();
+};
+
+$('btnPrint').onclick = () => {
+  const w = window.open('', '_blank'); if (!w) return;
+  w.document.write(`<!doctype html><html lang="pt"><head><meta charset="utf-8"><title>Cartaz ${esc(current.name)}</title>
+    <style>body{font-family:system-ui,sans-serif;text-align:center;padding:40px}h1{font-size:40px;margin:0 0 6px}
+    p{font-size:22px;color:#444}.qr svg{width:320px;height:320px}.b{color:#E4572E;font-weight:700}</style></head>
+    <body><h1>${esc(current.name)}</h1><p>Aponta a câmara e vê as nossas <span class="b">ofertas</span></p>
+    <div class="qr">${qrSvg(landingUrl(current.id), 10)}</div>
+    <p>Instala a app <b>Perto</b> e recebe um aviso sempre que passares por cá.</p>
+    <script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.close();
+};
+
+init();
+</script>
+</body>
+</html>
