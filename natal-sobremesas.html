@@ -37,10 +37,14 @@ body {
 .hero {
   position: relative;
   text-align: center;
-  padding: 4rem max(1rem, env(safe-area-inset-left, 0px)) 3rem max(1rem, env(safe-area-inset-right, 0px));
+  padding: 3rem 1.2rem 2.5rem;
+  padding-left: max(1.2rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1.2rem, env(safe-area-inset-right, 0px));
   overflow: hidden;
   border-bottom: 1px solid var(--border);
   background: radial-gradient(ellipse 80% 60% at 50% 0%, #1e1508 0%, var(--bg) 70%);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hero::before {
@@ -92,12 +96,14 @@ body {
 
 .hero-title {
   font-family: 'Fraunces', serif;
-  font-size: clamp(2.8rem, 10vw, 5.5rem);
-  line-height: 0.95;
+  font-size: clamp(2rem, 9vw, 5rem);
+  line-height: 1;
   letter-spacing: -0.01em;
   color: var(--fg);
   text-wrap: balance;
+  word-break: break-word;
   margin-bottom: 0.4rem;
+  max-width: 100%;
 }
 
 .hero-title em {
